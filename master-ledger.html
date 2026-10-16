@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Ledger Pro</title>
+    <style>
+        :root {
+            --sahil: #1659f2;
+            --arman: #0df147;
+            --advance: #f243f2; 
+            --gray-entry: #d6d6d6;
+            --light-yellow: #fff6a3;
+            --blue-receive: #6ec6ff;
+            --red-balance: #ff4d4d;
+            --dark-green: #00c853;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #a9a2a2c8; margin: 0; padding: 2px; font-size: 10px; -webkit-user-select: none; user-select: none; }
+        
+        #mainAppOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(25px); 
+            z-index: 999999; display: flex; align-items: center; justify-content: center;
+        }
+        #secretInput {
+            display: none; padding: 15px; border-radius: 20px; border: 3px solid #333; 
+            text-align: center; font-size: 20px; width: 160px; background: #fff;
+        }
+        .container { 
+              max-width: 100%; 
+              margin: auto; 
+              background: #43a5ee; 
+              border: 2px solid #333; 
+              border-radius: 25px; 
+              overflow: hidden; 
+              padding-top: 3px;
+              padding-bottom: 3px;
+        }
+
+        .tabs { display: flex; background: transparent; padding: 5px; padding-top: 5px; gap: 10px; }
+        .tab-btn { flex: 1; padding: 8px; border: 2px solid #000; font-weight: bold; border-radius: 12px; background: #555; color: #fff; box-shadow: 0 3px 0 #222; font-size: 11px; }
+        .active-sahil { background: var(--sahil) !important; border: 2px solid #fff; box-shadow: 0 0 10px #ff00ff !important; }
+        .active-arman { background: var(--arman) !important; color: black !important; border: 2px solid #fff; box-shadow: 0 0 10px #ff00ff !important; }
+        .active-advance { background: var(--advance) !important; color: black !important; border: 2px solid #fff; box-shadow: 0 0 7px #ff00ff !important; }
+        
+        .main-header { text-align: center; font-weight: bold; font-size: 18px; padding: 10px; border-radius: 80px; margin: 5px; border: 5px solid #000; outline: 2px solid #fff; outline-offset: -4px; box-shadow: 0 7px 0 #444348; }
+        .sahil-theme { background: var(--sahil); color: white; cursor: default; }
+        .arman-theme { background: var(--arman); color: black; cursor: pointer; }
+        .advance-theme { background: var(--advance); color: black; cursor: pointer; border: 5px solid #000; }
+
+        .summary-dash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 8px; }
+        .s-box { padding: 6px 0px; border-radius: 10px; text-align: center; color: white; font-weight: bold; font-size: 9px; border: 2px solid #000; box-shadow: 0 2px 0 #000; }
+        .adv-summary-dash { display: flex; gap: 10px; padding: 10px; justify-content: center; }
+  
+        .adv-s-box { 
+                flex: 1; 
+                padding: 2px; 
+                border-radius: 12px; 
+                text-align: center; 
+                color: white; 
+                font-weight: bold; 
+                font-size: 11px;
+                border: 2px solid #000; 
+                box-shadow: 0 3px 0 #000;
+                cursor: pointer;
+                transition: 0.2s;
+        }
+        .adv-s-box:active {
+                box-shadow: 0 0 0 #000;
+                transform: translateY(4px);
+        }
+        .admin-controls { padding: 6px; background: lightblue; border-radius: 12px; margin: 3px 1px; border: 2px solid #000; box-shadow: 0 3px 0 #000; }
+        .btn-sq { border: 2px solid #000; color: white; font-weight: bold; font-size: 9px; cursor: pointer; padding: 5px; box-shadow: 0 2px 0 #000; border-radius: 8px; height: 28px; }
+        .btn-add-main { 
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 8px; 
+            color: white; 
+            font-size: 13px; 
+            font-weight: bold; 
+            border-radius: 25px; 
+            border: 2px solid white; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            transition: 0.2s;
+        }
+
+        .table-scroll { overflow-x: auto; height: 55vh; margin-top: 5px; background: #8989923a; border-radius: 8px; border: 1px solid #999; }
+        table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
+        
+        th, td { 
+            border: 1px solid #ccc; 
+            text-align: center; 
+            padding: 2px 5px; 
+            height: 16px; 
+            font-size: 12px; 
+            font-weight: bold;
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        th { 
+            background: #3498db; 
+            color: white; 
+            border: 2px solid #333; 
+            position: sticky; 
+            top: 0; 
+        }
+
+        #mainTable th:nth-child(1), #mainTable td:nth-child(1) { min-width: 30px; width: 35px; }
+        #mainTable th:nth-child(4), #mainTable td:nth-child(4) { min-width: 180px; text-align: left; padding-left: 8px; }
+
+        #advanceTable { min-width: 100%; }
+        #advanceTable th { background: #333; color: #ff99ff; }
+        #advanceTable td { background: white; color: black; }
+
+        .row-gray td { background: var(--gray-entry); }
+        .row-pass td:nth-child(-n+9) { background: var(--blue-receive); }
+        .row-receive td:nth-child(-n+10) { background: var(--light-yellow); }
+        .row-part td:nth-child(-n+13) { background: var(--red-balance); color: #fff; }
+        .balance-red { background: var(--red-balance) !important; color: #fff !important; }
+        .row-full td { background: var(--dark-green); color: #000; }
+
+        .search-area { padding: 5px 5px; display: flex; gap: 2px; align-items: center; margin-top: 2px; }
+        #searchInp { flex: 1; padding: 4px 5px; border: 2px solid #180ce1bc; border-radius: 10px; font-size: 12px; height: 20px; background: #fff; }
+        .btn-clear { padding: 0 12px; height: 28px; font-size: 11px; font-weight: bold; border-radius: 10px; border: 2px solid #000; cursor: pointer; color: white; background: #e74c3c; display: flex; align-items: center; justify-content: center; }
+
+        .unlock-container { width: 100%; margin-bottom: 10px; display: flex; gap: 5px; align-items: center; }
+        .btn-unlock { 
+            background: #e67e22; 
+            color: white; 
+            border: 2px solid #000; 
+            font-size: 12px; 
+            font-weight: bold; 
+            box-shadow: 0 4px 0 #000; 
+            border-radius: 12px; flex: 8; padding: 6px; cursor: pointer; 
+        }
+        .btn-close-form { 
+            background: #0808b17d; 
+            color: white; 
+            border: 2px solid #000; 
+            font-size: 12px; 
+            font-weight: bold; 
+            box-shadow: 0 4px 0 #000; 
+            border-radius: 12px; flex: 2; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+        }
+        input:disabled { 
+            background-color: #0a18a7d3 !important; 
+            font-weight: bold; 
+            color: #15fb3ddd !important; 
+            border-color: #01e229d3 !important; 
+        }
+
+        #unlockModal, #deleteModal, #restoreModal, #advanceDeleteModal {
+            display: none; position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(20px); 
+            z-index: 10000; align-items: center; justify-content: center;
+        }
+        .unlock-card {
+            background: rgba(25, 25, 25, 0.105); 
+            padding: 15px; 
+            border-radius: 30px; 
+            border: 2px solid #edf61ddf;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            width: 160px;
+            text-align: center;
+        }
+
+        .unlock-card h3 { margin: 0 0 10px 0; font-size: 12px; color: #333; }
+        .unlock-card input { 
+            width: 85%; 
+            padding: 10px; 
+            border: 2px solid #00ffff; 
+            border-radius: 12px; 
+            font-size: 20px; 
+            text-align: center; 
+            margin-bottom: 15px; 
+            background: #000; 
+            color: #0fef11; 
+            outline: none;
+        }
+
+        .u-btn-row { display: flex; gap: 8px; }
+        .u-btn { flex: 1; padding: 8px; border: 2px solid #000; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; color: #fff; text-transform: uppercase; }
+
+        #entryArea, #advanceEntryArea { background: #c3bcbc90; padding: 10px; display: none; }
+        .entry-form { max-width: 400px; margin: auto; border: 2px solid #333; padding: 8px; background: #f4fe857d; border-radius: 8px; }
+        .form-row { display: flex; margin-bottom: 5px; align-items: center; justify-content: space-between; }
+        .form-row label { width: 200px; font-weight: 900; font-size: 14px; color: #040404; text-transform: uppercase; }
+        .form-row input, .form-row select
+        { 
+            flex: 0 0 65%; 
+            padding: 4px; 
+            font-size: 14px; 
+            border: 2px solid #3cf842; 
+            border-radius: 10px; 
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+        .adv-adjusted { 
+            background-color: #007bff !important;
+            color: white !important; 
+            font-weight: bold; 
+        }
+
+        /* एडवांस ताला और डेट की स्टाइलिंग */
+        .secure-cell {
+            cursor: pointer;
+            position: relative;
+        }
+        .lock-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
+        }
+        .lock-icon {
+            font-size: 10px;
+            color: inherit;
+        }
+        .lock-icon.has-date {
+            color: #ff0000 !important;
+        }
+        .lock-date {
+            font-size: 8px;
+            color: #d63031;
+            font-weight: bold;
+            margin-top: 1px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+<div id="mainAppOverlay">
+    <div onclick="handleLockClick()" style="width:100%; height:100%; position:absolute;"></div>
+    <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric">
+</div>
+
+<div id="unlockModal">
+    <div class="unlock-card">
+        <h3>🔐</h3>
+        <input type="password" id="unlockPassInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*">
+
+        <div class="u-btn-row">
+            <button class="u-btn" style="background:#27ae60;" onclick="verifyUnlock()">OK</button>
+            <button class="u-btn" style="background:#555;" onclick="closeUnlockModal()">X</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal">
+    <div class="unlock-card" style="width: 160px;">
+        <h3 id="delTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 14px;">DELETE SRL: 0</h3>
+        <input type="password" id="delPassInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*">
+
+        <div style="display: flex; gap: 5px;">
+            <button style="flex:1; background:red; color:white; padding:8px; border-radius:10px; border:2px solid black;" onclick="confirmDeletion()">DELETE</button>
+            <button style="flex:1; background:grey; color:white; padding:8px; border-radius:10px; border:2px solid black;" onclick="closeDelModal()">X</button>
+        </div>
+    </div>
+</div>
+
+<div id="advanceDeleteModal">
+    <div class="unlock-card" style="width: 160px;">
+        <h3 id="advDelTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 14px;">DELETE SRL: 0</h3>
+        <input type="password" id="advDelPassInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*">
+
+        <div style="display: flex; gap: 5px;">
+            <button style="flex:1; background:red; color:white; padding:8px; border-radius:10px; border:2px solid black;" onclick="confirmAdvanceDeletion()">DELETE</button>
+            <button style="flex:1; background:grey; color:white; padding:8px; border-radius:10px; border:2px solid black;" onclick="closeAdvDelModal()">X</button>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="mainContainer">
+    <div id="restoreModal">
+        <div class="unlock-card" style="width: 160px; background: rgba(25,25,25,0.8); backdrop-filter: blur(20px);">
+            <h3 style="color:white;">🔐</h3>
+            <input type="password" id="resPassInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*">
+
+            <div style="display: flex; gap: 8px;">
+                <button style="flex: 1; padding: 8px; border: 2px solid #000; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; color: #fff; background:#27ae60;" onclick="confirmRestore()">RESTORE</button>
+                <button style="flex: 1; padding: 8px; border: 2px solid #000; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; color: #fff; background:#555;" onclick="closeResModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button id="tab-sahil" class="tab-btn active-sahil" onclick="switchTab('sahil')">SAHIL</button>
+        <button id="tab-arman" class="tab-btn" onclick="switchTab('arman')">ARMAN</button>
+        <button id="tab-advance" class="tab-btn" onclick="switchTab('advance')">ADVANCE</button>
+    </div>
+    
+    <div id="header-title" class="main-header sahil-theme">
+        <span>SAHIL ACCOUNT</span>
+    </div>
+    
+    <div id="sahilArmanSummary" class="summary-dash">
+        <div class="s-box" style="background:#1e3799; cursor:pointer;" onclick="filterByStatus('ALL')">T-COUNT <span id="stat-count">0</span></div>
+        <div class="s-box" style="background:#2980b9; cursor:pointer;" onclick="filterByStatus('PASSED')">PASSED <span id="stat-pass">0</span></div>
+        <div class="s-box" style="background:#8e44ad; cursor:pointer;" onclick="filterByStatus('PENDING')">PENDING <span id="stat-pend">0</span></div>
+        <div class="s-box" style="background:#d35400; cursor:pointer;" onclick="filterByStatus('ALL')">T-PRICE <span id="stat-price">0</span></div>
+        <div class="s-box" style="background:#27ae60; cursor:pointer;" onclick="filterByStatus('FULL RECEIVE')">RECEIVED <span id="stat-rec">0</span></div>
+        <div class="s-box" style="background:#ff4757; cursor:pointer;" onclick="filterByStatus('BALANCE')">BALANCE <span id="stat-bal">0</span></div>
+    </div>
+
+    <div id="advanceSummary" class="adv-summary-dash" style="display:none;">
+        <div class="adv-s-box" style="background:#27ae60; cursor:pointer;" onclick="filterAdvance('RECEIVED')">TOTAL RECEIVED <br> <span id="adv-stat-rec">0</span></div>
+        <div class="adv-s-box" style="background:#e74c3c; cursor:pointer;" onclick="filterAdvance('GIVEN')">TOTAL GIVEN <br> <span id="adv-stat-give">0</span></div>
+        <div class="adv-s-box" style="background:#3498db; cursor:pointer;" onclick="filterAdvance('ALL')">BALANCE <br> <span id="adv-stat-diff">0</span></div>
+    </div>
+</div>
+
+<div id="adminControls" style="padding: 8px; background: #0088ff; border-radius: 30px; border: 3px solid #333; margin: 3px;">
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <button id="addEntryBtn" onclick="toggleForm()" style="flex: 3; background: #0fef11; color: white; border: 2px solid #ffffff; font-size: 14px; font-weight: bold; border-radius: 22px; height: 40px; box-shadow: inset 0 -4px 0 rgba(0,0,0,0.3);">NEW ENTRY</button>
+        <button onclick="refreshPage()" style="flex: 0.5; height: 40px; background: #333; color: white; border: 1px solid #f9f8f8; border-radius: 15px; font-size: 18px; cursor: pointer;">🔄</button>
+        <button onclick="toggleSettingsMenu()" style="flex: 0.5; height: 40px; background: #333; color: white; border: 1px solid #f9f8f8; border-radius: 15px; font-size: 18px; cursor: pointer;">⚙️</button>
+    </div>
+
+    <div id="settingsPanel" style="display: none; background: #001a1a; padding: 20px; border-radius: 55px; border: 3px solid #00ffff; margin-top: 5px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        <h3 style="color: #00ffff; text-align: center; margin-top: 0; font-size: 14px; letter-spacing: 2px; font-weight: 900;">SETTINGS</h3>
+        <hr style="border: 0.5px solid #004444; margin-bottom: 5px;">
+        <button class="btn-add-main" style="background: #4285f4;" onclick="manualBackup()">📂 BACKUP</button>
+        <button class="btn-add-main" style="background: #f4b400;" onclick="restorePrompt()">📥 RESTORE</button>
+        <button class="btn-add-main" style="background: #db4437;" onclick="showTrashList()">♻️ RECOVER DELETED</button>
+        <button class="btn-add-main" style="background: #ff4757;" onclick="handleLogout()">🔒 LOGOUT & SAVE</button>
+        <button onclick="toggleSettingsMenu()" style="width: 100%; background: #333; color: white; border: 2px solid #fff; border-radius: 50px; margin-top: 2px; padding: 8px; font-weight: bold; cursor: pointer;">CLOSE</button>
+    </div>
+</div>
+
+<div id="entryArea">
+    <div class="entry-form">
+        <div id="unlockWrapper" class="unlock-container" style="display:none;">
+            <button class="btn-unlock" onclick="askUnlock()"> UNLOCK EDIT</button>
+            <button class="btn-close-form" onclick="toggleForm()">X</button>
+        </div>
+        <input type="hidden" id="editIndex" value="-1">
+        <div class="form-row"><label>REC DATE</label><input type="text" id="f1" onblur="smartDate(this)"></div>
+        <div class="form-row"><label>AGENT</label><input type="text" id="f2"></div>
+        <div class="form-row"><label>HOLDER</label><input type="text" id="f3"></div>
+        <div class="form-row"><label>COUNT</label><input type="number" id="f4"></div>
+        <div class="form-row"><label>BANK</label><input type="text" id="f5"></div>
+        <div class="form-row"><label>TYPE</label><input type="text" id="f6"></div>
+        <div class="form-row"><label>PRICE</label><input type="number" id="f_pr" oninput="calcBal()"></div>
+        <div class="form-row"><label>PAS DATE</label><input type="text" id="f7" onblur="smartDate(this)"></div>
+        <div class="form-row"><label>RIC DATE</label><input type="text" id="f8" onblur="smartDate(this)"></div>
+        <div class="form-row"><label>REC AMO.</label><input type="number" id="f_am" oninput="calcBal()"></div>
+        <div class="form-row"><label>BALANCE</label><input type="text" id="f_bal_ui" readonly style="background:#eee;"></div>
+        <div class="form-row"><label>BAL. DATE</label><input type="text" id="f9" onblur="smartDate(this)"></div>
+        <div class="form-row"><label>PAYMENT</label><input type="number" id="f_pay_amt"></div>
+        <div class="form-row"><label>PAID DATE</label><input type="text" id="f_pay_date" onblur="smartDate(this)"></div>
+        <div style="display:flex; gap:5px; margin-top:10px; align-items: center;">
+            <button id="mainSaveBtn" class="btn-add-main" style="flex: 10; background:#27ae60; font-size: 12px; height: 30px; box-shadow: 0 3px 0 #0c0c0c;" onclick="submitEntry(false)">SAVE</button>
+            <button id="updateBtn" class="btn-add-main" style="flex:4; background:#f39c12; display:none; height:30px; margin-top:0;" onclick="submitEntry(false)">UPDATE</button>
+            <button id="saveAsNewBtn" class="btn-add-main" style="flex:4; background:#3498db; display:none; height:30px; margin-top:0;" onclick="submitEntry(true)">NEW</button>
+            <button id="delEntryBtn" class="btn-add-main" style="flex:4; background:#ff4757; display:none; height:30px; margin-top:0;" onclick="handleInsideDelete()">DELETE</button>
+            <button id="newCancelBtn" type="button" onclick="toggleForm()" style="flex: 1; background: #f00b0b5d; color: white; border: 2px solid #000; border-radius: 10px; height: 30px; font-weight: bold; font-size: 16px; box-shadow: 0 3px -0 #000000; cursor: pointer; display:block;">X</button>
+        </div>
+    </div>
+</div>
+
+<div id="advanceEntryArea">
+    <div class="entry-form" style="background: #f3fdb39d;">
+        <h2 style="text-align:center; font-size:14px;">ADVANCE ENTRY</h2>
+        <input type="hidden" id="advEditIndex" value="-1">
+        <div class="form-row"><label>PARTY NAME</label><input type="text" id="adv_f1"></div>
+        <div class="form-row"><label>DATE</label><input type="text" id="adv_f2" onblur="smartDate(this)"></div>
+        <div class="form-row"><label>AMOUNT</label><input type="number" id="adv_f3"></div>
+        <div class="form-row"><label>TYPE</label>
+            <select id="adv_f4">
+                <option value="RECEIVED">RECEIVED</option>
+                <option value="GIVEN">GIVEN</option>
+            </select>
+        </div>
+        <div class="form-row"><label>REASON</label><input type="text" id="adv_f5"></div>
+        <div style="display:flex; gap:5px; margin-top:10px;">
+            <button class="btn-add-main" style="flex:1; background:#27ae60;" onclick="submitAdvanceEntry()">SAVE DATA</button>
+            <button class="btn-sq" style="background:#333; width:35px; margin-top:4px;" onclick="toggleAdvanceForm()">X</button>
+        </div>
+    </div>
+</div>
+
+<div class="search-area">
+    <input type="text" id="searchInp" placeholder="🔍 Search entries..." oninput="renderData()">
+    <button onclick="clearSearch()" class="btn-clear">CLEAR</button>
+</div>
+
+<div class="table-scroll" id="mainTableScroll">
+    <table id="mainTable">
+        <thead>
+            <tr>
+                <th>Srl.</th><th>REC DATE</th><th>AGENT</th><th>HOLDER</th><th>COUNT</th><th>BANK</th><th>TYPE</th><th>PRICE</th><th>PASS DATE</th><th>REC.DATE</th><th>REC.AMO</th><th>STATUS</th><th>BALANCE</th><th>BAL.REC.DATE</th><th>PAYMENT</th><th>PROF</th>
+            </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+    </table>
+</div>
+
+<div class="table-scroll" id="advanceTableScroll" style="display:none;">
+    <table id="advanceTable">
+        <thead>
+            <tr>
+                <th style="color:#faf9fa; width:30px;">Srl.</th>
+                <th style="color:#faf9fa;">PARTY NAME</th>
+                <th style="color:#faf9fa;">DATE</th>
+                <th style="color:#faf9fa;">AMOUNT</th>
+                <th style="color:#faf9fa;">TYPE</th>
+                <th style="color:#faf9fa;">REASON</th>
+            </tr>
+        </thead>
+        <tbody id="advance-table-body"></tbody>
+    </table>
+</div>
+
+<script>
+    let isPermanentDelete = false;
+    const cloudURL = 'https://script.google.com/macros/s/AKfycbxPPKYhI_LGCV1HB8H_ZaEbJvD14QJbfVhlN5AhkzYTxQPRzb_FRW9Uj1BkdXh1kn9E/exec';
+    
+    let db = JSON.parse(localStorage.getItem('shared_master_v19')) || [];
+    let db_advance = JSON.parse(localStorage.getItem('master_advance_v1')) || [];
+    let currentMode = 'sahil';
+    let currentAdvFilter = 'ALL';
+    let deleteIdx = -1;
+    let advDeleteIdx = -1;
+    let currentFilter = 'ALL';
+    let clickCount = 0;
+    let activeTimers = {};
+    let trash = JSON.parse(localStorage.getItem('master_trash_v1')) || [];
+
+    function handleLockClick() {
+        clickCount++;
+        if (clickCount >= 3) {
+            document.getElementById('secretInput').style.display = 'block';
+            document.getElementById('secretInput').focus();
+            clickCount = 0;
+        }
+    }
+
+    document.getElementById('secretInput').addEventListener('input', function() {
+        if(this.value === "7869") { 
+            document.getElementById('mainAppOverlay').style.display = 'none'; 
+        }
+    });
+
+    async function silentBackup(showAlert = false) { 
+        const backupData = { 
+            shared_master_v19: JSON.parse(localStorage.getItem('shared_master_v19')) || [], 
+            master_advance_v1: JSON.parse(localStorage.getItem('master_advance_v1')) || [],
+            master_trash_v1: JSON.parse(localStorage.getItem('master_trash_v1')) || []
+        };
+
+        try { 
+            await fetch(cloudURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(backupData),
+                keepalive: true 
+            }); 
+
+            if(showAlert) alert("✅ Successfully Backup Data!  ");
+        } catch(e) { 
+            if(showAlert) alert("❌ Backup Failed!");
+        } 
+    }
+
+    async function manualBackup() {
+        await silentBackup(true);
+    }
+
+    async function autoCloudSave() { 
+        await silentBackup(false);
+    }
+
+    async function confirmRestore() {
+        const pinInput = document.getElementById('resPassInput');
+        const pin = pinInput.value;
+        
+        if(pin === "7869") {
+            pinInput.disabled = true; 
+            
+            try { 
+                const res = await fetch(cloudURL + "?type=ledger&t=" + Date.now(), {
+                    method: 'GET',
+                    redirect: 'follow'
+                }); 
+                
+                const textData = await res.text(); 
+                
+                try {
+                    const data = JSON.parse(textData); 
+                    
+                    localStorage.setItem('shared_master_v19', JSON.stringify(data.shared_master_v19 || []));
+                    localStorage.setItem('master_advance_v1', JSON.stringify(data.master_advance_v1 || []));
+                    
+                    let localTrash = JSON.parse(localStorage.getItem('master_trash_v1') || '[]');
+                    let cloudTrash = data.master_trash_v1 || [];
+                    
+                    cloudTrash.forEach(cItem => {
+                        let cData = cItem.actualData ? cItem.actualData : cItem;
+                        let exists = localTrash.some(lItem => {
+                            let lData = lItem.actualData ? lItem.actualData : lItem;
+                            return JSON.stringify(lData) === JSON.stringify(cData);
+                        });
+                        if (!exists) {
+                            localTrash.push(cItem);
+                        }
+                    });
+                    
+                    localStorage.setItem('master_trash_v1', JSON.stringify(localTrash)); 
+
+                    localStorage.setItem('skipLockOnce', 'true');
+                    alert("✅ Successfully Restored!");
+                    window.location.reload();
+                } catch (parseError) {
+                    alert("⚠️ Server Error: डेटा सही फॉर्मेट में नहीं है!");
+                    closeResModal();
+                }
+            } catch(e) { 
+                alert("❌ Network problem: इंटरनेट या कनेक्शन की दिक्कत है!"); 
+                closeResModal();
+            }
+        } else { 
+            alert("❌ Wrong password!"); 
+            pinInput.value = "";
+        }
+    }
+
+    function submitEntry(forceNew) {
+        let idxVal = document.getElementById('editIndex').value;
+        let idx = Number(idxVal); 
+        if (forceNew) idx = -1;
+        let pr = Number(document.getElementById('f_pr').value) || 0;
+        let am = Number(document.getElementById('f_am').value) || 0;
+        let bDate = document.getElementById('f9').value;
+        let finalK = bDate;
+        let finalRec = am;
+        if (bDate && bDate.trim() !== "") {
+            let actualBalance = pr - am;
+            if (actualBalance > 0) {
+                finalK = `${bDate} (${actualBalance})`; 
+                finalRec = pr; 
+            }
+        }
+        let entry = { 
+            a: document.getElementById('f1').value, 
+            b: document.getElementById('f2').value, 
+            c: document.getElementById('f3').value, 
+            d: document.getElementById('f4').value, 
+            e: document.getElementById('f5').value, 
+            f: document.getElementById('f6').value, 
+            g: pr.toString(), 
+            h: document.getElementById('f7').value, 
+            i: document.getElementById('f8').value, 
+            j: finalRec.toString(),
+            k: finalK,
+            payAmt: document.getElementById('f_pay_amt').value,
+            payDate: document.getElementById('f_pay_date').value
+        };
+        if (idx === -1) { db.push(entry); } else { db[idx] = entry; }
+        localStorage.setItem('shared_master_v19', JSON.stringify(db)); 
+        toggleForm(); 
+        renderData();
+    }
+
+    function submitAdvanceEntry() {
+        let idxVal = document.getElementById('advEditIndex').value;
+        let idx = Number(idxVal);
+        const entry = {
+            name: document.getElementById('adv_f1').value,
+            date: document.getElementById('adv_f2').value,
+            amount: document.getElementById('adv_f3').value,
+            type: document.getElementById('adv_f4').value,
+            reason: document.getElementById('adv_f5').value
+        };
+        if (!entry.name || !entry.amount) { alert("Enter Name and Amount!"); return; }
+        if (idx === -1) { db_advance.push(entry); } else { db_advance[idx] = entry; }
+        localStorage.setItem('master_advance_v1', JSON.stringify(db_advance));
+        toggleAdvanceForm();
+        renderAdvanceData(); 
+    }
+
+    function handleInsideDelete() {
+        let idx = Number(document.getElementById('editIndex').value);
+        if (idx >= 0) {
+            deleteIdx = idx;
+            document.getElementById('delTitle').innerText = "DELETE SRL: " + (idx + 1);
+            document.getElementById('deleteModal').style.display = 'flex';
+            document.getElementById('delPassInput').value = "";
+            document.getElementById('delPassInput').focus();
+        }
+    }
+
+    function confirmDeletion() { 
+        if(document.getElementById('delPassInput').value === "7869") { 
+            if (isPermanentDelete) {
+                trash.splice(deleteIdx, 1);
+                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                alert("Permanently Deleted!");
+            } else {
+                let entryToSave = { actualData: db[deleteIdx], oldPos: deleteIdx };
+                trash.unshift(entryToSave); 
+                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                db.splice(deleteIdx, 1); 
+                localStorage.setItem('shared_master_v19', JSON.stringify(db)); 
+                alert("Moved to Recycle Bin!");
+            }
+            isPermanentDelete = false; 
+            toggleForm();
+            renderData(); 
+            closeDelModal();
+        } else { alert("Wrong PIN!"); }
+    }
+
+    function showTrashList() {
+        const modal = document.getElementById('trashModal');
+        const list = document.getElementById('trash-list-content');
+        list.innerHTML = "";
+        if (trash.length === 0) { alert("Trash is Empty!"); return; }
+        modal.style.display = 'flex';
+        trash.forEach((item, index) => {
+            const displayData = item.actualData ? item.actualData : item;
+            const div = document.createElement('div');
+            div.style = "background:#222; padding:10px; margin-bottom:5px; border-radius:10px; border-left:4px solid #ff4757; color:white; margin-top:5px;";
+            div.innerHTML = `<b>${displayData.e || 'BANK'}</b> - ${displayData.c || 'HOLDER'} <br><small style="color:yellow;">Pos: ${item.oldPos !== undefined ? item.oldPos + 1 : 'New'}</small>`;
+            let timer;
+            div.onclick = () => {
+                if(confirm("Restore to original position?")) {
+                    if (item.oldPos !== undefined) {
+                        db.splice(item.oldPos, 0, item.actualData);
+                    } else {
+                        db.unshift(displayData);
+                    }
+                    trash.splice(index, 1);
+                    localStorage.setItem('shared_master_v19', JSON.stringify(db));
+                    localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                    renderData();
+                    showTrashList();
+                    if(trash.length === 0) modal.style.display='none';
+                }
+            };
+            const startPress = () => timer = setTimeout(() => {
+                deleteIdx = index; 
+                isPermanentDelete = true; 
+                document.getElementById('delTitle').innerText = "PERMANENT DELETE";
+                document.getElementById('trashModal').style.display = 'none'; 
+                document.getElementById('deleteModal').style.display = 'flex'; 
+                document.getElementById('delPassInput').value = "";
+                document.getElementById('delPassInput').focus();
+            }, 800);
+            const endPress = () => clearTimeout(timer);
+            div.onmousedown = startPress; div.onmouseup = endPress;
+            div.ontouchstart = startPress; div.ontouchend = endPress;
+            list.appendChild(div);
+        });
+    }
+
+    function confirmAdvanceDeletion() { 
+        if(document.getElementById('advDelPassInput').value === "7869") { 
+            db_advance.splice(advDeleteIdx, 1); 
+            localStorage.setItem('master_advance_v1', JSON.stringify(db_advance)); 
+            renderAdvanceData(); 
+            closeAdvDelModal(); 
+        } 
+    }
+
+    function toggleCellSecret(cell, uniqueId, rawContent, defaultLockStructure) {
+        if (activeTimers[uniqueId]) {
+            clearTimeout(activeTimers[uniqueId]);
+        }
+
+        if (cell.getAttribute('data-hidden') === 'true') {
+            cell.setAttribute('data-hidden', 'false');
+            cell.innerHTML = rawContent;
+
+            activeTimers[uniqueId] = setTimeout(() => {
+                cell.setAttribute('data-hidden', 'true');
+                cell.innerHTML = defaultLockStructure;
+                delete activeTimers[uniqueId];
+            }, 1000);
+        } else {
+            cell.setAttribute('data-hidden', 'true');
+            cell.innerHTML = defaultLockStructure;
+            if (activeTimers[uniqueId]) {
+                clearTimeout(activeTimers[uniqueId]);
+                delete activeTimers[uniqueId];
+            }
+        }
+    }
+
+    function renderData() {
+        if (currentMode === 'advance') { renderAdvanceData(); return; }
+        const tbody = document.getElementById('table-body');
+        const search = document.getElementById('searchInp').value.toLowerCase().trim();
+        tbody.innerHTML = '';
+        
+        let tCount=0, tPass=0, tPend=0, tPrice=0, tRec=0, tTotalOriginalBal=0, tTotalAdjustedBal=0;
+
+        let totalAdvReceived = db_advance
+            .filter(adv => 
+                adv.name && adv.name.trim().toUpperCase() === "ARMAN" && 
+                adv.type === "RECEIVED" && 
+                adv.reason && adv.reason.trim().toUpperCase() === "SAHIL BALANCE"
+            )
+            .reduce((sum, adv) => sum + Number(adv.amount), 0);
+
+        let totalAdvReturned = db_advance
+            .filter(adv => 
+                adv.name && adv.name.trim().toUpperCase() === "ARMAN" && 
+                adv.type === "GIVEN" && 
+                adv.reason && (adv.reason.trim().toUpperCase() === "SAHIL ADVANCE RETURN" || adv.reason.trim().toUpperCase() === "SAHIL BALANCE RETURN")
+            )
+            .reduce((sum, adv) => sum + Number(adv.amount), 0);
+
+        db.forEach((item, i) => {
+            let price = Number(item.g) || 0;
+            let rec = Number(item.j) || 0;
+            let bal = price - rec;
+            let status = "PENDING", rowClass = "row-gray";
+            
+            if (item.h && !item.i) { rowClass = "row-pass"; status = "PASSED"; }
+            if (item.i && rec === 0) { rowClass = "row-receive"; status = "RECEIVE"; }
+            if (rec > 0 && rec < price) { rowClass = "row-part"; status = "PART PAYMENT"; }
+            if (item.k || (rec >= price && price > 0)) { rowClass = "row-full"; status = "FULL RECEIVE"; rec = price; bal = 0; }
+
+            if (currentFilter !== 'ALL') {
+                if (currentFilter === 'BALANCE' && (bal <= 0 || !item.h)) return; 
+                if (currentFilter !== 'BALANCE' && status !== currentFilter) return; 
+            }
+            if (search && !Object.values(item).join(' ').toLowerCase().includes(search)) return;
+
+            let advText = "";
+            let tdClass = "";
+            let displayBal = (item.h && bal > 0) ? bal : ""; 
+            let srlNumber = (i + 1).toString();
+
+            let matchedAdv = db_advance.find(adv => adv.reason.trim() === srlNumber);
+            
+            if (matchedAdv) {
+                let adjustAmount = Number(matchedAdv.amount);
+                advText = `<br><span style="font-size:8px; color:white; background:#2217d5; padding:1px 2px; border-radius:10px; font-weight:bold;">Adv: ${adjustAmount}</span>`;
+                tdClass = "balance-red"; 
+            } else if (item.h && bal > 0) {
+                tdClass = "balance-red";
+            }
+
+            let payVal = Number(item.payAmt) || 0;
+            let profVal = price - payVal;
+
+            let paymentHTML = payVal > 0 ? `${payVal}<br><span style="color:red; font-size:10px;">${item.payDate || ''}</span>` : '';
+            let profitHTML = `${profVal}`;
+
+            const row = document.createElement('tr');
+            row.className = rowClass;
+            
+            row.innerHTML = `
+                <td>${i+1}</td>
+                <td>${item.a||''}</td>
+                <td>${item.b||''}</td>
+                <td>${item.c||''}</td>
+                <td>${item.d||''}</td>
+                <td>${item.e||''}</td>
+                <td>${item.f||''}</td>
+                <td>${price}</td>
+                <td>${item.h||''}</td>
+                <td>${item.i||''}</td>
+                <td>${rec}</td>
+                <td>${status}</td>
+                <td class="${tdClass}">${displayBal} ${advText}</td>
+                <td>${item.k||''}</td>
+            `;
+
+            const tdPayment = document.createElement('td');
+            tdPayment.className = "secure-cell";
+            
+            if (payVal > 0) {
+                tdPayment.setAttribute('data-hidden', 'true');
+                let hasDateClass = (item.payDate && item.payDate.trim() !== "") ? "has-date" : "";
+                let dateTextHTML = (item.payDate && item.payDate.trim() !== "") ? `<span class="lock-date">${item.payDate}</span>` : "";
+                let defaultLockStructure = `<div class="lock-wrapper"><span class="lock-icon ${hasDateClass}">🔒</span>${dateTextHTML}</div>`;
+                
+                tdPayment.innerHTML = defaultLockStructure;
+                tdPayment.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleCellSecret(tdPayment, `pay-${i}`, paymentHTML, defaultLockStructure);
+                };
+            } else {
+                tdPayment.innerHTML = "";
+            }
+
+            const tdProf = document.createElement('td');
+            tdProf.style.background = "#f1c40f";
+            tdProf.style.color = "#000";
+            tdProf.className = "secure-cell";
+
+            if (profVal !== 0) {
+                tdProf.setAttribute('data-hidden', 'true');
+                let defaultLockStructure = `<div class="lock-wrapper"><span class="lock-icon">🔒</span></div>`;
+                tdProf.innerHTML = defaultLockStructure;
+                tdProf.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleCellSecret(tdProf, `prof-${i}`, profitHTML, defaultLockStructure);
+                };
+            } else {
+                tdProf.innerHTML = "0";
+            }
+
+            row.appendChild(tdPayment);
+            row.appendChild(tdProf);
+
+            row.addEventListener('click', (e) => {
+                if (!e.target.closest('.secure-cell')) {
+                    if(currentMode === 'sahil') editRow(i);
+                }
+            });
+
+            tbody.appendChild(row);
+
+            tCount++; 
+            if(status !== "PENDING") tPass++; else tPend++; 
+            tPrice += price; tRec += rec; 
+            if (item.h && bal > 0) tTotalOriginalBal += bal;
+        });
+
+        document.getElementById('stat-count').innerText = tCount; 
+        document.getElementById('stat-pass').innerText = tPass; 
+        document.getElementById('stat-pend').innerText = tPend; 
+        document.getElementById('stat-price').innerText = tPrice; 
+        document.getElementById('stat-rec').innerText = tRec; 
+        document.getElementById('stat-bal').innerText = (currentFilter === 'BALANCE') ? tTotalAdjustedBal : tTotalOriginalBal;
+    }
+
+    function renderAdvanceData() {
+        const tbody = document.getElementById('advance-table-body');
+        const search = document.getElementById('searchInp').value.toLowerCase().trim();
+        tbody.innerHTML = '';
+        let tRec = 0, tGive = 0;
+        db_advance.forEach((item, i) => {
+            if (currentAdvFilter !== 'ALL' && item.type !== currentAdvFilter) return;
+            if (search && !Object.values(item).join(' ').toLowerCase().includes(search)) return;
+            let amt = Number(item.amount) || 0;
+            if(item.type === 'RECEIVED') tRec += amt; else tGive += amt;
+            const row = document.createElement('tr');
+            row.onclick = () => { editAdvanceRow(i); };
+            row.oncontextmenu = (e) => { 
+                e.preventDefault(); 
+                advDeleteIdx = i; 
+                document.getElementById('advDelTitle').innerText = "DELETE SRL: " + (i + 1);
+                document.getElementById('advanceDeleteModal').style.display='flex';
+            };
+            row.innerHTML = `<td>${i+1}</td><td>${item.name}</td><td>${item.date}</td><td>${item.amount}</td><td style="color:${item.type === 'RECEIVED' ? 'green' : 'red'}; font-weight:bold;">${item.type}</td><td>${item.reason}</td>`;
+            tbody.appendChild(row);
+        });
+        document.getElementById('adv-stat-rec').innerText = tRec;
+        document.getElementById('adv-stat-give').innerText = tGive;
+        document.getElementById('adv-stat-diff').innerText = tRec - tGive;
+    }
+
+    function toggleForm() {
+        const area = document.getElementById('entryArea');
+        if (area.style.display === 'block') {
+            area.style.display = 'none';
+            document.getElementById('editIndex').value = "-1";
+            document.querySelectorAll('#entryArea input').forEach(i => i.value = "");
+            setInputsLock(false); 
+            document.getElementById('unlockWrapper').style.display = 'none';
+            document.getElementById('mainSaveBtn').style.display = 'block';
+            document.getElementById('updateBtn').style.display = 'none';
+            document.getElementById('saveAsNewBtn').style.display = 'none';
+            document.getElementById('delEntryBtn').style.display = 'none';
+            document.getElementById('newCancelBtn').style.display = 'block';
+        } else { 
+            area.style.display = 'block'; 
+            document.getElementById('editIndex').value = "-1";
+            setInputsLock(false);
+            document.getElementById('unlockWrapper').style.display = 'none';
+            document.getElementById('mainSaveBtn').style.display = 'block';
+            document.getElementById('updateBtn').style.display = 'none';
+            document.getElementById('saveAsNewBtn').style.display = 'none';
+            document.getElementById('delEntryBtn').style.display = 'none';
+        }
+    }
+
+    function setInputsLock(isLocked) {
+        const inputs = document.querySelectorAll('#entryArea input:not([type="hidden"])');
+        inputs.forEach(inp => { if(inp.id !== 'f_bal_ui') inp.disabled = isLocked; });
+    }
+
+    function editRow(i) {
+        let item = db[i];
+        document.getElementById('editIndex').value = i;
+        document.getElementById('f1').value = item.a; document.getElementById('f2').value = item.b; 
+        document.getElementById('f3').value = item.c; document.getElementById('f4').value = item.d; 
+        document.getElementById('f5').value = item.e; document.getElementById('f6').value = item.f; 
+        document.getElementById('f_pr').value = item.g; document.getElementById('f7').value = item.h; 
+        document.getElementById('f8').value = item.i; document.getElementById('f_am').value = item.j;
+        document.getElementById('f9').value = item.k ? item.k.split(' (')[0] : "";
+        document.getElementById('f_pay_amt').value = item.payAmt || "";
+        document.getElementById('f_pay_date').value = item.payDate || "";
+
+        document.getElementById('entryArea').style.display = 'block';
+        document.getElementById('mainSaveBtn').style.display = 'none'; 
+        document.getElementById('newCancelBtn').style.display = 'none'; 
+        document.getElementById('delEntryBtn').style.display = 'none';
+        document.getElementById('unlockWrapper').style.display = 'flex';
+        setInputsLock(true);
+        calcBal();
+    }
+
+    function editAdvanceRow(i) {
+        let item = db_advance[i];
+        document.getElementById('advEditIndex').value = i;
+        document.getElementById('adv_f1').value = item.name; 
+        document.getElementById('adv_f2').value = item.date; 
+        document.getElementById('adv_f3').value = item.amount; 
+        document.getElementById('adv_f4').value = item.type; 
+        document.getElementById('adv_f5').value = item.reason;
+        document.getElementById('advanceEntryArea').style.display = 'block';
+    }
+
+    function switchTab(mode) { 
+        currentMode = mode; 
+        const header = document.getElementById('header-title');
+        const mainTable = document.getElementById('mainTableScroll');
+        const advTable = document.getElementById('advanceTableScroll');
+        const summary = document.getElementById('sahilArmanSummary');
+        const advSummary = document.getElementById('advanceSummary'); 
+        const adminControls = document.getElementById('adminControls');
+        document.getElementById('tab-sahil').className = "tab-btn " + (mode === 'sahil' ? "active-sahil" : ""); 
+        document.getElementById('tab-arman').className = "tab-btn " + (mode === 'arman' ? "active-arman" : ""); 
+        document.getElementById('tab-advance').className = "tab-btn " + (mode === 'advance' ? "active-advance" : ""); 
+        adminControls.style.display = (mode === 'sahil' ? 'block' : 'none');
+        if (mode === 'advance') {
+            header.className = "main-header advance-theme";
+            header.innerHTML = "<span>ADVANCE LEDGER</span>";
+            header.onclick = () => { toggleAdvanceForm(); };
+            mainTable.style.display = 'none';
+            advTable.style.display = 'block';
+            summary.style.display = 'none';
+            advSummary.style.display = 'flex'; 
+            document.querySelector('.container').style.background = "#f99bf8ab"; 
+            renderAdvanceData();
+        } else {
+            header.className = "main-header " + (mode === 'sahil' ? "sahil-theme" : "arman-theme"); 
+            header.innerHTML = "<span>" + mode.toUpperCase() + " ACCOUNT</span>"; 
+            header.onclick = () => { captureReport(); };
+            mainTable.style.display = 'block';
+            advTable.style.display = 'none';
+            summary.style.display = 'grid';
+            advSummary.style.display = 'none'; 
+            document.querySelector('.container').style.background = (mode === 'arman' ? "#b2fab4" : "#43a5ee"); 
+            renderData(); 
+        }
+    }
+
+    function smartDate(input) {
+        let v = input.value.trim().toLowerCase(); if (!v) return;
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let day, month, year;
+        let numOnly = v.replace(/\D/g, '');
+        if (numOnly.length === 6) { day = numOnly.substring(0, 2); month = monthNames[parseInt(numOnly.substring(2, 4)) - 1] || "Jan"; year = "20" + numOnly.substring(4, 6); }
+        else { let parts = v.split(/[\s-]+/); if (parts.length >= 2) { day = parts[0].padStart(2, '0'); let mVal = parts[1].substring(0, 3); month = mVal.charAt(0).toUpperCase() + mVal.slice(1); year = (parts[2] && parts[2].length === 2) ? "20" + parts[2] : (parts[2] || "2026"); } }
+        if (day && month && year) { let finalDate = `${day}-${month}-${year}`; input.value = finalDate; }
+    }
+
+    function calcBal() { let pr = Number(document.getElementById('f_pr').value) || 0; let am = Number(document.getElementById('f_am').value) || 0; document.getElementById('f_bal_ui').value = pr - am; }
+    function askUnlock() { document.getElementById('unlockModal').style.display = 'flex'; document.getElementById('unlockPassInput').focus(); }
+    function closeUnlockModal() { document.getElementById('unlockModal').style.display = 'none'; document.getElementById('unlockPassInput').value = ""; }
+    
+    function verifyUnlock() { 
+        if (document.getElementById('unlockPassInput').value === "7869") { 
+            setInputsLock(false); 
+            document.getElementById('unlockWrapper').style.setProperty('display', 'none', 'important'); 
+            document.getElementById('mainSaveBtn').style.display = 'none';
+            document.getElementById('updateBtn').style.display = 'block'; 
+            document.getElementById('saveAsNewBtn').style.display = 'block'; 
+            document.getElementById('delEntryBtn').style.display = 'block'; 
+            document.getElementById('newCancelBtn').style.display = 'block'; 
+            closeUnlockModal(); 
+        } else { alert("Incorrect PIN!"); } 
+    }
+
+    function toggleAdvanceForm() {
+        const area = document.getElementById('advanceEntryArea');
+        if (area.style.display === 'block') {
+            area.style.display = 'none';
+            document.getElementById('advEditIndex').value = "-1"; 
+            document.querySelectorAll('#advanceEntryArea input').forEach(i => i.value = "");
+        } else {
+            area.style.display = 'block';
+            document.getElementById('advEditIndex').value = "-1";
+        }
+    }
+
+    function filterAdvance(status) { currentAdvFilter = status; renderAdvanceData(); }
+    function filterByStatus(status) { currentFilter = status; renderData(); }
+    function clearSearch() { document.getElementById('searchInp').value = ""; renderData(); }
+    function refreshPage() { location.reload(); }
+    function restorePrompt() { document.getElementById('restoreModal').style.display = 'flex'; document.getElementById('resPassInput').focus(); }
+    function closeResModal() { document.getElementById('restoreModal').style.display = 'none'; document.getElementById('resPassInput').value = ""; }
+    function closeDelModal() { document.getElementById('deleteModal').style.display = 'none'; document.getElementById('delPassInput').value = ""; isPermanentDelete = false; }
+    function closeAdvDelModal() { document.getElementById('advanceDeleteModal').style.display = 'none'; document.getElementById('advDelPassInput').value = ""; }
+
+    function captureReport() {
+        const table = currentMode === 'advance' ? document.getElementById("advanceTable") : document.getElementById("mainTable");
+        const scrollDiv = currentMode === 'advance' ? document.getElementById('advanceTableScroll') : document.getElementById('mainTableScroll');
+        const oldH = scrollDiv.style.height;
+        if (currentMode === 'arman') {
+            const rows = document.querySelectorAll('#table-body tr');
+            rows.forEach(row => {
+                const status = row.cells[11].innerText.toUpperCase();
+                if (status === "FULL RECEIVE" || status === "RECEIVE") { row.style.display = 'none'; } else { row.style.display = ''; }
+            });
+        }
+        scrollDiv.style.height = "auto";
+        html2canvas(table, { backgroundColor: "#ffffff", scale: 2, logging: false, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = currentMode.toUpperCase() + '_REPORT.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            scrollDiv.style.height = oldH;
+            renderData(); 
+            alert(currentMode.toUpperCase() + " Report Saved!");
+        });
+    }
+
+    function jumpToAdvance() {
+        let oldMode = currentMode;
+        switchTab('advance'); 
+        setTimeout(() => {
+            const rows = document.querySelectorAll('#advance-table-body tr');
+            let target = Array.from(rows).find(r => r.innerText.toUpperCase().includes('ARMAN') && r.innerText.toUpperCase().includes('RECEIVED'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                target.style.backgroundColor = "yellow"; 
+                setTimeout(() => {
+                    target.style.backgroundColor = "white";
+                    setTimeout(() => { switchTab(oldMode); }, 500);
+                }, 2500); 
+            } else {
+                alert("ARMAN RECEIVED NOT FOUND!");
+                switchTab(oldMode);
+            }
+        }, 400);
+    }
+
+    window.onload = function() {
+        if(localStorage.getItem('skipLockOnce') === 'true') {
+            document.getElementById('mainAppOverlay').style.display = 'none';
+            localStorage.removeItem('skipLockOnce');
+        }
+        switchTab('sahil'); 
+    };
+
+    async function handleLogout() {
+        await silentBackup(true); 
+        document.getElementById('secretInput').value = "";
+        document.getElementById('mainAppOverlay').style.display = 'flex';
+        document.getElementById('secretInput').style.display = 'none';
+        document.getElementById('settingsPanel').style.display = 'none';
+    }
+
+    function toggleSettingsMenu() {
+        const panel = document.getElementById('settingsPanel');
+        if (!panel) return;
+        if (panel.style.display === 'none' || panel.style.display === '') {
+            panel.style.display = 'block';
+        } else {
+            panel.style.display = 'none';
+            document.getElementById('mainTableScroll').style.opacity = '1';
+        }
+    }
+</script>
+
+<div id="trashModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#1a1a1a; width:90%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #ff4757; max-height:80vh; overflow-y:auto;">
+        <h3 style="color:#ff4757; text-align:center; margin-top:0;">RECYCLE BIN</h3>
+        <p style="font-size:10px; color:yellow; text-align:center;">Tap to Restore | Long Press to Delete</p>
+        <div id="trash-list-content"></div>
+        <button onclick="document.getElementById('trashModal').style.display='none'" style="width:100%; margin-top:10px; background:#333; color:white; padding:10px; border-radius:10px;">CLOSE</button>
+    </div>
+</div>
+
+</body>
+</html>

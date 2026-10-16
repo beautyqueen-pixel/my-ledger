@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Khata Ledger Pro</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Khata Ledger Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#0b0e14">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #090c12;
+            --bg-card: #0e131d;
+            --text-main: #e2e8f0;
+            --text-muted: #828fa3;
+            --text-gray: #94a3b8;
+            --border-soft: #17202f;
+            --accent-recv: #2ecc71;
+            --accent-give: #e74c3c;
+            --header-dark: #090d14;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 520px;
+            background-color: var(--bg-card);
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--border-soft);
+            border-right: 1px solid var(--border-soft);
+        }
+
+        .summary-header {
+            padding: 12px 14px;
+            background: var(--header-dark);
+            border-bottom: 1px solid var(--border-soft);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .summary-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14.5px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .btn-setting, .btn-filter-trigger {
+            background: #151d2a;
+            border: 1px solid var(--border-soft);
+            color: #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-cloud-save {
+            background: #102a20;
+            border: 1px solid rgba(46, 204, 113, 0.4);
+            color: #2ecc71;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .compact-balance-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 14px;
+            background: #0d121c;
+            border-bottom: 1px solid var(--border-soft);
+        }
+
+        .strip-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+        }
+
+        .strip-val {
+            font-size: 12.5px;
+            font-weight: 700;
+        }
+
+        .filter-status-tag {
+            background: rgba(46, 204, 113, 0.12);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+            padding: 5px 12px;
+            margin: 6px 10px 0;
+            border-radius: 4px;
+            font-size: 11px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-status-tag button {
+            background: transparent;
+            border: none;
+            color: #ff7675;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .table-column-header {
+            display: grid;
+            grid-template-columns: 1.5fr 1.3fr 1.2fr;
+            align-items: center;
+            padding: 9px 14px;
+            background: #090c12;
+            border-bottom: 1px solid var(--border-soft);
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .table-column-header div:nth-child(2) { text-align: center; }
+        .table-column-header div:nth-child(3) { text-align: right; }
+
+        .ledger-list {
+            flex: 1;
+            padding-bottom: 80px;
+        }
+
+        .party-summary-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1.3fr 1.2fr;
+            align-items: center;
+            padding: 12px 14px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-soft);
+            cursor: pointer;
+            transition: background 0.1s ease;
+        }
+        .party-summary-row:hover, .party-summary-row:active {
+            background: #141b27;
+        }
+
+        .col-party-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #e2e8f0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 6px;
+        }
+
+        .col-banner-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .banner-pill {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+        .banner-pill.tag-recv {
+            background: rgba(56, 304, 103, 0.1);
+            color: #fcfcfb;
+            border: 1px solid rgba(46, 204, 113, 0.85);
+        }
+        .banner-pill.tag-give {
+            background: rgba(231, 76, 60, 0.19);
+            color: #f3f1f1;
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+
+        .col-final-balance {
+            text-align: right;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .bal-recv { color: var(--accent-recv); }
+        .bal-give { color: var(--accent-give); }
+        .bal-settled { color: #64748b; }
+
+        .fab-btn {
+            position: fixed;
+            bottom: 20px;
+            right: calc(50% - 230px);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: var(--accent-give);
+            color: white;
+            border: none;
+            font-size: 26px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 90;
+        }
+        @media (max-width: 520px) {
+            .fab-btn { right: 16px; }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 8px;
+        }
+        #addAccountModal { z-index: 99999 !important; }
+
+        .modal-box {
+            background: #111621;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 8px;
+            border: 1px solid var(--border-soft);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 94vh;
+        }
+
+        .modal-header {
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e2e8f0;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0b0e14;
+        }
+
+        .acc-nav-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--accent-recv);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-img-export {
+            background: #10b981;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .account-list {
+            overflow-y: auto;
+            flex: 1;
+            padding: 8px;
+        }
+
+        .desc-box-statement {
+            background: #131924;
+            border: 1px solid #1c2638;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 11.5px;
+            color: #cbd5e1;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+        .desc-box-statement span {
+            color: #7b889b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            margin-right: 4px;
+        }
+
+        .passbook-table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 6px;
+            border: 1px solid var(--border-soft);
+            background: #0b0e14;
+            margin-top: 10px;
+        }
+
+        .passbook-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .passbook-table th {
+            background: #151a24;
+            color: #94a3b8;
+            padding: 8px 6px;
+            border-bottom: 1px solid var(--border-soft);
+            font-weight: 600;
+        }
+
+        .passbook-table td {
+            padding: 8px 6px;
+            border-bottom: 1px solid #161c27;
+            color: #cbd5e0;
+        }
+
+        /* गैलरी जैसा सिलेक्शन स्टाइल */
+        .selected-delete-row {
+            background: rgba(231, 76, 60, 0.28) !important;
+            border-left: 3px solid #ff4757 !important;
+        }
+        .selected-delete-row td {
+            color: #ffffff !important;
+        }
+
+        .multi-delete-bar {
+            background: #1a0f12;
+            border: 1px solid #ff4757;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .simple-settings-list {
+            overflow-y: auto;
+            flex: 1;
+        }
+        .setting-section-title {
+            background: #0b0e14;
+            padding: 8px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent-recv);
+            border-top: 1px solid var(--border-soft);
+            border-bottom: 1px solid var(--border-soft);
+        }
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 11px 14px;
+            border-bottom: 1px solid var(--border-soft);
+            cursor: pointer;
+            font-size: 12px;
+            color: #cbd5e0;
+        }
+        .setting-item:hover { background: #161c27; }
+
+        .form-body {
+            padding: 12px 14px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .form-row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .form-group label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .form-control {
+            background: #0b0e14;
+            border: 1px solid var(--border-soft);
+            color: #e2e8f0;
+            padding: 8px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            outline: none;
+            width: 100%;
+        }
+        .form-control:focus { border-color: #3b82f6; }
+
+        .form-radio-row { display: flex; gap: 6px; }
+        .radio-btn-label {
+            flex: 1;
+            background: #0b0e14;
+            padding: 8px;
+            text-align: center;
+            border-radius: 4px;
+            border: 1px solid var(--border-soft);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        .radio-btn-label.active-cr {
+            background: rgba(46, 204, 113, 0.15);
+            border-color: var(--accent-recv);
+            color: var(--accent-recv);
+        }
+        .radio-btn-label.active-dr {
+            background: rgba(231, 76, 60, 0.15);
+            border-color: var(--accent-give);
+            color: #ff7675;
+        }
+
+        .modal-footer {
+            padding: 10px 14px;
+            display: flex;
+            gap: 6px;
+            border-top: 1px solid var(--border-soft);
+            background: #0b0e14;
+        }
+        .btn-modal {
+            flex: 1;
+            padding: 8px 5px;
+            border-radius: 4px;
+            border: none;
+            font-weight: 600;
+            font-size: 11.5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-cancel { background: #222b39; color: #cbd5e0; }
+        .btn-submit { background: var(--accent-recv); color: #ffffff; }
+
+        #cloudRestoreModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+        }
+        .cloud-pin-card {
+            background: #111621;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-soft);
+            width: 210px;
+            text-align: center;
+        }
+        .cloud-pin-card input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-soft);
+            border-radius: 4px;
+            font-size: 18px;
+            text-align: center;
+            margin: 10px 0;
+            background: #0b0e14;
+            color: var(--accent-recv);
+            outline: none;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="app-container">
+        <!-- Clean Compact Summary Header -->
+        <div class="summary-header">
+            <div class="summary-top-row">
+                <span>Khata Records</span>
+                <div class="header-actions">
+                    <button class="btn-cloud-save" onclick="manualCloudBackup()">☁️ Save</button>
+                    <button class="btn-setting" onclick="openSettingsModal()">⚙️ Settings</button>
+                    <button class="btn-filter-trigger" onclick="openAccountPicker('MAIN')"><span>Accounts</span> ▾</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- कॉम्पैक्ट बैलेंस बार -->
+        <div class="compact-balance-strip">
+            <div class="strip-item">
+                <span style="color: #94a3b8;">कुल लेना बाकी:</span>
+                <span class="strip-val" id="stripRecvBal" style="color: var(--accent-recv);">+ ₹ 0.00</span>
+            </div>
+            <div class="strip-item">
+                <span style="color: #94a3b8;">कुल देना बाकी:</span>
+                <span class="strip-val" id="stripGiveBal" style="color: var(--accent-give);">- ₹ 0.00</span>
+            </div>
+        </div>
+
+        <div id="filterTag" class="filter-status-tag" style="display: none;">
+            <span id="filterTagText">Filtered View</span>
+            <button onclick="clearFilter()">✕ Clear</button>
+        </div>
+
+        <!-- 3-Column Aligned Header -->
+        <div class="table-column-header">
+            <div>PARTY NAME</div>
+            <div>DR/CR</div>
+            <div>BALANCE</div>
+        </div>
+
+        <!-- Clean Party Summary Rows List -->
+        <div class="ledger-list" id="transactionList"></div>
+
+        <button class="fab-btn" onclick="openEntryForm()" title="New Entry">+</button>
+    </div>
+
+    <!-- CLOUD RESTORE MODAL -->
+    <div id="cloudRestoreModal">
+        <div class="cloud-pin-card">
+            <h3 style="color:#e2e8f0; font-size:13px;">🔐 Enter PIN</h3>
+            <input type="password" id="cloudResPin" placeholder="PIN" inputmode="numeric">
+            <div style="display:flex; gap:6px;">
+                <button class="btn-modal" style="background:var(--accent-recv); color:#fff;" onclick="confirmCloudRestore()">RESTORE</button>
+                <button class="btn-modal" style="background:#4a5568; color:#fff;" onclick="closeCloudRestoreModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span>Settings & Ledger Reports</span>
+                <button onclick="closeSettingsModal()" style="background:none; border:none; color:#aaa; font-size:15px; cursor:pointer;">✕</button>
+            </div>
+            <div class="simple-settings-list">
+                <div class="setting-section-title">1. Overall Summary (कुल हिसाब)</div>
+                <div class="setting-item" onclick="openOverallDetailedSummary()">
+                    <span style="color:#38bdf8; font-weight:600;">📊 कुल हिसाब सारांश (Full Breakdown)</span>
+                    <span style="color:#38bdf8; font-weight:600;">View ›</span>
+                </div>
+
+                <div class="setting-section-title">2. Balance Groups</div>
+                <div class="setting-item" onclick="openGroupListView('RECEIVE')">
+                    <span>Receive Group (लेना है)</span>
+                    <span style="color:#718096;">›</span>
+                </div>
+                <div class="setting-item" onclick="openGroupListView('GIVE')">
+                    <span>Give Group (देना है)</span>
+                    <span style="color:#718096;">›</span>
+                </div>
+
+                <div class="setting-section-title">3. Ledger Reports & Masters</div>
+                <div class="setting-item" onclick="openAccountPicker('SETTINGS')">
+                    <span>Account Sheets (Agents)</span>
+                    <span style="color:#718096;">›</span>
+                </div>
+                <div class="setting-item" onclick="openPersonLedgerPicker()">
+                    <span>Person Ledger (All Parties)</span>
+                    <span style="color:#718096;">›</span>
+                </div>
+                <div class="setting-item" onclick="openAllLedgersFullSheet()">
+                    <span style="color:#38bdf8; font-weight:600;">📊 All Parties All Ledgers</span>
+                    <span style="color:#38bdf8; font-weight:600;">Sheet ›</span>
+                </div>
+
+                <div class="setting-item" onclick="openManageMastersView()">
+                    <span style="color:#e2e8f0; font-weight:600;">Manage Parties (Edit / Delete)</span>
+                    <span style="color:var(--accent-recv); font-weight:600;">Manage ›</span>
+                </div>
+                <div class="setting-item" onclick="openManageCategoriesView()">
+                    <span style="color:#e2e8f0; font-weight:600;">Manage Categories (Edit / Delete)</span>
+                    <span style="color:#38bdf8; font-weight:600;">Categories ›</span>
+                </div>
+
+                <div class="setting-section-title">4. Cloud Backup</div>
+                <div class="setting-item" onclick="manualCloudBackup()">
+                    <span>Google Drive Cloud Backup</span>
+                    <span style="color:#63b3ed; font-weight:500;">☁️ Upload</span>
+                </div>
+                <div class="setting-item" onclick="openCloudRestoreModal()">
+                    <span>Google Drive Cloud Restore</span>
+                    <span style="color:#f6ad55; font-weight:500;">📥 Download</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passbook / Report Modal -->
+    <div class="modal-overlay" id="accountPickerModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="acc-nav-header">
+                    <button id="btnBackModal" class="btn-back" style="display:none;" onclick="handleModalBack()">← Back</button>
+                    <span id="accountModalTitle">Statement Passbook</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button id="btnExportImage" class="btn-img-export" onclick="captureAndSaveReportImage()">📸 Share</button>
+                    <button onclick="closeAccountPicker()" style="background:none; border:none; color:#888; font-size:14px; cursor:pointer;">✕</button>
+                </div>
+            </div>
+            <div class="account-list" id="accountListContainer"></div>
+        </div>
+    </div>
+
+    <!-- Add New Master Modal -->
+    <div class="modal-overlay" id="addAccountModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="masterModalHeading">Add / Edit Account Master</span>
+                <button onclick="closeCreateAccountModal()" style="background:none; border:none; color:#888; font-size:14px; cursor:pointer;">✕</button>
+            </div>
+            <div class="form-body">
+                <div class="form-group">
+                    <label>Balance Direction</label>
+                    <div class="form-radio-row">
+                        <div class="radio-btn-label active-cr" id="optAccReceive" onclick="selectAccDirection('RECEIVE')">Receive (लेना है)</div>
+                        <div class="radio-btn-label" id="optAccGive" onclick="selectAccDirection('GIVE')">Give (देना है)</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Agent / Main Account</label>
+                    <input type="text" id="newAccMain" class="form-control" list="agentsList">
+                </div>
+                <div class="form-group">
+                    <label>Party / Person Name</label>
+                    <input type="text" id="newAccPerson" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Agreed / Opening Amount</label>
+                    <input type="number" id="newAccAmount" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>Description / Note</label>
+                    <textarea id="newAccDesc" class="form-control" rows="1"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal btn-cancel" onclick="closeCreateAccountModal()">Cancel</button>
+                <button type="button" class="btn-modal btn-submit" onclick="saveNewAccountMaster()">Save Master</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add / Edit Entry Form -->
+    <div class="modal-overlay" id="entryModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span id="modalFormTitle">Entry Details</span>
+                <button type="button" onclick="openCreateAccountModal()" style="background:#17202c; color:var(--accent-recv); border:1px solid var(--accent-recv); padding:3px 8px; border-radius:4px; font-size:11px; cursor:pointer;">+ Add Master</button>
+            </div>
+            <div class="form-body">
+                <input type="hidden" id="editIndex" value="-1">
+
+                <div class="form-row-2col">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="inputDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label style="color: #cbd5e1;" id="labelTargetDue">Current Due</label>
+                        <input type="number" id="inputTargetAmount" class="form-control" oninput="updateRemainingHint()">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Party Name</label>
+                    <input type="text" id="inputName" class="form-control" list="personsList" placeholder="" oninput="onPersonNameInput(this.value)" onchange="onPersonNameInput(this.value)">
+                    <datalist id="personsList"></datalist>
+                </div>
+
+                <div class="form-group">
+                    <label>Agent / Main Account</label>
+                    <input type="text" id="inputAccount" class="form-control" list="agentsList" placeholder="" oninput="onAccountFieldChanged(this.value)" onchange="onAccountFieldChanged(this.value)">
+                    <datalist id="agentsList"></datalist>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label>Amount</label>
+                        <span id="remainingHint" style="font-size:10.5px; font-weight:600;"></span>
+                    </div>
+                    <input type="number" id="inputAmount" class="form-control" placeholder="" oninput="updateRemainingHint()">
+                </div>
+
+                <div class="form-group">
+                    <label>DR / CR (Entry Type)</label>
+                    <div class="form-radio-row">
+                        <div class="radio-btn-label" id="optCr" onclick="selectType('Cr')">CR (Credit / लिया)</div>
+                        <div class="radio-btn-label active-dr" id="optDr" onclick="selectType('Dr')">DR (Debit / दिया)</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <label>Category</label>
+                        <button type="button" id="btnAddCategoryQuick" onclick="quickAddCategory()" style="display:none; background:#102a20; border:1px solid #2ecc71; color:#2ecc71; border-radius:4px; font-size:10px; padding:1px 6px; cursor:pointer; font-weight:600;">+ Add Category</button>
+                    </div>
+                    <input type="text" id="inputParpas" class="form-control" list="categoryDatalist" placeholder="">
+                    <datalist id="categoryDatalist"></datalist>
+                </div>
+
+                <div class="form-group">
+                    <label>Note / Remarks</label>
+                    <input type="text" id="inputNote" class="form-control" placeholder="">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-modal btn-cancel" onclick="closeEntryForm()">Cancel</button>
+                <button type="button" id="btnDeleteForm" class="btn-modal" style="background:#742a2a; color:#feb2b2; display:none;" onclick="deleteCurrentFormRecord()">Delete</button>
+                <button type="button" class="btn-modal btn-submit" onclick="submitRecord()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'antique_khata_records_clean_v3';
+        const TARGETS_STORAGE_KEY = 'antique_khata_person_masters_clean_v3';
+        const CATEGORY_STORAGE_KEY = 'antique_khata_categories_v1';
+        const MASTER_PASSWORD_KEY = 'antique_khata_pass';
+        const cloudURL = 'https://script.google.com/macros/s/AKfycbxPPKYhI_LGCV1HB8H_ZaEbJvD14QJbfVhlN5AhkzYTxQPRzb_FRW9Uj1BkdXh1kn9E/exec';
+
+        let records = [];
+        let personMasters = {}; 
+        let categories = ["Sale", "Purchase", "Loan", "Paid", "Receive", "Commission", "Cash"];
+        let selectedAgentFilter = null;
+        let selectedPersonFilter = null;
+        let selectedCrDr = 'Dr';
+        let selectedAccDirection = 'RECEIVE';
+        let pickerCurrentView = 'MAIN_ACCOUNTS';
+        let currentDrillDownAccount = '';
+        let currentViewingPerson = '';
+        let openedFromSettings = false;
+
+        // गैलरी स्टाइल मल्टीपल डिलीट स्टेट
+        let isSelectionMode = false;
+        let selectedTransactionIndexes = new Set();
+        let longPressTimer = null;
+        let isLongPressTriggered = false;
+
+        const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+        window.onload = function() {
+            loadRecords();
+            document.getElementById('inputDate').value = getTodayDate();
+        };
+
+        function getTodayDate() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function formatHindiDate(dateStr) {
+            if (!dateStr) return '-';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            const day = String(parseInt(parts[2], 10)).padStart(2, '0');
+            const monthIdx = parseInt(parts[1], 10) - 1;
+            const year = parts[0].slice(-2);
+            return `${day} ${shortMonths[monthIdx] || ''} ${year}`;
+        }
+
+        function loadRecords() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            const savedMasters = localStorage.getItem(TARGETS_STORAGE_KEY);
+            const savedCats = localStorage.getItem(CATEGORY_STORAGE_KEY);
+            try { personMasters = savedMasters ? JSON.parse(savedMasters) : {}; } catch(e) { personMasters = {}; }
+            try { records = saved ? JSON.parse(saved) : []; } catch(e) { records = []; }
+            try { if(savedCats) categories = JSON.parse(savedCats); } catch(e) {}
+            updateDataList();
+            renderView();
+        }
+
+        function saveToStorage() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+            localStorage.setItem(TARGETS_STORAGE_KEY, JSON.stringify(personMasters));
+            localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
+            updateDataList();
+        }
+
+        async function silentCloudBackup(showAlert = false) {
+            const payload = { khata_records: records, khata_masters: personMasters, khata_categories: categories, timestamp: Date.now() };
+            const backupData = { shared_master_v19: [{ is_khata_bundle: true, payload: JSON.stringify(payload) }] };
+            try {
+                await fetch(cloudURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(backupData), keepalive: true });
+                if (showAlert) alert("✅ Cloud Backup Successful!");
+            } catch(e) {
+                if (showAlert) alert("❌ Cloud Backup Failed!");
+            }
+        }
+        function manualCloudBackup() { silentCloudBackup(true); }
+
+        function openCloudRestoreModal() {
+            closeSettingsModal();
+            document.getElementById('cloudRestoreModal').style.display = 'flex';
+            document.getElementById('cloudResPin').value = '';
+            document.getElementById('cloudResPin').focus();
+        }
+        function closeCloudRestoreModal() {
+            document.getElementById('cloudRestoreModal').style.display = 'none';
+        }
+
+        async function confirmCloudRestore() {
+            const pin = document.getElementById('cloudResPin').value;
+            const savedPass = localStorage.getItem(MASTER_PASSWORD_KEY) || '1234';
+            if (pin === "7869" || pin === savedPass) {
+                try {
+                    const res = await fetch(cloudURL + "?type=ledger&t=" + Date.now());
+                    const textData = await res.text();
+                    const data = JSON.parse(textData);
+                    let restored = false;
+                    if (data.shared_master_v19 && data.shared_master_v19[0]?.payload) {
+                        const parsed = JSON.parse(data.shared_master_v19[0].payload);
+                        records = parsed.khata_records || [];
+                        personMasters = parsed.khata_masters || {};
+                        if (parsed.khata_categories) categories = parsed.khata_categories;
+                        restored = true;
+                    }
+                    if (restored) {
+                        saveToStorage();
+                        alert("✅ Successfully Restored!");
+                        window.location.reload();
+                    } else {
+                        alert("⚠️ Backup not found!");
+                    }
+                } catch (e) { alert("❌ Restore Error!"); }
+            } else { alert("❌ Wrong PIN!"); }
+        }
+
+        function updateDataList() {
+            const datalist = document.getElementById('agentsList');
+            datalist.innerHTML = '';
+            const uniqueAccounts = [...new Set([...records.map(r => r.account).filter(Boolean), ...Object.values(personMasters).map(m => m.account).filter(Boolean)])];
+            uniqueAccounts.forEach(acc => {
+                const opt = document.createElement('option');
+                opt.value = acc;
+                datalist.appendChild(opt);
+            });
+
+            const personDatalist = document.getElementById('personsList');
+            personDatalist.innerHTML = '';
+            const uniquePersons = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
+            uniquePersons.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p;
+                personDatalist.appendChild(opt);
+            });
+
+            const catList = document.getElementById('categoryDatalist');
+            catList.innerHTML = '';
+            categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                catList.appendChild(opt);
+            });
+        }
+
+        function quickAddCategory() {
+            const val = document.getElementById('inputParpas').value.trim();
+            if (val && !categories.some(c => c.toLowerCase() === val.toLowerCase())) {
+                categories.push(val);
+                saveToStorage();
+                document.getElementById('btnAddCategoryQuick').style.display = 'none';
+                alert(`✅ कैटेगरी "${val}" जोड़ दी गई!`);
+            }
+        }
+
+        function onAccountFieldChanged(accVal) { 
+            const pName = document.getElementById('inputName').value.trim();
+            if (pName) {
+                const bal = getPersonNetBalance(pName, accVal);
+                document.getElementById('inputTargetAmount').value = bal.net;
+                updateRemainingHint();
+            }
+        }
+
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+
+        function findMasterKey(personName) {
+            if (!personName) return null;
+            const search = personName.trim().toLowerCase();
+            return Object.keys(personMasters).find(k => k.trim().toLowerCase() === search) || null;
+        }
+
+        function getPersonNetBalance(personName, filterAccount = null) {
+            const mKey = findMasterKey(personName);
+            const master = mKey ? personMasters[mKey] : null;
+            let account = master ? master.account : '';
+            let dr = 0, cr = 0;
+
+            records.forEach(r => {
+                if (isExactPersonMatch(r.name, personName)) {
+                    if (filterAccount && (r.account || 'Direct').toUpperCase() !== filterAccount.toUpperCase()) return;
+                    if (!account && r.account) account = r.account;
+                    const val = parseFloat(r.amount) || 0;
+                    if (r.crdr === 'Cr') cr += val;
+                    else dr += val;
+                }
+            });
+
+            const target = master ? (parseFloat(master.amount) || 0) : 0;
+            const direction = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+
+            let netRemaining = 0;
+            if (direction === 'RECEIVE') {
+                netRemaining = (target + dr) - cr;
+                if (netRemaining >= 0) return { net: netRemaining, direction: 'RECEIVE', target, account: account || 'Direct', dr, cr };
+                else return { net: Math.abs(netRemaining), direction: 'GIVE', target, account: account || 'Direct', dr, cr };
+            } else {
+                netRemaining = (target + cr) - dr;
+                if (netRemaining >= 0) return { net: netRemaining, direction: 'GIVE', target, account: account || 'Direct', dr, cr };
+                else return { net: Math.abs(netRemaining), direction: 'RECEIVE', target, account: account || 'Direct', dr, cr };
+            }
+        }
+
+        function calculateGrandFigures() {
+            let totalRecvAgreed = 0, totalRecvSettled = 0, totalRecvBalance = 0;
+            let totalGiveAgreed = 0, totalGiveSettled = 0, totalGiveBalance = 0;
+
+            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name).filter(Boolean)])];
+
+            allPersons.forEach(pName => {
+                const bal = getPersonNetBalance(pName);
+                const mKey = findMasterKey(pName);
+                const master = mKey ? personMasters[mKey] : null;
+                const baseDir = master ? master.direction : bal.direction;
+
+                if (baseDir === 'RECEIVE') {
+                    totalRecvAgreed += (bal.target + bal.dr);
+                    totalRecvSettled += bal.cr;
+                    if (bal.direction === 'RECEIVE') {
+                        totalRecvBalance += bal.net;
+                    }
+                } else {
+                    totalGiveAgreed += (bal.target + bal.cr);
+                    totalGiveSettled += bal.dr;
+                    if (bal.direction === 'GIVE') {
+                        totalGiveBalance += bal.net;
+                    }
+                }
+            });
+
+            return {
+                totalRecvAgreed, totalRecvSettled, totalRecvBalance,
+                totalGiveAgreed, totalGiveSettled, totalGiveBalance
+            };
+        }
+
+        function updateStripBalances() {
+            const fig = calculateGrandFigures();
+            document.getElementById('stripRecvBal').innerText = `+ ₹ ${formatINR(fig.totalRecvBalance)}`;
+            document.getElementById('stripGiveBal').innerText = `- ₹ ${formatINR(fig.totalGiveBalance)}`;
+        }
+
+        function openOverallDetailedSummary() {
+            closeSettingsModal();
+            pickerCurrentView = 'OVERALL_DETAILED_SUMMARY';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'Overall Khata Summary';
+
+            const fig = calculateGrandFigures();
+            const container = document.getElementById('accountListContainer');
+            
+            container.innerHTML = `
+                <div style="background:#0b0e14; padding:14px; border-radius:6px; border:1px solid var(--border-soft); display:flex; flex-direction:column; gap:12px;" id="reportCaptureArea">
+                    <h3 style="color:#e2e8f0; font-size:14px; font-weight:700; border-bottom:1px solid var(--border-soft); padding-bottom:8px;">📊 कुल हिसाब सारांश (Overall Summary)</h3>
+                    
+                    <div style="background:#111724; border:1px solid var(--border-soft); border-left:4px solid var(--accent-recv); border-radius:6px; padding:10px 12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="color:var(--accent-recv); font-weight:700; font-size:12.5px;">🟢 कुल लेना हिसाब (Receivable)</span>
+                            <span style="color:#cbd5e1; font-weight:700; font-size:12.5px;">₹ ${formatINR(fig.totalRecvAgreed)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; margin-bottom:4px;">
+                            <span>कुल प्राप्त (CR):</span>
+                            <span style="color:var(--accent-recv); font-weight:600;">₹ ${formatINR(fig.totalRecvSettled)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:#e2e8f0; padding-top:6px; border-top:1px dashed #1e293b;">
+                            <span>कुल लेना बाकी:</span>
+                            <span style="color:var(--accent-recv);">+ ₹ ${formatINR(fig.totalRecvBalance)}</span>
+                        </div>
+                    </div>
+
+                    <div style="background:#111724; border:1px solid var(--border-soft); border-left:4px solid var(--accent-give); border-radius:6px; padding:10px 12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                            <span style="color:#ff7675; font-weight:700; font-size:12.5px;">🔴 कुल देना हिसाब (Payable)</span>
+                            <span style="color:#cbd5e1; font-weight:700; font-size:12.5px;">₹ ${formatINR(fig.totalGiveAgreed)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; margin-bottom:4px;">
+                            <span>कुल भुगतान (DR):</span>
+                            <span style="color:#ff7675; font-weight:600;">₹ ${formatINR(fig.totalGiveSettled)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:#e2e8f0; padding-top:6px; border-top:1px dashed #1e293b;">
+                            <span>कुल देना बाकी:</span>
+                            <span style="color:var(--accent-give);">- ₹ ${formatINR(fig.totalGiveBalance)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openSinglePersonStatement(personName) {
+            currentViewingPerson = personName;
+            pickerCurrentView = 'SINGLE_PERSON_STATEMENT';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
+
+            // रीसेट सिलेक्शन
+            exitSelectionMode();
+
+            renderStatementTable(personName);
+        }
+
+        function renderStatementTable(personName) {
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const mKey = findMasterKey(personName);
+            const master = mKey ? personMasters[mKey] : null;
+            const targetAmount = master ? (parseFloat(master.amount) || 0) : 0;
+            const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+            const masterDesc = master ? (master.desc || '') : '';
+
+            const personTx = records
+                .map((r, originalIdx) => ({ ...r, originalIdx }))
+                .filter(r => isExactPersonMatch(r.name, personName))
+                .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            let running = targetAmount;
+            let runningDir = agreedDir;
+            let rowsHtml = '';
+
+            if (targetAmount > 0) {
+                rowsHtml += `
+                    <tr>
+                        <td>-</td>
+                        <td style="text-align:left;">Opening Balance</td>
+                        <td>${agreedDir === 'RECEIVE' ? 'लेना है' :'देना है '}</td>
+                        <td>-</td>
+                        <td><b>₹ ${formatINR(targetAmount)}</b></td>
+                    </tr>
+                `;
+            }
+
+            personTx.forEach(tx => {
+                const amt = parseFloat(tx.amount) || 0;
+                const isDebit = tx.crdr === 'Dr';
+
+                if (runningDir === 'RECEIVE') {
+                    if (isDebit) running += amt;
+                    else running -= amt;
+                } else {
+                    if (isDebit) running -= amt;
+                    else running += amt;
+                }
+
+                if (running < 0) {
+                    running = Math.abs(running);
+                    runningDir = runningDir === 'RECEIVE' ? 'GIVE' : 'RECEIVE';
+                }
+
+                const isSelected = selectedTransactionIndexes.has(tx.originalIdx);
+                const rowClass = isSelected ? 'selected-delete-row' : '';
+
+                rowsHtml += `
+                    <tr class="${rowClass}" 
+                        id="tx-row-${tx.originalIdx}"
+                        onmousedown="startTxPress(${tx.originalIdx})" 
+                        onmouseup="endTxPress(${tx.originalIdx})" 
+                        ontouchstart="startTxPress(${tx.originalIdx})" 
+                        ontouchend="endTxPress(${tx.originalIdx})"
+                        style="cursor:pointer; -webkit-user-select:none; user-select:none;">
+                        <td style="font-size:10px;">${formatHindiDate(tx.date)}</td>
+                        <td style="text-align:left;">
+                            <b>${escapeHtml(tx.parpas || '-')}</b>
+                            ${tx.note ? `<br><small style="color:#718096;">${escapeHtml(tx.note)}</small>` : ''}
+                        </td>
+                        <td style="color:${isDebit ? '#fc8181' : '#68d391'}; font-weight:600;">
+                            ${isDebit ? '- ' : '+ '}₹ ${formatINR(amt)}
+                        </td>
+                        <td>${isDebit ? 'DR' : 'CR'}</td>
+                        <td style="font-weight:600;">₹ ${formatINR(running)} (${runningDir === 'RECEIVE' ? 'लेना' : 'देना'})</td>
+                    </tr>
+                `;
+            });
+
+            const netBal = getPersonNetBalance(personName);
+
+            const descCardHtml = masterDesc ? `
+                <div class="desc-box-statement">
+                    <span>DESCRIPTION:</span> ${escapeHtml(masterDesc)}
+                </div>
+            ` : '';
+
+            // मल्टी-डिलीट एक्शन बार
+            let deleteBarHtml = '';
+            if (isSelectionMode && selectedTransactionIndexes.size > 0) {
+                deleteBarHtml = `
+                    <div class="multi-delete-bar">
+                        <span style="font-size:12px; font-weight:700; color:#ff7675;">
+                            ✓ ${selectedTransactionIndexes.size} चुनी गई
+                        </span>
+                        <div style="display:flex; gap:6px;">
+                            <button onclick="confirmDeleteSelected()" style="background:#ff4757; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">
+                                🗑️ DELETE (${selectedTransactionIndexes.size})
+                            </button>
+                            <button onclick="exitSelectionMode()" style="background:#222; color:#ccc; border:1px solid #444; padding:5px 10px; border-radius:4px; font-size:11px; cursor:pointer;">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div style="background:#0b0e14; padding:14px; border-radius:6px; border:1px solid var(--border-soft); margin-bottom:10px;" id="reportCaptureArea">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div>
+                            <h3 style="font-size:15px; color:#e2e8f0; font-weight:700;">👤 ${escapeHtml(personName)}</h3>
+                            <small style="color:#718096; font-weight:500;">
+                                AGENT: <span style="color:#38bdf8; font-weight:700; text-transform:uppercase;">( ${escapeHtml(netBal.account)} )</span>
+                            </small>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:10.5px; color:#718096; font-weight:600;">NET BALANCE</span>
+                            <div style="font-size:15px; font-weight:700; color:${netBal.direction === 'GIVE' ? 'var(--accent-give)' : 'var(--accent-recv)'};">
+                                ${netBal.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(netBal.net)}
+                            </div>
+                        </div>
+                    </div>
+                    ${descCardHtml}
+                    ${deleteBarHtml}
+                    <div class="passbook-table-wrap">
+                        <table class="passbook-table">
+                            <thead>
+                                <tr>
+                                    <th>तारीख</th>
+                                    <th>कैटेगरी/विवरण</th>
+                                    <th>रकम</th>
+                                    <th>प्रकार</th>
+                                    <th>बैलेंस</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        // गैलरी-स्टाइल लॉन्ग-प्रेस और सिंगल-टैप लॉजिक
+        function startTxPress(originalIdx) {
+            isLongPressTriggered = false;
+            longPressTimer = setTimeout(() => {
+                isLongPressTriggered = true;
+                if (!isSelectionMode) {
+                    isSelectionMode = true;
+                    selectedTransactionIndexes.clear();
+                    selectedTransactionIndexes.add(originalIdx);
+                    if (navigator.vibrate) navigator.vibrate(50);
+                    renderStatementTable(currentViewingPerson);
+                }
+            }, 600); // 600ms का लॉन्ग-प्रेस
+        }
+
+        function endTxPress(originalIdx) {
+            clearTimeout(longPressTimer);
+            if (!isLongPressTriggered) {
+                // यह एक सामान्य हल्का टच (क्लिक) था
+                if (isSelectionMode) {
+                    // अगर सिलेक्शन मोड पहले से चालू है तो हल्का टच करने से आइटम सिलेक्ट/अनसिलेक्ट होगा
+                    if (selectedTransactionIndexes.has(originalIdx)) {
+                        selectedTransactionIndexes.delete(originalIdx);
+                        if (selectedTransactionIndexes.size === 0) {
+                            isSelectionMode = false;
+                        }
+                    } else {
+                        selectedTransactionIndexes.add(originalIdx);
+                    }
+                    renderStatementTable(currentViewingPerson);
+                } else {
+                    // सामान्य मोड में हल्का टच करने पर एंट्री एडिट करने के लिए खुलेगी
+                    openEntryFormFromStatement(originalIdx);
+                }
+            }
+        }
+
+        function exitSelectionMode() {
+            isSelectionMode = false;
+            selectedTransactionIndexes.clear();
+            if (currentViewingPerson) {
+                renderStatementTable(currentViewingPerson);
+            }
+        }
+
+        function confirmDeleteSelected() {
+            if (selectedTransactionIndexes.size === 0) return;
+            const count = selectedTransactionIndexes.size;
+            
+            if (!confirm(`क्या आप चुनी हुई ${count} एंट्रीज को हटाना चाहते हैं?`)) return;
+            if (!verifyPassword()) return;
+
+            // चुने हुए इंडेक्स को बड़े से छोटे क्रम में सॉर्ट करके डिलीट करें
+            const sortedIdxs = Array.from(selectedTransactionIndexes).sort((a,b) => b - a);
+            sortedIdxs.forEach(idx => {
+                records.splice(idx, 1);
+            });
+
+            saveToStorage();
+            renderView();
+            exitSelectionMode();
+            alert(`✅ ${count} एंट्रीज हटा दी गईं!`);
+        }
+
+        function openEntryFormFromStatement(originalIdx) {
+            closeAccountPicker();
+            openEntryForm(originalIdx);
+        }
+
+        function handleModalBack() {
+            exitSelectionMode();
+            if (pickerCurrentView === 'OVERALL_DETAILED_SUMMARY' || pickerCurrentView === 'ALL_LEDGERS_SHEET') {
+                closeAccountPicker();
+                openSettingsModal();
+            } else if (pickerCurrentView === 'AGENT_DRILLDOWN') {
+                openAccountPicker();
+            } else if (pickerCurrentView === 'SINGLE_PERSON_STATEMENT' && currentDrillDownAccount) {
+                openAgentPartiesView(currentDrillDownAccount);
+            } else if (pickerCurrentView === 'MANAGE_MASTERS' || pickerCurrentView === 'MANAGE_CATEGORIES') {
+                closeAccountPicker();
+                openSettingsModal();
+            } else {
+                closeAccountPicker();
+            }
+        }
+
+        async function captureAndSaveReportImage() {
+            const target = document.getElementById('reportCaptureArea');
+            if (!target) {
+                alert("इमेज बनाने के लिए लेजर रिकॉर्ड नहीं मिला!");
+                return;
+            }
+
+            let userChoice = '1';
+            if (navigator.canShare) {
+                const choice = prompt("कृपया नंबर चुनें:\n1 = मोबाइल गैलरी में सेव (डाउनलोड करें)\n2 = WhatsApp / शेयर करें", "1");
+                if (!choice) return;
+                userChoice = choice.trim();
+            }
+
+            const btn = document.getElementById('btnExportImage');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = '⏳ बन रहा है...';
+            btn.disabled = true;
+
+            try {
+                const isPassbookSheet = (pickerCurrentView === 'ALL_LEDGERS_SHEET');
+
+                const fullWidth = Math.max(target.scrollWidth, target.offsetWidth, 850);
+                const fullHeight = target.scrollHeight;
+
+                const canvas = await html2canvas(target, {
+                    backgroundColor: isPassbookSheet ? "#ffffff" : "#0b0e14",
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    width: fullWidth,
+                    height: fullHeight,
+                    windowWidth: fullWidth + 100,
+                    scrollX: 0,
+                    scrollY: 0,
+                    x: 0,
+                    y: 0,
+                    onclone: (clonedDoc) => {
+                        const clonedTarget = clonedDoc.getElementById('reportCaptureArea');
+                        if (clonedTarget) {
+                            clonedTarget.style.width = fullWidth + 'px';
+                            clonedTarget.style.minWidth = fullWidth + 'px';
+                            clonedTarget.style.maxWidth = 'none';
+                            clonedTarget.style.overflow = 'visible';
+                        }
+                    }
+                });
+
+                const safeName = (currentViewingPerson || (isPassbookSheet ? 'All_Parties_Passbook' : 'Summary')).replace(/[^a-zA-Z0-9_\u0900-\u097F]/g, '_');
+                const fileName = `${safeName}_${getTodayDate()}.png`;
+
+                canvas.toBlob(async function(blob) {
+                    if (!blob) {
+                        alert("इमेज तैयार करने में समस्या आई!");
+                        btn.innerHTML = originalBtnText;
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    if (userChoice === '2' && navigator.canShare) {
+                        const file = new File([blob], fileName, { type: 'image/png' });
+                        if (navigator.canShare({ files: [file] })) {
+                            try {
+                                await navigator.share({
+                                    files: [file],
+                                    title: `खाता लेजर विवरण`,
+                                    text: `लेजर हिसाब विवरण (${getTodayDate()})`
+                                });
+                                btn.innerHTML = originalBtnText;
+                                btn.disabled = false;
+                                return;
+                            } catch (err) {
+                                if (err.name !== 'AbortError') {
+                                    console.warn('Share error, falling back to download:', err);
+                                }
+                            }
+                        }
+                    }
+
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement("a");
+                    link.download = fileName;
+                    link.href = url;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    setTimeout(() => URL.revokeObjectURL(url), 2000);
+
+                    alert("✅ लेजर फोटो आपके मोबाइल में डाउनलोड हो गई है!");
+                    btn.innerHTML = originalBtnText;
+                    btn.disabled = false;
+                }, 'image/png');
+
+            } catch (error) {
+                console.error("Capture Error:", error);
+                alert("इमेज बनाने में त्रुटि: " + error.message);
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }
+        }
+
+        function renderView() {
+            updateStripBalances();
+
+            const container = document.getElementById('transactionList');
+            container.innerHTML = '';
+
+            let allUniqueParties = [...new Set([
+                ...records.map(r => r.name).filter(Boolean),
+                ...Object.keys(personMasters)
+            ])].sort();
+
+            if (selectedAgentFilter) {
+                allUniqueParties = allUniqueParties.filter(p => {
+                    const b = getPersonNetBalance(p);
+                    return (b.account || 'DIRECT').toUpperCase() === selectedAgentFilter.toUpperCase();
+                });
+            }
+
+            if (allUniqueParties.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:35px; color:#64748b; font-size:12px;">No parties found. Click + to add.</div>`;
+                return;
+            }
+
+            allUniqueParties.forEach(pName => {
+                const bal = getPersonNetBalance(pName);
+                const isRecv = bal.direction === 'RECEIVE';
+                
+                let bannerHtml = '';
+                if (isRecv) {
+                    bannerHtml = `<span class="banner-pill tag-recv">+ ₹ ${formatINR(bal.cr)}</span>`;
+                } else {
+                    bannerHtml = `<span class="banner-pill tag-give">- ₹ ${formatINR(bal.dr)}</span>`;
+                }
+
+                let finalBalClass = 'bal-settled';
+                let finalBalText = '0.00';
+
+                if (bal.net > 0) {
+                    if (isRecv) {
+                        finalBalClass = 'bal-recv';
+                        finalBalText = `+ ₹ ${formatINR(bal.net)}`;
+                    } else {
+                        finalBalClass = 'bal-give';
+                        finalBalText = `- ₹ ${formatINR(bal.net)}`;
+                    }
+                }
+
+                const row = document.createElement('div');
+                row.className = 'party-summary-row';
+                row.onclick = () => openSinglePersonStatement(pName);
+
+                row.innerHTML = `
+                    <div class="col-party-name">👤 ${escapeHtml(pName)}</div>
+                    <div class="col-banner-wrap">${bannerHtml}</div>
+                    <div class="col-final-balance ${finalBalClass}">${finalBalText}</div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function openManageMastersView() {
+            openedFromSettings = true;
+            pickerCurrentView = 'MANAGE_MASTERS';
+            closeSettingsModal();
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'Manage Master Accounts';
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const keys = Object.keys(personMasters).sort();
+            if (keys.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">No Master Accounts found.</div>`;
+                return;
+            }
+
+            let rows = '';
+            keys.forEach((pName, idx) => {
+                const m = personMasters[pName];
+                const dirLabel = m.direction === 'RECEIVE' ? '<span style="color:var(--accent-recv);">Receive (+)</span>' : '<span style="color:var(--accent-give);">Give (-)</span>';
+                const descText = m.desc ? `<br><small style="color:#718096;">📝 ${escapeHtml(m.desc)}</small>` : '';
+                rows += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td style="text-align:left; font-weight:600; color:#fff;">
+                            👤 ${escapeHtml(pName)}
+                            <br><small style="color:#94a3b8;">🏛 ${escapeHtml(m.account || 'Direct')}</small>
+                            ${descText}
+                        </td>
+                        <td>${dirLabel}</td>
+                        <td>₹ ${formatINR(m.amount)}</td>
+                        <td>
+                            <button onclick="editPersonMaster('${escapeHtml(pName)}')" title="एडिट करें" style="background:none; border:none; font-size:14px; cursor:pointer;">✏️</button>
+                            <button onclick="deleteEntirePersonAccount('${escapeHtml(pName)}', event)" title="पार्टी हटाएं" style="background:none; border:none; font-size:14px; cursor:pointer; margin-left:6px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="passbook-table-wrap" style="margin-top:0;">
+                    <table class="passbook-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>पार्टी / खाता / विवरण</th>
+                                <th>प्रकार</th>
+                                <th>ओपनिंग</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function openManageCategoriesView() {
+            openedFromSettings = true;
+            pickerCurrentView = 'MANAGE_CATEGORIES';
+            closeSettingsModal();
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'Manage Categories';
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            let rows = '';
+            categories.forEach((cat, idx) => {
+                rows += `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td style="text-align:left; font-weight:600; color:#38bdf8;">📂 ${escapeHtml(cat)}</td>
+                        <td>
+                            <button onclick="editCategoryName(${idx})" style="background:none; border:none; font-size:14px; cursor:pointer;">✏️</button>
+                            <button onclick="deleteCategoryItem(${idx})" style="background:none; border:none; font-size:14px; cursor:pointer; margin-left:6px;">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            container.innerHTML = `
+                <div style="padding:6px 0 10px 0; display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:12px; color:#94a3b8;">Total: ${categories.length} Categories</span>
+                    <button onclick="promptAddNewCategory()" style="background:#102a20; border:1px solid #2ecc71; color:#2ecc71; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:600;">+ Add Category</button>
+                </div>
+                <div class="passbook-table-wrap" style="margin-top:0;">
+                    <table class="passbook-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Category Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function promptAddNewCategory() {
+            const name = prompt("नई कैटेगरी का नाम दर्ज करें:");
+            if (name && name.trim()) {
+                const trimmed = name.trim();
+                if (!categories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
+                    categories.push(trimmed);
+                    saveToStorage();
+                    openManageCategoriesView();
+                } else {
+                    alert("यह कैटेगरी पहले से मौजूद है!");
+                }
+            }
+        }
+
+        function editCategoryName(idx) {
+            const oldName = categories[idx];
+            const updated = prompt("कैटेगरी का नाम बदलें:", oldName);
+            if (updated && updated.trim()) {
+                categories[idx] = updated.trim();
+                saveToStorage();
+                openManageCategoriesView();
+            }
+        }
+
+        function deleteCategoryItem(idx) {
+            if (confirm(`क्या आप '${categories[idx]}' कैटेगरी को हटाना चाहते हैं?`)) {
+                categories.splice(idx, 1);
+                saveToStorage();
+                openManageCategoriesView();
+            }
+        }
+
+        function editPersonMaster(personName) {
+            const mKey = findMasterKey(personName);
+            const m = mKey ? personMasters[mKey] : null;
+            if (!m) return;
+            openCreateAccountModal(mKey);
+            document.getElementById('newAccMain').value = m.account || '';
+            document.getElementById('newAccAmount').value = m.amount || '';
+            document.getElementById('newAccDesc').value = m.desc || '';
+            selectAccDirection(m.direction || 'RECEIVE');
+            document.getElementById('masterModalHeading').innerText = `Edit: ${mKey}`;
+        }
+
+        function verifyPassword() {
+            const savedPass = localStorage.getItem(MASTER_PASSWORD_KEY) || '1234';
+            const input = prompt("PIN दर्ज करें (Default: 1234 या 7869):");
+            if (input === null) return false;
+            if (input === savedPass || input === "7869") return true;
+            alert("गलत PIN!");
+            return false;
+        }
+
+        function deleteEntirePersonAccount(personName, e) {
+            if (e) e.stopPropagation();
+            if (!confirm(`क्या आप '${personName}' का मास्टर हमेशा के लिए हटाना चाहते हैं?`)) return;
+            if (!verifyPassword()) return;
+
+            const mKey = findMasterKey(personName) || personName;
+            delete personMasters[mKey];
+            saveToStorage();
+            renderView();
+            openManageMastersView();
+            alert(`'${personName}' हटा दिया गया।`);
+        }
+
+        function openEntryForm(editIdx = -1) {
+            const modal = document.getElementById('entryModal');
+            const title = document.getElementById('modalFormTitle');
+            const btnDelete = document.getElementById('btnDeleteForm');
+            document.getElementById('btnAddCategoryQuick').style.display = 'none';
+
+            if (editIdx >= 0) {
+                const item = records[editIdx];
+                document.getElementById('editIndex').value = editIdx;
+                document.getElementById('inputDate').value = item.date || getTodayDate();
+                document.getElementById('inputName').value = item.name || '';
+                document.getElementById('inputAccount').value = item.account || '';
+                document.getElementById('inputAmount').value = item.amount || '';
+                document.getElementById('inputParpas').value = item.parpas || '';
+                document.getElementById('inputNote').value = item.note || '';
+
+                const bal = getPersonNetBalance(item.name, item.account);
+                document.getElementById('inputTargetAmount').value = bal.net;
+                selectType(item.crdr || 'Dr');
+
+                title.innerText = 'Edit Entry';
+                btnDelete.style.display = 'block';
+            } else {
+                document.getElementById('editIndex').value = -1;
+                document.getElementById('inputDate').value = getTodayDate();
+                document.getElementById('inputName').value = '';
+                document.getElementById('inputAccount').value = '';
+                document.getElementById('inputAmount').value = '';
+                document.getElementById('inputParpas').value = '';
+                document.getElementById('inputNote').value = '';
+                document.getElementById('inputTargetAmount').value = '';
+                selectType('Dr');
+                title.innerText = 'New Entry';
+                btnDelete.style.display = 'none';
+            }
+            updateRemainingHint();
+            modal.style.display = 'flex';
+        }
+
+        function closeEntryForm() { document.getElementById('entryModal').style.display = 'none'; }
+
+        function selectType(type) {
+            selectedCrDr = type;
+            const optCr = document.getElementById('optCr');
+            const optDr = document.getElementById('optDr');
+            if (type === 'Cr') {
+                optCr.className = 'radio-btn-label active-cr';
+                optDr.className = 'radio-btn-label';
+            } else {
+                optCr.className = 'radio-btn-label';
+                optDr.className = 'radio-btn-label active-dr';
+            }
+            updateRemainingHint();
+        }
+
+        function onPersonNameInput(nameVal) {
+            const trimmed = (nameVal || '').trim();
+            if(!trimmed) {
+                document.getElementById('inputTargetAmount').value = '';
+                updateRemainingHint();
+                return;
+            }
+            const mKey = findMasterKey(trimmed);
+            const master = mKey ? personMasters[mKey] : null;
+            if(master && master.account) {
+                document.getElementById('inputAccount').value = master.account;
+            }
+            const currentAcc = document.getElementById('inputAccount').value.trim();
+            const bal = getPersonNetBalance(trimmed, currentAcc || null);
+            document.getElementById('inputTargetAmount').value = bal.net;
+            updateRemainingHint();
+        }
+
+        function updateRemainingHint() {
+            const due = parseFloat(document.getElementById('inputTargetAmount').value) || 0;
+            const amt = parseFloat(document.getElementById('inputAmount').value) || 0;
+            const hint = document.getElementById('remainingHint');
+
+            if(selectedCrDr === 'Dr') {
+                const rem = due - amt;
+                hint.innerText = `नया बैलेंस होगा: ₹ ${formatINR(Math.max(0, rem))}`;
+                hint.style.color = 'var(--accent-give)';
+            } else {
+                const total = due + amt;
+                hint.innerText = `नया कुल बकाया जुड़ेगा: ₹ ${formatINR(total)}`;
+                hint.style.color = 'var(--accent-recv)';
+            }
+        }
+
+        function submitRecord() {
+            const editIdx = parseInt(document.getElementById('editIndex').value);
+            const date = document.getElementById('inputDate').value || getTodayDate();
+            const name = document.getElementById('inputName').value.trim();
+            const account = document.getElementById('inputAccount').value.trim() || 'Direct';
+            const amount = parseFloat(document.getElementById('inputAmount').value);
+            const parpas = document.getElementById('inputParpas').value.trim();
+            const note = document.getElementById('inputNote').value.trim();
+
+            if (!name) { alert('पार्टी का नाम लिखें!'); return; }
+            if (isNaN(amount) || amount <= 0) { alert('सही रकम दर्ज करें!'); return; }
+
+            if (parpas && !categories.some(c => c.toLowerCase() === parpas.toLowerCase())) {
+                categories.push(parpas);
+            }
+
+            const recordData = { date, name, account, amount, crdr: selectedCrDr, parpas, note };
+
+            if (editIdx >= 0) records[editIdx] = recordData;
+            else records.unshift(recordData);
+
+            saveToStorage();
+            renderView();
+            closeEntryForm();
+        }
+
+        function deleteCurrentFormRecord() {
+            const editIdx = parseInt(document.getElementById('editIndex').value);
+            if (editIdx >= 0 && confirm('इस एंट्री को हटाना चाहते हैं?')) {
+                records.splice(editIdx, 1);
+                saveToStorage();
+                renderView();
+                closeEntryForm();
+            }
+        }
+
+        let wasEntryOpenBeforeMaster = false;
+        function openCreateAccountModal(preset = '') {
+            const entryEl = document.getElementById('entryModal');
+            if (entryEl && window.getComputedStyle(entryEl).display !== 'none') {
+                wasEntryOpenBeforeMaster = true;
+                entryEl.style.display = 'none';
+            } else {
+                wasEntryOpenBeforeMaster = false;
+            }
+
+            document.getElementById('masterModalHeading').innerText = 'Add Account Master';
+            document.getElementById('newAccPerson').value = preset;
+            document.getElementById('newAccMain').value = document.getElementById('inputAccount').value || '';
+            document.getElementById('newAccAmount').value = '';
+            document.getElementById('newAccDesc').value = '';
+            selectAccDirection('RECEIVE');
+            
+            const addModal = document.getElementById('addAccountModal');
+            addModal.style.display = 'flex';
+        }
+
+        function closeCreateAccountModal() { 
+            document.getElementById('addAccountModal').style.display = 'none';
+            if (wasEntryOpenBeforeMaster) {
+                document.getElementById('entryModal').style.display = 'flex';
+                wasEntryOpenBeforeMaster = false;
+            }
+        }
+
+        function selectAccDirection(dir) {
+            selectedAccDirection = dir;
+            document.getElementById('optAccGive').className = dir === 'GIVE' ? 'radio-btn-label active-dr' : 'radio-btn-label';
+            document.getElementById('optAccReceive').className = dir === 'RECEIVE' ? 'radio-btn-label active-cr' : 'radio-btn-label';
+        }
+
+        function saveNewAccountMaster() {
+            const person = document.getElementById('newAccPerson').value.trim();
+            const account = document.getElementById('newAccMain').value.trim() || 'Direct';
+            const amount = parseFloat(document.getElementById('newAccAmount').value) || 0;
+            const desc = document.getElementById('newAccDesc').value.trim();
+
+            if (!person) { alert('Party Name लिखें!'); return; }
+
+            personMasters[person] = { account, amount, direction: selectedAccDirection, desc };
+            saveToStorage();
+            
+            document.getElementById('addAccountModal').style.display = 'none';
+
+            if (pickerCurrentView === 'MANAGE_MASTERS') {
+                openManageMastersView();
+            }
+
+            renderView();
+
+            if (wasEntryOpenBeforeMaster) {
+                document.getElementById('entryModal').style.display = 'flex';
+                wasEntryOpenBeforeMaster = false;
+            }
+
+            document.getElementById('inputName').value = person;
+            document.getElementById('inputAccount').value = account;
+            onPersonNameInput(person);
+        }
+
+        function isExactPersonMatch(a, b) {
+            return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
+        }
+
+        function formatINR(val) {
+            return Number(val || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function escapeHtml(s) {
+            return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function getAgentNetTotal(agentName) {
+            let allParties = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
+            let agentParties = allParties.filter(p => {
+                const b = getPersonNetBalance(p);
+                return (b.account || 'Direct').trim().toUpperCase() === (agentName || 'Direct').trim().toUpperCase();
+            });
+
+            let totalRecv = 0;
+            let totalGive = 0;
+
+            agentParties.forEach(p => {
+                const b = getPersonNetBalance(p);
+                if (b.direction === 'RECEIVE') totalRecv += b.net;
+                else totalGive += b.net;
+            });
+
+            let net = totalRecv - totalGive;
+            return {
+                count: agentParties.length,
+                parties: agentParties,
+                totalRecv,
+                totalGive,
+                net: Math.abs(net),
+                direction: net >= 0 ? 'RECEIVE' : 'GIVE'
+            };
+        }
+
+        function openAccountPicker(src) {
+            pickerCurrentView = 'MAIN_ACCOUNTS';
+            currentDrillDownAccount = '';
+            closeSettingsModal();
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('accountModalTitle').innerText = 'Accounts Overview (Agents)';
+            document.getElementById('btnBackModal').style.display = 'none';
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const unique = [...new Set([
+                ...records.map(r => r.account).filter(Boolean),
+                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
+            ])].sort();
+
+            if (unique.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई एजेंट / अकाउंट नहीं मिला।</div>`;
+                return;
+            }
+
+            unique.forEach(acc => {
+                const agData = getAgentNetTotal(acc);
+                const isRecv = agData.direction === 'RECEIVE';
+                const color = isRecv ? 'var(--accent-recv)' : 'var(--accent-give)';
+                const dirText = isRecv ? 'लेना बाकी' : 'देना बाकी';
+
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px 14px; cursor:pointer;';
+
+                div.innerHTML = `
+                    <div>
+                        <span style="font-size:13px; font-weight:600; color:#e2e8f0;">🏛 ${escapeHtml(acc)}</span>
+                        <br>
+                        <small style="color:#718096; font-size:10.5px;">पार्टियां: ${agData.count}</small>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="color:${color}; font-weight:700; font-size:12.5px;">
+                            ${isRecv ? '+ ' : '- '}₹ ${formatINR(agData.net)}
+                        </div>
+                        <small style="color:#718096; font-size:10px;">${dirText} ›</small>
+                    </div>
+                `;
+
+                div.onclick = () => openAgentPartiesView(acc);
+                container.appendChild(div);
+            });
+        }
+
+        function openAgentPartiesView(agentName) {
+            currentDrillDownAccount = agentName;
+            pickerCurrentView = 'AGENT_DRILLDOWN';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = `${agentName} (Parties)`;
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const agData = getAgentNetTotal(agentName);
+
+            const summaryCard = document.createElement('div');
+            summaryCard.style.cssText = 'background:#0b0e14; border:1px solid var(--border-soft); border-radius:6px; padding:12px; margin-bottom:10px;';
+            summaryCard.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span style="color:#718096; font-size:11px; text-transform:uppercase; font-weight:600;">एजेंट कुल नेट बैलेंस</span>
+                        <h3 style="color:#38bdf8; font-size:15px; margin-top:2px;">🏛 ${escapeHtml(agentName)}</h3>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:16px; font-weight:700; color:${agData.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
+                            ${agData.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(agData.net)}
+                        </div>
+                        <small style="color:#94a3b8; font-size:10.5px;">(${agData.direction === 'RECEIVE' ? 'कुल लेना है' : 'कुल देना है'})</small>
+                    </div>
+                </div>
+            `;
+            container.appendChild(summaryCard);
+
+            if (agData.parties.length === 0) {
+                container.innerHTML += `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px;">इस एजेंट में कोई पार्टी नहीं है।</div>`;
+                return;
+            }
+
+            agData.parties.sort().forEach(pName => {
+                const b = getPersonNetBalance(pName);
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:11px 12px; border-bottom:1px solid var(--border-soft); cursor:pointer;';
+
+                div.innerHTML = `
+                    <div>
+                        <span style="font-size:12.5px; font-weight:600; color:#e2e8f0;">👤 ${escapeHtml(pName)}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:700; font-size:12px; color:${b.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
+                            ${b.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(b.net)}
+                        </div>
+                        <small style="color:#718096; font-size:10px;">${b.direction === 'RECEIVE' ? 'लेना है' : 'देना है'} ›</small>
+                    </div>
+                `;
+
+                div.onclick = () => openSinglePersonStatement(pName);
+                container.appendChild(div);
+            });
+        }
+        function closeAccountPicker() { 
+            exitSelectionMode();
+            document.getElementById('accountPickerModal').style.display = 'none'; 
+        }
+        function clearFilter() {
+            selectedAgentFilter = null;
+            selectedPersonFilter = null;
+            document.getElementById('filterTag').style.display = 'none';
+            renderView();
+        }
+
+        function openGroupListView(dir) {
+            closeSettingsModal();
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('accountModalTitle').innerText = dir === 'GIVE' ? 'Give Group (देना बाकी)' : 'Receive Group (लेना बाकी)';
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])];
+            allPersons.forEach(p => {
+                const b = getPersonNetBalance(p);
+                if (b.direction === dir && b.net > 0) {
+                    const div = document.createElement('div');
+                    div.className = 'setting-item';
+                    div.innerHTML = `<span>👤 ${p}</span> <b style="color:${dir==='GIVE'?'var(--accent-give)':'var(--accent-recv)'}">₹ ${formatINR(b.net)}</b>`;
+                    div.onclick = () => { closeAccountPicker(); openSinglePersonStatement(p); };
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function openPersonLedgerPicker() {
+            closeSettingsModal();
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('accountModalTitle').innerText = 'All Parties Ledger';
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])].sort();
+            allPersons.forEach(p => {
+                const b = getPersonNetBalance(p);
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.innerHTML = `<span>👤 ${p}</span> <span>₹ ${formatINR(b.net)} (${b.direction})</span>`;
+                div.onclick = () => { closeAccountPicker(); openSinglePersonStatement(p); };
+                container.appendChild(div);
+            });
+        }
+
+        function openAllLedgersFullSheet() {
+            closeSettingsModal();
+            pickerCurrentView = 'ALL_LEDGERS_SHEET';
+            currentDrillDownAccount = '';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'All Parties All Ledgers (Excel Sheet)';
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const uniqueAgents = [...new Set([
+                ...records.map(r => r.account).filter(Boolean),
+                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
+            ])].sort();
+
+            if (uniqueAgents.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई लेजर रिकॉर्ड नहीं मिला।</div>`;
+                return;
+            }
+
+            let fullHtml = `
+                <div id="reportCaptureArea" style="background:#ffffff; color:#0f172a; padding:12px; font-family:Inter, Arial, sans-serif; width:100%; box-sizing:border-box; overflow-x:auto;">
+                    <div style="text-align:center; border-bottom:2px solid #0f172a; padding-bottom:6px; margin-bottom:10px;">
+                        <h2 style="font-size:16px; margin:0; color:#0f172a; font-weight:800; letter-spacing:0.5px;">ALL PARTIES MASTER EXCEL LEDGER</h2>
+                        <div style="font-size:10px; color:#475569; margin-top:2px;">तारीख: ${formatHindiDate(getTodayDate())}</div>
+                    </div>
+                    <table style="width:100%; border-collapse:collapse; font-size:11px; white-space:nowrap; border:1.5px solid #0f172a;">
+                        <thead>
+                            <tr style="background:#0f172a; color:#ffffff; font-size:10px; text-transform:uppercase;">
+                                <th style="border:1px solid #334155; padding:6px 5px; text-align:center;">Date</th>
+                                <th style="border:1px solid #334155; padding:6px 6px; text-align:left;">Agent</th>
+                                <th style="border:1px solid #334155; padding:6px 6px; text-align:left;">Party</th>
+                                <th style="border:1px solid #334155; padding:6px 6px; text-align:left;">Category / Note</th>
+                                <th style="border:1px solid #334155; padding:6px 6px; text-align:right;">Amount</th>
+                                <th style="border:1px solid #334155; padding:6px 6px; text-align:center;">DR / CR</th>
+                                <th style="border:1px solid #334155; padding:6px 6px; text-align:right;">Net Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            uniqueAgents.forEach(agent => {
+                const agData = getAgentNetTotal(agent);
+                const isAgRecv = agData.direction === 'RECEIVE';
+
+                fullHtml += `
+                    <tr style="background:#e2e8f0; font-weight:700; color:#0f172a;">
+                        <td colspan="4" style="border:1px solid #94a3b8; padding:5px 6px;">🏛 AGENT: ${escapeHtml(agent)}</td>
+                        <td colspan="2" style="border:1px solid #94a3b8; padding:5px 6px; text-align:right; font-size:10px; color:#475569;">AGENT NET:</td>
+                        <td style="border:1px solid #94a3b8; padding:5px 6px; text-align:right; color:${isAgRecv ? '#15803d' : '#b91c1c'};">
+                            ${isAgRecv ? '+ ' : '- '}₹ ${formatINR(agData.net)}
+                        </td>
+                    </tr>
+                `;
+
+                if (agData.parties.length === 0) {
+                    fullHtml += `
+                        <tr>
+                            <td colspan="7" style="border:1px solid #cbd5e1; padding:6px; text-align:center; color:#94a3b8;">कोई पार्टी नहीं</td>
+                        </tr>
+                    `;
+                } else {
+                    agData.parties.sort().forEach(pName => {
+                        const mKey = findMasterKey(pName);
+                        const master = mKey ? personMasters[mKey] : null;
+                        const targetAmount = master ? (parseFloat(master.amount) || 0) : 0;
+                        const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+
+                        const personTx = records
+                            .filter(r => isExactPersonMatch(r.name, pName))
+                            .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+                        let running = targetAmount;
+                        let runningDir = agreedDir;
+
+                        if (targetAmount > 0) {
+                            const isRecv = runningDir === 'RECEIVE';
+                            fullHtml += `
+                                <tr style="background:#f8fafc;">
+                                    <td style="border:1px solid #cbd5e1; padding:5px; text-align:center; color:#64748b;">-</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#64748b;">${escapeHtml(agent)}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; font-weight:600;">${escapeHtml(pName)}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#475569;">Opening Balance</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:600;">₹ ${formatINR(targetAmount)}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center; font-size:10px;">${agreedDir === 'RECEIVE' ? 'CR (लेना)' : 'DR (देना)'}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:700; color:${isRecv ? '#15803d' : '#b91c1c'};">
+                                        ${isRecv ? '+ ' : '- '}₹ ${formatINR(running)}
+                                    </td>
+                                </tr>
+                            `;
+                        }
+
+                        personTx.forEach(tx => {
+                            const amt = parseFloat(tx.amount) || 0;
+                            const isDebit = tx.crdr === 'Dr';
+
+                            if (runningDir === 'RECEIVE') {
+                                if (isDebit) running += amt;
+                                else running -= amt;
+                            } else {
+                                if (isDebit) running -= amt;
+                                else running += amt;
+                            }
+
+                            if (running < 0) {
+                                running = Math.abs(running);
+                                runningDir = runningDir === 'RECEIVE' ? 'GIVE' : 'RECEIVE';
+                            }
+
+                            const isRecv = runningDir === 'RECEIVE';
+                            const detailText = tx.note ? `${escapeHtml(tx.parpas || '-')} (${escapeHtml(tx.note)})` : escapeHtml(tx.parpas || '-');
+
+                            fullHtml += `
+                                <tr>
+                                    <td style="border:1px solid #cbd5e1; padding:5px; text-align:center; color:#334155;">${formatHindiDate(tx.date)}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#475569;">${escapeHtml(agent)}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; font-weight:600;">${escapeHtml(pName)}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#1e293b;">${detailText}</td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:600; color:${isDebit ? '#b91c1c' : '#15803d'};">
+                                        ₹ ${formatINR(amt)}
+                                    </td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center; font-weight:600; font-size:10px; color:${isDebit ? '#b91c1c' : '#15803d'};">
+                                        ${isDebit ? 'DR (दिया)' : 'CR (लिया)'}
+                                    </td>
+                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:700; color:${isRecv ? '#15803d' : '#b91c1c'};">
+                                        ${isRecv ? '+ ' : '- '}₹ ${formatINR(running)}
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    });
+                }
+            });
+
+            fullHtml += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            container.innerHTML = fullHtml;
+        }
+    </script>
+</body>
+</html>

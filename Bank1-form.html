@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Agent Pro</title>
+
+    <!-- PWA & App Capabilities -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bank Agent Pro">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#121212">
+
+    <!-- Embedded Manifest JSON -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"Bank Agent Pro","short_name":"Bank Pro","start_url":".","display":"standalone","background_color":"#121212","theme_color":"#121212","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231562f5%22/><text y=%2265%22 font-size=%2255%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BP</text></svg>","sizes":"192x192","type":"image/svg+xml"},{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231562f5%22/><text y=%2265%22 font-size=%2255%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BP</text></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- OCR Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+
+    <style>
+        :root { --bg-body: #121212; --neon-purple: #bc13fe; --neon-cyan: #00f3ff; --danger: #ff4757; }
+        * { box-sizing: border-box; font-family: 'Arial Black', sans-serif; }
+        body { margin: 10px; background: var(--bg-body); color: #fff; display: flex; flex-direction: column; align-items: center; }
+        .app-container { width: 100%; max-width: 480px; background: #1a1a1a; min-height: 100vh; padding-bottom: 20px;}
+        #form-to-share { background: #0a1f14; padding: 4px; border: 5px solid #075e74; display: none; } 
+        .header-box { background: linear-gradient(145deg, #840bd2, #840bd2); padding: 2px 20px; text-align: center; margin-bottom: 5px; border: 3px solid #fff; display: flex; flex-direction: column; align-items: center; gap: 1px; }
+        .title-design { background: linear-gradient(180deg, #840b 50%, #840b 50%); padding: 2px 8px; border-radius: 9px; color: white; border: 3px solid #fff657; min-width: 50%; font-weight: 900; text-transform: uppercase; font-size: 14px; }
+        .row { display: flex; flex-direction: row; background: #fafbacc1; padding: 2px 0px; align-items: stretch; border-bottom: 1px solid #ccc; }
+        .label { width: 120px; min-width: 90px; padding: 5px 4px; font-size: 11px; font-weight: bold; color: #fff; background: #9844eb; border: 2px solid #100d0d; display: flex; align-items: center; justify-content: space-between; }
+        .input-wrapper { width: 100%; background: white; display: flex; border: 2px solid #000000; min-height: 30px; overflow: hidden; }
+        .input-box { width: 100%; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 900; color: black; padding: 4px; min-height: 24px; word-break: break-word; white-space: pre-wrap; }
+        
+        textarea.input-box { 
+            resize: none; 
+            overflow: hidden; 
+            display: block;
+            height: auto; 
+            min-height: 30px; 
+            padding: 5px; 
+            font-family: inherit;
+        }
+        .split-cvv-inp {
+            width: 60px;
+            min-width: 50px;
+            max-width: 65px;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 900;
+            color: black;
+            padding: 2px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .split-exp-inp {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 900;
+            color: black;
+            padding: 2px 5px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .split-divider {
+            width: 2px;
+            background: #000;
+            flex-shrink: 0;
+        }
+
+        .controls { 
+            background: #1562f5; 
+            padding: 5px 2px;
+            width: 95%; 
+            margin: 0px auto;
+            border-radius: 20px;
+            border: 2px solid #00f3ff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9); 
+        }
+        button, .btn-custom { border: 2px solid #fff; border-radius: 10px; font-weight: 900; cursor: pointer; color: white; padding: 10px 2px; font-size: 11px; flex: 1; text-transform: uppercase; box-shadow: inset 0 2px 9px rgba(0,0,0,0.5); margin: 2px; }
+        button:active { transform: translateY(2px); box-shadow: inset 0 1px 4px rgba(0,0,0,0.8); }
+        .btn-save { background: #27ae60 !important; font-size: 14px !important; width: 100%; display: block; margin-bottom: 5px; box-shadow: 0 4px 0 #000 !important; border-radius: 15px !important; }
+        .btn-blue { background: #4285F4 !important; }
+        .btn-yellow { background: #f4b400 !important; color: #000 !important; }
+        .btn-purple { background: #bc13fe !important; }
+        .btn-black { background: #34495e !important; }
+        .btn-red { background: #ff4757 !important; max-width: 45px; }
+        .del-modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:4000; justify-content:center; align-items:center; backdrop-filter: blur(2px); }
+        .del-modal-box { background: #222; padding: 2px; border-radius: 20px; border: 4px solid #333; text-align: center; width: 70%; max-width: 200px; }
+        #search-inp { width: 100%; padding: 6px; border-radius: 10px; border: 2px solid var(--neon-cyan); background: #edededeb; color: #000; font-weight: bold; font-size: 13px; height: 30px; }
+        .list-item { background: #e6ca0188; padding: 4px 10px; margin-bottom: 2px; border-radius: 6px; border-left: 5px solid var(--neon-cyan); cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 20px; -webkit-user-select: none; user-select: none; }
+        #mainAppOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(35px); z-index: 999999; display: flex; align-items: center; justify-content: center; }
+        #secretInput { display: none; padding: 15px; border-radius: 20px; border: 3px solid #333; text-align: center; font-size: 20px; width: 200px; background: #fff; color: #000; }
+        .count-display { text-align: center; font-size: 14px; margin-top: 10px; color: #00f3ff; font-weight: bold; letter-spacing: 0px; }
+        #count-total { color: #ff4757; font-size: 14px; font-weight: bold; background: #1019f0; padding: 1px 10px; border-radius: 8px; border: 2px solid #ffffff; margin-left: 1px; }
+
+        @keyframes blink-red {
+            0% { background: #ff0000; color: white; box-shadow: 0 0 30px #ff0000; }
+            50% { background: #500000; color: #ff0000; box-shadow: 0 0 5px transparent; }
+            100% { background: #ff0000; color: white; box-shadow: 0 0 30px #ff0000; }
+        }
+        .blink-alert { animation: blink-red 0.4s infinite !important; border: 5px solid yellow !important; }
+        #vaultPanel button { width: 100%; text-transform: uppercase; font-weight: 900; }
+        .floating-opt { 
+            position: fixed; bottom: 80px; right: 20px; 
+            background: #bc13fe; color: white; width: 50px; height: 50px; 
+            border-radius: 50%; display: none; align-items: center; justify-content: center; 
+            font-size: 20px; z-index: 5000; border: 3px solid white; box-shadow: 0 0 15px rgba(188,19,254,0.6);
+            cursor: pointer;
+        }
+        .hide-btn { background: #ff4757; color: white; border: none; border-radius: 5px; padding: 2px 8px; cursor: pointer; font-size: 10px; margin-right: 5px; }
+        .cam-btn { background: #00f3ff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-size: 12px; cursor: pointer; line-height: 1; font-weight: normal; }
+    </style>
+</head>
+<body>
+
+<input type="file" id="cardGalleryInput" accept="image/*" style="display:none;" onchange="processCardImage(this)">
+
+<div id="scanChoiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:6000; justify-content:center; align-items:center; backdrop-filter:blur(3px);">
+    <div style="background:#222; border:2px solid #00f3ff; border-radius:15px; padding:20px; width:80%; max-width:280px; text-align:center;">
+        <h4 id="scanModalHeading" style="color:#00f3ff; margin-top:0; margin-bottom:15px;">SELECT IMAGE</h4>
+        <button style="background:#4285F4; width:100%; margin-bottom:15px; padding:12px; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer;" onclick="startGalleryScan()">🖼️ CHOOSE FROM GALLERY</button>
+        <button style="background:#444; width:100%; padding:8px; border-radius:8px; font-size:12px; cursor:pointer;" onclick="closeScanChoice()">CANCEL</button>
+    </div>
+</div>
+
+<div id="mainAppOverlay">
+    <div onclick="handleAppUnlockClick()" style="width:100%; height:100%; position:absolute;"></div>
+    <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*">
+</div>
+
+<div class="del-modal-overlay" id="delOverlay">
+    <div class="del-modal-box">
+        <h3 style="margin:0;" id="modalTitle">ACTION</h3>
+        <p id="modalSubText" style="margin: 5px 0; font-size: 12px; color: #bbb;"></p>
+        <input type="password" id="delPassInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" style="width:90%; padding:10px; margin:10px 0; text-align:center; border:2px solid red; border-radius:8px; font-size: 20px; letter-spacing: 5px;">
+        <div style="display:flex; gap:5px;">
+            <button id="confirmDelBtn">CONFIRM</button>
+            <button style="background:#333;" onclick="closeDelModal()">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+<div class="app-container">
+    <div id="form-to-share">
+       <div class="header-box">
+            <div class="title-design" id="head-agent">AGENT : NAME</div>
+            <div class="title-design" id="head-title">BANK / HOLDER</div>
+        </div>
+        <div id="fields-container"></div>
+        <div id="custom-fields-container"></div>
+    </div>
+
+    <div class="controls">
+        <div id="main-btn-container">
+            <div style="display:flex; align-items:center; gap:8px; padding:8px 10px 5px 10px;">
+                <button class="btn-save" style="margin:0; flex: 3; height: 42px; width: auto; background: #08ee0e84 !important; color: #ffffff !important; border: 2.5px solid #ff0000; box-shadow: 0 8px #00f3ff; border-radius: 2px;" onclick="handleMainAction()">NEW ENTRY</button>
+                <button onclick="refreshApp()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0; color: #fff;">🔄</button>
+                <div id="gearBtn" style="display: flex; justify-content: center;">
+                    <button onclick="toggleVault()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0;">⚙️</button>
+                </div>
+            </div>
+        </div>
+        <div id="vaultPanel" style="display:none; background: #0a1f14; border: 3px solid #00f3ff; border-radius: 20px; padding: 15px; margin: 10px; box-shadow: 0 0 20px rgba(0,243,255,0.4);">
+            <div style="text-align:center; color:#00f3ff; margin-bottom:15px; font-size:14px; font-weight:900; border-bottom: 1px solid #1a5a4a; padding-bottom:8px;">SETTING</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button style="background: #4285F4; padding: 10px; border-radius: 100px;" onclick="saveToSheet(true)">📂 BACKUP</button>
+                <button style="background: #f4b400; color: #000; padding: 10px; border-radius: 100px;" onclick="importFromSheet()">📥 RESTORE</button>
+                <button style="background: #e91e63; padding: 10px; border-radius: 100px;" onclick="showTrashList()">♻️ RECOVER DELETED</button>
+                <button style="background: #00f3ff; color: #000; padding: 10px; border-radius: 100px;" onclick="openFieldManager()">➕ ADD / EDIT FIELDS</button>
+                <button style="background: #ff4757; padding: 10px; border-radius: 100px;" onclick="handleOTPRequest()">🔐 CHANGE PASSWORD</button>
+                <button style="background: #bc13fe; padding: 10px; border-radius: 100px;" onclick="toggleOptionMenu()">⚙️ OPTION</button>
+                <button style="background: #ef1818; padding: 10px; border-radius: 100px; color: white; font-weight: bold; border: 5px solid #1eef2c;" onclick="handleLogout()">🔒 LOGOUT & SAVE</button>
+
+                <button style="background: #222; color: #fff; border: 1.5px solid #ffffff; height: 35px; border-radius: 100px;" onclick="toggleVault()">CLOSE</button>
+            </div>
+        </div>
+        <div id="option-menu" style="display: none; padding: 5px;  margin-top: 2px;">
+            <div style="display: flex; gap: 2px;">
+                <button style="background: #e91e63;" onclick="downloadPDF()">📄 PDF</button>
+                <button style="background: #25D366;" onclick="startSharingProcess()">📤 SHARE IMAGE</button>
+            </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:2px; margin-top:8px; padding: 0 10px;">
+            <input type="text" id="search-inp" placeholder="🔍 SEARCH..." onkeyup="filterList()" style="flex:8;">
+            <button onclick="document.getElementById('search-inp').value=''; filterList();" style="width:80px; height:30px; background:red; color:white; border-radius:10px;">Clear</button>
+        </div>
+        <div class="count-display">TOTAL: <span id="count-total">0</span></div>
+    </div> 
+    <div id="floatOptBtn" class="floating-opt" onclick="toggleOptionMenu()">⚙️</div>
+    
+    <div id="data-list" style="width: 100%; padding: 10px;"></div>
+
+<div id="customDialogOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:5000; justify-content:center; align-items:center;">
+    <div style="background:#222; padding:20px; border-radius:15px; border:2px solid #555; text-align:center; width:80%; max-width:300px; color:#fff;">
+        <h3 id="dialogTitle" style="margin-top:0;">Dialog</h3>
+        <p id="dialogMessage" style="font-size:14px; color:#ccc;">Message goes here.</p>
+        <div id="dialogButtons" style="display:flex; gap:10px; margin-top:20px;">
+            <button id="dialogOkBtn" style="background:#27ae60; flex:1; border:none; padding:10px; border-radius:8px; color:white; font-weight:bold; cursor:pointer;">OK</button>
+            <button id="dialogCancelBtn" style="background:#333; flex:1; border:none; padding:10px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; display:none;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby4ChegBRqlHpNRm2NuPzGcY_2aOeRO2hlh384YuF-hpQA1lv3SBA84X1u0hKOaf8QS/exec';
+
+    let PINS = JSON.parse(localStorage.getItem('BankPro_PINS')) || {
+        login: localStorage.getItem('BankPro_SecretPass') || "7869", 
+        edit: localStorage.getItem('BankPro_SecretPass') || "7869",
+        del: localStorage.getItem('BankPro_SecretPass') || "7869"
+    };
+    let currentEditID = null, deleteID = null, pendingAction = null, pressTimer;
+    let currentCustomFields = [];
+    let activeScanTarget = "card";
+
+    function handleOTPRequest() {
+        showCustomDialog("SECURITY CENTER", "OTP Sent to 9892980960", false, () => {
+            let otp = prompt("OTP?"); 
+            if(otp === "7506118091") {
+                let choice = prompt("WHICH PIN TO CHANGE?\n1. APP LOGIN PIN\n2. EDIT/UNLOCK PIN\n3. DELETE PIN\n(Type 1, 2 or 3)");
+                let key = (choice === "1") ? "login" : (choice === "2") ? "edit" : (choice === "3") ? "del" : "";
+                let label = (choice === "1") ? "APP LOGIN" : (choice === "2") ? "EDIT/UNLOCK" : (choice === "3") ? "DELETE" : "";
+
+                if(!key) { alert("Invalid Choice!"); return; }
+
+                let newPin = prompt(`ENTER NEW 4-DIGIT PIN FOR [${label}]:`);
+                if(newPin && newPin.length === 4) {
+                    PINS[key] = newPin;
+                    localStorage.setItem('BankPro_PINS', JSON.stringify(PINS));
+                    alert(`${label} PIN Updated!`);
+                } else { alert("Invalid PIN!"); }
+            } else { alert("Wrong OTP!"); }
+        });
+    }
+
+    let fieldConfig = JSON.parse(localStorage.getItem('myFieldConfig')) || [
+        ["AGENT NAME", "agent"], ["BANK NAME", "bank"], ["HOLDER NAME", "holder"],
+        ["A/C TYPE", "acctype"], ["A/C NO.", "acc"], ["IFSC CODE", "ifsc"], 
+        ["BRANCH", "branch"], ["MOBILE NO.", "mobile"], ["CUST ID", "custid"],
+        ["USER ID", "userid"], ["NET L PASS", "netl"], ["NET T PASS", "nett"],
+        ["MOB M PIN", "mpin"], ["MOB T PIN", "mobt"], ["UPI PIN", "upi"], 
+        ["DEBIT CARD", "debit"], ["ATM PIN", "atmpin"], ["CVV/EXP", "cvv"], 
+        ["MOTHER", "mother"], ["NOMINEE", "nominee"], ["PAN CARD", "pan"],
+        ["DOB", "dob"], ["EMAIL ID", "email"], ["ADDRESS", "addr"], ["PASS DATE", "passdate"]
+    ];
+
+    function showCustomDialog(title, message, isConfirm, onOk, onCancel) {
+        const overlay = document.getElementById('customDialogOverlay');
+        const okBtn = document.getElementById('dialogOkBtn');
+        const cancelBtn = document.getElementById('dialogCancelBtn');
+        document.getElementById('dialogTitle').innerText = title;
+        document.getElementById('dialogMessage').innerText = message;
+        cancelBtn.style.display = isConfirm ? 'block' : 'none';
+        okBtn.onclick = () => { overlay.style.display = 'none'; if (onOk) onOk(); };
+        cancelBtn.onclick = () => { overlay.style.display = 'none'; if (onCancel) onCancel(); };
+        overlay.style.display = 'flex';
+    }
+
+    function handleAppUnlockClick() {
+        let count = window.appClickCount || 0; count++; window.appClickCount = count;
+        if (count >= 3) { document.getElementById('secretInput').style.display = 'block'; document.getElementById('secretInput').focus(); window.appClickCount = 0; }
+    }
+    document.getElementById('secretInput').addEventListener('input', function() {
+        if(this.value === PINS.login) { document.getElementById('mainAppOverlay').style.display = 'none'; this.value=''; }
+    });
+
+    function getFirstWord(str) { return str ? str.trim().split(' ')[0].toUpperCase() : ""; }
+
+    function renderForm() {
+        const container = document.getElementById('fields-container');
+        if (!container) return;
+        container.innerHTML = ""; 
+        fieldConfig.forEach((f, index) => {
+            const row = document.createElement('div'); row.className = 'row'; row.id = 'row-' + f[1]; 
+            
+            let labelHtml = f[0];
+            if (f[1] === 'debit') {
+                labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('card')" title="Scan Debit Card">📷</button>`;
+            } else if (f[1] === 'pan') {
+                labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('pan')" title="Scan Pan Card">📷</button>`;
+            }
+
+            let inputHtml = "";
+            if (f[1] === 'addr') {
+                inputHtml = `<textarea class="input-box" id="inp-${f[1]}" style="height:30px;" oninput="liveUpdate(); autoResize(this);" onkeydown="handleEnter(event, ${index})"></textarea>`;
+            } else if (f[1] === 'cvv') {
+                inputHtml = `
+                    <input type="text" class="split-cvv-inp" id="inp-cvv-code" maxlength="4" placeholder="CVV" onkeydown="handleCvvEnter(event, ${index})">
+                    <div class="split-divider"></div>
+                    <input type="text" class="split-exp-inp" id="inp-cvv-exp" maxlength="5" placeholder="MM/YY" onkeydown="handleExpKeyDown(event, ${index})" oninput="handleExpInput(this)">
+                `;
+            } else {
+                inputHtml = `<div class="input-box" id="inp-${f[1]}" contenteditable="true" oninput="liveUpdate()" onkeydown="handleEnter(event, ${index})"></div>`;
+            }
+                
+            row.innerHTML = `<div class="label">${labelHtml}</div><div class="input-wrapper">${inputHtml}</div>`;
+            container.appendChild(row);
+        });
+    }
+
+    let isExpBackspacing = false;
+    function handleExpKeyDown(e, index) {
+        if (e.key === 'Enter') {
+            handleEnter(e, index);
+            return;
+        }
+        if (e.key === 'Backspace') {
+            isExpBackspacing = true;
+            let inp = e.target;
+            let val = inp.value;
+            if (val.length === 3 && val.endsWith('/')) {
+                e.preventDefault();
+                inp.value = val.substring(0, 1);
+            }
+        } else {
+            isExpBackspacing = false;
+        }
+    }
+
+    function handleExpInput(el) {
+        if (isExpBackspacing) return;
+        let v = el.value.replace(/\D/g, '');
+        if (v.length > 4) v = v.substring(0, 4);
+
+        if (v.length >= 2) {
+            el.value = v.substring(0, 2) + '/' + v.substring(2);
+        } else {
+            el.value = v;
+        }
+    }
+
+    function renderCustomFields() {
+        const container = document.getElementById('custom-fields-container');
+        if (!container) return;
+        container.innerHTML = "";
+        currentCustomFields.forEach((cf) => {
+            const row = document.createElement('div'); 
+            row.className = 'row'; 
+            row.id = 'row-cf-' + cf.key;
+            row.innerHTML = `<div class="label" style="background:#5a2399;">${cf.label}</div>
+                             <div class="input-wrapper">
+                                <div class="input-box" id="inp-cf-${cf.key}" contenteditable="true">${cf.value || ""}</div>
+                             </div>`;
+            container.appendChild(row);
+        });
+    }
+
+    function promptAddCustomField() {
+        let name = prompt("ENTER EXTRA FIELD NAME:");
+        if (name && name.trim()) {
+            name = name.trim().toUpperCase();
+            let key = "cf_" + Date.now();
+            currentCustomFields.push({ label: name, key: key, value: "" });
+            renderCustomFields();
+            const el = document.getElementById('inp-cf-' + key);
+            if (el) el.focus();
+        }
+    }
+
+    function handleCvvEnter(e, index) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const expEl = document.getElementById('inp-cvv-exp');
+            if (expEl) expEl.focus();
+        }
+    }
+
+    function handleEnter(e, index) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const nextField = fieldConfig[index + 1];
+            if (nextField) {
+                let nextEl = document.getElementById('inp-' + nextField[1]);
+                if (nextField[1] === 'cvv') {
+                    nextEl = document.getElementById('inp-cvv-code');
+                }
+                if (nextEl) {
+                    nextEl.focus();
+                    if (nextEl.tagName !== 'TEXTAREA' && nextEl.tagName !== 'INPUT') {
+                        const range = document.createRange(); 
+                        const sel = window.getSelection();
+                        range.selectNodeContents(nextEl); 
+                        range.collapse(false);
+                        sel.removeAllRanges(); 
+                        sel.addRange(range);
+                    } else if (nextEl.tagName === 'INPUT') {
+                        nextEl.selectionStart = nextEl.selectionEnd = nextEl.value.length;
+                    } else { 
+                        nextEl.selectionStart = nextEl.selectionEnd = nextEl.value.length; 
+                    }
+                }
+            }
+        }
+    }
+
+    function openScanChoice(target) {
+        activeScanTarget = target;
+        document.getElementById('scanModalHeading').innerText = target === 'pan' ? "SCAN PAN CARD" : "SCAN DEBIT CARD";
+        document.getElementById('scanChoiceModal').style.display = 'flex';
+    }
+    function closeScanChoice() {
+        document.getElementById('scanChoiceModal').style.display = 'none';
+    }
+
+    function startGalleryScan() {
+        closeScanChoice();
+        const galInp = document.getElementById('cardGalleryInput');
+        galInp.value = "";
+        galInp.click();
+    }
+
+    function processCardImage(inputEl) {
+        const file = inputEl.files[0];
+        if (!file) return;
+
+        showCustomDialog("SCANNING", "⚡ Reading Details from Image...", false);
+        const okBtn = document.getElementById('dialogOkBtn');
+        okBtn.style.display = 'none';
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const { data: { text } } = await Tesseract.recognize(e.target.result, 'eng');
+                parseOCRResult(text);
+            } catch (err) {
+                okBtn.style.display = 'block';
+                showCustomDialog("ERROR", "❌ Failed to read image! Please enter manually.", false);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function parseOCRResult(text) {
+        const okBtn = document.getElementById('dialogOkBtn');
+        try {
+            if (activeScanTarget === 'pan') {
+                let cleanPanText = text.toUpperCase().replace(/[^A-Z0-9\n ]/g, ' ');
+                let panCandidate = cleanPanText.match(/[A-Z0-9]{5}\s*[0-9OIS]{4}\s*[A-Z0-9]{1}/);
+                let foundPan = "";
+                
+                if (panCandidate) {
+                    let p = panCandidate[0].replace(/\s+/g, '');
+                    foundPan = p.substring(0, 5) + 
+                               p.substring(5, 9).replace(/O/g, '0').replace(/I/g, '1').replace(/S/g, '5') + 
+                               p.substring(9, 10);
+                }
+
+                let dobMatch = text.match(/\b(0[1-9]|[12][0-9]|3[01])[\/\-\.\s]+(0[1-9]|1[0-2])[\/\-\.\s]+(19[0-9]{2}|20[0-2][0-9])\b/);
+                let foundDob = "";
+                if (dobMatch) {
+                    let d = dobMatch[1].padStart(2, '0');
+                    let m = dobMatch[2].padStart(2, '0');
+                    let y = dobMatch[3];
+                    foundDob = `${d}/${m}/${y}`;
+                    const dobEl = document.getElementById('inp-dob');
+                    if (dobEl) dobEl.innerText = foundDob;
+                }
+
+                const panEl = document.getElementById('inp-pan');
+                if (panEl) {
+                    if (foundPan && foundDob) {
+                        panEl.innerText = `${foundPan}    ${foundDob}`;
+                    } else if (foundPan) {
+                        panEl.innerText = foundPan;
+                    }
+                }
+
+                okBtn.style.display = 'block';
+                showCustomDialog("SUCCESS", "✅ PAN & DOB Scanned Successfully!", false);
+            } else {
+                let rawClean = text.replace(/[^0-9a-zA-Z\/\-\n ]/g, ' ');
+                let digitsOnly = rawClean.replace(/\D/g, '');
+                let cardFound = "";
+
+                let blockMatch = rawClean.match(/\b\d{4}\s*[- ]?\s*\d{4}\s*[- ]?\s*\d{4}\s*[- ]?\d{4}\b/);
+                if (blockMatch) {
+                    cardFound = blockMatch[0].replace(/\D/g, '');
+                } else if (digitsOnly.length >= 16) {
+                    for (let i = 0; i <= digitsOnly.length - 16; i++) {
+                        let sub = digitsOnly.substring(i, i + 16);
+                        if (/^[3-6]/.test(sub)) {
+                            cardFound = sub;
+                            break;
+                        }
+                    }
+                    if (!cardFound) cardFound = digitsOnly.substring(0, 16);
+                } else if (digitsOnly.length >= 15) {
+                    cardFound = digitsOnly.substring(0, 15);
+                }
+
+                if (cardFound && cardFound.length >= 15) {
+                    let formatted = cardFound.match(/.{1,4}/g)?.join(' ') || cardFound;
+                    const debEl = document.getElementById('inp-debit');
+                    if (debEl) debEl.innerText = formatted;
+                }
+
+                let expMatch = rawClean.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*([0-9]{2,4})\b/);
+                if (expMatch) {
+                    const expEl = document.getElementById('inp-cvv-exp');
+                    let yr = expMatch[2];
+                    if (yr.length === 4) yr = yr.substring(2);
+                    if (expEl) expEl.value = expMatch[1] + '/' + yr;
+                }
+
+                let cvvMatch = rawClean.match(/\b(?:CVV|CVC)\s*[:\-]?\s*([0-9]{3})\b/i);
+                if (cvvMatch) {
+                    const cvvEl = document.getElementById('inp-cvv-code');
+                    if (cvvEl && !cvvEl.value.trim()) cvvEl.value = cvvMatch[1];
+                }
+
+                okBtn.style.display = 'block';
+                showCustomDialog("SUCCESS", "✅ Card Details Scanned!", false);
+            }
+        } catch (err) {
+            okBtn.style.display = 'block';
+            showCustomDialog("ERROR", "❌ Could not scan details! Please enter manually.", false);
+        }
+    }
+
+    function autoResize(el) { 
+        el.style.height = '30px'; 
+        if (el.scrollHeight > 30) { 
+            el.style.height = el.scrollHeight + 'px'; 
+        } 
+    }
+
+    function handleMainAction() { clearFormFields(); toggleForm(true, 'new'); }
+
+    function toggleForm(show, mode = 'new') {
+        const formToShare = document.getElementById('form-to-share');
+        const floatOptBtn = document.getElementById('floatOptBtn');
+        const searchArea = document.getElementById('search-inp').parentElement; 
+        const countDisplay = document.querySelector('.count-display'); 
+        const btnContainer = document.getElementById('main-btn-container');
+        const controlsBox = document.querySelector('.controls'); 
+        formToShare.style.display = show ? 'block' : 'none';
+        floatOptBtn.style.display = show ? 'flex' : 'none'; 
+        searchArea.style.display = show ? 'none' : 'flex';
+        if (countDisplay) countDisplay.style.display = show ? 'none' : 'block';
+
+        if (show) {
+            controlsBox.style.background = "none";
+            controlsBox.style.border = "none";
+            controlsBox.style.boxShadow = "none";
+            controlsBox.style.padding = "0"; 
+            if(mode === 'edit') { 
+                setLock(true); 
+                btnContainer.innerHTML = `
+                    <div style="display:flex; gap:5px; padding:5px;">
+                        <button class="btn-yellow" style="flex:5; height:38px; font-size:14px; border-radius:10px;" onclick="askUnlock()">🔓 UNLOCK TO EDIT</button>
+                        <button class="btn-black" style="flex:1; max-width:45px; height:38px; font-size:14px; border-radius:10px;" onclick="refreshApp()">X</button>
+                    </div>`; 
+            } else { 
+                setLock(false); 
+                btnContainer.innerHTML = `
+                    <div style="display:flex; gap:5px; padding:5px;">
+                        <button class="btn-blue" style="flex:4; height:38px; font-size:13px; border-radius:10px;" onclick="handleSave(false)">💾 SAVE NEW ENTRY</button>
+                        <button style="background:#00f3ff; color:#000; flex:1; max-width:45px; height:38px; font-size:18px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>
+                        <button class="btn-red" style="flex:1; max-width:45px; height:38px; font-size:14px; border-radius:10px;" onclick="refreshApp()">X</button>
+                    </div>`; 
+            }
+        } else {
+            controlsBox.style.background = "#1562f5"; 
+            controlsBox.style.border = "2px solid #00f3ff";
+            controlsBox.style.borderRadius = "20px";
+            controlsBox.style.padding = "5px 2px";
+            controlsBox.style.boxShadow = "0 15px 30px rgba(0,0,0,0.9)";
+
+            btnContainer.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px; padding:8px 10px 5px 10px;">
+                    <button class="btn-save" style="margin:0; flex: 3; height: 42px; width: auto; background: #08ee0e84 !important; color: #ffffff !important; border: 2.5px solid #ff0000; box-shadow: 0 8px #00f3ff; border-radius: 2px;" onclick="handleMainAction()">NEW ENTRY</button>
+                    <button onclick="refreshApp()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0; color: #fff;">🔄</button>
+                    <div id="gearBtn" style="display: flex; justify-content: center;">
+                        <button onclick="toggleVault()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0;">⚙️</button>
+                    </div>
+                </div>`; 
+            document.getElementById('option-menu').style.display = 'none'; 
+        }
+    }
+
+    function setLock(lock) { 
+        fieldConfig.forEach(f => { 
+            if (f[1] === 'cvv') {
+                const cvvBox = document.getElementById('inp-cvv-code');
+                const expBox = document.getElementById('inp-cvv-exp');
+                if (cvvBox) cvvBox.disabled = lock;
+                if (expBox) expBox.disabled = lock;
+            } else {
+                const el = document.getElementById('inp-'+f[1]); 
+                if(el) {
+                    if(el.tagName === 'TEXTAREA') el.readOnly = lock; 
+                    else el.contentEditable = !lock; 
+                }
+            }
+        }); 
+        currentCustomFields.forEach(cf => {
+            const el = document.getElementById('inp-cf-' + cf.key);
+            if(el) el.contentEditable = !lock;
+        });
+    }
+
+    function clearFormFields() {
+        fieldConfig.forEach(f => { 
+            if (f[1] === 'cvv') {
+                const cvvBox = document.getElementById('inp-cvv-code');
+                const expBox = document.getElementById('inp-cvv-exp');
+                if (cvvBox) { cvvBox.value = ""; cvvBox.parentElement.style.backgroundColor = "#fff"; }
+                if (expBox) { expBox.value = ""; }
+            } else {
+                const el = document.getElementById('inp-'+f[1]); 
+                if(el) {
+                    if(el.tagName === 'TEXTAREA') { el.value = ""; el.style.height = '30px'; } 
+                    else { el.innerText = ""; } 
+                    el.parentElement.style.backgroundColor = "#fff"; 
+                }
+            }
+        });
+        currentCustomFields = [];
+        renderCustomFields();
+        currentEditID = null; liveUpdate();
+    }
+
+    async function handleSave(forceNew) {
+        const holder = (document.getElementById('inp-holder').innerText || document.getElementById('inp-holder').value || "").trim();
+        if(!holder) return showCustomDialog("Error", "HOLDER NAME IS REQUIRED!", false);
+        
+        let stored = JSON.parse(localStorage.getItem('BankProData') || '[]');
+        const data = { id: forceNew ? Date.now() : (currentEditID || Date.now()) };
+        
+        fieldConfig.forEach(f => { 
+            if (f[1] === 'cvv') {
+                const cvvVal = (document.getElementById('inp-cvv-code')?.value || "").trim();
+                const expVal = (document.getElementById('inp-cvv-exp')?.value || "").trim();
+                data[f[1]] = cvvVal ? `${cvvVal}    ${expVal}` : expVal;
+            } else {
+                const el = document.getElementById('inp-'+f[1]); 
+                data[f[1]] = (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim(); 
+            }
+        });
+
+        let savedCF = [];
+        currentCustomFields.forEach(cf => {
+            const el = document.getElementById('inp-cf-' + cf.key);
+            let val = el ? el.innerText.trim() : (cf.value || "");
+            savedCF.push({ label: cf.label, key: cf.key, value: val });
+        });
+        if (savedCF.length > 0) {
+            data.customFields = savedCF;
+        }
+
+        if (data.passdate) {
+            if (/\d/.test(data.passdate) && data.passdate.length < 15) data.passdate = formatMyDate(data.passdate);
+        }
+
+        if (!forceNew && currentEditID) { 
+            stored = stored.map(i => i.id === currentEditID ? data : i); 
+        } else { 
+            stored.unshift(data); 
+        }
+
+        localStorage.setItem('BankProData', JSON.stringify(stored));
+        
+        renderList(); 
+        toggleForm(false);
+        showCustomDialog("Saved", "✅ फाइल सेव हो गई है! (बैकअप खुद लेना न भूलें)", false);
+    }
+
+    function renderList() {
+        const listDiv = document.getElementById('data-list');
+        const stored = JSON.parse(localStorage.getItem('BankProData') || '[]');
+        listDiv.innerHTML = ""; 
+        document.getElementById('count-total').innerText = stored.length;
+        
+        stored.forEach(item => {
+            const div = document.createElement('div'); 
+            div.className = 'list-item';
+            div.style.flexDirection = "column";
+            div.style.alignItems = "flex-start";
+            div.style.gap = "2px";
+            div.setAttribute('data-id', item.id);
+            div.setAttribute('data-bank', (item.bank || "").trim().toLowerCase());
+            div.setAttribute('data-agent', (item.agent || "").trim().toLowerCase());
+            div.setAttribute('data-holder', (item.holder || "").trim().toLowerCase());
+            div.setAttribute('data-mobile', (item.mobile || "").trim());
+
+            let passDisplay = "";
+            if (item.passdate) {
+                const isDate = item.passdate.includes('-') || item.passdate.includes('/');
+                passDisplay = `<span style="color:${isDate ? '#40fa59' : '#f50606'}; font-size:11px; font-weight:bold; margin-left:4px;">(${item.passdate})</span>`;
+            }
+
+            const mobText = item.mobile ? item.mobile : "No Number";
+
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+                    <div><b style="color:#e7f557;">${getFirstWord(item.bank || "")}</b> - ${getFirstWord(item.holder || "")} ${passDisplay}</div>
+                    <div style="color:#2afa45; font-size:13px; font-weight:bold;">${getFirstWord(item.agent || "")}</div>
+                </div>
+                <div class="mob-preview" style="font-size:12px; font-family:monospace; letter-spacing:1px; font-weight:bold;">
+                    <span style="color:#25D366; font-size:15px;">&#9742;</span> <span class="mob-num-text" style="color:#ffffff;">${mobText}</span>
+                </div>
+            `;
+            
+            div.onclick = () => loadItem(item.id);
+            listDiv.appendChild(div);
+        });
+    }
+
+    function loadItem(id) {
+        const item = JSON.parse(localStorage.getItem('BankProData')).find(i => i.id === id);
+        currentEditID = id;
+        fieldConfig.forEach(f => { 
+            if (f[1] === 'cvv') {
+                const rawCvvExp = (item[f[1]] || "").trim();
+                const cvvBox = document.getElementById('inp-cvv-code');
+                const expBox = document.getElementById('inp-cvv-exp');
+                
+                let parts = rawCvvExp.split(/\s+/);
+                if (parts.length >= 2) {
+                    if (cvvBox) cvvBox.value = parts[0];
+                    if (expBox) expBox.value = parts.slice(1).join(' ');
+                } else {
+                    if (cvvBox) cvvBox.value = "";
+                    if (expBox) expBox.value = rawCvvExp;
+                }
+                if (cvvBox) cvvBox.parentElement.style.backgroundColor="#59cba2cf";
+            } else {
+                const el = document.getElementById('inp-'+f[1]); 
+                if(el) {
+                    if(el.tagName === 'TEXTAREA') { el.value = item[f[1]] || ""; autoResize(el); } 
+                    else { el.innerText = item[f[1]] || ""; } 
+                    el.parentElement.style.backgroundColor="#59cba2cf"; 
+                }
+            }
+        });
+
+        currentCustomFields = item.customFields || [];
+        renderCustomFields();
+        currentCustomFields.forEach(cf => {
+            const el = document.getElementById('inp-cf-' + cf.key);
+            if (el) el.parentElement.style.backgroundColor = "#59cba2cf";
+        });
+
+        liveUpdate(); toggleForm(true, 'edit');
+    }
+
+    function askUnlock() { pendingAction = "unlock"; setupModal("ENTER EDIT PIN", "#4285F4", "UNLOCK"); }
+    function openDeleteModal(id) { deleteID = id; pendingAction = "delete"; setupModal("ENTER DELETE PIN", "red", "DELETE"); }
+
+    function setupModal(title, color, btnText) {
+        document.activeElement.blur();
+        document.getElementById('delOverlay').style.display = 'flex';
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalTitle').style.color = color;
+        document.getElementById('confirmDelBtn').style.background = color;
+        document.getElementById('delPassInput').value = ""; document.getElementById('delPassInput').focus();
+        document.getElementById('delPassInput').oninput = function() { if (this.value.length === 4) processPinAction(this.value); };
+    }
+
+    function processPinAction(enteredPin) {
+        if (pendingAction === "unlock") {
+            if (enteredPin === PINS.edit) {
+                setLock(false); 
+                
+                fieldConfig.forEach(f => {
+                    if (f[1] === 'cvv') {
+                        const cvvBox = document.getElementById('inp-cvv-code');
+                        if (cvvBox) cvvBox.parentElement.style.backgroundColor = "#ffffff";
+                    } else {
+                        const el = document.getElementById('inp-' + f[1]);
+                        if (el) el.parentElement.style.backgroundColor = "#ffffff"; 
+                    }
+                });
+                currentCustomFields.forEach(cf => {
+                    const el = document.getElementById('inp-cf-' + cf.key);
+                    if (el) el.parentElement.style.backgroundColor = "#ffffff";
+                });
+
+                document.getElementById('main-btn-container').innerHTML = `
+                    <div style="display:flex; gap:4px; padding:5px; align-items:center;">
+                        <button class="btn-blue" style="flex:3; height:34px; font-size:11px; margin:0;" onclick="handleSave(false)">🆙 UPDATE</button>
+                        <button class="btn-purple" style="flex:2; height:34px; font-size:11px; margin:0;" onclick="handleSave(true)">➕ NEW</button>
+                        <button style="background:#00f3ff; color:#000; flex:1; max-width:40px; height:34px; font-size:16px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>
+                        <button style="background:#ff4757; flex:1; max-width:40px; height:34px; font-size:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="openDeleteModal(currentEditID)" title="Delete Entry">🗑️</button>
+                        <button class="btn-black" style="flex:1; max-width:40px; height:34px; font-size:13px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="refreshApp()">X</button>
+                    </div>`;
+
+                closeDelModal();
+            } else { wrongPin(); }
+
+        } else if (pendingAction === "delete") {
+            if (enteredPin === PINS.del) {
+                if (isTrashDelete) { 
+                    let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');
+                    trash = trash.filter(i => i.id !== deleteID);
+                    localStorage.setItem('BankPro_Trash', JSON.stringify(trash));
+                    
+                    closeDelModal();
+                    showCustomDialog("SUCCESS", "Permanently Deleted from Trash", false);
+                } else { 
+                    let allData = JSON.parse(localStorage.getItem('BankProData') || '[]');
+                    let itemToTrash = allData.find(i => i.id === deleteID);
+                    
+                    if (itemToTrash) {
+                        let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');
+                        trash.unshift(itemToTrash);
+                        localStorage.setItem('BankPro_Trash', JSON.stringify(trash));
+                    }
+
+                    let stored = allData.filter(i => i.id !== deleteID);
+                    localStorage.setItem('BankProData', JSON.stringify(stored));
+                    
+                    renderList();
+                    closeDelModal();
+                    showCustomDialog("DELETED", "Moved to Recycle Bin", false);
+                }
+                isTrashDelete = false;
+            } else { wrongPin(); }
+        }
+    }
+
+    function wrongPin() {
+        document.getElementById('delPassInput').value = ""; 
+        showCustomDialog("WRONG PIN", "ACCESS DENIED", false);
+    }
+
+    function closeDelModal() { 
+        document.getElementById('delOverlay').style.display = 'none';
+        if(isTrashDelete) { 
+            showTrashList(); 
+            isTrashDelete = false;
+        } 
+    }
+
+    async function saveToSheet(show) {
+        const fullBackup = {
+            mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
+            trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]')
+        };
+        try { 
+            await fetch(scriptURL, { 
+                method: 'POST', 
+                mode: 'no-cors', 
+                body: JSON.stringify(fullBackup),
+                keepalive: true
+            }); 
+            if(show) showCustomDialog("Success", "✅ Successfull BacupData!", false); 
+        } catch (e) { 
+            if(show) showCustomDialog("Error", "❌ InternalError!", false); 
+        }
+    }
+
+    async function importFromSheet() {
+        showCustomDialog("Restore?", "Overwrite local data?", true, async () => {
+            try { 
+                document.getElementById('dialogTitle').innerText = "SYNCING...";
+                document.getElementById('dialogMessage').innerText = "Downloading Backup...";
+                document.getElementById('dialogOkBtn').style.display = 'none';
+                document.getElementById('dialogCancelBtn').style.display = 'none';
+
+                const res = await fetch(scriptURL + "?action=read&t=" + Date.now(), {
+                    method: 'GET',
+                    redirect: 'follow'
+                }); 
+                
+                const textData = await res.text(); 
+                
+                try {
+                    const data = JSON.parse(textData); 
+                    
+                    let mainList = Array.isArray(data.mainData) ? data.mainData : (Array.isArray(data) ? data : []);
+                    let trashList = Array.isArray(data.trashData) ? data.trashData : [];
+
+                    localStorage.setItem('BankProData', JSON.stringify(mainList));
+                    localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
+                    
+                    renderList(); 
+                    document.getElementById('dialogOkBtn').style.display = 'block';
+                    showCustomDialog("Success", "✅ Successfull Restore!", false); 
+                    
+                } catch (parseError) {
+                    document.getElementById('dialogOkBtn').style.display = 'block';
+                    alert("⚠️ Google Script Error: डेटा सही फॉर्मेट में नहीं है!\nServer Message: " + textData.substring(0, 100));
+                    showCustomDialog("Error", "❌ रिस्टोर फेल! (Data Format Error)", false);
+                }
+            } 
+            catch (e) { 
+                document.getElementById('dialogOkBtn').style.display = 'block';
+                alert("⚠️ System Error: " + e.message);
+                showCustomDialog("Error", "❌ रिस्टोर फेल! (Network Blocked)", false); 
+            }
+        });
+    }
+
+    function liveUpdate() {
+        const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }
+        document.getElementById('head-agent').innerText = getFirstWord(getVal('agent')) || "NAME";
+        document.getElementById('head-title').innerText = (getFirstWord(getVal('bank')) || "BANK") + " / " + (getFirstWord(getVal('holder')) || "HOLDER");
+    }
+
+    function filterList() {
+        const rawInput = document.getElementById('search-inp').value;
+        const queryTrim = rawInput.trim();
+        const items = Array.from(document.getElementsByClassName('list-item'));
+
+        if (!queryTrim) {
+            items.forEach(it => {
+                it.style.display = "flex";
+                const numSpan = it.querySelector('.mob-num-text');
+                if(numSpan) numSpan.innerText = it.getAttribute('data-mobile') || "No Number";
+            });
+            document.getElementById('count-total').innerText = items.length;
+            return;
+        }
+
+        const isPureDigitSearch = /^\d+$/.test(queryTrim);
+        const hasPatternChar = /[\s\-_.*xX]/.test(rawInput) && /\d/.test(rawInput);
+        let regex = null;
+
+        if (hasPatternChar) {
+            let pattern = rawInput
+                .replace(/[^0-9\s\-_.*xX]/g, '')
+                .replace(/[\s\-_.*xX]/g, '\\d');
+
+            try {
+                regex = new RegExp(pattern);
+            } catch(e) {
+                regex = null;
+            }
+        }
+
+        let visibleItems = [];
+        const queryLower = queryTrim.toLowerCase();
+
+        items.forEach(it => {
+            const mobileRaw = (it.getAttribute('data-mobile') || "").replace(/\D/g, '');
+            let isMatch = false;
+
+            if (isPureDigitSearch || regex) {
+                // केवल मोबाइल नंबर में सर्च करें (शुरू, बीच, आखिरी कहीं भी)
+                if (regex && mobileRaw) {
+                    if (regex.test(mobileRaw)) isMatch = true;
+                } else if (isPureDigitSearch && mobileRaw) {
+                    if (mobileRaw.includes(queryTrim)) isMatch = true;
+                }
+            } else {
+                // टेक्स्ट सर्च: केवल Bank, Agent या Holder के नाम से मैच करें
+                const bankVal = it.getAttribute('data-bank') || "";
+                const agentVal = it.getAttribute('data-agent') || "";
+                const holderVal = it.getAttribute('data-holder') || "";
+
+                if (bankVal.includes(queryLower) || agentVal.includes(queryLower) || holderVal.includes(queryLower)) {
+                    isMatch = true;
+                }
+            }
+
+            if (isMatch) {
+                it.style.display = "flex";
+                visibleItems.push(it);
+            } else {
+                it.style.display = "none";
+            }
+        });
+
+        document.getElementById('count-total').innerText = visibleItems.length;
+
+        if (visibleItems.length === 1 && queryTrim.length >= 4 && (hasPatternChar || isPureDigitSearch)) {
+            const targetId = Number(visibleItems[0].getAttribute('data-id'));
+            loadItem(targetId);
+        }
+    }
+
+    function refreshApp() { toggleForm(false); renderList(); document.getElementById('vaultPanel').style.display = 'none'; }
+    function toggleOptionMenu() { document.getElementById('option-menu').style.display = document.getElementById('option-menu').style.display === 'none' ? 'block' : 'none'; }
+    function toggleVault() { document.getElementById('vaultPanel').style.display = document.getElementById('vaultPanel').style.display === 'none' ? 'block' : 'none'; }
+
+    async function startSharingProcess() {
+        const form = document.getElementById('form-to-share');
+        form.style.display = 'block';
+
+        const rows = form.querySelectorAll('.row');
+        rows.forEach(row => {
+            if (!row.querySelector('.hide-btn')) {
+                const btn = document.createElement('button');
+                btn.innerText = "➖";
+                btn.className = "hide-btn";
+                btn.onclick = () => row.remove();
+                row.prepend(btn);
+            }
+        });
+        if (!document.getElementById('temp-print-btn')) {
+            const printBtn = document.createElement('button');
+            printBtn.id = "temp-print-btn";
+            printBtn.innerText = "✅ PRINT IMAGE NOW";
+            printBtn.style = "width:100%; padding:15px; background:#25D366; color:white; font-weight:bold; border:2px solid white; margin-bottom:10px;";
+            printBtn.onclick = async () => {
+                printBtn.remove();
+                form.querySelectorAll('.hide-btn').forEach(b => b.remove());
+                await shareAsImage();
+                location.reload(); 
+            };
+            form.prepend(printBtn);
+        }
+    }
+
+    async function shareAsImage() {
+        const el = document.getElementById('form-to-share');
+        el.style.display = 'block';
+        const agentBar = document.getElementById('head-agent');
+        const agentRow = document.getElementById('row-agent');
+        const passRow = document.getElementById('row-passdate');
+        if (agentBar) agentBar.style.display = 'none';
+        if (agentRow) agentRow.style.display = 'none';
+        if (passRow) passRow.style.display = 'none'; 
+        try {
+            const canvas = await html2canvas(el, { backgroundColor: "#0a1f14", scale: 2, useCORS: true });
+            if (agentBar) agentBar.style.display = 'block';
+            if (agentRow) agentRow.style.display = 'block';
+            if (passRow) passRow.style.display = 'block';
+            el.style.display = 'none';
+            const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+            const file = new File([blob], "BankDetails.png", { type: 'image/png' });
+            if (navigator.share) { await navigator.share({ files: [file], title: 'Bank Details' }); }
+        } catch (err) { 
+            if (agentBar) agentBar.style.display = 'block';
+            if (agentRow) agentRow.style.display = 'block';
+            if (passRow) passRow.style.display = 'block';
+            el.style.display = 'none'; 
+            alert("Error sharing image"); 
+        }
+    }
+
+    async function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const el = document.getElementById('form-to-share');
+
+        const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }
+        const fileName = `${getFirstWord(getVal('bank')) || "BANK"}_${getFirstWord(getVal('holder')) || "HOLDER"}.pdf`;
+        el.style.display = 'block'; 
+        el.style.width = '450px'; 
+        try {
+            const canvas = await html2canvas(el, { backgroundColor: "#0a1f14", scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/jpeg', 0.9);
+            const imgWidth = 190; 
+            const imgHeight = (canvas.height * imgWidth) / canvas.width; 
+            const pdf = new jsPDF('p', 'mm', [imgWidth + 20, imgHeight + 20]);
+            pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);
+            pdf.save(fileName);
+        } catch (err) {
+            alert("PDF Error: " + err);
+        } finally {
+            el.style.display = 'none'; 
+            el.style.width = ''; 
+            if (typeof refreshApp === "function") { refreshApp(); }
+        }
+    }
+
+    function formatMyDate(str) {
+        if (!str) return "";
+        let d = str.toLowerCase(); const months = { 'jan': 'Jan', 'feb': 'Feb', 'mar': 'Mar', 'apr': 'Apr', 'may': 'May', 'jun': 'Jun', 'jul': 'Jul', 'aug': 'Aug', 'sep': 'Sep', 'oct': 'Oct', 'nov': 'Nov', 'dec': 'Dec' };
+        let parts = d.match(/(\d+)|([a-z]+)/g); if (!parts || parts.length < 2) return str;
+        let day = parts[0].padStart(2, '0'); let monthName = months[parts[1].substring(0,3)] || "Jan";
+        let year = parts[2] ? (parts[2].length === 2 ? "20" + parts[2] : parts[2]) : "2026";
+        return `${day}-${monthName}-${year}`;
+    }
+
+    function openFieldManager() { document.getElementById('fieldModal').style.display = 'flex'; renderFieldEditList(); }
+    function closeFieldManager() {
+        document.querySelector('#fieldModal h3').innerText = "MANAGE FIELDS";
+        document.querySelector('#fieldModal h3').style.color = "#00f3ff";
+        document.getElementById('new-field-name').parentElement.style.display = 'flex'; 
+        
+        localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig));
+        renderForm();
+        document.getElementById('fieldModal').style.display = 'none';
+        refreshApp();
+    }
+
+    function renderFieldEditList() {
+        const list = document.getElementById('field-list-edit'); list.innerHTML = "";
+        fieldConfig.forEach((f, index) => {
+            const div = document.createElement('div'); div.style = "display:flex; justify-content:space-between; background:#262626; padding:10px; margin-bottom:5px; border-radius:10px;";
+            div.innerHTML = `<span>${f[0]}</span><div><span onclick="moveField(${index}, -1)">🔼</span><span onclick="moveField(${index}, 1)">🔽</span></div>`;
+            div.ontouchstart = () => pressTimer = setTimeout(() => { if(confirm("Delete?")){ fieldConfig.splice(index, 1); localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig)); renderFieldEditList(); } }, 800);
+            div.ontouchend = () => clearTimeout(pressTimer);
+            list.appendChild(div);
+        });
+    }
+
+    function moveField(idx, step) {
+        let newIdx = idx + step; if (newIdx >= 0 && newIdx < fieldConfig.length) {
+            let temp = fieldConfig[idx]; fieldConfig[idx] = fieldConfig[newIdx]; fieldConfig[newIdx] = temp;
+            renderFieldEditList();
+        }
+    }
+
+    function addNewField() {
+        const name = document.getElementById('new-field-name').value.trim().toUpperCase();
+        if(name) { fieldConfig.push([name, name.toLowerCase().replace(/\s+/g, '')]); document.getElementById('new-field-name').value = ""; renderFieldEditList(); }
+    }
+    
+    window.onload = () => { 
+        renderList(); 
+        renderForm(); 
+
+        // Service worker registration
+        if ('serviceWorker' in navigator) {
+            const swCode = `self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request).catch(function() { return caches.match(e.request); })); });`;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(){});
+        }
+    };
+
+    let isTrashDelete = false;
+    function showTrashList() {
+        let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');
+        if (trash.length === 0) return showCustomDialog("EMPTY", "No items in Trash", false);
+
+        document.getElementById('fieldModal').style.display = 'flex';
+        const list = document.getElementById('field-list-edit');
+        
+        document.querySelector('#fieldModal h3').innerText = "RECYCLE BIN";
+        document.querySelector('#fieldModal h3').style.color = "#ff4757";
+        document.getElementById('new-field-name').parentElement.style.display = 'none'; 
+        
+        list.innerHTML = `<p style="font-size:10px; color:yellow; text-align:center; margin-bottom:10px;">Tap to Restore | Long Press to Delete</p>`;
+
+        trash.forEach(item => {
+            const div = document.createElement('div');
+            div.style = "background:#333; padding:10px; margin-bottom:5px; border-radius:10px; border-left:4px solid #e91e63; color:white; -webkit-user-select:none; user-select:none; cursor:pointer;";
+            div.innerHTML = `<b>${item.bank || 'BANK'}</b> - ${item.holder || 'HOLDER'}`;
+            
+            let timer;
+            let isLongPress = false;
+
+            const handleTap = () => {
+                document.getElementById('fieldModal').style.display = 'none';
+                showCustomDialog("RESTORE?", "Bring this entry back?", true, 
+                    () => {
+                        restoreSpecificItem(item.id);
+                        showCustomDialog("SUCCESS", "Entry restored!", false);
+                    }, 
+                    () => { showTrashList(); }
+                );
+            };
+
+            const startPress = (e) => {
+                isLongPress = false;
+                timer = setTimeout(() => {
+                    isLongPress = true; 
+                    deleteID = item.id;
+                    isTrashDelete = true;
+                    pendingAction = "delete";
+                    document.getElementById('fieldModal').style.display = 'none';
+                    setupModal("PERMANENT DELETE", "red", "DELETE");
+                }, 800);
+            };
+
+            const endPress = () => {
+                clearTimeout(timer);
+                if (!isLongPress) handleTap();
+            };
+
+            div.onmousedown = startPress;
+            div.onmouseup = endPress;
+            div.ontouchstart = (e) => { startPress(e); };
+            div.ontouchend = (e) => { endPress(); };
+
+            list.appendChild(div);
+        });
+    }
+
+    function restoreSpecificItem(id) {
+        let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');
+        let item = trash.find(i => i.id === id);
+        if (item) {
+            let currentData = JSON.parse(localStorage.getItem('BankProData') || '[]');
+            item.id = Date.now(); 
+            currentData.push(item); 
+            
+            localStorage.setItem('BankProData', JSON.stringify(currentData));
+            localStorage.setItem('BankPro_Trash', JSON.stringify(trash.filter(i => i.id !== id)));
+            renderList();
+        }
+    }
+    
+    async function handleLogout() {
+        document.getElementById('vaultPanel').style.display = 'none';
+        await saveToSheet(false); 
+        showCustomDialog("Success", "✅ Successfull BacupData!", false, () => {
+            document.getElementById('secretInput').value = "";
+            document.getElementById('mainAppOverlay').style.display = 'flex';
+            document.getElementById('secretInput').style.display = 'none';
+        });
+    }
+</script>
+<div id="fieldModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#1a1a1a; width:95%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #00f3ff; max-height:85vh; overflow-y:auto;">
+        <h3 style="color:#00f3ff; text-align:center; margin-top:0;">MANAGE FIELDS</h3>
+        <div id="field-list-edit" style="margin-bottom:15px;"></div>
+        <div style="display:flex; gap:5px; background:#222; padding:10px; border-radius:10px;">
+            <input type="text" id="new-field-name" placeholder="Name..." style="flex:1; background:transparent; border:none; color:white;">
+            <button onclick="addNewField()" style="background:#00f3ff; color:#000;">ADD</button>
+        </div>
+        <button onclick="closeFieldManager()" style="width:100%; margin-top:10px; background:#333;">CLOSE</button>
+    </div>
+</div>
+</body>
+</html>
