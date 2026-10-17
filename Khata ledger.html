@@ -32,18 +32,14 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            -webkit-user-select: none !important;
-            user-select: none !important;
             -webkit-tap-highlight-color: transparent !important;
         }
 
-        input, textarea, select {
-            -webkit-user-select: text !important;
-            user-select: text !important;
-        }
-
+        /* अनचाहा रिफ्रेश (Pull to refresh) रोकने के लिए */
         html, body {
-            overscroll-behavior-y: contain; /* स्वाइप करने पर अनचाहा रिफ्रेश रोकता है */
+            overscroll-behavior-y: none !important;
+            overscroll-behavior: none !important;
+            height: 100%;
         }
 
         body {
@@ -52,6 +48,14 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* इनपुट और टेक्स्टएरिया में सेलेक्ट, कट, कॉपी, पेस्ट पूरी तरह चालू */
+        input, textarea, select {
+            -webkit-user-select: text !important;
+            user-select: text !important;
         }
 
         .app-container {
@@ -64,6 +68,7 @@
             flex-direction: column;
             border-left: 1px solid var(--border-soft);
             border-right: 1px solid var(--border-soft);
+            overscroll-behavior-y: none;
         }
 
         .summary-header {
@@ -179,6 +184,7 @@
         .ledger-list {
             flex: 1;
             padding-bottom: 80px;
+            overflow-y: auto;
         }
 
         .party-summary-row {
@@ -467,6 +473,28 @@
         }
         .form-control:focus { border-color: #3b82f6; }
 
+        /* क्विक एक्शन बटन स्टाइल (कॉपी, पेस्ट, ट्रांसफर के लिए) */
+        .field-quick-bar {
+            display: flex;
+            gap: 5px;
+            margin-top: 3px;
+            justify-content: flex-end;
+        }
+        .btn-field-action {
+            background: #172233;
+            border: 1px solid #2b394f;
+            color: #38bdf8;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .btn-field-action:active {
+            background: #38bdf8;
+            color: #0b0e14;
+        }
+
         .form-radio-row { display: flex; gap: 6px; }
         .radio-btn-label {
             flex: 1;
@@ -544,7 +572,7 @@
         }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
     <div class="app-container">
         <!-- Clean Compact Summary Header -->
@@ -639,6 +667,7 @@
                     <span style="color:#38bdf8; font-weight:600;">Sheet ›</span>
                 </div>
 
+                <div class="setting-section-title">4. Manage Masters & Categories</div>
                 <div class="setting-item" onclick="openManageMastersView()">
                     <span style="color:#e2e8f0; font-weight:600;">Manage Parties (Edit / Delete)</span>
                     <span style="color:var(--accent-recv); font-weight:600;">Manage ›</span>
@@ -648,7 +677,7 @@
                     <span style="color:#38bdf8; font-weight:600;">Categories ›</span>
                 </div>
 
-                <div class="setting-section-title">4. Cloud Backup</div>
+                <div class="setting-section-title">5. Cloud Backup</div>
                 <div class="setting-item" onclick="manualCloudBackup()">
                     <span>Google Drive Cloud Backup</span>
                     <span style="color:#63b3ed; font-weight:500;">☁️ Backup</span>
@@ -766,16 +795,16 @@
                     </div>
                 </div>
 
-                <!-- CATEGORY: नो ड्रॉपडाउन, शुद्ध फ्री टाइप इनपुट -->
-                <div class="form-group">
-                    <label>Category / Purpose</label>
-                    <input type="text" id="inputParpas" class="form-control" placeholder="" autocomplete="off">
-                </div>
+<div class="form-group">
+    <label>Category / Purpose</label>
+    <input type="text" id="inputParpas" class="form-control" placeholder="" autocomplete="off">
+</div>
 
-                <div class="form-group">
-                    <label>Note / Remarks</label>
-                    <input type="text" id="inputNote" class="form-control" placeholder="">
-                </div>
+<div class="form-group">
+    <label>Note / Remarks</label>
+    <input type="text" id="inputNote" class="form-control" placeholder="">
+</div>
+
             </div>
 
             <div class="modal-footer">
@@ -811,13 +840,17 @@
         let longPressTimer = null;
         let isLongPressTriggered = false;
 
+        // टच स्क्रॉलिंग व अनचाहे डिलीट/क्लिक को रोकने के वैरिएबल्स
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isTouchScrolling = false;
+
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         window.onload = function() {
             loadRecords();
             document.getElementById('inputDate').value = getTodayDate();
         };
-
         function getTodayDate() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -1125,8 +1158,9 @@
                         id="tx-row-${tx.originalIdx}"
                         onmousedown="startTxPress(${tx.originalIdx})" 
                         onmouseup="endTxPress(${tx.originalIdx})" 
-                        ontouchstart="startTxPress(${tx.originalIdx})" 
-                        ontouchend="endTxPress(${tx.originalIdx})"
+                        ontouchstart="handleTxTouchStart(event, ${tx.originalIdx})" 
+                        ontouchmove="handleTxTouchMove(event)"
+                        ontouchend="handleTxTouchEnd(${tx.originalIdx})"
                         style="cursor:pointer; -webkit-user-select:none; user-select:none;">
                         <td style="font-size:10px;">${formatHindiDate(tx.date)}</td>
                         <td style="text-align:left;">
@@ -1205,6 +1239,36 @@
             `;
         }
 
+        // मोबाइल टच-स्क्रॉलिंग और लॉन्ग-प्रेस का सही समाधान
+        function handleTxTouchStart(e, originalIdx) {
+            isTouchScrolling = false;
+            if (e.touches && e.touches[0]) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }
+            startTxPress(originalIdx);
+        }
+
+        function handleTxTouchMove(e) {
+            if (!e.touches || !e.touches[0]) return;
+            const diffX = Math.abs(e.touches[0].clientX - touchStartX);
+            const diffY = Math.abs(e.touches[0].clientY - touchStartY);
+            // यदि उंगली 8 पिक्सल से ज्यादा हिली, तो यह स्क्रॉल है, लॉन्ग-प्रेस तुरंत रद्द करें
+            if (diffX > 8 || diffY > 8) {
+                isTouchScrolling = true;
+                clearTimeout(longPressTimer);
+            }
+        }
+
+        function handleTxTouchEnd(originalIdx) {
+            clearTimeout(longPressTimer);
+            // यदि यूजर सिर्फ स्क्रॉल कर रहा था, तो कोई डिलीट या फॉर्म न खोलें
+            if (isTouchScrolling) {
+                return;
+            }
+            endTxPress(originalIdx);
+        }
+
         function startTxPress(originalIdx) {
             isLongPressTriggered = false;
             longPressTimer = setTimeout(() => {
@@ -1216,7 +1280,7 @@
                     if (navigator.vibrate) navigator.vibrate(50);
                     renderStatementTable(currentViewingPerson);
                 }
-            }, 600);
+            }, 700); // सुरक्षित 700ms टाइमर
         }
 
         function endTxPress(originalIdx) {
@@ -1638,7 +1702,7 @@
 
                 title.innerText = 'Edit Entry';
                 btnDelete.style.display = 'block';
-                btnSaveMore.style.display = 'none'; // एडिट में लगातार सेव की जरूरत नहीं
+                btnSaveMore.style.display = 'none';
             } else {
                 document.getElementById('editIndex').value = -1;
                 document.getElementById('inputDate').value = getTodayDate();
@@ -1728,17 +1792,14 @@
             renderView();
 
             if (keepOpen) {
-                // फॉर्म खुला रखें और उसी व्यक्ति के लिए अगली एंट्री तैयार रखें
                 document.getElementById('inputAmount').value = '';
                 document.getElementById('inputNote').value = '';
                 document.getElementById('inputParpas').value = '';
                 
-                // नया अपडेटेड बैलेंस रिफ्लेक्ट करें
                 const bal = getPersonNetBalance(name, account);
                 document.getElementById('inputTargetAmount').value = bal.net;
                 updateRemainingHint();
                 
-                // फोकस रकम पर ले जाएं
                 document.getElementById('inputAmount').focus();
             } else {
                 closeEntryForm();
