@@ -42,6 +42,10 @@
             user-select: text !important;
         }
 
+        html, body {
+            overscroll-behavior-y: contain; /* स्वाइप करने पर अनचाहा रिफ्रेश रोकता है */
+        }
+
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
@@ -379,7 +383,6 @@
             color: #cbd5e0;
         }
 
-        /* गैलरी जैसा सिलेक्शन स्टाइल */
         .selected-delete-row {
             background: rgba(231, 76, 60, 0.28) !important;
             border-left: 3px solid #ff4757 !important;
@@ -496,7 +499,7 @@
         }
         .btn-modal {
             flex: 1;
-            padding: 8px 5px;
+            padding: 9px 5px;
             border-radius: 4px;
             border: none;
             font-weight: 600;
@@ -505,6 +508,7 @@
             text-align: center;
         }
         .btn-cancel { background: #222b39; color: #cbd5e0; }
+        .btn-save-more { background: #1e3a5f; color: #38bdf8; border: 1px solid #38bdf8; }
         .btn-submit { background: var(--accent-recv); color: #ffffff; }
 
         #cloudRestoreModal {
@@ -762,13 +766,10 @@
                     </div>
                 </div>
 
+                <!-- CATEGORY: नो ड्रॉपडाउन, शुद्ध फ्री टाइप इनपुट -->
                 <div class="form-group">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <label>Category</label>
-                        <button type="button" id="btnAddCategoryQuick" onclick="quickAddCategory()" style="display:none; background:#102a20; border:1px solid #2ecc71; color:#2ecc71; border-radius:4px; font-size:10px; padding:1px 6px; cursor:pointer; font-weight:600;">+ Add Category</button>
-                    </div>
-                    <input type="text" id="inputParpas" class="form-control" list="categoryDatalist" placeholder="">
-                    <datalist id="categoryDatalist"></datalist>
+                    <label>Category / Purpose</label>
+                    <input type="text" id="inputParpas" class="form-control" placeholder="" autocomplete="off">
                 </div>
 
                 <div class="form-group">
@@ -780,7 +781,8 @@
             <div class="modal-footer">
                 <button type="button" class="btn-modal btn-cancel" onclick="closeEntryForm()">Cancel</button>
                 <button type="button" id="btnDeleteForm" class="btn-modal" style="background:#742a2a; color:#feb2b2; display:none;" onclick="deleteCurrentFormRecord()">Delete</button>
-                <button type="button" class="btn-modal btn-submit" onclick="submitRecord()">Save</button>
+                <button type="button" id="btnSaveAndMore" class="btn-modal btn-save-more" onclick="submitRecord(true)">+ Save & Next</button>
+                <button type="button" class="btn-modal btn-submit" onclick="submitRecord(false)">Save</button>
             </div>
         </div>
     </div>
@@ -804,7 +806,6 @@
         let currentViewingPerson = '';
         let openedFromSettings = false;
 
-        // गैलरी स्टाइल मल्टीपल डिलीट स्टेट
         let isSelectionMode = false;
         let selectedTransactionIndexes = new Set();
         let longPressTimer = null;
@@ -920,24 +921,6 @@
                 opt.value = p;
                 personDatalist.appendChild(opt);
             });
-
-            const catList = document.getElementById('categoryDatalist');
-            catList.innerHTML = '';
-            categories.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c;
-                catList.appendChild(opt);
-            });
-        }
-
-        function quickAddCategory() {
-            const val = document.getElementById('inputParpas').value.trim();
-            if (val && !categories.some(c => c.toLowerCase() === val.toLowerCase())) {
-                categories.push(val);
-                saveToStorage();
-                document.getElementById('btnAddCategoryQuick').style.display = 'none';
-                alert(`✅ कैटेगरी "${val}" जोड़ दी गई!`);
-            }
         }
 
         function onAccountFieldChanged(accVal) { 
@@ -1082,9 +1065,7 @@
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
 
-            // रीसेट सिलेक्शन
             exitSelectionMode();
-
             renderStatementTable(personName);
         }
 
@@ -1169,7 +1150,6 @@
                 </div>
             ` : '';
 
-            // मल्टी-डिलीट एक्शन बार
             let deleteBarHtml = '';
             if (isSelectionMode && selectedTransactionIndexes.size > 0) {
                 deleteBarHtml = `
@@ -1225,7 +1205,6 @@
             `;
         }
 
-        // गैलरी-स्टाइल लॉन्ग-प्रेस और सिंगल-टैप लॉजिक
         function startTxPress(originalIdx) {
             isLongPressTriggered = false;
             longPressTimer = setTimeout(() => {
@@ -1237,15 +1216,13 @@
                     if (navigator.vibrate) navigator.vibrate(50);
                     renderStatementTable(currentViewingPerson);
                 }
-            }, 600); // 600ms का लॉन्ग-प्रेस
+            }, 600);
         }
 
         function endTxPress(originalIdx) {
             clearTimeout(longPressTimer);
             if (!isLongPressTriggered) {
-                // यह एक सामान्य हल्का टच (क्लिक) था
                 if (isSelectionMode) {
-                    // अगर सिलेक्शन मोड पहले से चालू है तो हल्का टच करने से आइटम सिलेक्ट/अनसिलेक्ट होगा
                     if (selectedTransactionIndexes.has(originalIdx)) {
                         selectedTransactionIndexes.delete(originalIdx);
                         if (selectedTransactionIndexes.size === 0) {
@@ -1256,7 +1233,6 @@
                     }
                     renderStatementTable(currentViewingPerson);
                 } else {
-                    // सामान्य मोड में हल्का टच करने पर एंट्री एडिट करने के लिए खुलेगी
                     openEntryFormFromStatement(originalIdx);
                 }
             }
@@ -1277,7 +1253,6 @@
             if (!confirm(`क्या आप चुनी हुई ${count} एंट्रीज को हटाना चाहते हैं?`)) return;
             if (!verifyPassword()) return;
 
-            // चुने हुए इंडेक्स को बड़े से छोटे क्रम में सॉर्ट करके डिलीट करें
             const sortedIdxs = Array.from(selectedTransactionIndexes).sort((a,b) => b - a);
             sortedIdxs.forEach(idx => {
                 records.splice(idx, 1);
@@ -1645,7 +1620,7 @@
             const modal = document.getElementById('entryModal');
             const title = document.getElementById('modalFormTitle');
             const btnDelete = document.getElementById('btnDeleteForm');
-            document.getElementById('btnAddCategoryQuick').style.display = 'none';
+            const btnSaveMore = document.getElementById('btnSaveAndMore');
 
             if (editIdx >= 0) {
                 const item = records[editIdx];
@@ -1663,6 +1638,7 @@
 
                 title.innerText = 'Edit Entry';
                 btnDelete.style.display = 'block';
+                btnSaveMore.style.display = 'none'; // एडिट में लगातार सेव की जरूरत नहीं
             } else {
                 document.getElementById('editIndex').value = -1;
                 document.getElementById('inputDate').value = getTodayDate();
@@ -1675,6 +1651,7 @@
                 selectType('Dr');
                 title.innerText = 'New Entry';
                 btnDelete.style.display = 'none';
+                btnSaveMore.style.display = 'block';
             }
             updateRemainingHint();
             modal.style.display = 'flex';
@@ -1730,7 +1707,7 @@
             }
         }
 
-        function submitRecord() {
+        function submitRecord(keepOpen = false) {
             const editIdx = parseInt(document.getElementById('editIndex').value);
             const date = document.getElementById('inputDate').value || getTodayDate();
             const name = document.getElementById('inputName').value.trim();
@@ -1742,10 +1719,6 @@
             if (!name) { alert('पार्टी का नाम लिखें!'); return; }
             if (isNaN(amount) || amount <= 0) { alert('सही रकम दर्ज करें!'); return; }
 
-            if (parpas && !categories.some(c => c.toLowerCase() === parpas.toLowerCase())) {
-                categories.push(parpas);
-            }
-
             const recordData = { date, name, account, amount, crdr: selectedCrDr, parpas, note };
 
             if (editIdx >= 0) records[editIdx] = recordData;
@@ -1753,7 +1726,23 @@
 
             saveToStorage();
             renderView();
-            closeEntryForm();
+
+            if (keepOpen) {
+                // फॉर्म खुला रखें और उसी व्यक्ति के लिए अगली एंट्री तैयार रखें
+                document.getElementById('inputAmount').value = '';
+                document.getElementById('inputNote').value = '';
+                document.getElementById('inputParpas').value = '';
+                
+                // नया अपडेटेड बैलेंस रिफ्लेक्ट करें
+                const bal = getPersonNetBalance(name, account);
+                document.getElementById('inputTargetAmount').value = bal.net;
+                updateRemainingHint();
+                
+                // फोकस रकम पर ले जाएं
+                document.getElementById('inputAmount').focus();
+            } else {
+                closeEntryForm();
+            }
         }
 
         function deleteCurrentFormRecord() {
@@ -1975,10 +1964,12 @@
                 container.appendChild(div);
             });
         }
+
         function closeAccountPicker() { 
             exitSelectionMode();
             document.getElementById('accountPickerModal').style.display = 'none'; 
         }
+
         function clearFilter() {
             selectedAgentFilter = null;
             selectedPersonFilter = null;
