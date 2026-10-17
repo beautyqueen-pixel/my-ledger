@@ -35,17 +35,19 @@
             -webkit-tap-highlight-color: transparent !important;
         }
 
-        /* ब्राउज़र का अनचाहा पुल-टू-रिफ्रेश पूरी तरह ब्लॉक */
+        /* 100% फुल स्क्रीन लॉक - ब्राउज़र का रिफ्रेश पूरी तरह बंद */
         html, body {
             position: fixed;
             top: 0;
             left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
             overscroll-behavior: none !important;
             overscroll-behavior-y: none !important;
-            -webkit-overflow-scrolling: auto;
+            touch-action: pan-x pan-y !important;
         }
 
         body {
@@ -57,7 +59,7 @@
             user-select: none;
         }
 
-        /* इनपुट और टेक्स्टएरिया में कट, कॉपी, सेलेक्ट व पेस्ट पूरी तरह चालू */
+        /* इनपुट और फॉर्म में टेक्स्ट सेलेक्ट/कट/कॉपी/पेस्ट पूरी तरह चालू */
         input, textarea, select {
             -webkit-user-select: text !important;
             user-select: text !important;
@@ -194,7 +196,8 @@
             flex: 1;
             padding-bottom: 80px;
             overflow-y: auto;
-            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain !important;
         }
 
         .party-summary-row {
@@ -350,7 +353,8 @@
             overflow-y: auto;
             flex: 1;
             padding: 8px;
-            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain !important;
         }
 
         .desc-box-statement {
@@ -378,6 +382,7 @@
             border: 1px solid var(--border-soft);
             background: #0b0e14;
             margin-top: 10px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .passbook-table {
@@ -428,7 +433,8 @@
         .simple-settings-list {
             overflow-y: auto;
             flex: 1;
-            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain !important;
         }
         .setting-section-title {
             background: #0b0e14;
@@ -457,7 +463,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain !important;
         }
         .form-row-2col {
             display: grid;
@@ -838,29 +845,31 @@
 
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-        // 100% फुल-प्रूफ पुल-टू-रिफ्रेश ब्लॉकर (Pull-to-refresh Blocker)
-        let pageTouchStartY = 0;
-        document.addEventListener('touchstart', function(e) {
+        // ========================================================
+        // 100% पक्का हार्डवेयर लेवल रिफ्रेश-गार्ड (Pull to refresh रोकथाम)
+        // ========================================================
+        let touchStartScreenY = 0;
+
+        window.addEventListener('touchstart', function(e) {
             if (e.touches.length === 1) {
-                pageTouchStartY = e.touches[0].clientY;
+                touchStartScreenY = e.touches[0].screenY;
             }
         }, { passive: false });
 
-        document.addEventListener('touchmove', function(e) {
+        window.addEventListener('touchmove', function(e) {
             if (e.touches.length !== 1) return;
-            const currentY = e.touches[0].clientY;
-            const scrollDistance = currentY - pageTouchStartY;
+            const currentScreenY = e.touches[0].screenY;
+            const diffY = currentScreenY - touchStartScreenY;
 
-            // यह ढूँढता है कि जिस हिस्से पर यूजर स्क्रॉल कर रहा है वह अंदरूनी स्क्रॉल वाला कंटेनर है या नहीं
-            let scrollableParent = e.target.closest('.ledger-list, .account-list, .simple-settings-list, .form-body, .passbook-table-wrap');
-
-            if (!scrollableParent) {
-                // अगर स्क्रॉल करने वाली जगह नहीं है, तो किसी भी नीचे की खिंचाव को रोकें
-                if (e.cancelable) e.preventDefault();
-            } else {
-                // अगर स्क्रॉल कंटेनर सबसे ऊपर पहुंच चुका है और यूजर फिर भी नीचे खींच रहा है, तो रिफ्रेश रोकें
-                if (scrollableParent.scrollTop <= 0 && scrollDistance > 0) {
-                    if (e.cancelable) e.preventDefault();
+            // अगर यूजर नीचे की ओर स्वाइप कर रहा है
+            if (diffY > 0) {
+                const scrollable = e.target.closest('.ledger-list, .account-list, .simple-settings-list, .form-body, .passbook-table-wrap');
+                
+                // अगर स्क्रॉल करने वाला बॉक्स नहीं है, या बॉक्स सबसे ऊपर (scrollTop <= 0) पर है
+                if (!scrollable || scrollable.scrollTop <= 0) {
+                    if (e.cancelable) {
+                        e.preventDefault(); // ब्राउज़र का रिफ्रेश चक्र पूरी तरह ब्लॉक
+                    }
                 }
             }
         }, { passive: false });
@@ -1028,7 +1037,7 @@
             let totalRecvAgreed = 0, totalRecvSettled = 0, totalRecvBalance = 0;
             let totalGiveAgreed = 0, totalGiveSettled = 0, totalGiveBalance = 0;
 
-            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name).filter(Boolean)])];
+            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])];
 
             allPersons.forEach(pName => {
                 const bal = getPersonNetBalance(pName);
