@@ -1062,28 +1062,37 @@
             const desc = document.getElementById('authStatusDesc');
             const displayHeader = document.getElementById('displayUserNameHeader');
 
-            if (currentUser) {
+                        if (currentUser) {
                 if (syncBtnText) syncBtnText.innerText = "Sync";
                 if (authInputs) authInputs.style.display = 'none';
                 if (loggedInArea) loggedInArea.style.display = 'flex';
                 
-                let userFullName = currentUser.email;
+                // प्रोफाइल से नाम उठाएगा, अगर नहीं मिला तो सीधे Rahul दिखाएगा
+                let userFullName = localStorage.getItem("saved_user_name") || "Rahul";
                 try {
                     const profSnap = await fbDb.collection("users").doc(currentUser.uid).collection("profile").doc("info").get();
                     if (profSnap.exists && profSnap.data()?.fullName) {
                         userFullName = profSnap.data().fullName;
+                        localStorage.setItem("saved_user_name", userFullName);
                     }
                 } catch(e) {}
 
-                // डिस्प्ले पर नाम दिखाना
-                if (displayHeader) displayHeader.innerText = "👤 " + userFullName;
-                if (userDisplay) userDisplay.innerText = "👤 " + userFullName + " (" + currentUser.email + ")";
+                // मेन डिस्प्ले (हेडर) पर केवल नाम दिखेगा (ईमेल बिल्कुल नहीं दिखेगा)
+                if (displayHeader) {
+                    displayHeader.innerText = "👤 " + userFullName;
+                }
+                
+                // अंदर पॉपअप में भी सिर्फ आपका नाम दिखेगा
+                if (userDisplay) {
+                    userDisplay.innerText = "👤 " + userFullName;
+                }
                 
                 if (desc) {
                     desc.innerText = "You are successfully logged in!";
-                    desc.style.color = "#ff4757"; // लाल कलर
+                    desc.style.color = "#ff4757";
                 }
-            } else {
+            }
+               else {
                 if (syncBtnText) syncBtnText.innerText = "Register";
                 if (authInputs) authInputs.style.display = 'flex';
                 if (loggedInArea) loggedInArea.style.display = 'none';
