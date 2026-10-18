@@ -82,7 +82,7 @@
         }
 
         .summary-header {
-            padding: 12px 14px;
+            padding: 10px 14px;
             background: var(--header-dark);
             border-bottom: 1px solid var(--border-soft);
             position: sticky;
@@ -95,14 +95,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14.5px;
-            font-weight: 600;
+        }
+
+        .header-title-box {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .header-title {
+            font-size: 14px;
+            font-weight: 700;
             color: #cbd5e1;
+            letter-spacing: 0.3px;
+        }
+
+        /* डिस्प्ले पर यूजर का नाम दिखाने वाला टैग */
+        .user-badge-header {
+            font-size: 11px;
+            font-weight: 600;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            max-width: 160px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .header-actions {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             align-items: center;
         }
 
@@ -110,28 +134,28 @@
             background: #151d2a;
             border: 1px solid var(--border-soft);
             color: #cbd5e1;
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 11px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .btn-cloud-save {
             background: #102a20;
             border: 1px solid rgba(46, 204, 113, 0.4);
             color: #2ecc71;
-            padding: 4px 10px;
+            padding: 4px 8px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 11px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
 
         .compact-balance-strip {
@@ -561,7 +585,7 @@
             border-radius: 10px;
             border: 1px solid var(--border-soft);
             width: 100%;
-            max-width: 320px;
+            max-width: 330px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -572,13 +596,35 @@
             padding: 9px;
             border: 1px solid var(--border-soft);
             border-radius: 5px;
-            font-size: 12.5px;
+            font-size: 12px;
             background: #0b0e14;
             color: #fff;
             outline: none;
         }
         .auth-card input:focus {
             border-color: #38bdf8;
+        }
+
+        .tab-auth-switch {
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-soft);
+            margin-bottom: 4px;
+        }
+        .tab-auth-btn {
+            flex: 1;
+            padding: 7px;
+            background: #0b0e14;
+            color: #94a3b8;
+            border: none;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tab-auth-btn.active {
+            background: #1e293b;
+            color: #38bdf8;
         }
     </style>
 </head>
@@ -587,7 +633,11 @@
     <div class="app-container">
         <div class="summary-header">
             <div class="summary-top-row">
-                <span id="appMainTitle">Khata Ledger Pro</span>
+                <div class="header-title-box">
+                    <span class="header-title">Khata Ledger Pro</span>
+                    <!-- यूजर का नाम यहाँ डिस्प्ले पर दिखेगा -->
+                    <span id="displayUserNameHeader" class="user-badge-header">👤 Guest User</span>
+                </div>
                 <div class="header-actions">
                     <button class="btn-cloud-save" onclick="handleCloudAction()">🔥 <span id="syncBtnText">Register</span></button>
                     <button class="btn-setting" onclick="openSettingsModal()">⚙️ Settings</button>
@@ -627,32 +677,33 @@
     <div id="firebaseAuthModal">
         <div class="auth-card">
             <h3 style="color:#e2e8f0; font-size:14px; font-weight:700;">🔥 Firebase Cloud Sync</h3>
-            <p id="authStatusDesc" style="color:#94a3b8; font-size:11px;">Register or Login with your details</p>
+            <p id="authStatusDesc" style="color:#ff4757; font-size:11.5px; font-weight:600;">Register or Login with your details</p>
 
-            <div id="authInputsArea" style="display:flex; flex-direction:column; gap:8px;">
-                <input type="text" id="fbFullName" placeholder="Full Name (पूरा नाम) *">
-                <input type="tel" id="fbMobile" placeholder="Mobile Number (10 अंक) *" maxlength="10">
+            <!-- बिना लॉगिन के फॉर्म -->
+            <div id="authInputsArea" style="display:flex; flex-direction:column; gap:7px;">
+                <div class="tab-auth-switch">
+                    <button type="button" id="tabRegisterBtn" class="tab-auth-btn active" onclick="switchAuthTab('REGISTER')">REGISTER (नया खाता)</button>
+                    <button type="button" id="tabLoginBtn" class="tab-auth-btn" onclick="switchAuthTab('LOGIN')">LOGIN (लॉगिन)</button>
+                </div>
+
+                <!-- सिर्फ रजिस्टर के लिए दिखने वाले फील्ड्स -->
+                <div id="regExtraFields" style="display:flex; flex-direction:column; gap:7px;">
+                    <input type="text" id="fbFullName" placeholder="Full Name (पूरा नाम) *">
+                    <input type="tel" id="fbMobile" placeholder="Mobile Number (10 अंक) *" maxlength="10">
+                </div>
+
                 <input type="email" id="fbEmail" placeholder="Email Address *">
-                <input type="password" id="fbPassword" placeholder="Password (कम से कम 6 अक्षर) *">
+                <input type="password" id="fbPassword" placeholder="Password (पासवर्ड) *">
+                
+                <!-- दो बार पासवर्ड डालने का बॉक्स (सिर्फ रजिस्टर में) -->
+                <input type="password" id="fbConfirmPassword" placeholder="Confirm Password (दोबारा पासवर्ड) *">
 
-                <!-- SMS OTP भेजने के लिए reCAPTCHA -->
-                <div id="recaptcha-container"></div>
-
-                <!-- OTP भेजने का बटन -->
-                <button type="button" id="btnSendOtp" class="btn-modal" style="background:#38bdf8; color:#fff;" onclick="sendMobileOtp()">📲 Send OTP on Mobile</button>
-
-                <!-- OTP डालने का बॉक्स (यह शुरू में छुपा रहेगा) -->
-                <div id="otpInputSection" style="display:none; flex-direction:column; gap:6px; margin-top:4px;">
-                    <input type="number" id="fbOtpCode" placeholder="Enter 6-Digit OTP" maxlength="6" style="text-align:center; letter-spacing:4px; font-weight:700;">
-                    <button type="button" class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="verifyOtpAndRegister()">✅ Verify OTP & Complete Register</button>
-                </div>
-
-                <div style="border-top:1px solid var(--border-soft); margin-top:6px; padding-top:6px;">
-                    <button type="button" class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="firebaseLogin()">LOGIN</button>
-                </div>
+                <button type="button" id="btnAuthSubmit" class="btn-modal" style="background:#38bdf8; color:#fff; padding:10px; font-size:12px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
             </div>
+
+            <!-- लॉगिन हो जाने पर दिखने वाला एरिया -->
             <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:8px;">
-                <div style="font-size:12px; color:#2ecc71; word-break:break-all; font-weight:600;" id="userEmailDisplay"></div>
+                <div style="font-size:13px; color:#38bdf8; word-break:break-all; font-weight:700;" id="userEmailDisplay"></div>
                 
                 <div style="display:flex; gap:6px; margin-top:6px;">
                     <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="backupToFirebase(true)">☁️ BACKUP</button>
@@ -861,6 +912,7 @@
         let fbAuth = null;
         let fbDb = null;
         let currentUser = null;
+        let currentAuthTab = 'REGISTER';
 
         try {
             if (!firebase.apps.length) {
@@ -869,9 +921,15 @@
             fbAuth = firebase.auth();
             fbDb = firebase.firestore();
 
+            // हमेशा लॉगिन याद रखने के लिए (LOCAL Persistence)
+            fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+
             fbAuth.onAuthStateChanged(user => {
                 currentUser = user;
                 updateAuthUI();
+                if (currentUser) {
+                    restoreFromFirebase(false);
+                }
             });
         } catch (e) {
             console.warn("Firebase Init Error:", e);
@@ -971,43 +1029,69 @@
         // ==========================================
         // FIREBASE AUTH & BACKUP LOGIC
         // ==========================================
+        function switchAuthTab(tab) {
+            currentAuthTab = tab;
+            const tabReg = document.getElementById('tabRegisterBtn');
+            const tabLog = document.getElementById('tabLoginBtn');
+            const extraFields = document.getElementById('regExtraFields');
+            const confirmPass = document.getElementById('fbConfirmPassword');
+            const submitBtn = document.getElementById('btnAuthSubmit');
+
+            if (tab === 'REGISTER') {
+                tabReg.className = 'tab-auth-btn active';
+                tabLog.className = 'tab-auth-btn';
+                extraFields.style.display = 'flex';
+                confirmPass.style.display = 'block';
+                submitBtn.innerText = 'रजिस्टर करें';
+                submitBtn.style.background = '#38bdf8';
+            } else {
+                tabReg.className = 'tab-auth-btn';
+                tabLog.className = 'tab-auth-btn active';
+                extraFields.style.display = 'none';
+                confirmPass.style.display = 'none';
+                submitBtn.innerText = 'लॉगिन करें';
+                submitBtn.style.background = '#2ecc71';
+            }
+        }
+
         async function updateAuthUI() {
             const syncBtnText = document.getElementById('syncBtnText');
             const authInputs = document.getElementById('authInputsArea');
             const loggedInArea = document.getElementById('authLoggedInArea');
             const userDisplay = document.getElementById('userEmailDisplay');
             const desc = document.getElementById('authStatusDesc');
+            const displayHeader = document.getElementById('displayUserNameHeader');
 
             if (currentUser) {
-                // लॉगिन होने के बाद बटन का नाम SYNC हो जाएगा
                 if (syncBtnText) syncBtnText.innerText = "Sync";
                 if (authInputs) authInputs.style.display = 'none';
                 if (loggedInArea) loggedInArea.style.display = 'flex';
                 
-                // Firestore से नाम भी निकालकर दिखाएं
-                let displayName = currentUser.email;
+                let userFullName = currentUser.email;
                 try {
                     const profSnap = await fbDb.collection("users").doc(currentUser.uid).collection("profile").doc("info").get();
                     if (profSnap.exists && profSnap.data()?.fullName) {
-                        displayName = `${profSnap.data().fullName} (${currentUser.email})`;
+                        userFullName = profSnap.data().fullName;
                     }
                 } catch(e) {}
 
-                if (userDisplay) userDisplay.innerText = "👤 " + displayName;
+                // डिस्प्ले पर नाम दिखाना
+                if (displayHeader) displayHeader.innerText = "👤 " + userFullName;
+                if (userDisplay) userDisplay.innerText = "👤 " + userFullName + " (" + currentUser.email + ")";
+                
                 if (desc) {
                     desc.innerText = "You are successfully logged in!";
                     desc.style.color = "#ff4757"; // लाल कलर
-                    desc.style.fontWeight = "600";
                 }
             } else {
-                // पहली बार या बिना लॉगिन होने पर बटन पर REGISTER दिखेगा
                 if (syncBtnText) syncBtnText.innerText = "Register";
                 if (authInputs) authInputs.style.display = 'flex';
                 if (loggedInArea) loggedInArea.style.display = 'none';
+                if (displayHeader) displayHeader.innerText = "👤 Guest User";
+                
                 if (desc) {
                     desc.innerText = "Register or Login with your details";
                     desc.style.color = "#94a3b8";
-                    desc.style.fontWeight = "normal";
                 }
             }
         }
@@ -1029,15 +1113,22 @@
             document.getElementById('firebaseAuthModal').style.display = 'none';
         }
 
-                let confirmationResultGlobal = null;
+        function handleAuthSubmit() {
+            if (currentAuthTab === 'REGISTER') {
+                firebaseSignUp();
+            } else {
+                firebaseLogin();
+            }
+        }
 
-        // 1. मोबाइल नंबर पर SMS OTP भेजने का फंक्शन
-        async function sendMobileOtp() {
+        async function firebaseSignUp() {
             const fullName = document.getElementById('fbFullName').value.trim();
             const mobile = document.getElementById('fbMobile').value.trim();
             const email = document.getElementById('fbEmail').value.trim();
             const pass = document.getElementById('fbPassword').value;
+            const confirmPass = document.getElementById('fbConfirmPassword').value;
 
+            // नाम और मोबाइल नंबर अनिवार्य जांच
             if (!fullName) { 
                 alert("❌ कृपया अपना पूरा नाम लिखें!"); 
                 document.getElementById('fbFullName').focus();
@@ -1054,88 +1145,53 @@
                 return; 
             }
             if (!pass || pass.length < 6) { 
-                alert("❌ पासवर्ड कम से कम 6 अक्षरों का रखें!"); 
+                alert("❌ पासवर्ड कम से कम 6 अक्षरों का होना चाहिए!"); 
                 document.getElementById('fbPassword').focus();
                 return; 
             }
-
-            const formattedPhone = "+91" + mobile;
-
-            try {
-                if (!window.recaptchaVerifier) {
-                    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-                        'size': 'invisible'
-                    });
-                }
-
-                const btn = document.getElementById('btnSendOtp');
-                btn.innerText = "⏳ Sending OTP...";
-                btn.disabled = true;
-
-                // Firebase द्वारा मोबाइल पर SMS OTP भेजना
-                confirmationResultGlobal = await fbAuth.signInWithPhoneNumber(formattedPhone, window.recaptchaVerifier);
-
-                alert(`✅ OTP ${formattedPhone} पर भेज दिया गया है!`);
-                document.getElementById('otpInputSection').style.display = 'flex';
-                btn.style.display = 'none';
-            } catch (error) {
-                alert("❌ OTP भेजने में समस्या: " + error.message);
-                if (window.recaptchaVerifier) {
-                    window.recaptchaVerifier.render().then(widgetId => grecaptcha.reset(widgetId));
-                }
-                document.getElementById('btnSendOtp').disabled = false;
-                document.getElementById('btnSendOtp').innerText = "📲 Send OTP on Mobile";
-            }
-        }
-
-        // 2. OTP वेरिफाई करके नया अकाउंट बनाने का फंक्शन
-        async function verifyOtpAndRegister() {
-            const otp = document.getElementById('fbOtpCode').value.trim();
-            const fullName = document.getElementById('fbFullName').value.trim();
-            const mobile = document.getElementById('fbMobile').value.trim();
-            const email = document.getElementById('fbEmail').value.trim();
-            const pass = document.getElementById('fbPassword').value;
-
-            if (!otp || otp.length < 6) {
-                alert("❌ कृपया सही 6 अंकों का OTP दर्ज करें!");
-                document.getElementById('fbOtpCode').focus();
+            // दो बार पासवर्ड अनिवार्य जांच
+            if (pass !== confirmPass) {
+                alert("❌ दोनों पासवर्ड एक जैसे नहीं हैं! कृपया दोबारा सही पासवर्ड डालें।");
+                document.getElementById('fbConfirmPassword').focus();
                 return;
             }
 
             try {
-                // OTP कोड की पुष्टि
-                const phoneResult = await confirmationResultGlobal.confirm(otp);
-                const tempUser = phoneResult.user;
+                const userCredential = await fbAuth.createUserWithEmailAndPassword(email, pass);
+                const uid = userCredential.user.uid;
 
-                // ईमेल और पासवर्ड को अकाउंट से लिंक करना
-                const emailCred = firebase.auth.EmailAuthProvider.credential(email, pass);
-                await tempUser.linkWithCredential(emailCred);
-
-                // प्रोफाइल डेटाबेस में नाम और मोबाइल नंबर सेव करना
-                await fbDb.collection("users").doc(tempUser.uid).collection("profile").doc("info").set({
+                // प्रोफाइल में नाम और मोबाइल नंबर सेव करना
+                await fbDb.collection("users").doc(uid).collection("profile").doc("info").set({
                     fullName: fullName,
                     mobile: mobile,
                     email: email,
-                    phoneVerified: true,
                     registeredAt: new Date().toISOString()
                 });
 
-                alert(`🎉 बधाई हो ${fullName}! आपका मोबाइल OTP वेरिफाई हो गया और अकाउंट बन गया।`);
+                alert(`🎉 स्वागत है ${fullName}! आपका खाता बन गया है और आप लॉगिन हो चुके हैं।`);
                 updateAuthUI();
                 await backupToFirebase(false);
-            } catch (error) {
-                alert("❌ गलत OTP या वेरिफिकेशन एरर: " + error.message);
+                closeFirebaseAuthModal();
+            } catch (err) {
+                alert("❌ रजिस्ट्रेशन एरर: " + err.message);
             }
         }
+
         async function firebaseLogin() {
             const email = document.getElementById('fbEmail').value.trim();
             const pass = document.getElementById('fbPassword').value;
-            if (!email || !pass) { alert("ईमेल और पासवर्ड दर्ज करें!"); return; }
+
+            if (!email || !pass) { 
+                alert("❌ कृपया ईमेल और पासवर्ड दोनों दर्ज करें!"); 
+                return; 
+            }
 
             try {
                 await fbAuth.signInWithEmailAndPassword(email, pass);
                 alert("✅ लॉगिन सफल!");
                 updateAuthUI();
+                await restoreFromFirebase(false);
+                closeFirebaseAuthModal();
             } catch (err) {
                 alert("❌ लॉगिन एरर: " + err.message);
             }
@@ -1144,7 +1200,12 @@
         async function firebaseLogout() {
             try {
                 await fbAuth.signOut();
-                alert("लॉगआउट हो गए!");
+                // लॉगआउट होने पर लोकल स्क्रीन साफ़ कर दें
+                records = [];
+                personMasters = {};
+                saveToStorage();
+                renderView();
+                alert("आप लॉगआउट हो गए हैं!");
                 updateAuthUI();
             } catch (err) {
                 alert("एरर: " + err.message);
@@ -1172,9 +1233,9 @@
             }
         }
 
-        async function restoreFromFirebase() {
+        async function restoreFromFirebase(showAlert = true) {
             if (!currentUser || !fbDb) {
-                openFirebaseAuthModal();
+                if (showAlert) openFirebaseAuthModal();
                 return;
             }
 
@@ -1190,14 +1251,13 @@
 
                     saveToStorage();
                     renderView();
-                    alert("✅ Firebase से डेटा सफलतापूर्वक रिस्टोर हो गया!");
-                    closeFirebaseAuthModal();
+                    if (showAlert) alert("✅ Firebase से आपका डेटा सफलतापूर्वक लोड हो गया!");
                 } else {
-                    alert("⚠️ इस अकाउंट पर कोई पिछला Firebase बैकअप नहीं मिला!");
+                    if (showAlert) alert("⚠️ इस अकाउंट पर कोई पिछला बैकअप नहीं मिला!");
                 }
             } catch (err) {
                 console.error("Restore Error:", err);
-                alert("❌ रिस्टोर में त्रुटि: " + err.message);
+                if (showAlert) alert("❌ रिस्टोर में त्रुटि: " + err.message);
             }
         }
 
