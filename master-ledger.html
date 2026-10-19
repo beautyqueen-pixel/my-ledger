@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Master Ledger Pro</title>
     <style>
+    html, body {
+    overscroll-behavior-y: none !important;
+    overscroll-behavior: none !important;
+    height: 100%;
+    overflow: hidden;
+}
+
         :root {
             --sahil: #1659f2;
             --arman: #0df147;
@@ -140,16 +147,17 @@
 
         /* 2. टेबल की स्मूथ स्क्रोलिंग (बिना किसी रुकावट के) */
         .table-scroll { 
-            overflow-x: scroll !important; 
-            overflow-y: scroll !important; 
-            flex: 1; /* बची हुई पूरी जगह टेबल लेगी */
-            margin-top: 5px; 
-            background: #8989923a; 
-            border-radius: 8px; 
-            border: 1px solid #999; 
-            overscroll-behavior: contain !important;
-            -webkit-overflow-scrolling: touch !important;
-        }
+    overflow-x: auto !important; 
+    overflow-y: scroll !important; 
+    height: 55vh; 
+    margin-top: 5px; 
+    background: #8989923a; 
+    border-radius: 8px; 
+    border: 1px solid #999; 
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
         table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
         
         th, td { 
