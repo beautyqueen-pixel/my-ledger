@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Master Ledger Pro</title>
     <style>
         :root {
@@ -15,7 +15,22 @@
             --red-balance: #ff4d4d;
             --dark-green: #00c853;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #a9a2a2c8; margin: 0; padding: 2px; font-size: 10px; -webkit-user-select: none; user-select: none; }
+
+        /* ब्राउज़र के पुल-टू-रिफ्रेश (खींचकर रिफ्रेश होना) को ब्लॉक करने के लिए */
+        html, body {
+            overscroll-behavior-y: contain !important;
+            overscroll-behavior: contain !important;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #a9a2a2c8; 
+            margin: 0; 
+            padding: 2px; 
+            font-size: 10px; 
+            -webkit-user-select: none; 
+            user-select: none; 
+        }
         
         /* 3-Tap App Lock Screen */
         #mainAppOverlay {
@@ -109,7 +124,18 @@
             text-transform: uppercase; 
         }
 
-        .table-scroll { overflow-x: auto; height: 55vh; margin-top: 5px; background: #8989923a; border-radius: 8px; border: 1px solid #999; }
+        /* टेबल स्क्रोल में भी ओवर-स्क्रोल बंद रखा गया है */
+        .table-scroll { 
+            overflow-x: auto; 
+            overflow-y: auto; 
+            height: 55vh; 
+            margin-top: 5px; 
+            background: #8989923a; 
+            border-radius: 8px; 
+            border: 1px solid #999; 
+            overscroll-behavior-y: contain !important;
+            -webkit-overflow-scrolling: touch;
+        }
         table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
         
         th, td { 
@@ -229,7 +255,7 @@
         <input type="tel" id="loginPhone" placeholder="मोबाइल नंबर (Phone)">
         <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
         <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
-        <div class="auth-switch" onclick="askRegisterPermission()">click hear to new account registerर</div>
+        <div class="auth-switch" onclick="askRegisterPermission()">click hear to new account register</div>
     </div>
 
     <div class="auth-card" id="registerBox" style="display: none;">
@@ -551,6 +577,30 @@
     let tempNewPins = null;
     let currentUser = JSON.parse(localStorage.getItem('master_active_user') || 'null');
 
+    // --- Pull-To-Refresh को पूरी तरह ब्लॉक करने का स्मार्ट प्रोटेक्शन ---
+    let touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', function(e) {
+        let touchY = e.touches[0].clientY;
+        let touchDiff = touchY - touchStartY;
+
+        // जब यूज़र नीचे की तरफ स्वाइप करता है और पेज पहले से सबसे ऊपर (top 0) है:
+        if (touchDiff > 0 && window.scrollY <= 0) {
+            // अगर स्वाइप टेबल के अंदर हो रहा है और टेबल अभी ऊपर है
+            let tableScroll = e.target.closest('.table-scroll');
+            if (tableScroll) {
+                if (tableScroll.scrollTop <= 0) {
+                    e.preventDefault(); // ब्राउज़र का रिफ्रेश ट्रिगर रोकें
+                }
+            } else {
+                e.preventDefault(); // मुख्य पेज का रिफ्रेश ट्रिगर रोकें
+            }
+        }
+    }, { passive: false });
+
     // --- 3-Tap App Lock (Custom openPin) ---
     function handleLockClick() {
         clickCount++;
@@ -663,14 +713,13 @@
     function closeAuthModal() {
         document.getElementById('authOverlay').style.display = 'none';
     }
-        function askRegisterPermission() {
-        // अगर पहले से कोई यूज़र मौजूद है तो मास्टर पासवर्ड और वॉर्निंग माँगेगा
+
+    function askRegisterPermission() {
         if (currentUser && currentUser.phone) {
             let masterPin = prompt("⚠️ प्राइवेसी सुरक्षा: नया खाता बनाने के लिए मास्टर पासवर्ड दर्ज करें:");
             if (masterPin === MASTER_PHONE_PIN) {
                 let agree = confirm("⚠️ ध्यान दें: नया रजिस्टर करते ही यह ऐप रिसेट होकर फ्रेश हो जाएगा!\n\nपुराने खाते (" + (currentUser.email || currentUser.phone) + ") का बैकअप क्लाउड सर्वर पर सुरक्षित रहेगा, पर इस नए खाते के लिए स्क्रीन खाली हो जाएगी।\n\nक्या आप सहमत हैं?");
                 if (agree) {
-                    // लोकल डेटा खाली करके नए रजिस्ट्रेशन पर ले जाएगा
                     db = [];
                     db_advance = [];
                     trash = [];
@@ -687,7 +736,6 @@
                 alert("❌ गलत मास्टर पासवर्ड! आप नया रजिस्टर नहीं कर सकते।");
             }
         } else {
-            // पहली बार कोई भी सीधे रजिस्टर कर सकता है
             toggleAuthMode('register');
         }
     }
@@ -806,7 +854,7 @@
                 lastSync: new Date().toISOString()
             };
             await window.fbPushData(currentUser.phone, payload);
-            alert("✅ BACKUP SUCSES DUN !" );
+            alert("✅ BACKUP SUCSES DUN !");
         } catch(e) {
             alert("❌  BACKUP FAIL: " + e.message);
         }
@@ -823,7 +871,7 @@
                 localStorage.setItem('master_advance_v1', JSON.stringify(db_advance));
                 localStorage.setItem('master_trash_v1', JSON.stringify(trash));
                 renderData();
-                alert("✅ Restore  sucsesfully!");
+                alert("✅ Restore sucsesfully!");
             } else {
                 alert("सर्वर पर कोई बैकअप नहीं मिला!");
             }
