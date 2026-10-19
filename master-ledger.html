@@ -126,16 +126,18 @@
 
         /* टेबल स्क्रोल में भी ओवर-स्क्रोल बंद रखा गया है */
         .table-scroll { 
-            overflow-x: auto; 
-            overflow-y: auto; 
-            height: 55vh; 
-            margin-top: 5px; 
-            background: #8989923a; 
-            border-radius: 8px; 
-            border: 1px solid #999; 
-            overscroll-behavior-y: contain !important;
-            -webkit-overflow-scrolling: touch;
-        }
+    overflow-x: auto !important; 
+    overflow-y: scroll !important; 
+    height: 55vh; 
+    margin-top: 5px; 
+    background: #8989923a; 
+    border-radius: 8px; 
+    border: 1px solid #999; 
+    overscroll-behavior: none !important;
+    touch-action: pan-x pan-y !important;
+    -webkit-overflow-scrolling: touch;
+}
+
         table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
         
         th, td { 
@@ -577,37 +579,18 @@
     let tempNewPins = null;
     let currentUser = JSON.parse(localStorage.getItem('master_active_user') || 'null');
 
-    // --- Pull-To-Refresh को पूरी तरह ब्लॉक करने का स्मार्ट प्रोटेक्शन ---
-    let touchStartY = 0;
-    document.addEventListener('touchstart', function(e) {
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
+    document.body.style.overscrollBehavior = 'none';
 
-    document.addEventListener('touchmove', function(e) {
-        let touchY = e.touches[0].clientY;
-        let touchDiff = touchY - touchStartY;
-
-        // जब यूज़र नीचे की तरफ स्वाइप करता है और पेज पहले से सबसे ऊपर (top 0) है:
-        if (touchDiff > 0 && window.scrollY <= 0) {
-            // अगर स्वाइप टेबल के अंदर हो रहा है और टेबल अभी ऊपर है
-            let tableScroll = e.target.closest('.table-scroll');
-            if (tableScroll) {
-                if (tableScroll.scrollTop <= 0) {
-                    e.preventDefault(); // ब्राउज़र का रिफ्रेश ट्रिगर रोकें
-                }
-            } else {
-                e.preventDefault(); // मुख्य पेज का रिफ्रेश ट्रिगर रोकें
-            }
-        }
-    }, { passive: false });
-
-    // --- 3-Tap App Lock (Custom openPin) ---
     function handleLockClick() {
-        clickCount++;
-        if (clickCount >= 3) {
-            document.getElementById('secretInput').style.display = 'block';
-            document.getElementById('secretInput').focus();
-            clickCount = 0;
+        const overlay = document.getElementById('mainAppOverlay');
+        if (overlay && overlay.style.display !== 'none') {
+            clickCount++;
+            if (clickCount >= 3) {
+                const secInp = document.getElementById('secretInput');
+                secInp.style.display = 'block';
+                secInp.focus();
+                clickCount = 0;
+            }
         }
     }
 
@@ -616,15 +599,18 @@
             document.getElementById('mainAppOverlay').style.display = 'none'; 
             this.value = "";
             this.style.display = 'none';
+            clickCount = 0;
         }
     });
 
     function handleAppLock() {
+        clickCount = 0;
         document.getElementById('secretInput').value = "";
-        document.getElementById('mainAppOverlay').style.display = 'flex';
         document.getElementById('secretInput').style.display = 'none';
+        document.getElementById('mainAppOverlay').style.display = 'flex';
         document.getElementById('settingsPanel').style.display = 'none';
     }
+
 
     // --- Master Password Verification Gate ---
     function openPasswordManagerGate() {
