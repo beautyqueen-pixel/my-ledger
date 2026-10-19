@@ -16,40 +16,44 @@
             --dark-green: #00c853;
         }
 
-        /* ब्राउज़र के पुल-टू-रिफ्रेश (खींचकर रिफ्रेश होना) को ब्लॉक करने के लिए */
+        /* 1. ब्राउज़र के पुल-टू-रिफ्रेश को जड़ से खत्म करने के लिए */
         html, body {
-    overscroll-behavior-y: none !important;
-    overscroll-behavior-x: none !important;
-    overscroll-behavior: none !important;
-}
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* स्क्रीन को हिलने से रोकेगा */
+            overscroll-behavior: none !important;
+            overscroll-behavior-y: none !important;
+            -webkit-user-select: none;
+            user-select: none;
+            font-family: 'Segoe UI', sans-serif;
+            background: #a9a2a2c8;
+            font-size: 10px;
+        }
 
-        html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden !important;
-    overscroll-behavior: none !important;
-    overscroll-behavior-y: none !important;
-    touch-action: pan-x pan-y !important;
-}
-body { 
-    font-family: 'Segoe UI', sans-serif; 
-    background: #a9a2a2c8; 
-    margin: 0; 
-    padding: 2px; 
-    font-size: 10px; 
-    -webkit-user-select: none; 
-    user-select: none; 
-}
+        /* पूरे ऐप का मुख्य ढाँचा जो स्क्रीन पर फिक्स रहेगा */
+        #appWrapper {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 2px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
         
         /* 3-Tap App Lock Screen */
         #mainAppOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.3); backdrop-filter: blur(25px); 
             z-index: 999999; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
         }
         #secretInput {
             display: none; padding: 15px; border-radius: 20px; border: 3px solid #333; 
             text-align: center; font-size: 20px; width: 160px; background: #fff;
+            z-index: 1000000;
         }
 
         /* Transparent Auth Modal */
@@ -78,13 +82,14 @@ body {
 
         .container { 
               max-width: 100%; 
-              margin: auto; 
+              margin: 0; 
               background: #43a5ee; 
               border: 1.5px solid #333; 
               border-radius: 25px; 
               overflow: hidden; 
               padding-top: 3px;
               padding-bottom: 3px;
+              flex-shrink: 0;
         }
         .user-tag {
             text-align: center; font-size: 12px; font-weight: 900; color: #ffff00;
@@ -133,19 +138,18 @@ body {
             text-transform: uppercase; 
         }
 
-        /* टेबल स्क्रोल में भी ओवर-स्क्रोल बंद रखा गया है */
+        /* 2. टेबल की स्मूथ स्क्रोलिंग (बिना किसी रुकावट के) */
         .table-scroll { 
-    overflow-x: auto !important; 
-    overflow-y: auto !important; 
-    height: 55vh; 
-    margin-top: 5px; 
-    background: #8989923a; 
-    border-radius: 8px; 
-    border: 1px solid #999; 
-    overscroll-behavior: contain !important;
-    -webkit-overflow-scrolling: touch !important;
-}
-
+            overflow-x: scroll !important; 
+            overflow-y: scroll !important; 
+            flex: 1; /* बची हुई पूरी जगह टेबल लेगी */
+            margin-top: 5px; 
+            background: #8989923a; 
+            border-radius: 8px; 
+            border: 1px solid #999; 
+            overscroll-behavior: contain !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
         table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
         
         th, td { 
@@ -166,6 +170,7 @@ body {
             border: 2px solid #333; 
             position: sticky; 
             top: 0; 
+            z-index: 2;
         }
 
         #mainTable th:nth-child(1), #mainTable td:nth-child(1) { min-width: 30px; width: 35px; }
@@ -182,7 +187,7 @@ body {
         .balance-red { background: var(--red-balance) !important; color: #fff !important; }
         .row-full td { background: var(--dark-green); color: #000; }
 
-        .search-area { padding: 5px; display: flex; gap: 4px; align-items: center; margin-top: 2px; }
+        .search-area { padding: 5px; display: flex; gap: 4px; align-items: center; margin-top: 2px; flex-shrink: 0; }
         #searchInp { flex: 1; padding: 4px 8px; border: 2px solid #180ce1bc; border-radius: 10px; font-size: 12px; height: 22px; background: #fff; }
         .btn-clear { padding: 0 12px; height: 32px; font-size: 11px; font-weight: bold; border-radius: 10px; border: 2px solid #000; cursor: pointer; color: white; background: #e74c3c; display: flex; align-items: center; justify-content: center; }
 
@@ -225,7 +230,7 @@ body {
         .pm-row label { font-size: 10px; font-weight: bold; color: #ffeb3b; text-align: left; width: 45%; }
         .pm-row input { width: 50%; padding: 5px; border-radius: 6px; border: 1px solid #00f0ff; background: #000; color: #00ff66; text-align: center; font-size: 13px; font-weight: bold; outline: none; }
 
-        #entryArea, #advanceEntryArea { background: #c3bcbc90; padding: 10px; display: none; }
+        #entryArea, #advanceEntryArea { background: #c3bcbc90; padding: 10px; display: none; flex-shrink: 0; }
         .entry-form { max-width: 400px; margin: auto; border: 2px solid #333; padding: 8px; background: #f4fe857d; border-radius: 8px; }
         .form-row { display: flex; margin-bottom: 5px; align-items: center; justify-content: space-between; }
         .form-row label { width: 140px; font-weight: 900; font-size: 13px; color: #040404; text-transform: uppercase; }
@@ -252,267 +257,271 @@ body {
 <body>
 
 <!-- 3-Tap App Lock Screen -->
-<div id="mainAppOverlay">
-    <div onclick="handleLockClick()" style="width:100%; height:100%; position:absolute;"></div>
-    <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric">
+<div id="mainAppOverlay" onclick="handleLockClick()">
+    <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" onclick="event.stopPropagation()">
 </div>
 
-<!-- Firebase User Login / Registration Modal -->
-<div id="authOverlay">
-    <div class="auth-card" id="loginBox">
-        <span class="close-auth" onclick="closeAuthModal()">✖</span>
-        <h2>LOGIN MASTER LEDGER</h2>
-        <input type="tel" id="loginPhone" placeholder="मोबाइल नंबर (Phone)">
-        <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
-        <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
-        <div class="auth-switch" onclick="askRegisterPermission()">click hear to new account register</div>
-    </div>
+<!-- मेन ऐप रैपर जो स्क्रीन को हिलने नहीं देगा -->
+<div id="appWrapper">
 
-    <div class="auth-card" id="registerBox" style="display: none;">
-        <span class="close-auth" onclick="closeAuthModal()">✖</span>
-        <h2>REGISTER ACCOUNT</h2>
-        <input type="text" id="regName" placeholder="पूरा नाम (Full Name)">
-        <input type="tel" id="regPhone" placeholder="मोबाइल नंबर (Phone)">
-        <input type="email" id="regEmail" placeholder="ईमेल पता (Email Address)">
-        <input type="password" id="regPass1" placeholder="पासवर्ड (Password)">
-        <input type="password" id="regPass2" placeholder="पासवर्ड दोबारा (Confirm Password)">
-        <button class="btn-auth-main" onclick="handleRegister()">REGISTER & SAVE</button>
-        <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
-    </div>
-</div>
+    <!-- Firebase User Login / Registration Modal -->
+    <div id="authOverlay">
+        <div class="auth-card" id="loginBox">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>LOGIN MASTER LEDGER</h2>
+            <input type="tel" id="loginPhone" placeholder="मोबाइल नंबर (Phone)">
+            <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
+            <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
+            <div class="auth-switch" onclick="askRegisterPermission()">click hear to new account register</div>
+        </div>
 
-<!-- Master Password Prompt Modal (Mobile No: 9892980960) -->
-<div id="masterGateModal">
-    <div class="unlock-card" style="width: 220px;">
-        <h3 id="masterGateTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">ENTER MASTER PIN</h3>
-        <input type="password" id="masterGateInput" placeholder="MASTER PIN / PHONE" inputmode="numeric">
-        <div class="u-btn-row">
-            <button class="u-btn" style="background:#27ae60;" onclick="submitMasterGate()">OK</button>
-            <button class="u-btn" style="background:#555;" onclick="closeMasterGate()">X</button>
+        <div class="auth-card" id="registerBox" style="display: none;">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>REGISTER ACCOUNT</h2>
+            <input type="text" id="regName" placeholder="पूरा नाम (Full Name)">
+            <input type="tel" id="regPhone" placeholder="मोबाइल नंबर (Phone)">
+            <input type="email" id="regEmail" placeholder="ईमेल पता (Email Address)">
+            <input type="password" id="regPass1" placeholder="पासवर्ड (Password)">
+            <input type="password" id="regPass2" placeholder="पासवर्ड दोबारा (Confirm Password)">
+            <button class="btn-auth-main" onclick="handleRegister()">REGISTER & SAVE</button>
+            <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
         </div>
     </div>
-</div>
 
-<!-- Password Management Panel -->
-<div id="passManagerModal">
-    <div class="pm-card">
-        <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
-        <hr style="border:0.5px solid #005577; margin-bottom:12px;">
+    <!-- Master Password Prompt Modal -->
+    <div id="masterGateModal">
+        <div class="unlock-card" style="width: 220px;">
+            <h3 id="masterGateTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">ENTER MASTER PIN</h3>
+            <input type="password" id="masterGateInput" placeholder="MASTER PIN / PHONE" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#27ae60;" onclick="submitMasterGate()">OK</button>
+                <button class="u-btn" style="background:#555;" onclick="closeMasterGate()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Management Panel -->
+    <div id="passManagerModal">
+        <div class="pm-card">
+            <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
+            <hr style="border:0.5px solid #005577; margin-bottom:12px;">
+            
+            <div class="pm-row">
+                <label>1. APP OPEN LOCK</label>
+                <input type="text" id="pm_open" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>2. EDIT UNLOCK PIN</label>
+                <input type="text" id="pm_edit" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>3. DELETE / RECYCLE</label>
+                <input type="text" id="pm_del" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>4. CLOUD BACKUP PIN</label>
+                <input type="text" id="pm_cloud" placeholder="7869">
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-top:14px;">
+                <button class="u-btn" style="background:#00c853;" onclick="savePasswordSettings()">SAVE PASSWORDS</button>
+                <button class="u-btn" style="background:#555;" onclick="closePassManager()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cloud Action Password Modal -->
+    <div id="cloudPassModal">
+        <div class="unlock-card">
+            <h3 id="cloudModalTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">PASSWORD</h3>
+            <input type="password" id="cloudPassInput" placeholder="PIN" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#27ae60;" onclick="verifyCloudAction()">OK</button>
+                <button class="u-btn" style="background:#555;" onclick="closeCloudModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset App Security Modal -->
+    <div id="resetAppModal">
+        <div class="unlock-card" style="width:220px;">
+            <h3 id="resetModalTitle" style="color:#ff4757; margin:0 0 10px 0; font-size:12px;">RESET APP</h3>
+            <input type="password" id="resetPassInput" placeholder="SET / ENTER PIN" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#e74c3c;" onclick="handleResetSubmit()">CONFIRM</button>
+                <button class="u-btn" style="background:#555;" onclick="closeResetModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="unlockModal">
+        <div class="unlock-card">
+            <h3 style="color:#fff; margin:0 0 10px 0;">🔐 UNLOCK</h3>
+            <input type="password" id="unlockPassInput" placeholder="PIN" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#27ae60;" onclick="verifyUnlock()">OK</button>
+                <button class="u-btn" style="background:#555;" onclick="closeUnlockModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal">
+        <div class="unlock-card">
+            <h3 id="delTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE</h3>
+            <input type="password" id="delPassInput" placeholder="PIN" inputmode="numeric">
+            <div style="display: flex; gap: 5px;">
+                <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none;" onclick="confirmDeletion()">DEL</button>
+                <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none;" onclick="closeDelModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="advanceDeleteModal">
+        <div class="unlock-card">
+            <h3 id="advDelTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE ADVANCE</h3>
+            <input type="password" id="advDelPassInput" placeholder="PIN" inputmode="numeric">
+            <div style="display: flex; gap: 5px;">
+                <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none;" onclick="confirmAdvanceDeletion()">DEL</button>
+                <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none;" onclick="closeAdvDelModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <div id="userDisplayTag" class="user-tag">USER: NOT LOGGED IN</div>
+
+        <div class="tabs">
+            <button id="tab-sahil" class="tab-btn active-sahil" onclick="switchTab('sahil')">SAHIL</button>
+            <button id="tab-arman" class="tab-btn" onclick="switchTab('arman')">ARMAN</button>
+            <button id="tab-advance" class="tab-btn" onclick="switchTab('advance')">ADVANCE</button>
+        </div>
         
-        <div class="pm-row">
-            <label>1. APP OPEN LOCK</label>
-            <input type="text" id="pm_open" placeholder="7869">
-        </div>
-        <div class="pm-row">
-            <label>2. EDIT UNLOCK PIN</label>
-            <input type="text" id="pm_edit" placeholder="7869">
-        </div>
-        <div class="pm-row">
-            <label>3. DELETE / RECYCLE</label>
-            <input type="text" id="pm_del" placeholder="7869">
-        </div>
-        <div class="pm-row">
-            <label>4. CLOUD BACKUP PIN</label>
-            <input type="text" id="pm_cloud" placeholder="7869">
+        <div id="header-title" class="main-header sahil-theme">
+            <span>SAHIL ACCOUNT</span>
         </div>
         
-        <div style="display:flex; gap:8px; margin-top:14px;">
-            <button class="u-btn" style="background:#00c853;" onclick="savePasswordSettings()">SAVE PASSWORDS</button>
-            <button class="u-btn" style="background:#555;" onclick="closePassManager()">CLOSE</button>
+        <div id="sahilArmanSummary" class="summary-dash">
+            <div class="s-box" style="background:#1e3799; cursor:pointer;" onclick="filterByStatus('ALL')">T-COUNT <span id="stat-count">0</span></div>
+            <div class="s-box" style="background:#2980b9; cursor:pointer;" onclick="filterByStatus('PASSED')">PASSED <span id="stat-pass">0</span></div>
+            <div class="s-box" style="background:#8e44ad; cursor:pointer;" onclick="filterByStatus('PENDING')">PENDING <span id="stat-pend">0</span></div>
+            <div class="s-box" style="background:#d35400; cursor:pointer;" onclick="filterByStatus('ALL')">T-PRICE <span id="stat-price">0</span></div>
+            <div class="s-box" style="background:#27ae60; cursor:pointer;" onclick="filterByStatus('FULL RECEIVE')">RECEIVED <span id="stat-rec">0</span></div>
+            <div class="s-box" style="background:#ff4757; cursor:pointer;" onclick="filterByStatus('BALANCE')">BALANCE <span id="stat-bal">0</span></div>
+        </div>
+
+        <div id="advanceSummary" class="adv-summary-dash" style="display:none;">
+            <div class="adv-s-box" style="background:#27ae60; cursor:pointer;" onclick="filterAdvance('RECEIVED')">TOTAL RECEIVED <br> <span id="adv-stat-rec">0</span></div>
+            <div class="adv-s-box" style="background:#e74c3c; cursor:pointer;" onclick="filterAdvance('GIVEN')">TOTAL GIVEN <br> <span id="adv-stat-give">0</span></div>
+            <div class="adv-s-box" style="background:#3498db; cursor:pointer;" onclick="filterAdvance('ALL')">BALANCE <br> <span id="adv-stat-diff">0</span></div>
         </div>
     </div>
-</div>
 
-<!-- Cloud Action Password Modal -->
-<div id="cloudPassModal">
-    <div class="unlock-card">
-        <h3 id="cloudModalTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">PASSWORD</h3>
-        <input type="password" id="cloudPassInput" placeholder="PIN" inputmode="numeric">
-        <div class="u-btn-row">
-            <button class="u-btn" style="background:#27ae60;" onclick="verifyCloudAction()">OK</button>
-            <button class="u-btn" style="background:#555;" onclick="closeCloudModal()">X</button>
+    <div id="adminControls" style="padding: 8px; background: #0088ff; border-radius: 25px; border: 2px solid #333; margin: 3px; flex-shrink: 0;">
+        <div style="display: flex; gap: 2px; align-items: center;">
+            <button id="addEntryBtn" onclick="toggleForm()" style="flex: 4; background: #0fef11; color: white; border: 2px solid #ffffff; font-size: 13px; font-weight: bold; border-radius: 20px; height: 40px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);">NEW ENTRY</button>
+            <button onclick="triggerQuickBackup()" class="btn-sync" title="Direct Cloud Backup">☁️ SYNC</button>
+            <button onclick="toggleSettingsMenu()" style="flex: 0.9; height: 40px; background: #333; color: white; border: 2px solid #fff; border-radius: 20px; font-size: 18px; cursor: pointer;">⚙️</button>
+        </div>
+
+        <div id="settingsPanel" style="display: none; background: #001a1a; padding: 15px; border-radius: 25px; border: 2px solid #00ffff; margin-top: 5px;">
+            <h3 style="color: #00ffff; text-align: center; margin-top: 0; font-size: 13px; letter-spacing: 2px;">SETTINGS</h3>
+            <button class="btn-add-main" style="background: #27ae60;" onclick="openAuthModal()">👤 LOGIN / ACCOUNT</button>
+            <button class="btn-add-main" style="background: #e67e22;" onclick="openPasswordManagerGate()">🔑 MANAGE PASSWORDS</button>
+            <button class="btn-add-main" style="background: #4285f4;" onclick="askCloudAction('BACKUP')">☁️ BACKUP</button>
+            <button class="btn-add-main" style="background: #f39c12;" onclick="askCloudAction('RESTORE')">📥 RESTORE</button>
+            <button class="btn-add-main" style="background: #db4437;" onclick="showTrashList()">♻️ RECOVER DELETED</button>
+            <button class="btn-add-main" style="background: #9b59b6;" onclick="promptResetApp()">⚠️ RESET APP</button>
+            <button class="btn-add-main" style="background: #ff4757;" onclick="handleAppLock()">🔒 LOCK APP</button>
+            <button onclick="toggleSettingsMenu()" style="width: 100%; background: #333; color: white; border: 1px solid #fff; border-radius: 20px; padding: 8px; font-weight: bold; cursor: pointer;">CLOSE</button>
         </div>
     </div>
-</div>
 
-<!-- Reset App Security Modal -->
-<div id="resetAppModal">
-    <div class="unlock-card" style="width:220px;">
-        <h3 id="resetModalTitle" style="color:#ff4757; margin:0 0 10px 0; font-size:12px;">RESET APP</h3>
-        <input type="password" id="resetPassInput" placeholder="SET / ENTER PIN" inputmode="numeric">
-        <div class="u-btn-row">
-            <button class="u-btn" style="background:#e74c3c;" onclick="handleResetSubmit()">CONFIRM</button>
-            <button class="u-btn" style="background:#555;" onclick="closeResetModal()">X</button>
+    <div id="entryArea">
+        <div class="entry-form">
+            <div id="unlockWrapper" class="unlock-container" style="display:none;">
+                <button class="btn-unlock" onclick="askUnlock()"> UNLOCK EDIT</button>
+                <button class="btn-close-form" onclick="toggleForm()">X</button>
+            </div>
+            <input type="hidden" id="editIndex" value="-1">
+            <div class="form-row"><label>REC DATE</label><input type="text" id="f1" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>AGENT</label><input type="text" id="f2"></div>
+            <div class="form-row"><label>HOLDER</label><input type="text" id="f3"></div>
+            <div class="form-row"><label>COUNT</label><input type="number" id="f4"></div>
+            <div class="form-row"><label>BANK</label><input type="text" id="f5"></div>
+            <div class="form-row"><label>TYPE</label><input type="text" id="f6"></div>
+            <div class="form-row"><label>PRICE</label><input type="number" id="f_pr" oninput="calcBal()"></div>
+            <div class="form-row"><label>PAS DATE</label><input type="text" id="f7" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>RIC DATE</label><input type="text" id="f8" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>REC AMO.</label><input type="number" id="f_am" oninput="calcBal()"></div>
+            <div class="form-row"><label>BALANCE</label><input type="text" id="f_bal_ui" readonly style="background:#eee;"></div>
+            <div class="form-row"><label>BAL. DATE</label><input type="text" id="f9" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>PAYMENT</label><input type="number" id="f_pay_amt"></div>
+            <div class="form-row"><label>PAID DATE</label><input type="text" id="f_pay_date" onblur="smartDate(this)"></div>
+            <div style="display:flex; gap:5px; margin-top:10px; align-items: center;">
+                <button id="mainSaveBtn" class="btn-add-main" style="flex: 10; background:#27ae60; font-size: 12px; height: 32px;" onclick="submitEntry(false)">SAVE</button>
+                <button id="updateBtn" class="btn-add-main" style="flex:4; background:#f39c12; display:none; height:32px; margin-top:0;" onclick="submitEntry(false)">UPDATE</button>
+                <button id="saveAsNewBtn" class="btn-add-main" style="flex:4; background:#3498db; display:none; height:32px; margin-top:0;" onclick="submitEntry(true)">NEW</button>
+                <button id="delEntryBtn" class="btn-add-main" style="flex:4; background:#ff4757; display:none; height:32px; margin-top:0;" onclick="handleInsideDelete()">DELETE</button>
+                <button id="newCancelBtn" type="button" onclick="toggleForm()" style="flex: 1; background: #f00b0b5d; color: white; border: 2px solid #000; border-radius: 10px; height: 32px; font-weight: bold; cursor: pointer;">X</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="unlockModal">
-    <div class="unlock-card">
-        <h3 style="color:#fff; margin:0 0 10px 0;">🔐 UNLOCK</h3>
-        <input type="password" id="unlockPassInput" placeholder="PIN" inputmode="numeric">
-        <div class="u-btn-row">
-            <button class="u-btn" style="background:#27ae60;" onclick="verifyUnlock()">OK</button>
-            <button class="u-btn" style="background:#555;" onclick="closeUnlockModal()">X</button>
+    <div id="advanceEntryArea">
+        <div class="entry-form" style="background: #f3fdb39d;">
+            <h2 style="text-align:center; font-size:14px; margin:4px;">ADVANCE ENTRY</h2>
+            <input type="hidden" id="advEditIndex" value="-1">
+            <div class="form-row"><label>PARTY NAME</label><input type="text" id="adv_f1"></div>
+            <div class="form-row"><label>DATE</label><input type="text" id="adv_f2" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>AMOUNT</label><input type="number" id="adv_f3"></div>
+            <div class="form-row"><label>TYPE</label>
+                <select id="adv_f4">
+                    <option value="RECEIVED">RECEIVED</option>
+                    <option value="GIVEN">GIVEN</option>
+                </select>
+            </div>
+            <div class="form-row"><label>REASON</label><input type="text" id="adv_f5"></div>
+            <div style="display:flex; gap:5px; margin-top:10px;">
+                <button class="btn-add-main" style="flex:1; background:#27ae60;" onclick="submitAdvanceEntry()">SAVE DATA</button>
+                <button class="btn-sq" style="background:#333; width:35px; margin-top:4px;" onclick="toggleAdvanceForm()">X</button>
+            </div>
         </div>
     </div>
-</div>
 
-<div id="deleteModal">
-    <div class="unlock-card">
-        <h3 id="delTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE</h3>
-        <input type="password" id="delPassInput" placeholder="PIN" inputmode="numeric">
-        <div style="display: flex; gap: 5px;">
-            <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none;" onclick="confirmDeletion()">DEL</button>
-            <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none;" onclick="closeDelModal()">X</button>
-        </div>
-    </div>
-</div>
-
-<div id="advanceDeleteModal">
-    <div class="unlock-card">
-        <h3 id="advDelTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE ADVANCE</h3>
-        <input type="password" id="advDelPassInput" placeholder="PIN" inputmode="numeric">
-        <div style="display: flex; gap: 5px;">
-            <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none;" onclick="confirmAdvanceDeletion()">DEL</button>
-            <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none;" onclick="closeAdvDelModal()">X</button>
-        </div>
-    </div>
-</div>
-
-<div class="container" id="mainContainer">
-    <div id="userDisplayTag" class="user-tag">USER: NOT LOGGED IN</div>
-
-    <div class="tabs">
-        <button id="tab-sahil" class="tab-btn active-sahil" onclick="switchTab('sahil')">SAHIL</button>
-        <button id="tab-arman" class="tab-btn" onclick="switchTab('arman')">ARMAN</button>
-        <button id="tab-advance" class="tab-btn" onclick="switchTab('advance')">ADVANCE</button>
-    </div>
-    
-    <div id="header-title" class="main-header sahil-theme">
-        <span>SAHIL ACCOUNT</span>
-    </div>
-    
-    <div id="sahilArmanSummary" class="summary-dash">
-        <div class="s-box" style="background:#1e3799; cursor:pointer;" onclick="filterByStatus('ALL')">T-COUNT <span id="stat-count">0</span></div>
-        <div class="s-box" style="background:#2980b9; cursor:pointer;" onclick="filterByStatus('PASSED')">PASSED <span id="stat-pass">0</span></div>
-        <div class="s-box" style="background:#8e44ad; cursor:pointer;" onclick="filterByStatus('PENDING')">PENDING <span id="stat-pend">0</span></div>
-        <div class="s-box" style="background:#d35400; cursor:pointer;" onclick="filterByStatus('ALL')">T-PRICE <span id="stat-price">0</span></div>
-        <div class="s-box" style="background:#27ae60; cursor:pointer;" onclick="filterByStatus('FULL RECEIVE')">RECEIVED <span id="stat-rec">0</span></div>
-        <div class="s-box" style="background:#ff4757; cursor:pointer;" onclick="filterByStatus('BALANCE')">BALANCE <span id="stat-bal">0</span></div>
+    <div class="search-area">
+        <input type="text" id="searchInp" placeholder="🔍 Search entries..." oninput="renderData()">
+        <button onclick="clearSearch()" class="btn-clear">CLEAR</button>
     </div>
 
-    <div id="advanceSummary" class="adv-summary-dash" style="display:none;">
-        <div class="adv-s-box" style="background:#27ae60; cursor:pointer;" onclick="filterAdvance('RECEIVED')">TOTAL RECEIVED <br> <span id="adv-stat-rec">0</span></div>
-        <div class="adv-s-box" style="background:#e74c3c; cursor:pointer;" onclick="filterAdvance('GIVEN')">TOTAL GIVEN <br> <span id="adv-stat-give">0</span></div>
-        <div class="adv-s-box" style="background:#3498db; cursor:pointer;" onclick="filterAdvance('ALL')">BALANCE <br> <span id="adv-stat-diff">0</span></div>
-    </div>
-</div>
-
-<div id="adminControls" style="padding: 8px; background: #0088ff; border-radius: 25px; border: 2px solid #333; margin: 3px;">
-    <div style="display: flex; gap: 2px; align-items: center;">
-        <button id="addEntryBtn" onclick="toggleForm()" style="flex: 4; background: #0fef11; color: white; border: 2px solid #ffffff; font-size: 13px; font-weight: bold; border-radius: 20px; height: 40px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);">NEW ENTRY</button>
-
-        <button onclick="triggerQuickBackup()" class="btn-sync" title="Direct Cloud Backup">☁️ SYNC</button>
-        <button onclick="toggleSettingsMenu()" style="flex: 0.9; height: 40px; background: #333; color: white; border: 2px solid #fff; border-radius: 20px; font-size: 18px; cursor: pointer;">⚙️</button>
+    <!-- टेबल स्क्रोल कंटेनर -->
+    <div class="table-scroll" id="mainTableScroll">
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>Srl.</th><th>REC DATE</th><th>AGENT</th><th>HOLDER</th><th>COUNT</th><th>BANK</th><th>TYPE</th><th>PRICE</th><th>PASS DATE</th><th>REC.DATE</th><th>REC.AMO</th><th>STATUS</th><th>BALANCE</th><th>BAL.REC.DATE</th><th>PAYMENT</th><th>PROF</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
     </div>
 
-    <div id="settingsPanel" style="display: none; background: #001a1a; padding: 15px; border-radius: 25px; border: 2px solid #00ffff; margin-top: 5px;">
-        <h3 style="color: #00ffff; text-align: center; margin-top: 0; font-size: 13px; letter-spacing: 2px;">SETTINGS</h3>
-        <button class="btn-add-main" style="background: #27ae60;" onclick="openAuthModal()">👤 LOGIN / ACCOUNT</button>
-        <button class="btn-add-main" style="background: #e67e22;" onclick="openPasswordManagerGate()">🔑 MANAGE PASSWORDS</button>
-        <button class="btn-add-main" style="background: #4285f4;" onclick="askCloudAction('BACKUP')">☁️ BACKUP</button>
-        <button class="btn-add-main" style="background: #f39c12;" onclick="askCloudAction('RESTORE')">📥 RESTORE</button>
-        <button class="btn-add-main" style="background: #db4437;" onclick="showTrashList()">♻️ RECOVER DELETED</button>
-        <button class="btn-add-main" style="background: #9b59b6;" onclick="promptResetApp()">⚠️ RESET APP</button>
-        <button class="btn-add-main" style="background: #ff4757;" onclick="handleAppLock()">🔒 LOCK APP</button>
-        <button onclick="toggleSettingsMenu()" style="width: 100%; background: #333; color: white; border: 1px solid #fff; border-radius: 20px; padding: 8px; font-weight: bold; cursor: pointer;">CLOSE</button>
+    <div class="table-scroll" id="advanceTableScroll" style="display:none;">
+        <table id="advanceTable">
+            <thead>
+                <tr>
+                    <th style="color:#faf9fa; width:30px;">Srl.</th>
+                    <th style="color:#faf9fa;">PARTY NAME</th>
+                    <th style="color:#faf9fa;">DATE</th>
+                    <th style="color:#faf9fa;">AMOUNT</th>
+                    <th style="color:#faf9fa;">TYPE</th>
+                    <th style="color:#faf9fa;">REASON</th>
+                </tr>
+            </thead>
+            <tbody id="advance-table-body"></tbody>
+        </table>
     </div>
-</div>
 
-<div id="entryArea">
-    <div class="entry-form">
-        <div id="unlockWrapper" class="unlock-container" style="display:none;">
-            <button class="btn-unlock" onclick="askUnlock()"> UNLOCK EDIT</button>
-            <button class="btn-close-form" onclick="toggleForm()">X</button>
-        </div>
-        <input type="hidden" id="editIndex" value="-1">
-        <div class="form-row"><label>REC DATE</label><input type="text" id="f1" onblur="smartDate(this)"></div>
-        <div class="form-row"><label>AGENT</label><input type="text" id="f2"></div>
-        <div class="form-row"><label>HOLDER</label><input type="text" id="f3"></div>
-        <div class="form-row"><label>COUNT</label><input type="number" id="f4"></div>
-        <div class="form-row"><label>BANK</label><input type="text" id="f5"></div>
-        <div class="form-row"><label>TYPE</label><input type="text" id="f6"></div>
-        <div class="form-row"><label>PRICE</label><input type="number" id="f_pr" oninput="calcBal()"></div>
-        <div class="form-row"><label>PAS DATE</label><input type="text" id="f7" onblur="smartDate(this)"></div>
-        <div class="form-row"><label>RIC DATE</label><input type="text" id="f8" onblur="smartDate(this)"></div>
-        <div class="form-row"><label>REC AMO.</label><input type="number" id="f_am" oninput="calcBal()"></div>
-        <div class="form-row"><label>BALANCE</label><input type="text" id="f_bal_ui" readonly style="background:#eee;"></div>
-        <div class="form-row"><label>BAL. DATE</label><input type="text" id="f9" onblur="smartDate(this)"></div>
-        <div class="form-row"><label>PAYMENT</label><input type="number" id="f_pay_amt"></div>
-        <div class="form-row"><label>PAID DATE</label><input type="text" id="f_pay_date" onblur="smartDate(this)"></div>
-        <div style="display:flex; gap:5px; margin-top:10px; align-items: center;">
-            <button id="mainSaveBtn" class="btn-add-main" style="flex: 10; background:#27ae60; font-size: 12px; height: 32px;" onclick="submitEntry(false)">SAVE</button>
-            <button id="updateBtn" class="btn-add-main" style="flex:4; background:#f39c12; display:none; height:32px; margin-top:0;" onclick="submitEntry(false)">UPDATE</button>
-            <button id="saveAsNewBtn" class="btn-add-main" style="flex:4; background:#3498db; display:none; height:32px; margin-top:0;" onclick="submitEntry(true)">NEW</button>
-            <button id="delEntryBtn" class="btn-add-main" style="flex:4; background:#ff4757; display:none; height:32px; margin-top:0;" onclick="handleInsideDelete()">DELETE</button>
-            <button id="newCancelBtn" type="button" onclick="toggleForm()" style="flex: 1; background: #f00b0b5d; color: white; border: 2px solid #000; border-radius: 10px; height: 32px; font-weight: bold; cursor: pointer;">X</button>
-        </div>
-    </div>
-</div>
-
-<div id="advanceEntryArea">
-    <div class="entry-form" style="background: #f3fdb39d;">
-        <h2 style="text-align:center; font-size:14px; margin:4px;">ADVANCE ENTRY</h2>
-        <input type="hidden" id="advEditIndex" value="-1">
-        <div class="form-row"><label>PARTY NAME</label><input type="text" id="adv_f1"></div>
-        <div class="form-row"><label>DATE</label><input type="text" id="adv_f2" onblur="smartDate(this)"></div>
-        <div class="form-row"><label>AMOUNT</label><input type="number" id="adv_f3"></div>
-        <div class="form-row"><label>TYPE</label>
-            <select id="adv_f4">
-                <option value="RECEIVED">RECEIVED</option>
-                <option value="GIVEN">GIVEN</option>
-            </select>
-        </div>
-        <div class="form-row"><label>REASON</label><input type="text" id="adv_f5"></div>
-        <div style="display:flex; gap:5px; margin-top:10px;">
-            <button class="btn-add-main" style="flex:1; background:#27ae60;" onclick="submitAdvanceEntry()">SAVE DATA</button>
-            <button class="btn-sq" style="background:#333; width:35px; margin-top:4px;" onclick="toggleAdvanceForm()">X</button>
-        </div>
-    </div>
-</div>
-
-<div class="search-area">
-    <input type="text" id="searchInp" placeholder="🔍 Search entries..." oninput="renderData()">
-    <button onclick="clearSearch()" class="btn-clear">CLEAR</button>
-</div>
-
-<div class="table-scroll" id="mainTableScroll">
-    <table id="mainTable">
-        <thead>
-            <tr>
-                <th>Srl.</th><th>REC DATE</th><th>AGENT</th><th>HOLDER</th><th>COUNT</th><th>BANK</th><th>TYPE</th><th>PRICE</th><th>PASS DATE</th><th>REC.DATE</th><th>REC.AMO</th><th>STATUS</th><th>BALANCE</th><th>BAL.REC.DATE</th><th>PAYMENT</th><th>PROF</th>
-            </tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-    </table>
-</div>
-
-<div class="table-scroll" id="advanceTableScroll" style="display:none;">
-    <table id="advanceTable">
-        <thead>
-            <tr>
-                <th style="color:#faf9fa; width:30px;">Srl.</th>
-                <th style="color:#faf9fa;">PARTY NAME</th>
-                <th style="color:#faf9fa;">DATE</th>
-                <th style="color:#faf9fa;">AMOUNT</th>
-                <th style="color:#faf9fa;">TYPE</th>
-                <th style="color:#faf9fa;">REASON</th>
-            </tr>
-        </thead>
-        <tbody id="advance-table-body"></tbody>
-    </table>
-</div>
+</div> <!-- appWrapper End -->
 
 <div id="trashModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center;">
     <div style="background:#1a1a1a; width:90%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #ff4757; max-height:80vh; overflow-y:auto;">
@@ -587,18 +596,14 @@ body {
     let tempNewPins = null;
     let currentUser = JSON.parse(localStorage.getItem('master_active_user') || 'null');
 
-    document.body.style.overscrollBehavior = 'none';
-
+    // --- 3-Tap App Lock (पूरी तरह ठीक किया गया) ---
     function handleLockClick() {
-        const overlay = document.getElementById('mainAppOverlay');
-        if (overlay && overlay.style.display !== 'none') {
-            clickCount++;
-            if (clickCount >= 3) {
-                const secInp = document.getElementById('secretInput');
-                secInp.style.display = 'block';
-                secInp.focus();
-                clickCount = 0;
-            }
+        clickCount++;
+        if (clickCount >= 3) {
+            const secInp = document.getElementById('secretInput');
+            secInp.style.display = 'block';
+            secInp.focus();
+            clickCount = 0;
         }
     }
 
@@ -618,7 +623,6 @@ body {
         document.getElementById('mainAppOverlay').style.display = 'flex';
         document.getElementById('settingsPanel').style.display = 'none';
     }
-
 
     // --- Master Password Verification Gate ---
     function openPasswordManagerGate() {
@@ -796,7 +800,7 @@ body {
         }
     }
 
-    // --- बाहर वाले बटन से सीधे सिर्फ बैकअप लेना (No Restore) ---
+    // --- केवल बैकअप लेने वाला बटन ---
     async function triggerQuickBackup() {
         if (!currentUser) {
             alert("कृपया पहले लॉगिन करें!");
@@ -806,7 +810,6 @@ body {
         await executeCloudBackup();
     }
 
-    // --- क्लाउड बैकअप / रिस्टोर डायलॉग ---
     function askCloudAction(actionType) {
         if (!currentUser) {
             alert("कृपया पहले लॉगिन करें!");
@@ -1395,15 +1398,6 @@ body {
         if (forceClose) { panel.style.display = 'none'; return; }
         panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
     }
-    
-        if (pCurrent > pStart) {
-            if (!tableScroll || tableScroll.scrollTop <= 0) {
-                if (e.cancelable) {
-                    e.preventDefault(); //
-                }
-            }
-        }
-    }, { passive: false });
 
     window.onload = function() {
         applyUserSession();
