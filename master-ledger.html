@@ -18,9 +18,10 @@
 
         /* ब्राउज़र के पुल-टू-रिफ्रेश (खींचकर रिफ्रेश होना) को ब्लॉक करने के लिए */
         html, body {
-            overscroll-behavior-y: contain !important;
-            overscroll-behavior: contain !important;
-        }
+    overscroll-behavior-y: none !important;
+    overscroll-behavior-x: none !important;
+    overscroll-behavior: none !important;
+}
 
         html, body {
     width: 100%;
@@ -135,15 +136,14 @@ body {
         /* टेबल स्क्रोल में भी ओवर-स्क्रोल बंद रखा गया है */
         .table-scroll { 
     overflow-x: auto !important; 
-    overflow-y: scroll !important; 
+    overflow-y: auto !important; 
     height: 55vh; 
     margin-top: 5px; 
     background: #8989923a; 
     border-radius: 8px; 
     border: 1px solid #999; 
-    overscroll-behavior: none !important;
-    touch-action: pan-x pan-y !important;
-    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain !important;
+    -webkit-overflow-scrolling: touch !important;
 }
 
         table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
@@ -1395,15 +1395,7 @@ body {
         if (forceClose) { panel.style.display = 'none'; return; }
         panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
     }
-    let pStart = 0;
-    window.addEventListener('touchstart', function(e) {
-        pStart = e.touches[0].screenY;
-    }, { passive: true });
-
-    window.addEventListener('touchmove', function(e) {
-        let pCurrent = e.touches[0].screenY;
-        let tableScroll = e.target.closest('.table-scroll');
-
+    
         if (pCurrent > pStart) {
             if (!tableScroll || tableScroll.scrollTop <= 0) {
                 if (e.cancelable) {
