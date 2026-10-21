@@ -255,7 +255,7 @@
         }
         .setting-section-title {
             background: #090d14; padding: 6px 12px; font-size: 10px; font-weight: 600;
-            color: var(--accent-recv); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);
+            color: #968547; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);
         }
         .setting-item {
             display: flex; justify-content: space-between; align-items: center;
@@ -533,8 +533,8 @@
 
                 <div class="setting-section-title">4. Security & Passwords</div>
                 <div class="setting-item" onclick="openPasswordManagerGate()">
-                    <span style="color:#e67e22; font-weight:600;">🔑 Manage Security Passwords</span>
-                    <span style="color:#e67e22;">Manage ›</span>
+                    <span style="color:#ff4757; font-weight:600;">🔑 Manage Security Passwords</span>
+                    <span style="color:#ff4757;">Manage ›</span>
                 </div>
                 <div class="setting-item" onclick="handleAppLock()">
                     <span style="color:#ff4757; font-weight:600;">🔒 Lock App Now</span>
@@ -543,18 +543,18 @@
 
                 <div class="setting-section-title">5. Cloud Backup & Sync</div>
                 <div class="setting-item" onclick="closeSettingsModal(); openFirebaseAuthModal();">
-                    <span style="color:#38bdf8; font-weight:600;">🔥 Firebase Account & Sync</span>
-                    <span style="color:#38bdf8;">Open ›</span>
+                    <span style="color:#1b11f8ea; font-weight:600;">🔥 Firebase Account & Sync</span>
+                    <span style="color:#e59008;">Open ›</span>
                 </div>
 
                 <div class="setting-section-title">6. Backup & Restore (JSON / File)</div>
                 <div class="setting-item" onclick="exportDataToJsonFile()">
-                    <span style="color:#10b981; font-weight:600;">💾 Export Backup (Download JSON)</span>
-                    <span style="color:#10b981;">Download ›</span>
+                    <span style="color:#747776c1; font-weight:600;">💾 Export Backup (Download JSON)</span>
+                    <span style="color:#747776c1;">Download ›</span>
                 </div>
                 <div class="setting-item" onclick="triggerJsonImport()">
-                    <span style="color:#f59e0b; font-weight:600;">📥 Restore from JSON File</span>
-                    <span style="color:#f59e0b;">Select File ›</span>
+                    <span style="color:#747776c1; font-weight:600;">📥 Restore from JSON File</span>
+                    <span style="color:#747776c1;">Select File ›</span>
                 </div>
 
                 <div class="setting-item" onclick="promptResetApp()">
