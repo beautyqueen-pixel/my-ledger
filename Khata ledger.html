@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -16,17 +16,16 @@
 
     <!-- FIREBASE COMPAT SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
-            --bg-main: #090c12;
-            --bg-card: #0e131d;
+            --bg-main: #0b0e14;
+            --bg-card: #0d121c;
             --text-main: #e2e8f0;
             --text-muted: #828fa3;
             --text-gray: #94a3b8;
-            --border-soft: #17202f;
+            --border-soft: #172233;
             --accent-recv: #2ecc71;
             --accent-give: #e74c3c;
             --header-dark: #090d14;
@@ -42,19 +41,12 @@
 
         html, body {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%;
             overflow: hidden;
             overscroll-behavior: none !important;
             overscroll-behavior-y: none !important;
-            touch-action: pan-x pan-y !important;
-        }
-
-        body {
+            touch-action: pan-y !important;
             background-color: var(--bg-main);
             color: var(--text-main);
             display: flex;
@@ -71,7 +63,7 @@
         .app-container {
             width: 100%;
             max-width: 520px;
-            background-color: var(--bg-card);
+            background-color: var(--bg-main);
             height: 100%;
             position: relative;
             display: flex;
@@ -81,565 +73,278 @@
             overflow: hidden;
         }
 
+        #mainAppOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(25px); 
+            z-index: 999999; display: none; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        #secretInput {
+            display: none; padding: 12px 18px; border-radius: 16px; border: 2px solid #38bdf8; 
+            text-align: center; font-size: 18px; width: 160px; background: #0b0e14; color: #38bdf8;
+            outline: none; z-index: 1000000;
+        }
+
         .summary-header {
             padding: 10px 14px;
             background: var(--header-dark);
             border-bottom: 1px solid var(--border-soft);
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            position: sticky; top: 0; z-index: 10;
             flex-shrink: 0;
         }
 
         .summary-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .header-title-box {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
+        .header-title-box { display: flex; flex-direction: column; gap: 2px; }
+        .header-title { font-size: 14px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.3px; }
 
-        .header-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #cbd5e1;
-            letter-spacing: 0.3px;
-        }
-
-        /* डिस्प्ले पर यूजर का नाम दिखाने वाला टैग */
         .user-badge-header {
-            font-size: 11px;
-            font-weight: 600;
-            color: #38bdf8;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            max-width: 160px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            font-size: 11px; font-weight: 600; color: #38bdf8;
+            display: flex; align-items: center; gap: 4px;
+            max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        .header-actions {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
+        .header-actions { display: flex; gap: 5px; align-items: center; }
 
         .btn-setting, .btn-filter-trigger {
-            background: #151d2a;
-            border: 1px solid var(--border-soft);
-            color: #cbd5e1;
-            padding: 4px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 3px;
+            background: #151d2a; border: 1px solid var(--border-soft); color: #cbd5e1;
+            padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 500;
+            display: flex; align-items: center; gap: 3px;
         }
 
         .btn-cloud-save {
-            background: #102a20;
-            border: 1px solid rgba(46, 204, 113, 0.4);
-            color: #2ecc71;
-            padding: 4px 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 3px;
+            background: #102a20; border: 1px solid rgba(46, 204, 113, 0.4); color: #2ecc71;
+            padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600;
+            display: flex; align-items: center; gap: 3px;
         }
 
         .compact-balance-strip {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 9px 14px;
-            background: #0d121c;
-            border-bottom: 1px solid var(--border-soft);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 14px; background: #0c1017; border-bottom: 1px solid var(--border-soft);
             flex-shrink: 0;
         }
 
-        .strip-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11.5px;
-            font-weight: 600;
-        }
-
-        .strip-val {
-            font-size: 12.5px;
-            font-weight: 700;
-        }
-
-        .filter-status-tag {
-            background: rgba(46, 204, 113, 0.12);
-            border: 1px solid rgba(46, 204, 113, 0.3);
-            color: #2ecc71;
-            padding: 5px 12px;
-            margin: 6px 10px 0;
-            border-radius: 4px;
-            font-size: 11px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-shrink: 0;
-        }
-        .filter-status-tag button {
-            background: transparent;
-            border: none;
-            color: #ff7675;
-            cursor: pointer;
-            font-size: 11px;
-        }
+        .strip-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; }
+        .strip-val { font-size: 12px; font-weight: 700; }
 
         .table-column-header {
-            display: grid;
-            grid-template-columns: 1.5fr 1.3fr 1.2fr;
-            align-items: center;
-            padding: 9px 14px;
-            background: #090c12;
-            border-bottom: 1px solid var(--border-soft);
-            font-size: 11px;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            flex-shrink: 0;
+            display: grid; grid-template-columns: 1.4fr 1.3fr 1.3fr;
+            align-items: center; padding: 8px 14px; background: #090d14;
+            border-bottom: 1px solid var(--border-soft); font-size: 10px; font-weight: 600;
+            color: #64748b; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;
         }
         .table-column-header div:nth-child(2) { text-align: center; }
         .table-column-header div:nth-child(3) { text-align: right; }
 
         .ledger-list {
-            flex: 1;
-            padding-bottom: 80px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain !important;
+            flex: 1; padding-bottom: 85px; overflow-y: scroll;
+            -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain !important;
+            touch-action: pan-y !important;
         }
 
         .party-summary-row {
-            display: grid;
-            grid-template-columns: 1.5fr 1.3fr 1.2fr;
-            align-items: center;
-            padding: 12px 14px;
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-soft);
-            cursor: pointer;
-            transition: background 0.1s ease;
+            display: grid; grid-template-columns: 1.4fr 1.3fr 1.3fr;
+            align-items: center; padding: 11px 14px; background: var(--bg-card);
+            border-bottom: 1px solid #141b26; cursor: pointer; transition: background 0.1s ease;
         }
-        .party-summary-row:hover, .party-summary-row:active {
-            background: #141b27;
-        }
+        .party-summary-row:active { background: #162030; }
 
         .col-party-name {
-            font-size: 12px;
-            font-weight: 600;
-            color: #e2e8f0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-right: 6px;
+            font-size: 12px; font-weight: 600; color: #e2e8f0;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 4px;
         }
 
         .col-banner-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        .banner-pill {
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 10px;
+        .pill-net {
+            font-size: 11px; 
             font-weight: 600;
-            white-space: nowrap;
-            letter-spacing: 0.2px;
+            white-space: nowrap; 
+            display: inline-block;
+            padding: 0;
         }
-        .banner-pill.tag-recv {
-            background: rgba(56, 304, 103, 0.1);
-            color: #fcfcfb;
-            border: 1px solid rgba(46, 204, 113, 0.85);
+        .pill-dr {
+            background: transparent !important;
+            border: none !important;
+            color: #f65655;
         }
-        .banner-pill.tag-give {
-            background: rgba(231, 76, 60, 0.19);
-            color: #f3f1f1;
-            border: 1px solid rgba(231, 76, 60, 0.5);
+        .pill-cr {
+            background: transparent !important;
+            border: none !important;
+            color: #2ecc71;
         }
-
         .col-final-balance {
-            text-align: right;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
+            text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap;
         }
         .bal-recv { color: var(--accent-recv); }
         .bal-give { color: var(--accent-give); }
         .bal-settled { color: #64748b; }
 
-        .fab-btn {
-            position: fixed;
-            bottom: 20px;
-            right: calc(50% - 230px);
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: var(--accent-give);
-            color: white;
-            border: none;
-            font-size: 26px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            z-index: 90;
+        .filter-status-tag {
+            background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8; padding: 5px 12px; margin: 6px 10px 0; border-radius: 4px;
+            font-size: 11px; display: flex; justify-content: space-between; align-items: center;
+            flex-shrink: 0;
         }
-        @media (max-width: 520px) {
-            .fab-btn { right: 16px; }
+        .filter-status-tag button {
+            background: transparent; border: none; color: #ff7675; cursor: pointer; font-size: 11px; font-weight: 700;
         }
 
+        .fab-btn {
+            position: fixed; bottom: 20px; right: calc(50% - 230px);
+            width: 48px; height: 48px; border-radius: 50%;
+            background-color: var(--accent-give); color: white; border: none; font-size: 26px;
+            display: flex; justify-content: center; align-items: center; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 90;
+        }
+        @media (max-width: 520px) { .fab-btn { right: 16px; } }
+
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 8px;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.88); display: none; justify-content: center; align-items: center;
+            z-index: 1000; padding: 8px;
         }
         #addAccountModal { z-index: 99999 !important; }
 
         .modal-box {
-            background: #111621;
-            width: 100%;
-            max-width: 480px;
-            border-radius: 8px;
-            border: 1px solid var(--border-soft);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            max-height: 94vh;
+            background: #111621; width: 100%; max-width: 500px; border-radius: 10px;
+            border: 1px solid var(--border-soft); overflow: hidden; display: flex; flex-direction: column; max-height: 95vh;
         }
 
         .modal-header {
-            padding: 12px 14px;
-            font-size: 13px;
-            font-weight: 600;
-            color: #e2e8f0;
-            border-bottom: 1px solid var(--border-soft);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #0b0e14;
-            flex-shrink: 0;
+            padding: 10px 14px; font-size: 12.5px; font-weight: 600; color: #e2e8f0;
+            border-bottom: 1px solid var(--border-soft); display: flex; justify-content: space-between;
+            align-items: center; background: #0b0e14; flex-shrink: 0;
         }
 
-        .acc-nav-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-back {
-            background: none;
-            border: none;
-            color: var(--accent-recv);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
+        .btn-back { background: none; border: none; color: var(--accent-recv); font-size: 12px; font-weight: 600; cursor: pointer; }
         .btn-img-export {
-            background: #10b981;
-            color: #ffffff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+            background: #10b981; color: #ffffff; border: none; padding: 5px 10px;
+            border-radius: 5px; font-size: 11px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; gap: 4px;
         }
 
         .account-list {
-            overflow-y: auto;
-            flex: 1;
-            padding: 8px;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain !important;
-        }
-
-        .desc-box-statement {
-            background: #131924;
-            border: 1px solid #1c2638;
-            border-radius: 6px;
-            padding: 8px 10px;
-            font-size: 11.5px;
-            color: #cbd5e1;
-            margin-top: 6px;
-            line-height: 1.4;
-        }
-        .desc-box-statement span {
-            color: #7b889b;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 10px;
-            margin-right: 4px;
+            overflow-y: scroll; flex: 1; padding: 8px;
+            -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain !important;
+            touch-action: pan-y !important;
         }
 
         .passbook-table-wrap {
-            width: 100%;
-            overflow-x: auto;
-            border-radius: 6px;
-            border: 1px solid var(--border-soft);
-            background: #0b0e14;
-            margin-top: 10px;
-            -webkit-overflow-scrolling: touch;
+            width: 100%; overflow-x: auto; border-radius: 6px; border: 1px solid var(--border-soft);
+            background: #0b0e14; margin-top: 8px; -webkit-overflow-scrolling: touch;
         }
 
-        .passbook-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11px;
-            text-align: center;
-        }
+        .passbook-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; }
+        .passbook-table th { background: #151a24; color: #94a3b8; padding: 7px 5px; border-bottom: 1px solid var(--border-soft); font-weight: 600; }
+        .passbook-table td { padding: 7px 5px; border-bottom: 1px solid #161c27; color: #cbd5e0; }
 
-        .passbook-table th {
-            background: #151a24;
-            color: #94a3b8;
-            padding: 8px 6px;
-            border-bottom: 1px solid var(--border-soft);
-            font-weight: 600;
-        }
-
-        .passbook-table td {
-            padding: 8px 6px;
-            border-bottom: 1px solid #161c27;
-            color: #cbd5e0;
-        }
-
-        .selected-delete-row {
-            background: rgba(231, 76, 60, 0.28) !important;
-            border-left: 3px solid #ff4757 !important;
-        }
-        .selected-delete-row td {
-            color: #ffffff !important;
-        }
-
-        .multi-delete-bar {
-            background: #1a0f12;
-            border: 1px solid #ff4757;
-            border-radius: 6px;
-            padding: 8px 12px;
-            margin-top: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            animation: fadeIn 0.2s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* Master Sheet Styles (Screenshot match) */
+        .excel-sheet-table { width: 100%; border-collapse: collapse; font-size: 9.5px; font-family: monospace, sans-serif; background: #fff; color: #111; }
+        .excel-sheet-table th { background: #1e293b; color: #fff; padding: 5px 4px; font-size: 9px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
+        .excel-sheet-table td { padding: 4px 5px; border: 1px solid #e2e8f0; font-size: 9.5px; }
+        .excel-agent-banner { background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 4px 6px; border: 1px solid #bae6fd; font-size: 10px; }
 
         .simple-settings-list {
-            overflow-y: auto;
-            flex: 1;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain !important;
+            overflow-y: scroll; flex: 1; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain !important;
+            touch-action: pan-y !important;
         }
         .setting-section-title {
-            background: #0b0e14;
-            padding: 8px 12px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--accent-recv);
-            border-top: 1px solid var(--border-soft);
-            border-bottom: 1px solid var(--border-soft);
+            background: #090d14; padding: 6px 12px; font-size: 10px; font-weight: 600;
+            color: var(--accent-recv); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);
         }
         .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 11px 14px;
-            border-bottom: 1px solid var(--border-soft);
-            cursor: pointer;
-            font-size: 12px;
-            color: #cbd5e0;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 9px 14px; border-bottom: 1px solid var(--border-soft); cursor: pointer;
+            font-size: 11.5px; color: #cbd5e0;
         }
-        .setting-item:hover { background: #161c27; }
+        .setting-item:hover, .setting-item:active { background: #151d2a; }
 
         .form-body {
-            padding: 12px 14px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: contain !important;
+            padding: 12px 14px; overflow-y: scroll; display: flex; flex-direction: column; gap: 8px;
+            -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain !important;
+            touch-action: pan-y !important;
         }
-        .form-row-2col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-        .form-group label {
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-weight: 600;
-        }
+        .form-row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .form-group { display: flex; flex-direction: column; gap: 3px; }
+        .form-group label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .form-control {
-            background: #0b0e14;
-            border: 1px solid var(--border-soft);
-            color: #e2e8f0;
-            padding: 8px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            outline: none;
-            width: 100%;
+            background: #0b0e14; border: 1px solid var(--border-soft); color: #e2e8f0;
+            padding: 7px 9px; border-radius: 5px; font-size: 12px; outline: none; width: 100%;
         }
         .form-control:focus { border-color: #3b82f6; }
-
         .form-radio-row { display: flex; gap: 6px; }
         .radio-btn-label {
-            flex: 1;
-            background: #0b0e14;
-            padding: 8px;
-            text-align: center;
-            border-radius: 4px;
-            border: 1px solid var(--border-soft);
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 11px;
+            flex: 1; background: #0b0e14; padding: 7px; text-align: center; border-radius: 5px;
+            border: 1px solid var(--border-soft); cursor: pointer; font-weight: 600; font-size: 11px;
         }
-        .radio-btn-label.active-cr {
-            background: rgba(46, 204, 113, 0.15);
-            border-color: var(--accent-recv);
-            color: var(--accent-recv);
-        }
-        .radio-btn-label.active-dr {
-            background: rgba(231, 76, 60, 0.15);
-            border-color: var(--accent-give);
-            color: #ff7675;
-        }
+        .radio-btn-label.active-cr { background: rgba(46, 204, 113, 0.15); border-color: var(--accent-recv); color: var(--accent-recv); }
+        .radio-btn-label.active-dr { background: rgba(231, 76, 60, 0.15); border-color: var(--accent-give); color: #ff7675; }
 
         .modal-footer {
-            padding: 10px 14px;
-            display: flex;
-            gap: 6px;
-            border-top: 1px solid var(--border-soft);
-            background: #0b0e14;
-            flex-shrink: 0;
+            padding: 9px 14px; display: flex; gap: 6px; border-top: 1px solid var(--border-soft);
+            background: #0b0e14; flex-shrink: 0;
         }
         .btn-modal {
-            flex: 1;
-            padding: 9px 5px;
-            border-radius: 4px;
-            border: none;
-            font-weight: 600;
-            font-size: 11.5px;
-            cursor: pointer;
-            text-align: center;
+            flex: 1; padding: 8px 5px; border-radius: 5px; border: none; font-weight: 600; font-size: 11.5px;
+            cursor: pointer; text-align: center;
         }
         .btn-cancel { background: #222b39; color: #cbd5e0; }
         .btn-save-more { background: #1e3a5f; color: #38bdf8; border: 1px solid #38bdf8; }
         .btn-submit { background: var(--accent-recv); color: #ffffff; }
 
-        /* FIREBASE AUTH & SYNC MODAL */
-        #firebaseAuthModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(6px);
-            z-index: 100000;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-        }
-        .auth-card {
-            background: #111621;
-            padding: 18px;
-            border-radius: 10px;
-            border: 1px solid var(--border-soft);
-            width: 100%;
-            max-width: 330px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .auth-card input {
-            width: 100%;
-            padding: 9px;
-            border: 1px solid var(--border-soft);
-            border-radius: 5px;
-            font-size: 12px;
-            background: #0b0e14;
-            color: #fff;
-            outline: none;
-        }
-        .auth-card input:focus {
-            border-color: #38bdf8;
+        #firebaseAuthModal, #masterGateModal, #passManagerModal, #resetAppModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
+            z-index: 100000; align-items: center; justify-content: center; padding: 12px;
         }
 
-        .tab-auth-switch {
-            display: flex;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--border-soft);
-            margin-bottom: 4px;
+        #cloudActionModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(20px);
+            z-index: 200000 !important; align-items: center; justify-content: center; padding: 12px;
         }
-        .tab-auth-btn {
-            flex: 1;
-            padding: 7px;
-            background: #0b0e14;
-            color: #94a3b8;
-            border: none;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
+
+        .auth-card {
+            background: rgba(17, 22, 33, 0.98); padding: 18px; border-radius: 14px; border: 1px solid var(--border-soft);
+            width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 9px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
         }
-        .tab-auth-btn.active {
-            background: #1e293b;
-            color: #38bdf8;
+        .auth-card input {
+            width: 100%; padding: 10px; border: 1px solid var(--border-soft); border-radius: 8px;
+            font-size: 12.5px; background: #0b0e14; color: #fff; outline: none; text-align: center;
+        }
+        .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+        .pm-row label { font-size: 10.5px; font-weight: 600; color: #38bdf8; text-align: left; width: 55%; }
+        .pm-row input { width: 40%; padding: 5px; border-radius: 5px; border: 1px solid #38bdf8; background: #000; color: #2ecc71; text-align: center; font-size: 12px; font-weight: bold; outline: none; }
+        
+        .auth-links {
+            display: flex; justify-content: space-between; font-size: 10.5px; margin-top: 4px; padding: 0 4px;
+        }
+        .auth-link {
+            color: #38bdf8; cursor: pointer; text-decoration: underline;
         }
     </style>
 </head>
 <body>
+
+    <div id="mainAppOverlay" onclick="handleLockClick()">
+        <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" autocomplete="new-password" onclick="event.stopPropagation()">
+    </div>
 
     <div class="app-container">
         <div class="summary-header">
             <div class="summary-top-row">
                 <div class="header-title-box">
                     <span class="header-title">Khata Ledger Pro</span>
-                    <!-- यूजर का नाम यहाँ डिस्प्ले पर दिखेगा -->
-                    <span id="displayUserNameHeader" class="user-badge-header">👤 Guest User</span>
+                    <span id="displayUserNameHeader" class="user-badge-header">👤 Login</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-cloud-save" onclick="handleCloudAction()">🔥 <span id="syncBtnText">Register</span></button>
+                    <button class="btn-cloud-save" onclick="handleCloudAction()">🔥 <span id="syncBtnText">Login</span></button>
                     <button class="btn-setting" onclick="openSettingsModal()">⚙️ Settings</button>
                     <button class="btn-filter-trigger" onclick="openAccountPicker('MAIN')"><span>Accounts</span> ▾</button>
                 </div>
@@ -664,7 +369,7 @@
 
         <div class="table-column-header">
             <div>PARTY NAME</div>
-            <div>DR/CR</div>
+            <div>NET TRANSACTION</div>
             <div>BALANCE</div>
         </div>
 
@@ -673,47 +378,118 @@
         <button class="fab-btn" onclick="openEntryForm()" title="New Entry">+</button>
     </div>
 
-    <!-- FIREBASE AUTH & SYNC MODAL -->
+    <!-- Hidden Input for JSON file restore -->
+    <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleJsonFileSelect(event)">
+
+    <div id="masterGateModal">
+        <div class="auth-card" style="max-width: 250px;">
+            <h3 id="masterGateTitle" style="color:#38bdf8; font-size:12px; font-weight:700;">ENTER MASTER PIN</h3>
+            <input type="password" id="masterGateInput" placeholder="" inputmode="numeric">
+            <div style="display:flex; gap:6px; margin-top:4px;">
+                <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="submitMasterGate()">OK</button>
+                <button class="btn-modal btn-cancel" onclick="closeMasterGate()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="passManagerModal">
+        <div class="auth-card">
+            <h3 style="color:#38bdf8; font-size:13px; font-weight:700;">PASSWORD SETTINGS</h3>
+            <hr style="border:0.5px solid #1c2638; margin: 4px 0 8px 0;">
+            <div class="pm-row">
+                <label>1. APP OPEN LOCK</label>
+                <input type="text" id="pm_open" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>2. EDIT UNLOCK PIN</label>
+                <input type="text" id="pm_edit" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>3. DELETE PIN</label>
+                <input type="text" id="pm_del" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>4. CLOUD BACKUP PIN</label>
+                <input type="text" id="pm_cloud" placeholder="7869">
+            </div>
+            <div style="display:flex; gap:6px; margin-top:6px;">
+                <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="savePasswordSettings()">SAVE</button>
+                <button class="btn-modal btn-cancel" onclick="closePassManager()">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resetAppModal">
+        <div class="auth-card" style="max-width: 260px;">
+            <h3 style="color:#ff4757; font-size:12px; font-weight:700;">⚠️ RESET APP</h3>
+            <p style="font-size:10px; color:#94a3b8;">मास्टर पासवर्ड दर्ज करें:</p>
+            <input type="password" id="resetPassInput" placeholder="MASTER PIN" inputmode="numeric">
+            <div style="display:flex; gap:6px; margin-top:4px;">
+                <button class="btn-modal" style="background:#e74c3c; color:#fff;" onclick="handleResetSubmit()">CONFIRM RESET</button>
+                <button class="btn-modal btn-cancel" onclick="closeResetModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cloudActionModal">
+        <div class="auth-card" style="max-width: 280px;">
+            <h3 id="cloudActionTitle" style="color:#38bdf8; font-size:13.5px; font-weight:700;">☁️ CLOUD ACTION</h3>
+            <p style="font-size:11px; color:#94a3b8;" id="cloudActionDesc">पासवर्ड दर्ज करें</p>
+            <input type="password" id="cloudActionPassInput" placeholder="Password" inputmode="numeric">
+            <div style="display:flex; gap:6px; margin-top:6px;">
+                <button id="btnExecuteCloud" class="btn-modal" style="background:#2ecc71; color:#fff; font-weight:700;" onclick="submitCloudAction()">OK</button>
+                <button class="btn-modal btn-cancel" onclick="closeCloudActionModal()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
     <div id="firebaseAuthModal">
         <div class="auth-card">
-            <h3 style="color:#e2e8f0; font-size:14px; font-weight:700;">🔥 Firebase Cloud Sync</h3>
-            <p id="authStatusDesc" style="color:#ff4757; font-size:11.5px; font-weight:600;">Register or Login with your details</p>
+            <h3 style="color:#e2e8f0; font-size:13.5px; font-weight:700;">🔥 Khata Account</h3>
+            <p id="authStatusDesc" style="color:#38bdf8; font-size:11px; font-weight:600;">नया खाता रजिस्टर करें</p>
 
-            <!-- बिना लॉगिन के फॉर्म -->
-            <div id="authInputsArea" style="display:flex; flex-direction:column; gap:7px;">
-                <div class="tab-auth-switch">
-                    <button type="button" id="tabRegisterBtn" class="tab-auth-btn active" onclick="switchAuthTab('REGISTER')">REGISTER (नया खाता)</button>
-                    <button type="button" id="tabLoginBtn" class="tab-auth-btn" onclick="switchAuthTab('LOGIN')">LOGIN (लॉगिन)</button>
+            <div id="authInputsArea" style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; border-radius:6px; overflow:hidden; border:1px solid var(--border-soft); margin-bottom:2px;">
+                    <button type="button" id="tabRegisterBtn" style="flex:1; padding:7px; background:#1e293b; color:#38bdf8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('REGISTER')">REGISTER</button>
+                    <button type="button" id="tabLoginBtn" style="flex:1; padding:7px; background:#0b0e14; color:#94a3b8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('LOGIN')">LOGIN</button>
                 </div>
 
-                <!-- सिर्फ रजिस्टर के लिए दिखने वाले फील्ड्स -->
-                <div id="regExtraFields" style="display:flex; flex-direction:column; gap:7px;">
-                    <input type="text" id="fbFullName" placeholder="Full Name (पूरा नाम) *">
-                    <input type="tel" id="fbMobile" placeholder="Mobile Number (10 अंक) *" maxlength="10">
+                <div id="regExtraFields" style="display:flex; flex-direction:column; gap:6px;">
+                    <input type="text" id="fbFullName" placeholder="पूरा नाम (Full Name) *">
+                    <input type="text" id="fbRegUsername" placeholder="यूज़र नाम (Username) *" autocomplete="off">
+                    <input type="tel" id="fbRegMobile" placeholder="मोबाइल नंबर (10 अंक) *" maxlength="10">
+                    <input type="email" id="fbRegEmail" placeholder="ईमेल आईडी (डेटा बैकअप चाबी) *">
                 </div>
 
-                <input type="email" id="fbEmail" placeholder="Email Address *">
-                <input type="password" id="fbPassword" placeholder="Password (पासवर्ड) *">
+                <div id="loginField" style="display:none;">
+                    <input type="text" id="fbLoginIdentifier" placeholder="यूज़र नाम / मोबाइल नंबर / ईमेल आईडी *">
+                </div>
+
+                <input type="password" id="fbPassword" placeholder="पासवर्ड (Password) *">
                 
-                <!-- दो बार पासवर्ड डालने का बॉक्स (सिर्फ रजिस्टर में) -->
-                <input type="password" id="fbConfirmPassword" placeholder="Confirm Password (दोबारा पासवर्ड) *">
+                <div id="regConfirmField" style="display:block;">
+                    <input type="password" id="fbConfirmPassword" placeholder="पासवर्ड दोबारा (Confirm Password) *">
+                </div>
 
-                <button type="button" id="btnAuthSubmit" class="btn-modal" style="background:#38bdf8; color:#fff; padding:10px; font-size:12px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
+                <div class="auth-links" id="authLinksRow" style="display:none;">
+                    <span class="auth-link" onclick="handleForgotPassword()">Forgot Password?</span>
+                    <span class="auth-link" onclick="handleForgotDetails()">Find My Details?</span>
+                </div>
+
+                <button type="button" id="btnAuthSubmit" class="btn-modal" style="background:#38bdf8; color:#fff; padding:8px; font-size:11.5px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
             </div>
 
-            <!-- लॉगिन हो जाने पर दिखने वाला एरिया -->
-            <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:8px;">
-                <div style="font-size:13px; color:#38bdf8; word-break:break-all; font-weight:700;" id="userEmailDisplay"></div>
+            <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:7px;">
+                <div style="font-size:13px; color:#38bdf8; font-weight:700;" id="userEmailDisplay"></div>
                 
-                <div style="display:flex; gap:6px; margin-top:6px;">
-                    <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="backupToFirebase(true)">☁️ BACKUP</button>
-                    <button class="btn-modal" style="background:#f59e0b; color:#fff;" onclick="restoreFromFirebase()">📥 RESTORE</button>
+                <div style="display:flex; gap:6px; margin-top:4px;">
+                    <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="openCloudActionModal('BACKUP')">☁️ BACKUP</button>
+                    <button class="btn-modal" style="background:#f59e0b; color:#fff;" onclick="openCloudActionModal('RESTORE')">📥 RESTORE</button>
                 </div>
-
-                <button class="btn-modal" style="background:#e74c3c; color:#fff; margin-top:4px;" onclick="firebaseLogout()">LOGOUT</button>
+                <button class="btn-modal" style="background:#e74c3c; color:#fff; margin-top:2px;" onclick="firebaseLogout(true)">LOGOUT & LOCK</button>
             </div>
 
-            <button class="btn-modal" style="background:#222b39; color:#94a3b8; margin-top:4px;" onclick="closeFirebaseAuthModal()">CLOSE</button>
+            <button class="btn-modal btn-cancel" id="btnAuthModalClose" style="display:none; margin-top:4px;" onclick="closeFirebaseAuthModal()">CLOSE</button>
         </div>
     </div>
 
@@ -750,19 +526,20 @@
                     <span>Person Ledger (All Parties)</span>
                     <span style="color:#718096;">›</span>
                 </div>
-                <div class="setting-item" onclick="openAllLedgersFullSheet()">
-                    <span style="color:#38bdf8; font-weight:600;">📊 All Parties All Ledgers</span>
-                    <span style="color:#38bdf8; font-weight:600;">Sheet ›</span>
+                <!-- All Parties All Ledgers (Full Excel Passbook) restored -->
+                <div class="setting-item" onclick="openAllPartiesMasterSheet()">
+                    <span style="color:#c845f0; font-weight:700;">📊 All Parties All Ledgers</span>
+                    <span style="color:#c845f0; font-weight:700;">Sheet ›</span>
                 </div>
 
-                <div class="setting-section-title">4. Manage Masters & Categories</div>
-                <div class="setting-item" onclick="openManageMastersView()">
-                    <span style="color:#e2e8f0; font-weight:600;">Manage Parties (Edit / Delete)</span>
-                    <span style="color:var(--accent-recv); font-weight:600;">Manage ›</span>
+                <div class="setting-section-title">4. Security & Passwords</div>
+                <div class="setting-item" onclick="openPasswordManagerGate()">
+                    <span style="color:#e67e22; font-weight:600;">🔑 Manage Security Passwords</span>
+                    <span style="color:#e67e22;">Manage ›</span>
                 </div>
-                <div class="setting-item" onclick="openManageCategoriesView()">
-                    <span style="color:#e2e8f0; font-weight:600;">Manage Categories (Edit / Delete)</span>
-                    <span style="color:#38bdf8; font-weight:600;">Categories ›</span>
+                <div class="setting-item" onclick="handleAppLock()">
+                    <span style="color:#ff4757; font-weight:600;">🔒 Lock App Now</span>
+                    <span style="color:#ff4757;">Lock ›</span>
                 </div>
 
                 <div class="setting-section-title">5. Cloud Backup & Sync</div>
@@ -770,15 +547,30 @@
                     <span style="color:#38bdf8; font-weight:600;">🔥 Firebase Account & Sync</span>
                     <span style="color:#38bdf8;">Open ›</span>
                 </div>
+
+                <div class="setting-section-title">6. Backup & Restore (JSON / File)</div>
+                <div class="setting-item" onclick="exportDataToJsonFile()">
+                    <span style="color:#10b981; font-weight:600;">💾 Export Backup (Download JSON)</span>
+                    <span style="color:#10b981;">Download ›</span>
+                </div>
+                <div class="setting-item" onclick="triggerJsonImport()">
+                    <span style="color:#f59e0b; font-weight:600;">📥 Restore from JSON File</span>
+                    <span style="color:#f59e0b;">Select File ›</span>
+                </div>
+
+                <div class="setting-item" onclick="promptResetApp()">
+                    <span style="color:#ff4757; font-weight:600;">⚠️ Reset App (Clear Local Data)</span>
+                    <span style="color:#ff4757;">Reset ›</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Passbook / Report Modal -->
+    <!-- Statement / Passbook Modal -->
     <div class="modal-overlay" id="accountPickerModal">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 520px;">
             <div class="modal-header">
-                <div class="acc-nav-header">
+                <div style="display:flex; align-items:center; gap:6px;">
                     <button id="btnBackModal" class="btn-back" style="display:none;" onclick="handleModalBack()">← Back</button>
                     <span id="accountModalTitle">Statement Passbook</span>
                 </div>
@@ -853,13 +645,13 @@
 
                 <div class="form-group">
                     <label>Party Name</label>
-                    <input type="text" id="inputName" class="form-control" list="personsList" placeholder="" oninput="onPersonNameInput(this.value)" onchange="onPersonNameInput(this.value)">
+                    <input type="text" id="inputName" class="form-control" list="personsList" oninput="onPersonNameInput(this.value)" onchange="onPersonNameInput(this.value)">
                     <datalist id="personsList"></datalist>
                 </div>
 
                 <div class="form-group">
                     <label>Agent / Main Account</label>
-                    <input type="text" id="inputAccount" class="form-control" list="agentsList" placeholder="" oninput="onAccountFieldChanged(this.value)" onchange="onAccountFieldChanged(this.value)">
+                    <input type="text" id="inputAccount" class="form-control" list="agentsList">
                     <datalist id="agentsList"></datalist>
                 </div>
 
@@ -868,7 +660,7 @@
                         <label>Amount</label>
                         <span id="remainingHint" style="font-size:10.5px; font-weight:600;"></span>
                     </div>
-                    <input type="number" id="inputAmount" class="form-control" placeholder="" oninput="updateRemainingHint()">
+                    <input type="number" id="inputAmount" class="form-control" oninput="updateRemainingHint()">
                 </div>
 
                 <div class="form-group">
@@ -881,12 +673,12 @@
 
                 <div class="form-group">
                     <label>Category / Purpose</label>
-                    <input type="text" id="inputParpas" class="form-control" placeholder="" autocomplete="off">
+                    <input type="text" id="inputParpas" class="form-control">
                 </div>
 
                 <div class="form-group">
                     <label>Note / Remarks</label>
-                    <input type="text" id="inputNote" class="form-control" placeholder="">
+                    <input type="text" id="inputNote" class="form-control">
                 </div>
             </div>
 
@@ -901,36 +693,38 @@
 
     <script>
         const firebaseConfig = {
-            apiKey: "AIzaSyC38xkCjYMEraStiCKvgRn9BQlswr7A8i8",
-            authDomain: "khata-ledger-f5841.firebaseapp.com",
-            projectId: "khata-ledger-f5841",
-            storageBucket: "khata-ledger-f5841.firebasestorage.app",
-            messagingSenderId: "325392194720",
-            appId: "1:325392194720:web:7e38489d0f3a02f77cfdc5"
+            apiKey: "AIzaSyB2NEAvyF3HTs4LMlF07z_co78ILMYsfRc",
+            authDomain: "khata-ledger-9ffe4.firebaseapp.com",
+            projectId: "khata-ledger-9ffe4",
+            storageBucket: "khata-ledger-9ffe4.firebasestorage.app",
+            messagingSenderId: "852685026600",
+            appId: "1:852685026600:web:8fee91e6167593b91e4c1d"
         };
 
-        let fbAuth = null;
         let fbDb = null;
         let currentUser = null;
         let currentAuthTab = 'REGISTER';
+        let pendingCloudAction = '';
+
+        let appPins = {
+            openPin: "7869",
+            editPin: "7869",
+            delPin: "7869",
+            cloudPin: "7869"
+        };
+
+        let registeredMasterPhone = "7869";
+        let masterGatePurpose = '';
+        let clickCount = 0;
+
+        let inactivityTimer = null;
+        const INACTIVITY_LIMIT = 10 * 60 * 1000;
 
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
             }
-            fbAuth = firebase.auth();
             fbDb = firebase.firestore();
-
-            // हमेशा लॉगिन याद रखने के लिए (LOCAL Persistence)
-            fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
-            fbAuth.onAuthStateChanged(user => {
-                currentUser = user;
-                updateAuthUI();
-                if (currentUser) {
-                    restoreFromFirebase(false);
-                }
-            });
         } catch (e) {
             console.warn("Firebase Init Error:", e);
         }
@@ -938,57 +732,81 @@
         const STORAGE_KEY = 'antique_khata_records_clean_v3';
         const TARGETS_STORAGE_KEY = 'antique_khata_person_masters_clean_v3';
         const CATEGORY_STORAGE_KEY = 'antique_khata_categories_v1';
-        const MASTER_PASSWORD_KEY = 'antique_khata_pass';
 
         let records = [];
         let personMasters = {}; 
         let categories = ["Sale", "Purchase", "Loan", "Paid", "Receive", "Commission", "Cash"];
-        let selectedAgentFilter = null;
-        let selectedPersonFilter = null;
         let selectedCrDr = 'Dr';
         let selectedAccDirection = 'RECEIVE';
         let pickerCurrentView = 'MAIN_ACCOUNTS';
         let currentDrillDownAccount = '';
         let currentViewingPerson = '';
-        let openedFromSettings = false;
-
-        let isSelectionMode = false;
-        let selectedTransactionIndexes = new Set();
-        let longPressTimer = null;
-        let isLongPressTriggered = false;
-
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let isTouchScrolling = false;
+        let selectedAgentFilter = null;
 
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-        let touchStartScreenY = 0;
-        window.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 1) {
-                touchStartScreenY = e.touches[0].screenY;
-            }
-        }, { passive: false });
-
-        window.addEventListener('touchmove', function(e) {
-            if (e.touches.length !== 1) return;
-            const currentScreenY = e.touches[0].screenY;
-            const diffY = currentScreenY - touchStartScreenY;
-
-            if (diffY > 0) {
-                const scrollable = e.target.closest('.ledger-list, .account-list, .simple-settings-list, .form-body, .passbook-table-wrap');
-                if (!scrollable || scrollable.scrollTop <= 0) {
-                    if (e.cancelable) {
-                        e.preventDefault();
-                    }
-                }
-            }
-        }, { passive: false });
-
         window.onload = function() {
-            loadRecords();
+            const savedUser = localStorage.getItem('khata_active_user');
+            
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                } catch(e) { currentUser = null; }
+            }
+
+            if (currentUser) {
+                const savedPins = localStorage.getItem('khata_custom_pins');
+                if (savedPins) {
+                    try { appPins = JSON.parse(savedPins); } catch(e){}
+                }
+                registeredMasterPhone = localStorage.getItem('khata_master_phone') || currentUser.mobile || "7869";
+
+                loadRecords();
+                updateAuthUI();
+                startInactivityTimer();
+                handleAppLock();
+            } else {
+                records = [];
+                personMasters = {};
+                renderView();
+                updateAuthUI();
+                openMandatoryRegister();
+            }
+
             document.getElementById('inputDate').value = getTodayDate();
+            setupActivityListeners();
         };
+
+        function setupActivityListeners() {
+            ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(evt => {
+                document.addEventListener(evt, resetInactivityTimer, true);
+            });
+        }
+
+        function resetInactivityTimer() {
+            if (currentUser) {
+                clearTimeout(inactivityTimer);
+                startInactivityTimer();
+            }
+        }
+
+        function startInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            inactivityTimer = setTimeout(async () => {
+                if (currentUser) {
+                    await backupToFirebase(false);
+                    firebaseLogout(false);
+                }
+            }, INACTIVITY_LIMIT);
+        }
+
+        function openMandatoryRegister() {
+            document.getElementById('mainAppOverlay').style.display = 'none';
+            document.getElementById('firebaseAuthModal').style.display = 'flex';
+            const closeBtn = document.getElementById('btnAuthModalClose');
+            if (closeBtn) closeBtn.style.display = 'none'; 
+            switchAuthTab('REGISTER');
+        }
 
         function getTodayDate() {
             const today = new Date();
@@ -1009,298 +827,514 @@
         }
 
         function loadRecords() {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            const savedMasters = localStorage.getItem(TARGETS_STORAGE_KEY);
-            const savedCats = localStorage.getItem(CATEGORY_STORAGE_KEY);
-            try { personMasters = savedMasters ? JSON.parse(savedMasters) : {}; } catch(e) { personMasters = {}; }
-            try { records = saved ? JSON.parse(saved) : []; } catch(e) { records = []; }
-            try { if(savedCats) categories = JSON.parse(savedCats); } catch(e) {}
+            try { personMasters = JSON.parse(localStorage.getItem(TARGETS_STORAGE_KEY)) || {}; } catch(e) { personMasters = {}; }
+            try { records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { records = []; }
+            try { 
+                const savedCats = localStorage.getItem(CATEGORY_STORAGE_KEY);
+                if (savedCats) categories = JSON.parse(savedCats);
+            } catch(e) {}
             updateDataList();
             renderView();
         }
 
         function saveToStorage() {
+            if (!currentUser) return;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
             localStorage.setItem(TARGETS_STORAGE_KEY, JSON.stringify(personMasters));
             localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
             updateDataList();
         }
 
-        // ==========================================
-        // FIREBASE AUTH & BACKUP LOGIC
-        // ==========================================
+        function handleLockClick() {
+            clickCount++;
+            if (clickCount >= 3) {
+                const secInp = document.getElementById('secretInput');
+                secInp.style.display = 'block';
+                secInp.focus();
+                clickCount = 0;
+            }
+        }
+
+        document.getElementById('secretInput').addEventListener('input', function() {
+            if (this.value === appPins.openPin || this.value === registeredMasterPhone || this.value === "7869") {
+                document.getElementById('mainAppOverlay').style.display = 'none';
+                this.value = "";
+                this.style.display = 'none';
+                clickCount = 0;
+            }
+        });
+
+        function handleAppLock() {
+            clickCount = 0;
+            document.getElementById('secretInput').value = "";
+            document.getElementById('secretInput').style.display = 'none';
+            document.getElementById('mainAppOverlay').style.display = 'flex';
+            closeSettingsModal();
+        }
+
+        function openPasswordManagerGate() {
+            masterGatePurpose = 'OPEN_PM';
+            document.getElementById('masterGateTitle').innerText = "ENTER MASTER PIN";
+            document.getElementById('masterGateInput').value = "";
+            document.getElementById('masterGateModal').style.display = 'flex';
+            document.getElementById('masterGateInput').focus();
+            closeSettingsModal();
+        }
+
+        function closeMasterGate() {
+            document.getElementById('masterGateModal').style.display = 'none';
+        }
+
+        function submitMasterGate() {
+            const entered = document.getElementById('masterGateInput').value.trim();
+            if (entered === registeredMasterPhone || entered === "7869") {
+                closeMasterGate();
+                if (masterGatePurpose === 'OPEN_PM') {
+                    showPasswordManagerUI();
+                }
+            } else {
+                alert("❌ गलत मास्टर पासवर्ड!");
+            }
+        }
+
+        function showPasswordManagerUI() {
+            document.getElementById('pm_open').value = appPins.openPin;
+            document.getElementById('pm_edit').value = appPins.editPin;
+            document.getElementById('pm_del').value = appPins.delPin;
+            document.getElementById('pm_cloud').value = appPins.cloudPin;
+            document.getElementById('passManagerModal').style.display = 'flex';
+        }
+
+        function closePassManager() {
+            document.getElementById('passManagerModal').style.display = 'none';
+        }
+
+        function savePasswordSettings() {
+            appPins = {
+                openPin: document.getElementById('pm_open').value.trim() || "7869",
+                editPin: document.getElementById('pm_edit').value.trim() || "7869",
+                delPin: document.getElementById('pm_del').value.trim() || "7869",
+                cloudPin: document.getElementById('pm_cloud').value.trim() || "7869"
+            };
+            localStorage.setItem('khata_custom_pins', JSON.stringify(appPins));
+            closePassManager();
+            alert("✅ सभी पासवर्ड सुरक्षित सेव हो गए!");
+        }
+
+        function promptResetApp() {
+            closeSettingsModal();
+            document.getElementById('resetPassInput').value = "";
+            document.getElementById('resetAppModal').style.display = 'flex';
+            document.getElementById('resetPassInput').focus();
+        }
+
+        function closeResetModal() {
+            document.getElementById('resetAppModal').style.display = 'none';
+        }
+
+        function handleResetSubmit() {
+            const entered = document.getElementById('resetPassInput').value.trim();
+            if (entered === registeredMasterPhone || entered === "7869") {
+                if (confirm("⚠️ क्या आप वाकई लोकल डेटा रिसेट करना चाहते हैं?\nFirebase में आपका क्लाउड बैकअप सुरक्षित रहेगा!")) {
+                    records = [];
+                    personMasters = {};
+                    saveToStorage();
+                    renderView();
+                    closeResetModal();
+                    alert("✅ ऐप का लोकल डेटा रीसेट हो गया है!");
+                }
+            } else {
+                alert("❌ गलत मास्टर पासवर्ड!");
+            }
+        }
+
         function switchAuthTab(tab) {
             currentAuthTab = tab;
             const tabReg = document.getElementById('tabRegisterBtn');
             const tabLog = document.getElementById('tabLoginBtn');
             const extraFields = document.getElementById('regExtraFields');
-            const confirmPass = document.getElementById('fbConfirmPassword');
+            const loginField = document.getElementById('loginField');
+            const confirmField = document.getElementById('regConfirmField');
             const submitBtn = document.getElementById('btnAuthSubmit');
+            const authLinksRow = document.getElementById('authLinksRow');
+            const desc = document.getElementById('authStatusDesc');
 
             if (tab === 'REGISTER') {
-                tabReg.className = 'tab-auth-btn active';
-                tabLog.className = 'tab-auth-btn';
+                tabReg.style.background = '#1e293b'; tabReg.style.color = '#38bdf8';
+                tabLog.style.background = '#0b0e14'; tabLog.style.color = '#94a3b8';
                 extraFields.style.display = 'flex';
-                confirmPass.style.display = 'block';
+                loginField.style.display = 'none';
+                confirmField.style.display = 'block';
+                authLinksRow.style.display = 'none';
                 submitBtn.innerText = 'रजिस्टर करें';
                 submitBtn.style.background = '#38bdf8';
+                desc.innerText = 'नया खाता विवरण भरें';
             } else {
-                tabReg.className = 'tab-auth-btn';
-                tabLog.className = 'tab-auth-btn active';
+                tabReg.style.background = '#0b0e14'; tabReg.style.color = '#94a3b8';
+                tabLog.style.background = '#1e293b'; tabLog.style.color = '#2ecc71';
                 extraFields.style.display = 'none';
-                confirmPass.style.display = 'none';
+                loginField.style.display = 'block';
+                confirmField.style.display = 'none';
+                authLinksRow.style.display = 'flex';
                 submitBtn.innerText = 'लॉगिन करें';
                 submitBtn.style.background = '#2ecc71';
+                desc.innerText = 'Username, Mobile Number या Email ID से लॉगिन करें';
             }
         }
 
-        async function updateAuthUI() {
+        function updateAuthUI() {
             const syncBtnText = document.getElementById('syncBtnText');
             const authInputs = document.getElementById('authInputsArea');
             const loggedInArea = document.getElementById('authLoggedInArea');
             const userDisplay = document.getElementById('userEmailDisplay');
             const desc = document.getElementById('authStatusDesc');
             const displayHeader = document.getElementById('displayUserNameHeader');
+            const closeBtn = document.getElementById('btnAuthModalClose');
 
-                        if (currentUser) {
+            if (currentUser) {
                 if (syncBtnText) syncBtnText.innerText = "Sync";
                 if (authInputs) authInputs.style.display = 'none';
                 if (loggedInArea) loggedInArea.style.display = 'flex';
-                
-                // प्रोफाइल से नाम उठाएगा, अगर नहीं मिला तो सीधे Rahul दिखाएगा
-                let userFullName = localStorage.getItem("saved_user_name") || "Rahul";
-                try {
-                    const profSnap = await fbDb.collection("users").doc(currentUser.uid).collection("profile").doc("info").get();
-                    if (profSnap.exists && profSnap.data()?.fullName) {
-                        userFullName = profSnap.data().fullName;
-                        localStorage.setItem("saved_user_name", userFullName);
-                    }
-                } catch(e) {}
+                if (closeBtn) closeBtn.style.display = 'block';
 
-                // मेन डिस्प्ले (हेडर) पर केवल नाम दिखेगा (ईमेल बिल्कुल नहीं दिखेगा)
-                if (displayHeader) {
-                    displayHeader.innerText = "👤 " + userFullName;
-                }
+                const displayUserName = currentUser.username || currentUser.fullName || "USER";
+                if (displayHeader) displayHeader.innerText = "👤 " + displayUserName.toUpperCase();
                 
-                // अंदर पॉपअप में भी सिर्फ आपका नाम दिखेगा
-                if (userDisplay) {
-                    userDisplay.innerText = "👤 " + userFullName;
-                }
-                
-                if (desc) {
-                    desc.innerText = "You are successfully logged in!";
-                    desc.style.color = "#ff4757";
-                }
-            }
-               else {
-                if (syncBtnText) syncBtnText.innerText = "Register";
+                if (userDisplay) userDisplay.innerText = "👤 " + (currentUser.fullName || displayUserName).toUpperCase();
+                if (desc) desc.innerText = "आप सफलतापूर्वक लॉगिन हैं!";
+            } else {
+                if (syncBtnText) syncBtnText.innerText = "Login";
                 if (authInputs) authInputs.style.display = 'flex';
                 if (loggedInArea) loggedInArea.style.display = 'none';
-                if (displayHeader) displayHeader.innerText = "👤 Guest User";
-                
-                if (desc) {
-                    desc.innerText = "Register or Login with your details";
-                    desc.style.color = "#94a3b8";
-                }
+                if (displayHeader) displayHeader.innerText = "👤 Login";
+                if (desc) desc.innerText = "नया खाता विवरण भरें";
             }
         }
 
         function handleCloudAction() {
-            if (!currentUser) {
-                openFirebaseAuthModal();
-            } else {
-                backupToFirebase(true);
-            }
+            if (!currentUser) openFirebaseAuthModal();
+            else openCloudActionModal('BACKUP');
         }
 
         function openFirebaseAuthModal() {
             document.getElementById('firebaseAuthModal').style.display = 'flex';
+            if (!currentUser) {
+                switchAuthTab('LOGIN');
+            }
             updateAuthUI();
         }
 
         function closeFirebaseAuthModal() {
+            if (!currentUser) {
+                alert("⚠️ कृपया पहले रजिस्टर या लॉगिन करें!");
+                return;
+            }
             document.getElementById('firebaseAuthModal').style.display = 'none';
         }
 
         function handleAuthSubmit() {
-            if (currentAuthTab === 'REGISTER') {
-                firebaseSignUp();
-            } else {
-                firebaseLogin();
-            }
+            if (currentAuthTab === 'REGISTER') firebaseSignUp();
+            else firebaseLogin();
         }
 
         async function firebaseSignUp() {
             const fullName = document.getElementById('fbFullName').value.trim();
-            const mobile = document.getElementById('fbMobile').value.trim();
-            const email = document.getElementById('fbEmail').value.trim();
+            const username = document.getElementById('fbRegUsername').value.trim().toLowerCase();
+            const mobile = document.getElementById('fbRegMobile').value.trim();
+            const email = document.getElementById('fbRegEmail').value.trim().toLowerCase();
             const pass = document.getElementById('fbPassword').value;
             const confirmPass = document.getElementById('fbConfirmPassword').value;
 
-            // नाम और मोबाइल नंबर अनिवार्य जांच
-            if (!fullName) { 
-                alert("❌ कृपया अपना पूरा नाम लिखें!"); 
-                document.getElementById('fbFullName').focus();
-                return; 
-            }
-            if (!mobile || mobile.length !== 10 || isNaN(mobile)) { 
-                alert("❌ कृपया सही 10 अंकों का मोबाइल नंबर लिखें!"); 
-                document.getElementById('fbMobile').focus();
-                return; 
-            }
-            if (!email) { 
-                alert("❌ कृपया सही ईमेल पता दर्ज करें!"); 
-                document.getElementById('fbEmail').focus();
-                return; 
-            }
-            if (!pass || pass.length < 6) { 
-                alert("❌ पासवर्ड कम से कम 6 अक्षरों का होना चाहिए!"); 
-                document.getElementById('fbPassword').focus();
-                return; 
-            }
-            // दो बार पासवर्ड अनिवार्य जांच
-            if (pass !== confirmPass) {
-                alert("❌ दोनों पासवर्ड एक जैसे नहीं हैं! कृपया दोबारा सही पासवर्ड डालें।");
-                document.getElementById('fbConfirmPassword').focus();
-                return;
-            }
+            if (!fullName) { alert("❌ कृपया अपना पूरा नाम लिखें!"); return; }
+            if (!username || username.length < 3) { alert("❌ कम से कम 3 अक्षरों का यूजरनेम बनाएं!"); return; }
+            if (!mobile || mobile.length !== 10 || isNaN(mobile)) { alert("❌ सही 10 अंकों का मोबाइल नंबर लिखें!"); return; }
+            if (!email || !email.includes('@')) { alert("❌ कृपया सही ईमेल आईडी दर्ज करें!"); return; }
+            if (!pass || pass.length < 4) { alert("❌ पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!"); return; }
+            if (pass !== confirmPass) { alert("❌ दोनों पासवर्ड एक जैसे नहीं हैं!"); return; }
 
             try {
-                const userCredential = await fbAuth.createUserWithEmailAndPassword(email, pass);
-                const uid = userCredential.user.uid;
+                const [uDoc, mDoc] = await Promise.all([
+                    fbDb.collection("app_accounts").doc("user_" + username).get(),
+                    fbDb.collection("app_accounts").doc("phone_" + mobile).get()
+                ]);
 
-                // प्रोफाइल में नाम और मोबाइल नंबर सेव करना
-                await fbDb.collection("users").doc(uid).collection("profile").doc("info").set({
+                if (uDoc.exists) { alert("⚠️ यह यूज़रनेम पहले से लिया जा चुका है! दूसरा चुनें।"); return; }
+                if (mDoc.exists) { alert("⚠️ यह मोबाइल नंबर पहले से पंजीकृत है! कृपया Login करें।"); switchAuthTab('LOGIN'); return; }
+
+                const userObj = {
                     fullName: fullName,
+                    username: username,
                     mobile: mobile,
                     email: email,
+                    pass: pass,
                     registeredAt: new Date().toISOString()
-                });
+                };
 
-                alert(`🎉 स्वागत है ${fullName}! आपका खाता बन गया है और आप लॉगिन हो चुके हैं।`);
+                const batch = fbDb.batch();
+                batch.set(fbDb.collection("master_profiles").doc(mobile), userObj);
+                batch.set(fbDb.collection("app_accounts").doc("user_" + username), { targetMobile: mobile, targetEmail: email });
+                batch.set(fbDb.collection("app_accounts").doc("phone_" + mobile), { targetMobile: mobile, targetEmail: email });
+                batch.set(fbDb.collection("app_accounts").doc("email_" + email), { targetMobile: mobile, targetEmail: email });
+
+                await batch.commit();
+
+                registeredMasterPhone = mobile;
+                localStorage.setItem("khata_master_phone", mobile);
+                localStorage.setItem("saved_user_name", username);
+                localStorage.setItem("khata_active_user", JSON.stringify(userObj));
+                currentUser = userObj;
+
+                alert(`🎉 स्वागत है ${username.toUpperCase()}! आपका खाता बन गया है।`);
                 updateAuthUI();
-                await backupToFirebase(false);
-                closeFirebaseAuthModal();
+                startInactivityTimer();
+
+                await restoreFromFirebase(false);
+                document.getElementById('firebaseAuthModal').style.display = 'none';
             } catch (err) {
                 alert("❌ रजिस्ट्रेशन एरर: " + err.message);
             }
         }
 
         async function firebaseLogin() {
-            const email = document.getElementById('fbEmail').value.trim();
+            const rawIdentifier = document.getElementById('fbLoginIdentifier').value.trim();
             const pass = document.getElementById('fbPassword').value;
 
-            if (!email || !pass) { 
-                alert("❌ कृपया ईमेल और पासवर्ड दोनों दर्ज करें!"); 
+            if (!rawIdentifier) { 
+                alert("❌ कृपया अपना Username, Mobile Number या Email ID डालें!"); 
+                return; 
+            }
+            if (!pass) { 
+                alert("❌ कृपया अपना पासवर्ड दर्ज करें!"); 
                 return; 
             }
 
+            const cleanId = rawIdentifier.toLowerCase();
+            let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
+
             try {
-                await fbAuth.signInWithEmailAndPassword(email, pass);
+                let targetMobile = null;
+                const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
+
+                if (idxSnap.exists && idxSnap.data()?.targetMobile) {
+                    targetMobile = idxSnap.data().targetMobile;
+                } else if (cleanId.length === 10 && !isNaN(cleanId)) {
+                    targetMobile = cleanId;
+                }
+
+                if (!targetMobile) {
+                    alert("❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!");
+                    return;
+                }
+
+                const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
+                if (!userSnap.exists) {
+                    alert("❌ खाता डेटा नहीं मिला!");
+                    return;
+                }
+
+                const userData = userSnap.data();
+                if (userData.pass !== pass) {
+                    alert("❌ गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें।");
+                    return;
+                }
+
+                currentUser = userData;
+                registeredMasterPhone = userData.mobile || "7869";
+                localStorage.setItem("khata_master_phone", registeredMasterPhone);
+                localStorage.setItem("saved_user_name", userData.username || "USER");
+                localStorage.setItem("khata_active_user", JSON.stringify(userData));
+
                 alert("✅ लॉगिन सफल!");
                 updateAuthUI();
+                startInactivityTimer();
+                
                 await restoreFromFirebase(false);
-                closeFirebaseAuthModal();
+                document.getElementById('firebaseAuthModal').style.display = 'none';
             } catch (err) {
-                alert("❌ लॉगिन एरर: " + err.message);
+                alert("❌ लॉगिन में त्रुटि: " + err.message);
             }
         }
 
-        async function firebaseLogout() {
-            try {
-                await fbAuth.signOut();
-                // लॉगआउट होने पर लोकल स्क्रीन साफ़ कर दें
-                records = [];
-                personMasters = {};
-                saveToStorage();
-                renderView();
-                alert("आप लॉगआउट हो गए हैं!");
-                updateAuthUI();
-            } catch (err) {
-                alert("एरर: " + err.message);
+        function openCloudActionModal(type) {
+            pendingCloudAction = type;
+            const title = document.getElementById('cloudActionTitle');
+            const desc = document.getElementById('cloudActionDesc');
+            const passInput = document.getElementById('cloudActionPassInput');
+            const okBtn = document.getElementById('btnExecuteCloud');
+
+            passInput.value = '';
+            if (type === 'BACKUP') {
+                title.innerText = "☁️ CLOUD BACKUP";
+                desc.innerText = "डेटा बैकअप लेने के लिए पासवर्ड डालें";
+                okBtn.innerText = "BACKUP NOW";
+                okBtn.style.background = "#2ecc71";
+            } else {
+                title.innerText = "📥 CLOUD RESTORE";
+                desc.innerText = "डेटा रिस्टोर करने के लिए पासवर्ड डालें";
+                okBtn.innerText = "RESTORE NOW";
+                okBtn.style.background = "#f59e0b";
+            }
+            document.getElementById('cloudActionModal').style.display = 'flex';
+            passInput.focus();
+        }
+
+        function closeCloudActionModal() {
+            document.getElementById('cloudActionModal').style.display = 'none';
+        }
+
+        function submitCloudAction() {
+            const entered = document.getElementById('cloudActionPassInput').value.trim();
+            if (entered === appPins.cloudPin || entered === registeredMasterPhone || entered === "7869") {
+                closeCloudActionModal();
+                if (pendingCloudAction === 'BACKUP') {
+                    backupToFirebase(true);
+                } else {
+                    restoreFromFirebase(true);
+                }
+            } else {
+                alert("❌ गलत पासवर्ड!");
             }
         }
 
         async function backupToFirebase(showAlert = true) {
-            if (!currentUser || !fbDb) {
-                if (showAlert) openFirebaseAuthModal();
-                return;
-            }
-
+            if (!currentUser || !fbDb) return;
             try {
-                const docRef = fbDb.collection("users").doc(currentUser.uid).collection("khata_data").doc("backup");
-                await docRef.set({
-                    records: records,
-                    personMasters: personMasters,
-                    categories: categories,
+                const userEmail = (currentUser.email || '').toLowerCase().trim();
+                const userMobile = currentUser.mobile || registeredMasterPhone;
+                
+                const backupPayload = {
+                    records, 
+                    personMasters, 
+                    categories, 
+                    userEmail: userEmail,
+                    userMobile: userMobile,
+                    userName: currentUser.username || '',
                     lastUpdated: new Date().toISOString()
-                });
-                if (showAlert) alert("✅ Firebase पर बैकअप सफलतापूर्वक सेव हो गया!");
+                };
+
+                await fbDb.collection("users_data_by_email").doc(userEmail).set(backupPayload);
+
+                if (showAlert) alert("✅ आपका पूरा हिसाब ईमेल क्लाउड बैकअप में सुरक्षित सेव हो गया!");
             } catch (err) {
-                console.error("Backup Error:", err);
                 if (showAlert) alert("❌ बैकअप में त्रुटि: " + err.message);
             }
         }
 
         async function restoreFromFirebase(showAlert = true) {
-            if (!currentUser || !fbDb) {
-                if (showAlert) openFirebaseAuthModal();
-                return;
-            }
-
+            if (!currentUser || !fbDb) return;
             try {
-                const docRef = fbDb.collection("users").doc(currentUser.uid).collection("khata_data").doc("backup");
-                const docSnap = await docRef.get();
+                const userEmail = (currentUser.email || '').toLowerCase().trim();
+                let dataFound = null;
 
-                if (docSnap.exists) {
-                    const data = docSnap.data();
-                    records = data.records || [];
-                    personMasters = data.personMasters || {};
-                    categories = data.categories || categories;
+                if (userEmail) {
+                    try {
+                        const eSnap = await fbDb.collection("users_data_by_email").doc(userEmail).get();
+                        if (eSnap.exists && eSnap.data()?.records) {
+                            dataFound = eSnap.data();
+                        }
+                    } catch(e) {}
+                }
 
+                if (dataFound) {
+                    records = dataFound.records || [];
+                    personMasters = dataFound.personMasters || {};
+                    categories = dataFound.categories || categories;
                     saveToStorage();
                     renderView();
-                    if (showAlert) alert("✅ Firebase से आपका डेटा सफलतापूर्वक लोड हो गया!");
+                    if (showAlert) alert(`✅ आपका डेटा (${records.length} रिकॉर्ड्स) सफलतापूर्वक लोड हो गया!`);
                 } else {
-                    if (showAlert) alert("⚠️ इस अकाउंट पर कोई पिछला बैकअप नहीं मिला!");
+                    if (showAlert) alert("⚠️ इस ईमेल पर कोई पुराना बैकअप नहीं मिला। नई एंट्री शुरू कर सकते हैं।");
                 }
             } catch (err) {
-                console.error("Restore Error:", err);
                 if (showAlert) alert("❌ रिस्टोर में त्रुटि: " + err.message);
             }
         }
 
-        function updateDataList() {
-            const datalist = document.getElementById('agentsList');
-            datalist.innerHTML = '';
-            const uniqueAccounts = [...new Set([...records.map(r => r.account).filter(Boolean), ...Object.values(personMasters).map(m => m.account).filter(Boolean)])];
-            uniqueAccounts.forEach(acc => {
-                const opt = document.createElement('option');
-                opt.value = acc;
-                datalist.appendChild(opt);
-            });
-
-            const personDatalist = document.getElementById('personsList');
-            personDatalist.innerHTML = '';
-            const uniquePersons = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
-            uniquePersons.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p;
-                personDatalist.appendChild(opt);
-            });
+        // ==========================================
+        // JSON FILE BACKUP & RESTORE
+        // ==========================================
+        function exportDataToJsonFile() {
+            if (!currentUser) { alert("कृपया पहले लॉगिन करें!"); return; }
+            const backupObj = {
+                records,
+                personMasters,
+                categories,
+                exportDate: new Date().toISOString(),
+                user: currentUser.username || 'User'
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Khata_Backup_${getTodayDate()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            alert("✅ बैकअप JSON फाइल डाउनलोड हो गई!");
         }
 
-        function onAccountFieldChanged(accVal) { 
-            const pName = document.getElementById('inputName').value.trim();
-            if (pName) {
-                const bal = getPersonNetBalance(pName, accVal);
-                document.getElementById('inputTargetAmount').value = bal.net;
-                updateRemainingHint();
+        function triggerJsonImport() {
+            if (!currentUser) { alert("कृपया पहले लॉगिन करें!"); return; }
+            document.getElementById('jsonFileInput').click();
+        }
+
+        function handleJsonFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.records || data.personMasters) {
+                        records = data.records || [];
+                        personMasters = data.personMasters || {};
+                        if (data.categories) categories = data.categories;
+
+                        saveToStorage();
+                        renderView();
+                        alert(`✅ JSON फाइल से डेटा सफलतापूर्वक रीस्टोर हो गया! (${records.length} रिकॉर्ड्स)`);
+                        closeSettingsModal();
+                    } else {
+                        alert("❌ यह सही खाता बैकअप फाइल नहीं है!");
+                    }
+                } catch (err) {
+                    alert("❌ JSON फाइल पढ़ने में त्रुटि: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // Reset
+        }
+
+        async function firebaseLogout(userInitiated = true) {
+            if (currentUser) {
+                await backupToFirebase(false);
             }
+
+            clearTimeout(inactivityTimer);
+            currentUser = null;
+            localStorage.removeItem("khata_active_user");
+            localStorage.removeItem("saved_user_name");
+            
+            records = [];
+            personMasters = {};
+            renderView();
+
+            if (userInitiated) {
+                alert("✅ डेटा सुरक्षित सेव हो गया। आप लॉगआउट हो चुके हैं!");
+            } else {
+                alert("⚠️ 10 मिनट इनएक्टिविटी: ऑटो बैकअप करके लॉगआउट कर दिया गया है!");
+            }
+
+            updateAuthUI();
+            openFirebaseAuthModal();
         }
 
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
-        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+        function handleForgotPassword() {
+            alert("पासवर्ड हेल्प: आपका मास्टर पिन और डिफ़ॉल्ट पासवर्ड 7869 या आपका रजिस्टर्ड मोबाइल नंबर है।");
+        }
+        function handleForgotDetails() {
+            handleForgotPassword();
+        }
 
         function findMasterKey(personName) {
             if (!personName) return null;
@@ -1324,45 +1358,60 @@
                 }
             });
 
-            const target = master ? (parseFloat(master.amount) || 0) : 0;
-            const direction = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+            const openingAmount = master ? (parseFloat(master.amount) || 0) : 0;
+            const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
 
             let netRemaining = 0;
-            if (direction === 'RECEIVE') {
-                netRemaining = (target + dr) - cr;
-                if (netRemaining >= 0) return { net: netRemaining, direction: 'RECEIVE', target, account: account || 'Direct', dr, cr };
-                else return { net: Math.abs(netRemaining), direction: 'GIVE', target, account: account || 'Direct', dr, cr };
+            let finalDirection = 'RECEIVE';
+
+            if (agreedDir === 'RECEIVE') {
+                const totalClaim = openingAmount + dr;
+                netRemaining = totalClaim - cr;
+                finalDirection = netRemaining >= 0 ? 'RECEIVE' : 'GIVE';
             } else {
-                netRemaining = (target + cr) - dr;
-                if (netRemaining >= 0) return { net: netRemaining, direction: 'GIVE', target, account: account || 'Direct', dr, cr };
-                else return { net: Math.abs(netRemaining), direction: 'RECEIVE', target, account: account || 'Direct', dr, cr };
+                const totalDebt = openingAmount + cr;
+                netRemaining = totalDebt - dr;
+                finalDirection = netRemaining >= 0 ? 'GIVE' : 'RECEIVE';
             }
+
+            const netTxVal = dr - cr;
+
+            return {
+                net: Math.abs(netRemaining),
+                direction: finalDirection,
+                target: openingAmount,
+                agreedDir: agreedDir,
+                account: account || 'Direct',
+                dr,
+                cr,
+                netTxVal: Math.abs(netTxVal),
+                netTxType: netTxVal >= 0 ? 'GIVEN' : 'RECEIVED'
+            };
         }
 
         function calculateGrandFigures() {
             let totalRecvAgreed = 0, totalRecvSettled = 0, totalRecvBalance = 0;
             let totalGiveAgreed = 0, totalGiveSettled = 0, totalGiveBalance = 0;
 
+            if (!currentUser) {
+                return {
+                    totalRecvAgreed: 0, totalRecvSettled: 0, totalRecvBalance: 0,
+                    totalGiveAgreed: 0, totalGiveSettled: 0, totalGiveBalance: 0
+                };
+            }
+
             const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])];
 
             allPersons.forEach(pName => {
                 const bal = getPersonNetBalance(pName);
-                const mKey = findMasterKey(pName);
-                const master = mKey ? personMasters[mKey] : null;
-                const baseDir = master ? master.direction : bal.direction;
-
-                if (baseDir === 'RECEIVE') {
-                    totalRecvAgreed += (bal.target + bal.dr);
+                if (bal.direction === 'RECEIVE') {
+                    totalRecvBalance += bal.net;
                     totalRecvSettled += bal.cr;
-                    if (bal.direction === 'RECEIVE') {
-                        totalRecvBalance += bal.net;
-                    }
+                    totalRecvAgreed += (bal.target + bal.dr);
                 } else {
-                    totalGiveAgreed += (bal.target + bal.cr);
+                    totalGiveBalance += bal.net;
                     totalGiveSettled += bal.dr;
-                    if (bal.direction === 'GIVE') {
-                        totalGiveBalance += bal.net;
-                    }
+                    totalGiveAgreed += (bal.target + bal.cr);
                 }
             });
 
@@ -1378,45 +1427,243 @@
             document.getElementById('stripGiveBal').innerText = `- ₹ ${formatINR(fig.totalGiveBalance)}`;
         }
 
+        function renderView() {
+            updateStripBalances();
+            const container = document.getElementById('transactionList');
+            container.innerHTML = '';
+
+            if (!currentUser) {
+                container.innerHTML = `<div style="text-align:center; padding:45px; color:#64748b; font-size:12px;">डेटा देखने के लिए कृपया रजिस्टर या लॉगिन करें।</div>`;
+                return;
+            }
+
+            let allUniqueParties = [...new Set([
+                ...records.map(r => r.name).filter(Boolean),
+                ...Object.keys(personMasters)
+            ])].sort();
+
+            if (selectedAgentFilter) {
+                allUniqueParties = allUniqueParties.filter(p => {
+                    const b = getPersonNetBalance(p);
+                    return (b.account || 'DIRECT').toUpperCase() === selectedAgentFilter.toUpperCase();
+                });
+            }
+
+            if (allUniqueParties.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:35px; color:#64748b; font-size:12px;">कोई रिकॉर्ड नहीं मिला। + दबाकर नई एंट्री जोड़ें।</div>`;
+                return;
+            }
+
+            allUniqueParties.forEach(pName => {
+                const bal = getPersonNetBalance(pName);
+                
+                let netTxHtml = '';
+                if (bal.netTxType === 'GIVEN') {
+                    netTxHtml = `<span class="pill-net pill-dr">दिया: ₹ ${formatINR(bal.netTxVal)}</span>`;
+                } else {
+                    netTxHtml = `<span class="pill-net pill-cr">जमा: ₹ ${formatINR(bal.netTxVal)}</span>`;
+                }
+
+                let balClass = 'bal-settled';
+                let balText = '₹ 0.00';
+
+                if (bal.net > 0) {
+                    if (bal.direction === 'RECEIVE') {
+                        balClass = 'bal-recv';
+                        balText = `+ ₹ ${formatINR(bal.net)}`;
+                    } else {
+                        balClass = 'bal-give';
+                        balText = `- ₹ ${formatINR(bal.net)}`;
+                    }
+                }
+
+                const row = document.createElement('div');
+                row.className = 'party-summary-row';
+                row.onclick = () => openSinglePersonStatement(pName);
+
+                row.innerHTML = `
+                    <div class="col-party-name">👤 ${escapeHtml(pName)}</div>
+                    <div class="col-banner-wrap">${netTxHtml}</div>
+                    <div class="col-final-balance ${balClass}">${balText}</div>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        // ==========================================
+        // ALL PARTIES ALL LEDGERS (EXCEL SHEET PASSBOOK)
+        // ==========================================
+                function openAllPartiesMasterSheet() {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
+            closeSettingsModal();
+            pickerCurrentView = 'ALL_PARTIES_EXCEL_SHEET';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'All Parties All Ledgers';
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            let allAgents = [...new Set([
+                ...records.map(r => r.account).filter(Boolean),
+                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
+            ])].sort();
+
+            if (allAgents.length === 0) allAgents = ['Direct'];
+
+            let fullHtml = `
+                <div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; background: #fff; border-radius: 6px;">
+                    <div style="min-width: 760px; background: #fff; padding: 12px; color: #111;" id="reportCaptureArea">
+                        <div style="text-align: center; border-bottom: 2px solid #111; padding-bottom: 5px; margin-bottom: 8px;">
+                            <h2 style="font-size: 15px; font-weight: 800; letter-spacing: 0.5px; color: #000; margin: 0;">ALL PARTIES MASTER EXCEL LEDGER</h2>
+                            <span style="font-size: 10px; color: #333; font-weight: 700;">${getTodayDate()}</span>
+                        </div>
+                        <table class="excel-sheet-table" style="width: 100%; border-collapse: collapse; font-size: 10.5px; font-family: sans-serif;">
+                            <thead>
+                                <tr style="background: #172554; color: #fff;">
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 75px; text-align: center;">DATE</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 90px; text-align: left;">AGENT</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 110px; text-align: left;">PARTY</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; text-align: left;">DETAILS</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 85px; text-align: right;">AMOUNT</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 45px; text-align: center;">DR/CR</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 95px; text-align: right;">NET BAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+
+            allAgents.forEach(agent => {
+                const agData = getAgentNetTotal(agent);
+                const isRecv = agData.direction === 'RECEIVE';
+                const sign = isRecv ? '+ ' : '- ';
+                const color = isRecv ? '#15803d' : '#b91c1c';
+
+                fullHtml += `
+                    <tr style="background: #e0f2fe;">
+                        <td colspan="5" style="padding: 5px 8px; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 11px;">
+                            🏛 AGENT: ${escapeHtml(agent)}
+                        </td>
+                        <td style="padding: 5px; text-align: center; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 10px;">NET:</td>
+                        <td style="padding: 5px 8px; text-align: right; font-weight: 800; color: ${color}; border: 1px solid #cbd5e1; font-size: 11px;">
+                            ${sign}₹ ${formatINR(agData.net)}
+                        </td>
+                    </tr>
+                `;
+
+                agData.parties.sort().forEach(pName => {
+                    const mKey = findMasterKey(pName);
+                    const master = mKey ? personMasters[mKey] : null;
+                    const opening = master ? (parseFloat(master.amount) || 0) : 0;
+                    const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+
+                    let running = opening;
+                    let runningDir = agreedDir;
+
+                    if (opening > 0) {
+                        fullHtml += `
+                            <tr style="background: #f8fafc;">
+                                <td style="text-align: center; color: #64748b; border: 1px solid #e2e8f0; padding: 4px;">-</td>
+                                <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(agent)}</td>
+                                <td style="font-weight: 700; border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(pName)}</td>
+                                <td style="color: #0284c7; font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">OPENING</td>
+                                <td style="text-align: right; font-weight: 700; border: 1px solid #e2e8f0; padding: 4px;">₹ ${formatINR(opening)}</td>
+                                <td style="text-align: center; font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">${agreedDir === 'RECEIVE' ? 'CR' : 'DR'}</td>
+                                <td style="text-align: right; font-weight: 800; color: ${agreedDir==='RECEIVE'?'#15803d':'#b91c1c'}; border: 1px solid #e2e8f0; padding: 4px;">
+                                    ${agreedDir === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(opening)}
+                                </td>
+                            </tr>
+                        `;
+                    }
+
+                    const pTx = records
+                        .filter(r => isExactPersonMatch(r.name, pName) && (r.account || 'Direct').toUpperCase() === agent.toUpperCase())
+                        .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+                    pTx.forEach(tx => {
+                        const amt = parseFloat(tx.amount) || 0;
+                        const isDebit = tx.crdr === 'Dr';
+
+                        if (runningDir === 'RECEIVE') {
+                            if (isDebit) running += amt; else running -= amt;
+                        } else {
+                            if (isDebit) running -= amt; else running += amt;
+                        }
+
+                        if (running < 0) {
+                            running = Math.abs(running);
+                            runningDir = runningDir === 'RECEIVE' ? 'GIVE' : 'RECEIVE';
+                        }
+
+                        fullHtml += `
+                            <tr>
+                                <td style="text-align: center; border: 1px solid #e2e8f0; padding: 4px; white-space: nowrap;">${formatHindiDate(tx.date)}</td>
+                                <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(agent)}</td>
+                                <td style="font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(pName)}</td>
+                                <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(tx.parpas || '-')}</td>
+                                <td style="text-align: right; font-weight: 700; color: ${isDebit ? '#dc2626' : '#15803d'}; border: 1px solid #e2e8f0; padding: 4px;">
+                                    ₹ ${formatINR(amt)}
+                                </td>
+                                <td style="text-align: center; font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">${tx.crdr}</td>
+                                <td style="text-align: right; font-weight: 800; color: ${runningDir==='RECEIVE'?'#15803d':'#b91c1c'}; border: 1px solid #e2e8f0; padding: 4px;">
+                                    ${runningDir==='RECEIVE'?'+ ': '- '}₹ ${formatINR(running)}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+            });
+
+            fullHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = fullHtml;
+        }
+
         function openOverallDetailedSummary() {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             closeSettingsModal();
             pickerCurrentView = 'OVERALL_DETAILED_SUMMARY';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = 'Overall Khata Summary';
+            document.getElementById('accountModalTitle').innerText = 'Overall Summary';
 
             const fig = calculateGrandFigures();
             const container = document.getElementById('accountListContainer');
             
             container.innerHTML = `
-                <div style="background:#0b0e14; padding:14px; border-radius:6px; border:1px solid var(--border-soft); display:flex; flex-direction:column; gap:12px;" id="reportCaptureArea">
-                    <h3 style="color:#e2e8f0; font-size:14px; font-weight:700; border-bottom:1px solid var(--border-soft); padding-bottom:8px;">📊 कुल हिसाब सारांश (Overall Summary)</h3>
+                <div style="background:#0b0e14; padding:12px; border-radius:6px; border:1px solid var(--border-soft); display:flex; flex-direction:column; gap:10px;" id="reportCaptureArea">
+                    <h3 style="color:#e2e8f0; font-size:13px; font-weight:700; border-bottom:1px solid var(--border-soft); padding-bottom:6px;">📊 कुल हिसाब सारांश (Overall Summary)</h3>
                     
-                    <div style="background:#111724; border:1px solid var(--border-soft); border-left:4px solid var(--accent-recv); border-radius:6px; padding:10px 12px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <span style="color:var(--accent-recv); font-weight:700; font-size:12.5px;">🟢 कुल लेना हिसाब (Receivable)</span>
-                            <span style="color:#cbd5e1; font-weight:700; font-size:12.5px;">₹ ${formatINR(fig.totalRecvAgreed)}</span>
+                    <div style="background:#111724; border:1px solid var(--border-soft); border-left:4px solid var(--accent-recv); border-radius:6px; padding:8px 10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="color:var(--accent-recv); font-weight:700; font-size:12px;">🟢 कुल लेना हिसाब (Receivable)</span>
+                            <span style="color:#cbd5e1; font-weight:700; font-size:12px;">₹ ${formatINR(fig.totalRecvAgreed)}</span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; margin-bottom:4px;">
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:#94a3b8; margin-bottom:4px;">
                             <span>कुल प्राप्त (CR):</span>
                             <span style="color:var(--accent-recv); font-weight:600;">₹ ${formatINR(fig.totalRecvSettled)}</span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:#e2e8f0; padding-top:6px; border-top:1px dashed #1e293b;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#e2e8f0; padding-top:4px; border-top:1px dashed #1e293b;">
                             <span>कुल लेना बाकी:</span>
                             <span style="color:var(--accent-recv);">+ ₹ ${formatINR(fig.totalRecvBalance)}</span>
                         </div>
                     </div>
 
-                    <div style="background:#111724; border:1px solid var(--border-soft); border-left:4px solid var(--accent-give); border-radius:6px; padding:10px 12px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <span style="color:#ff7675; font-weight:700; font-size:12.5px;">🔴 कुल देना हिसाब (Payable)</span>
-                            <span style="color:#cbd5e1; font-weight:700; font-size:12.5px;">₹ ${formatINR(fig.totalGiveAgreed)}</span>
+                    <div style="background:#111724; border:1px solid var(--border-soft); border-left:4px solid var(--accent-give); border-radius:6px; padding:8px 10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="color:#ff7675; font-weight:700; font-size:12px;">🔴 कुल देना हिसाब (Payable)</span>
+                            <span style="color:#cbd5e1; font-weight:700; font-size:12px;">₹ ${formatINR(fig.totalGiveAgreed)}</span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; margin-bottom:4px;">
+                        <div style="display:flex; justify-content:space-between; font-size:10.5px; color:#94a3b8; margin-bottom:4px;">
                             <span>कुल भुगतान (DR):</span>
                             <span style="color:#ff7675; font-weight:600;">₹ ${formatINR(fig.totalGiveSettled)}</span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:12.5px; font-weight:700; color:#e2e8f0; padding-top:6px; border-top:1px dashed #1e293b;">
+                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:#e2e8f0; padding-top:4px; border-top:1px dashed #1e293b;">
                             <span>कुल देना बाकी:</span>
                             <span style="color:var(--accent-give);">- ₹ ${formatINR(fig.totalGiveBalance)}</span>
                         </div>
@@ -1432,7 +1679,6 @@
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
 
-            exitSelectionMode();
             renderStatementTable(personName);
         }
 
@@ -1444,7 +1690,6 @@
             const master = mKey ? personMasters[mKey] : null;
             const targetAmount = master ? (parseFloat(master.amount) || 0) : 0;
             const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
-            const masterDesc = master ? (master.desc || '') : '';
 
             const personTx = records
                 .map((r, originalIdx) => ({ ...r, originalIdx }))
@@ -1457,12 +1702,12 @@
 
             if (targetAmount > 0) {
                 rowsHtml += `
-                    <tr>
-                        <td>-</td>
-                        <td style="text-align:left;">Opening Balance</td>
-                        <td>${agreedDir === 'RECEIVE' ? 'लेना है' :'देना है '}</td>
-                        <td>-</td>
-                        <td><b>₹ ${formatINR(targetAmount)}</b></td>
+                    <tr style="color: #38bdf8;">
+                        <td style="color: #38bdf8;">-</td>
+                        <td style="text-align:left; color: #38bdf8; font-weight:600;">Opening Balance</td>
+                        <td style="color: #38bdf8;">${agreedDir === 'RECEIVE' ? 'लेना है' : 'देना है'}</td>
+                        <td style="color: #38bdf8;">-</td>
+                        <td style="color: #38bdf8;"><b>₹ ${formatINR(targetAmount)}</b></td>
                     </tr>
                 `;
             }
@@ -1472,11 +1717,9 @@
                 const isDebit = tx.crdr === 'Dr';
 
                 if (runningDir === 'RECEIVE') {
-                    if (isDebit) running += amt;
-                    else running -= amt;
+                    if (isDebit) running += amt; else running -= amt;
                 } else {
-                    if (isDebit) running -= amt;
-                    else running += amt;
+                    if (isDebit) running -= amt; else running += amt;
                 }
 
                 if (running < 0) {
@@ -1484,27 +1727,14 @@
                     runningDir = runningDir === 'RECEIVE' ? 'GIVE' : 'RECEIVE';
                 }
 
-                const isSelected = selectedTransactionIndexes.has(tx.originalIdx);
-                const rowClass = isSelected ? 'selected-delete-row' : '';
-
                 rowsHtml += `
-                    <tr class="${rowClass}" 
-                        id="tx-row-${tx.originalIdx}"
-                        onmousedown="startTxPress(${tx.originalIdx})" 
-                        onmouseup="endTxPress(${tx.originalIdx})" 
-                        ontouchstart="handleTxTouchStart(event, ${tx.originalIdx})" 
-                        ontouchmove="handleTxTouchMove(event)"
-                        ontouchend="handleTxTouchEnd(${tx.originalIdx})"
-                        style="cursor:pointer; -webkit-user-select:none; user-select:none;">
+                    <tr style="cursor:pointer;" onclick="openEntryFormFromStatement(${tx.originalIdx})">
                         <td style="font-size:10px;">${formatHindiDate(tx.date)}</td>
-                        <td style="text-align:left;">
-                            <b>${escapeHtml(tx.parpas || '-')}</b>
-                            ${tx.note ? `<br><small style="color:#718096;">${escapeHtml(tx.note)}</small>` : ''}
-                        </td>
-                        <td style="color:${isDebit ? '#fc8181' : '#68d391'}; font-weight:600;">
+                        <td style="text-align:left;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
+                        <td style="color:${isDebit ? '#ff7675' : '#2ecc71'}; font-weight:600;">
                             ${isDebit ? '- ' : '+ '}₹ ${formatINR(amt)}
                         </td>
-                        <td>${isDebit ? 'DR' : 'CR'}</td>
+                        <td>${isDebit ? 'DR (दिया)' : 'CR (लिया)'}</td>
                         <td style="font-weight:600;">₹ ${formatINR(running)} (${runningDir === 'RECEIVE' ? 'लेना' : 'देना'})</td>
                     </tr>
                 `;
@@ -1512,55 +1742,35 @@
 
             const netBal = getPersonNetBalance(personName);
 
-            const descCardHtml = masterDesc ? `
-                <div class="desc-box-statement">
-                    <span>DESCRIPTION:</span> ${escapeHtml(masterDesc)}
-                </div>
-            ` : '';
-
-            let deleteBarHtml = '';
-            if (isSelectionMode && selectedTransactionIndexes.size > 0) {
-                deleteBarHtml = `
-                    <div class="multi-delete-bar">
-                        <span style="font-size:12px; font-weight:700; color:#ff7675;">
-                            ✓ ${selectedTransactionIndexes.size} चुनी गई
-                        </span>
-                        <div style="display:flex; gap:6px;">
-                            <button onclick="confirmDeleteSelected()" style="background:#ff4757; color:#fff; border:none; padding:5px 12px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">
-                                🗑️ DELETE (${selectedTransactionIndexes.size})
-                            </button>
-                            <button onclick="exitSelectionMode()" style="background:#222; color:#ccc; border:1px solid #444; padding:5px 10px; border-radius:4px; font-size:11px; cursor:pointer;">
-                                Cancel
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-
             container.innerHTML = `
-                <div style="background:#0b0e14; padding:14px; border-radius:6px; border:1px solid var(--border-soft); margin-bottom:10px;" id="reportCaptureArea">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div style="background:#0b0e14; padding:12px; border-radius:8px; border:1px solid var(--border-soft);" id="reportCaptureArea">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
                         <div>
-                            <h3 style="font-size:15px; color:#e2e8f0; font-weight:700;">👤 ${escapeHtml(personName)}</h3>
-                            <small style="color:#718096; font-weight:500;">
-                                AGENT: <span style="color:#38bdf8; font-weight:700; text-transform:uppercase;">( ${escapeHtml(netBal.account)} )</span>
-                            </small>
+                            <h3 style="font-size:13.5px; color:#e2e8f0; font-weight:700;">👤 ${escapeHtml(personName)}</h3>
+                            <small style="color:#718096; font-size:10.5px;">एजेंट: <b style="color:#38bdf8;">${escapeHtml(netBal.account)}</b></small>
                         </div>
-                        <div style="text-align:right;">
-                            <span style="font-size:10.5px; color:#718096; font-weight:600;">NET BALANCE</span>
-                            <div style="font-size:15px; font-weight:700; color:${netBal.direction === 'GIVE' ? 'var(--accent-give)' : 'var(--accent-recv)'};">
-                                ${netBal.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(netBal.net)}
+
+                        <div style="text-align:center;">
+                            <div style="font-size:11px; font-weight:600; color:#ff7675;">
+                                कुल दिया: ₹ ${formatINR(netBal.netTxVal)}
                             </div>
                         </div>
+
+                        <div style="text-align:right;">
+                            <span style="font-size:10px; color:#718096; font-weight:600;">NET BALANCE</span>
+                            <div style="font-size:12px; font-weight:700; color:${netBal.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
+                                ${netBal.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(netBal.net)}
+                            </div>
+                            <small style="color:#cbd5e1; font-size:9.5px; font-weight:bold;">${netBal.direction === 'RECEIVE' ? 'कुल लेंदार हुए' : 'कुल देनदार हुए'}</small>
+                        </div>
                     </div>
-                    ${descCardHtml}
-                    ${deleteBarHtml}
+
                     <div class="passbook-table-wrap">
                         <table class="passbook-table">
                             <thead>
                                 <tr>
                                     <th>तारीख</th>
-                                    <th>कैटेगरी/विवरण</th>
+                                    <th>विवरण</th>
                                     <th>रकम</th>
                                     <th>प्रकार</th>
                                     <th>बैलेंस</th>
@@ -1573,90 +1783,174 @@
             `;
         }
 
-        function handleTxTouchStart(e, originalIdx) {
-            isTouchScrolling = false;
-            if (e.touches && e.touches[0]) {
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            }
-            startTxPress(originalIdx);
-        }
-
-        function handleTxTouchMove(e) {
-            if (!e.touches || !e.touches[0]) return;
-            const diffX = Math.abs(e.touches[0].clientX - touchStartX);
-            const diffY = Math.abs(e.touches[0].clientY - touchStartY);
-            if (diffX > 8 || diffY > 8) {
-                isTouchScrolling = true;
-                clearTimeout(longPressTimer);
-            }
-        }
-
-        function handleTxTouchEnd(originalIdx) {
-            clearTimeout(longPressTimer);
-            if (isTouchScrolling) {
-                return;
-            }
-            endTxPress(originalIdx);
-        }
-
-        function startTxPress(originalIdx) {
-            isLongPressTriggered = false;
-            longPressTimer = setTimeout(() => {
-                isLongPressTriggered = true;
-                if (!isSelectionMode) {
-                    isSelectionMode = true;
-                    selectedTransactionIndexes.clear();
-                    selectedTransactionIndexes.add(originalIdx);
-                    if (navigator.vibrate) navigator.vibrate(50);
-                    renderStatementTable(currentViewingPerson);
-                }
-            }, 700);
-        }
-
-        function endTxPress(originalIdx) {
-            clearTimeout(longPressTimer);
-            if (!isLongPressTriggered) {
-                if (isSelectionMode) {
-                    if (selectedTransactionIndexes.has(originalIdx)) {
-                        selectedTransactionIndexes.delete(originalIdx);
-                        if (selectedTransactionIndexes.size === 0) {
-                            isSelectionMode = false;
-                        }
-                    } else {
-                        selectedTransactionIndexes.add(originalIdx);
-                    }
-                    renderStatementTable(currentViewingPerson);
-                } else {
-                    openEntryFormFromStatement(originalIdx);
-                }
-            }
-        }
-
-        function exitSelectionMode() {
-            isSelectionMode = false;
-            selectedTransactionIndexes.clear();
-            if (currentViewingPerson) {
-                renderStatementTable(currentViewingPerson);
-            }
-        }
-
-        function confirmDeleteSelected() {
-            if (selectedTransactionIndexes.size === 0) return;
-            const count = selectedTransactionIndexes.size;
-            
-            if (!confirm(`क्या आप चुनी हुई ${count} एंट्रीज को हटाना चाहते हैं?`)) return;
-            if (!verifyPassword()) return;
-
-            const sortedIdxs = Array.from(selectedTransactionIndexes).sort((a,b) => b - a);
-            sortedIdxs.forEach(idx => {
-                records.splice(idx, 1);
+        function getAgentNetTotal(agentName) {
+            let allParties = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
+            let agentParties = allParties.filter(p => {
+                const b = getPersonNetBalance(p);
+                return (b.account || 'Direct').trim().toUpperCase() === (agentName || 'Direct').trim().toUpperCase();
             });
 
-            saveToStorage();
-            renderView();
-            exitSelectionMode();
-            alert(`✅ ${count} एंट्रीज हटा दी गईं!`);
+            let totalRecv = 0, totalGive = 0;
+            agentParties.forEach(p => {
+                const b = getPersonNetBalance(p);
+                if (b.direction === 'RECEIVE') totalRecv += b.net;
+                else totalGive += b.net;
+            });
+
+            let net = totalRecv - totalGive;
+            return {
+                count: agentParties.length,
+                parties: agentParties,
+                totalRecv, totalGive,
+                net: Math.abs(net),
+                direction: net >= 0 ? 'RECEIVE' : 'GIVE'
+            };
+        }
+
+        function openAccountPicker(src) {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
+            pickerCurrentView = 'MAIN_ACCOUNTS';
+            currentDrillDownAccount = '';
+            closeSettingsModal();
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('accountModalTitle').innerText = 'Accounts Overview (Agents)';
+            document.getElementById('btnBackModal').style.display = 'none';
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const unique = [...new Set([
+                ...records.map(r => r.account).filter(Boolean),
+                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
+            ])].sort();
+
+            if (unique.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई एजेंट / अकाउंट नहीं मिला।</div>`;
+                return;
+            }
+
+            unique.forEach(acc => {
+                const agData = getAgentNetTotal(acc);
+                const isRecv = agData.direction === 'RECEIVE';
+                const color = isRecv ? 'var(--accent-recv)' : 'var(--accent-give)';
+                const dirText = isRecv ? 'लेना बाकी' : 'देना बाकी';
+
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.innerHTML = `
+                    <div>
+                        <span style="font-size:12.5px; font-weight:600; color:#e2e8f0;">🏛 ${escapeHtml(acc)}</span>
+                        <br>
+                        <small style="color:#718096; font-size:10px;">पार्टियां: ${agData.count}</small>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="color:${color}; font-weight:700; font-size:12px;">
+                            ${isRecv ? '+ ' : '- '}₹ ${formatINR(agData.net)}
+                        </div>
+                        <small style="color:#718096; font-size:9.5px;">${dirText} ›</small>
+                    </div>
+                `;
+                div.onclick = () => openAgentPartiesView(acc);
+                container.appendChild(div);
+            });
+        }
+
+        function openAgentPartiesView(agentName) {
+            currentDrillDownAccount = agentName;
+            pickerCurrentView = 'AGENT_DRILLDOWN';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = `${agentName} (Parties)`;
+
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const agData = getAgentNetTotal(agentName);
+
+            const summaryCard = document.createElement('div');
+            summaryCard.style.cssText = 'background:#0b0e14; border:1px solid var(--border-soft); border-radius:6px; padding:10px; margin-bottom:8px;';
+            summaryCard.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <span style="color:#718096; font-size:10px; text-transform:uppercase; font-weight:600;">एजेंट कुल नेट बैलेंस</span>
+                        <h3 style="color:#38bdf8; font-size:14px; margin-top:2px;">🏛 ${escapeHtml(agentName)}</h3>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:15px; font-weight:700; color:${agData.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
+                            ${agData.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(agData.net)}
+                        </div>
+                        <small style="color:#94a3b8; font-size:10px;">(${agData.direction === 'RECEIVE' ? 'कुल लेना है' : 'कुल देना है'})</small>
+                    </div>
+                </div>
+            `;
+            container.appendChild(summaryCard);
+
+            if (agData.parties.length === 0) {
+                container.innerHTML += `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px;">इस एजेंट में कोई पार्टी नहीं है।</div>`;
+                return;
+            }
+
+            agData.parties.sort().forEach(pName => {
+                const b = getPersonNetBalance(pName);
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.innerHTML = `
+                    <div>
+                        <span style="font-size:12px; font-weight:600; color:#e2e8f0;">👤 ${escapeHtml(pName)}</span>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:700; font-size:11.5px; color:${b.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
+                            ${b.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(b.net)}
+                        </div>
+                        <small style="color:#718096; font-size:9.5px;">${b.direction === 'RECEIVE' ? 'लेना है' : 'देना है'} ›</small>
+                    </div>
+                `;
+                div.onclick = () => openSinglePersonStatement(pName);
+                container.appendChild(div);
+            });
+        }
+
+        function openGroupListView(dir) {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
+            closeSettingsModal();
+            pickerCurrentView = 'GROUP_LIST';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = dir === 'GIVE' ? 'Give Group (देना बाकी)' : 'Receive Group (लेना बाकी)';
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])];
+            allPersons.forEach(p => {
+                const b = getPersonNetBalance(p);
+                if (b.direction === dir && b.net > 0) {
+                    const div = document.createElement('div');
+                    div.className = 'setting-item';
+                    div.innerHTML = `<span>👤 ${p}</span> <b style="color:${dir==='GIVE'?'var(--accent-give)':'var(--accent-recv)'}">₹ ${formatINR(b.net)}</b>`;
+                    div.onclick = () => { openSinglePersonStatement(p); };
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function openPersonLedgerPicker() {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
+            closeSettingsModal();
+            pickerCurrentView = 'PERSON_LEDGER_LIST';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'All Parties Ledger';
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])].sort();
+            allPersons.forEach(p => {
+                const b = getPersonNetBalance(p);
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.innerHTML = `<span>👤 ${p}</span> <span>₹ ${formatINR(b.net)} (${b.direction})</span>`;
+                div.onclick = () => { openSinglePersonStatement(p); };
+                container.appendChild(div);
+            });
         }
 
         function openEntryFormFromStatement(originalIdx) {
@@ -1665,353 +1959,24 @@
         }
 
         function handleModalBack() {
-            exitSelectionMode();
-            if (pickerCurrentView === 'OVERALL_DETAILED_SUMMARY' || pickerCurrentView === 'ALL_LEDGERS_SHEET') {
-                closeAccountPicker();
-                openSettingsModal();
-            } else if (pickerCurrentView === 'AGENT_DRILLDOWN') {
-                openAccountPicker();
-            } else if (pickerCurrentView === 'SINGLE_PERSON_STATEMENT' && currentDrillDownAccount) {
+            if (pickerCurrentView === 'SINGLE_PERSON_STATEMENT' && currentDrillDownAccount) {
                 openAgentPartiesView(currentDrillDownAccount);
-            } else if (pickerCurrentView === 'MANAGE_MASTERS' || pickerCurrentView === 'MANAGE_CATEGORIES') {
-                closeAccountPicker();
-                openSettingsModal();
+            } else if (pickerCurrentView === 'AGENT_DRILLDOWN') {
+                openAccountPicker('SETTINGS');
             } else {
                 closeAccountPicker();
+                openSettingsModal();
             }
         }
 
-        async function captureAndSaveReportImage() {
-            const target = document.getElementById('reportCaptureArea');
-            if (!target) {
-                alert("इमेज बनाने के लिए लेजर रिकॉर्ड नहीं मिला!");
-                return;
-            }
-
-            let userChoice = '1';
-            if (navigator.canShare) {
-                const choice = prompt("कृपया नंबर चुनें:\n1 = मोबाइल गैलरी में सेव (डाउनलोड करें)\n2 = WhatsApp / शेयर करें", "1");
-                if (!choice) return;
-                userChoice = choice.trim();
-            }
-
-            const btn = document.getElementById('btnExportImage');
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = '⏳ बन रहा है...';
-            btn.disabled = true;
-
-            try {
-                const isPassbookSheet = (pickerCurrentView === 'ALL_LEDGERS_SHEET');
-
-                const fullWidth = Math.max(target.scrollWidth, target.offsetWidth, 850);
-                const fullHeight = target.scrollHeight;
-
-                const canvas = await html2canvas(target, {
-                    backgroundColor: isPassbookSheet ? "#ffffff" : "#0b0e14",
-                    scale: 2,
-                    useCORS: true,
-                    logging: false,
-                    width: fullWidth,
-                    height: fullHeight,
-                    windowWidth: fullWidth + 100,
-                    scrollX: 0,
-                    scrollY: 0,
-                    x: 0,
-                    y: 0,
-                    onclone: (clonedDoc) => {
-                        const clonedTarget = clonedDoc.getElementById('reportCaptureArea');
-                        if (clonedTarget) {
-                            clonedTarget.style.width = fullWidth + 'px';
-                            clonedTarget.style.minWidth = fullWidth + 'px';
-                            clonedTarget.style.maxWidth = 'none';
-                            clonedTarget.style.overflow = 'visible';
-                        }
-                    }
-                });
-
-                const safeName = (currentViewingPerson || (isPassbookSheet ? 'All_Parties_Passbook' : 'Summary')).replace(/[^a-zA-Z0-9_\u0900-\u097F]/g, '_');
-                const fileName = `${safeName}_${getTodayDate()}.png`;
-
-                canvas.toBlob(async function(blob) {
-                    if (!blob) {
-                        alert("इमेज तैयार करने में समस्या आई!");
-                        btn.innerHTML = originalBtnText;
-                        btn.disabled = false;
-                        return;
-                    }
-
-                    if (userChoice === '2' && navigator.canShare) {
-                        const file = new File([blob], fileName, { type: 'image/png' });
-                        if (navigator.canShare({ files: [file] })) {
-                            try {
-                                await navigator.share({
-                                    files: [file],
-                                    title: `खाता लेजर विवरण`,
-                                    text: `लेजर हिसाब विवरण (${getTodayDate()})`
-                                });
-                                btn.innerHTML = originalBtnText;
-                                btn.disabled = false;
-                                return;
-                            } catch (err) {
-                                if (err.name !== 'AbortError') {
-                                    console.warn('Share error, falling back to download:', err);
-                                }
-                            }
-                        }
-                    }
-
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement("a");
-                    link.download = fileName;
-                    link.href = url;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    setTimeout(() => URL.revokeObjectURL(url), 2000);
-
-                    alert("✅ लेजर फोटो आपके डिवाइस में सेव हो गई!");
-                    btn.innerHTML = originalBtnText;
-                    btn.disabled = false;
-                }, 'image/png');
-
-            } catch (error) {
-                console.error("Capture Error:", error);
-                alert("इमेज बनाने में त्रुटि: " + error.message);
-                btn.innerHTML = originalBtnText;
-                btn.disabled = false;
-            }
-        }
-
-        function renderView() {
-            updateStripBalances();
-
-            const container = document.getElementById('transactionList');
-            container.innerHTML = '';
-
-            let allUniqueParties = [...new Set([
-                ...records.map(r => r.name).filter(Boolean),
-                ...Object.keys(personMasters)
-            ])].sort();
-
-            if (selectedAgentFilter) {
-                allUniqueParties = allUniqueParties.filter(p => {
-                    const b = getPersonNetBalance(p);
-                    return (b.account || 'DIRECT').toUpperCase() === selectedAgentFilter.toUpperCase();
-                });
-            }
-
-            if (allUniqueParties.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:35px; color:#64748b; font-size:12px;">No parties found. Click + to add.</div>`;
-                return;
-            }
-
-            allUniqueParties.forEach(pName => {
-                const bal = getPersonNetBalance(pName);
-                const isRecv = bal.direction === 'RECEIVE';
-                
-                let bannerHtml = '';
-                if (isRecv) {
-                    bannerHtml = `<span class="banner-pill tag-recv">+ ₹ ${formatINR(bal.cr)}</span>`;
-                } else {
-                    bannerHtml = `<span class="banner-pill tag-give">- ₹ ${formatINR(bal.dr)}</span>`;
-                }
-
-                let finalBalClass = 'bal-settled';
-                let finalBalText = '0.00';
-
-                if (bal.net > 0) {
-                    if (isRecv) {
-                        finalBalClass = 'bal-recv';
-                        finalBalText = `+ ₹ ${formatINR(bal.net)}`;
-                    } else {
-                        finalBalClass = 'bal-give';
-                        finalBalText = `- ₹ ${formatINR(bal.net)}`;
-                    }
-                }
-
-                const row = document.createElement('div');
-                row.className = 'party-summary-row';
-                row.onclick = () => openSinglePersonStatement(pName);
-
-                row.innerHTML = `
-                    <div class="col-party-name">👤 ${escapeHtml(pName)}</div>
-                    <div class="col-banner-wrap">${bannerHtml}</div>
-                    <div class="col-final-balance ${finalBalClass}">${finalBalText}</div>
-                `;
-                container.appendChild(row);
-            });
-        }
-
-        function openManageMastersView() {
-            openedFromSettings = true;
-            pickerCurrentView = 'MANAGE_MASTERS';
-            closeSettingsModal();
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = 'Manage Master Accounts';
-
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const keys = Object.keys(personMasters).sort();
-            if (keys.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">No Master Accounts found.</div>`;
-                return;
-            }
-
-            let rows = '';
-            keys.forEach((pName, idx) => {
-                const m = personMasters[pName];
-                const dirLabel = m.direction === 'RECEIVE' ? '<span style="color:var(--accent-recv);">Receive (+)</span>' : '<span style="color:var(--accent-give);">Give (-)</span>';
-                const descText = m.desc ? `<br><small style="color:#718096;">📝 ${escapeHtml(m.desc)}</small>` : '';
-                rows += `
-                    <tr>
-                        <td>${idx + 1}</td>
-                        <td style="text-align:left; font-weight:600; color:#fff;">
-                            👤 ${escapeHtml(pName)}
-                            <br><small style="color:#94a3b8;">🏛 ${escapeHtml(m.account || 'Direct')}</small>
-                            ${descText}
-                        </td>
-                        <td>${dirLabel}</td>
-                        <td>₹ ${formatINR(m.amount)}</td>
-                        <td>
-                            <button onclick="editPersonMaster('${escapeHtml(pName)}')" title="एडिट करें" style="background:none; border:none; font-size:14px; cursor:pointer;">✏️</button>
-                            <button onclick="deleteEntirePersonAccount('${escapeHtml(pName)}', event)" title="पार्टी हटाएं" style="background:none; border:none; font-size:14px; cursor:pointer; margin-left:6px;">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            container.innerHTML = `
-                <div class="passbook-table-wrap" style="margin-top:0;">
-                    <table class="passbook-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>पार्टी / खाता / विवरण</th>
-                                <th>प्रकार</th>
-                                <th>ओपनिंग</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        function openManageCategoriesView() {
-            openedFromSettings = true;
-            pickerCurrentView = 'MANAGE_CATEGORIES';
-            closeSettingsModal();
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = 'Manage Categories';
-
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            let rows = '';
-            categories.forEach((cat, idx) => {
-                rows += `
-                    <tr>
-                        <td>${idx + 1}</td>
-                        <td style="text-align:left; font-weight:600; color:#38bdf8;">📂 ${escapeHtml(cat)}</td>
-                        <td>
-                            <button onclick="editCategoryName(${idx})" style="background:none; border:none; font-size:14px; cursor:pointer;">✏️</button>
-                            <button onclick="deleteCategoryItem(${idx})" style="background:none; border:none; font-size:14px; cursor:pointer; margin-left:6px;">🗑️</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            container.innerHTML = `
-                <div style="padding:6px 0 10px 0; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:12px; color:#94a3b8;">Total: ${categories.length} Categories</span>
-                    <button onclick="promptAddNewCategory()" style="background:#102a20; border:1px solid #2ecc71; color:#2ecc71; padding:4px 10px; border-radius:4px; font-size:11px; cursor:pointer; font-weight:600;">+ Add Category</button>
-                </div>
-                <div class="passbook-table-wrap" style="margin-top:0;">
-                    <table class="passbook-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Category Name</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        function promptAddNewCategory() {
-            const name = prompt("नई कैटेगरी का नाम दर्ज करें:");
-            if (name && name.trim()) {
-                const trimmed = name.trim();
-                if (!categories.some(c => c.toLowerCase() === trimmed.toLowerCase())) {
-                    categories.push(trimmed);
-                    saveToStorage();
-                    openManageCategoriesView();
-                } else {
-                    alert("यह कैटेगरी पहले से मौजूद है!");
-                }
-            }
-        }
-
-        function editCategoryName(idx) {
-            const oldName = categories[idx];
-            const updated = prompt("कैटेगरी का नाम बदलें:", oldName);
-            if (updated && updated.trim()) {
-                categories[idx] = updated.trim();
-                saveToStorage();
-                openManageCategoriesView();
-            }
-        }
-
-        function deleteCategoryItem(idx) {
-            if (confirm(`क्या आप '${categories[idx]}' कैटेगरी को हटाना चाहते हैं?`)) {
-                categories.splice(idx, 1);
-                saveToStorage();
-                openManageCategoriesView();
-            }
-        }
-
-        function editPersonMaster(personName) {
-            const mKey = findMasterKey(personName);
-            const m = mKey ? personMasters[mKey] : null;
-            if (!m) return;
-            openCreateAccountModal(mKey);
-            document.getElementById('newAccMain').value = m.account || '';
-            document.getElementById('newAccAmount').value = m.amount || '';
-            document.getElementById('newAccDesc').value = m.desc || '';
-            selectAccDirection(m.direction || 'RECEIVE');
-            document.getElementById('masterModalHeading').innerText = `Edit: ${mKey}`;
-        }
-
-        function verifyPassword() {
-            const savedPass = localStorage.getItem(MASTER_PASSWORD_KEY) || '1234';
-            const input = prompt("PIN दर्ज करें (Default: 1234 या 7869):");
-            if (input === null) return false;
-            if (input === savedPass || input === "7869") return true;
-            alert("गलत PIN!");
-            return false;
-        }
-
-        function deleteEntirePersonAccount(personName, e) {
-            if (e) e.stopPropagation();
-            if (!confirm(`क्या आप '${personName}' का मास्टर हमेशा के लिए हटाना चाहते हैं?`)) return;
-            if (!verifyPassword()) return;
-
-            const mKey = findMasterKey(personName) || personName;
-            delete personMasters[mKey];
-            saveToStorage();
+        function clearFilter() {
+            selectedAgentFilter = null;
+            document.getElementById('filterTag').style.display = 'none';
             renderView();
-            openManageMastersView();
-            alert(`'${personName}' हटा दिया गया।`);
         }
 
         function openEntryForm(editIdx = -1) {
+            if (!currentUser) { alert("एंट्री जोड़ने के लिए कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             const modal = document.getElementById('entryModal');
             const title = document.getElementById('modalFormTitle');
             const btnDelete = document.getElementById('btnDeleteForm');
@@ -2056,15 +2021,8 @@
 
         function selectType(type) {
             selectedCrDr = type;
-            const optCr = document.getElementById('optCr');
-            const optDr = document.getElementById('optDr');
-            if (type === 'Cr') {
-                optCr.className = 'radio-btn-label active-cr';
-                optDr.className = 'radio-btn-label';
-            } else {
-                optCr.className = 'radio-btn-label';
-                optDr.className = 'radio-btn-label active-dr';
-            }
+            document.getElementById('optCr').className = type === 'Cr' ? 'radio-btn-label active-cr' : 'radio-btn-label';
+            document.getElementById('optDr').className = type === 'Dr' ? 'radio-btn-label active-dr' : 'radio-btn-label';
             updateRemainingHint();
         }
 
@@ -2077,7 +2035,7 @@
             }
             const mKey = findMasterKey(trimmed);
             const master = mKey ? personMasters[mKey] : null;
-            if(master && master.account) {
+            if (master && master.account) {
                 document.getElementById('inputAccount').value = master.account;
             }
             const currentAcc = document.getElementById('inputAccount').value.trim();
@@ -2091,18 +2049,19 @@
             const amt = parseFloat(document.getElementById('inputAmount').value) || 0;
             const hint = document.getElementById('remainingHint');
 
-            if(selectedCrDr === 'Dr') {
+            if (selectedCrDr === 'Dr') {
                 const rem = due - amt;
-                hint.innerText = `नया बैलेंस होगा: ₹ ${formatINR(Math.max(0, rem))}`;
+                hint.innerText = `नया बैलेंस: ₹ ${formatINR(Math.max(0, rem))}`;
                 hint.style.color = 'var(--accent-give)';
             } else {
                 const total = due + amt;
-                hint.innerText = `नया कुल बकाया जुड़ेगा: ₹ ${formatINR(total)}`;
+                hint.innerText = `नया बैलेंस: ₹ ${formatINR(total)}`;
                 hint.style.color = 'var(--accent-recv)';
             }
         }
 
         function submitRecord(keepOpen = false) {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             const editIdx = parseInt(document.getElementById('editIndex').value);
             const date = document.getElementById('inputDate').value || getTodayDate();
             const name = document.getElementById('inputName').value.trim();
@@ -2126,11 +2085,9 @@
                 document.getElementById('inputAmount').value = '';
                 document.getElementById('inputNote').value = '';
                 document.getElementById('inputParpas').value = '';
-                
                 const bal = getPersonNetBalance(name, account);
                 document.getElementById('inputTargetAmount').value = bal.net;
                 updateRemainingHint();
-                
                 document.getElementById('inputAmount').focus();
             } else {
                 closeEntryForm();
@@ -2139,42 +2096,31 @@
 
         function deleteCurrentFormRecord() {
             const editIdx = parseInt(document.getElementById('editIndex').value);
-            if (editIdx >= 0 && confirm('इस एंट्री को हटाना चाहते हैं?')) {
-                records.splice(editIdx, 1);
-                saveToStorage();
-                renderView();
-                closeEntryForm();
+            if (editIdx >= 0) {
+                let pin = prompt("एंट्री डिलीट करने के लिए पासवर्ड दर्ज करें:");
+                if (pin === appPins.delPin || pin === registeredMasterPhone || pin === "7869") {
+                    records.splice(editIdx, 1);
+                    saveToStorage();
+                    renderView();
+                    closeEntryForm();
+                    alert("✅ एंट्री हटा दी गई!");
+                } else if (pin !== null) {
+                    alert("❌ गलत पासवर्ड!");
+                }
             }
         }
 
-        let wasEntryOpenBeforeMaster = false;
         function openCreateAccountModal(preset = '') {
-            const entryEl = document.getElementById('entryModal');
-            if (entryEl && window.getComputedStyle(entryEl).display !== 'none') {
-                wasEntryOpenBeforeMaster = true;
-                entryEl.style.display = 'none';
-            } else {
-                wasEntryOpenBeforeMaster = false;
-            }
-
             document.getElementById('masterModalHeading').innerText = 'Add Account Master';
             document.getElementById('newAccPerson').value = preset;
-            document.getElementById('newAccMain').value = document.getElementById('inputAccount').value || '';
+            document.getElementById('newAccMain').value = '';
             document.getElementById('newAccAmount').value = '';
             document.getElementById('newAccDesc').value = '';
             selectAccDirection('RECEIVE');
-            
-            const addModal = document.getElementById('addAccountModal');
-            addModal.style.display = 'flex';
+            document.getElementById('addAccountModal').style.display = 'flex';
         }
 
-        function closeCreateAccountModal() { 
-            document.getElementById('addAccountModal').style.display = 'none';
-            if (wasEntryOpenBeforeMaster) {
-                document.getElementById('entryModal').style.display = 'flex';
-                wasEntryOpenBeforeMaster = false;
-            }
-        }
+        function closeCreateAccountModal() { document.getElementById('addAccountModal').style.display = 'none'; }
 
         function selectAccDirection(dir) {
             selectedAccDirection = dir;
@@ -2183,6 +2129,7 @@
         }
 
         function saveNewAccountMaster() {
+            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             const person = document.getElementById('newAccPerson').value.trim();
             const account = document.getElementById('newAccMain').value.trim() || 'Direct';
             const amount = parseFloat(document.getElementById('newAccAmount').value) || 0;
@@ -2192,24 +2139,37 @@
 
             personMasters[person] = { account, amount, direction: selectedAccDirection, desc };
             saveToStorage();
-            
             document.getElementById('addAccountModal').style.display = 'none';
-
-            if (pickerCurrentView === 'MANAGE_MASTERS') {
-                openManageMastersView();
-            }
-
             renderView();
+        }
 
-            if (wasEntryOpenBeforeMaster) {
-                document.getElementById('entryModal').style.display = 'flex';
-                wasEntryOpenBeforeMaster = false;
+        function updateDataList() {
+            const datalist = document.getElementById('agentsList');
+            if (datalist) {
+                datalist.innerHTML = '';
+                const uniqueAccounts = [...new Set([...records.map(r => r.account).filter(Boolean), ...Object.values(personMasters).map(m => m.account).filter(Boolean)])];
+                uniqueAccounts.forEach(acc => {
+                    const opt = document.createElement('option');
+                    opt.value = acc;
+                    datalist.appendChild(opt);
+                });
             }
 
-            document.getElementById('inputName').value = person;
-            document.getElementById('inputAccount').value = account;
-            onPersonNameInput(person);
+            const personDatalist = document.getElementById('personsList');
+            if (personDatalist) {
+                personDatalist.innerHTML = '';
+                const uniquePersons = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
+                uniquePersons.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p;
+                    personDatalist.appendChild(opt);
+                });
+            }
         }
+
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+        function closeAccountPicker() { document.getElementById('accountPickerModal').style.display = 'none'; }
 
         function isExactPersonMatch(a, b) {
             return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
@@ -2223,331 +2183,24 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        function getAgentNetTotal(agentName) {
-            let allParties = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
-            let agentParties = allParties.filter(p => {
-                const b = getPersonNetBalance(p);
-                return (b.account || 'Direct').trim().toUpperCase() === (agentName || 'Direct').trim().toUpperCase();
+                function captureAndSaveReportImage() {
+            const el = document.getElementById('reportCaptureArea');
+            if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
+            
+            // पूरी चौड़ाई (760px) की फोटो खींचने के लिए
+            html2canvas(el, { 
+                backgroundColor: '#ffffff', 
+                scale: 2,
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: el.scrollWidth,
+                width: el.scrollWidth
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Khata_Ledger_Sheet_${getTodayDate()}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
             });
-
-            let totalRecv = 0;
-            let totalGive = 0;
-
-            agentParties.forEach(p => {
-                const b = getPersonNetBalance(p);
-                if (b.direction === 'RECEIVE') totalRecv += b.net;
-                else totalGive += b.net;
-            });
-
-            let net = totalRecv - totalGive;
-            return {
-                count: agentParties.length,
-                parties: agentParties,
-                totalRecv,
-                totalGive,
-                net: Math.abs(net),
-                direction: net >= 0 ? 'RECEIVE' : 'GIVE'
-            };
-        }
-
-        function openAccountPicker(src) {
-            pickerCurrentView = 'MAIN_ACCOUNTS';
-            currentDrillDownAccount = '';
-            closeSettingsModal();
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('accountModalTitle').innerText = 'Accounts Overview (Agents)';
-            document.getElementById('btnBackModal').style.display = 'none';
-
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const unique = [...new Set([
-                ...records.map(r => r.account).filter(Boolean),
-                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
-            ])].sort();
-
-            if (unique.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई एजेंट / अकाउंट नहीं मिला।</div>`;
-                return;
-            }
-
-            unique.forEach(acc => {
-                const agData = getAgentNetTotal(acc);
-                const isRecv = agData.direction === 'RECEIVE';
-                const color = isRecv ? 'var(--accent-recv)' : 'var(--accent-give)';
-                const dirText = isRecv ? 'लेना बाकी' : 'देना बाकी';
-
-                const div = document.createElement('div');
-                div.className = 'setting-item';
-                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:12px 14px; cursor:pointer;';
-
-                div.innerHTML = `
-                    <div>
-                        <span style="font-size:13px; font-weight:600; color:#e2e8f0;">🏛 ${escapeHtml(acc)}</span>
-                        <br>
-                        <small style="color:#718096; font-size:10.5px;">पार्टियां: ${agData.count}</small>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="color:${color}; font-weight:700; font-size:12.5px;">
-                            ${isRecv ? '+ ' : '- '}₹ ${formatINR(agData.net)}
-                        </div>
-                        <small style="color:#718096; font-size:10px;">${dirText} ›</small>
-                    </div>
-                `;
-
-                div.onclick = () => openAgentPartiesView(acc);
-                container.appendChild(div);
-            });
-        }
-
-        function openAgentPartiesView(agentName) {
-            currentDrillDownAccount = agentName;
-            pickerCurrentView = 'AGENT_DRILLDOWN';
-            document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = `${agentName} (Parties)`;
-
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const agData = getAgentNetTotal(agentName);
-
-            const summaryCard = document.createElement('div');
-            summaryCard.style.cssText = 'background:#0b0e14; border:1px solid var(--border-soft); border-radius:6px; padding:12px; margin-bottom:10px;';
-            summaryCard.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <span style="color:#718096; font-size:11px; text-transform:uppercase; font-weight:600;">एजेंट कुल नेट बैलेंस</span>
-                        <h3 style="color:#38bdf8; font-size:15px; margin-top:2px;">🏛 ${escapeHtml(agentName)}</h3>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:16px; font-weight:700; color:${agData.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
-                            ${agData.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(agData.net)}
-                        </div>
-                        <small style="color:#94a3b8; font-size:10.5px;">(${agData.direction === 'RECEIVE' ? 'कुल लेना है' : 'कुल देना है'})</small>
-                    </div>
-                </div>
-            `;
-            container.appendChild(summaryCard);
-
-            if (agData.parties.length === 0) {
-                container.innerHTML += `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px;">इस एजेंट में कोई पार्टी नहीं है।</div>`;
-                return;
-            }
-
-            agData.parties.sort().forEach(pName => {
-                const b = getPersonNetBalance(pName);
-                const div = document.createElement('div');
-                div.className = 'setting-item';
-                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:11px 12px; border-bottom:1px solid var(--border-soft); cursor:pointer;';
-
-                div.innerHTML = `
-                    <div>
-                        <span style="font-size:12.5px; font-weight:600; color:#e2e8f0;">👤 ${escapeHtml(pName)}</span>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-weight:700; font-size:12px; color:${b.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
-                            ${b.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(b.net)}
-                        </div>
-                        <small style="color:#718096; font-size:10px;">${b.direction === 'RECEIVE' ? 'लेना है' : 'देना है'} ›</small>
-                    </div>
-                `;
-
-                div.onclick = () => openSinglePersonStatement(pName);
-                container.appendChild(div);
-            });
-        }
-
-        function closeAccountPicker() { 
-            exitSelectionMode();
-            document.getElementById('accountPickerModal').style.display = 'none'; 
-        }
-
-        function clearFilter() {
-            selectedAgentFilter = null;
-            selectedPersonFilter = null;
-            document.getElementById('filterTag').style.display = 'none';
-            renderView();
-        }
-
-        function openGroupListView(dir) {
-            closeSettingsModal();
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('accountModalTitle').innerText = dir === 'GIVE' ? 'Give Group (देना बाकी)' : 'Receive Group (लेना बाकी)';
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])];
-            allPersons.forEach(p => {
-                const b = getPersonNetBalance(p);
-                if (b.direction === dir && b.net > 0) {
-                    const div = document.createElement('div');
-                    div.className = 'setting-item';
-                    div.innerHTML = `<span>👤 ${p}</span> <b style="color:${dir==='GIVE'?'var(--accent-give)':'var(--accent-recv)'}">₹ ${formatINR(b.net)}</b>`;
-                    div.onclick = () => { closeAccountPicker(); openSinglePersonStatement(p); };
-                    container.appendChild(div);
-                }
-            });
-        }
-
-        function openPersonLedgerPicker() {
-            closeSettingsModal();
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('accountModalTitle').innerText = 'All Parties Ledger';
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])].sort();
-            allPersons.forEach(p => {
-                const b = getPersonNetBalance(p);
-                const div = document.createElement('div');
-                div.className = 'setting-item';
-                div.innerHTML = `<span>👤 ${p}</span> <span>₹ ${formatINR(b.net)} (${b.direction})</span>`;
-                div.onclick = () => { closeAccountPicker(); openSinglePersonStatement(p); };
-                container.appendChild(div);
-            });
-        }
-
-        function openAllLedgersFullSheet() {
-            closeSettingsModal();
-            pickerCurrentView = 'ALL_LEDGERS_SHEET';
-            currentDrillDownAccount = '';
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = 'All Parties All Ledgers (Excel Sheet)';
-
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const uniqueAgents = [...new Set([
-                ...records.map(r => r.account).filter(Boolean),
-                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
-            ])].sort();
-
-            if (uniqueAgents.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई लेजर रिकॉर्ड नहीं मिला।</div>`;
-                return;
-            }
-
-            let fullHtml = `
-                <div id="reportCaptureArea" style="background:#ffffff; color:#0f172a; padding:12px; font-family:Inter, Arial, sans-serif; width:100%; box-sizing:border-box; overflow-x:auto;">
-                    <div style="text-align:center; border-bottom:2px solid #0f172a; padding-bottom:6px; margin-bottom:10px;">
-                        <h2 style="font-size:16px; margin:0; color:#0f172a; font-weight:800; letter-spacing:0.5px;">ALL PARTIES MASTER EXCEL LEDGER</h2>
-                        <div style="font-size:10px; color:#475569; margin-top:2px;">तारीख: ${formatHindiDate(getTodayDate())}</div>
-                    </div>
-                    <table style="width:100%; border-collapse:collapse; font-size:11px; white-space:nowrap; border:1.5px solid #0f172a;">
-                        <thead>
-                            <tr style="background:#0f172a; color:#ffffff; font-size:10px; text-transform:uppercase;">
-                                <th style="border:1px solid #334155; padding:6px 5px; text-align:center;">Date</th>
-                                <th style="border:1px solid #334155; padding:6px 6px; text-align:left;">Agent</th>
-                                <th style="border:1px solid #334155; padding:6px 6px; text-align:left;">Party</th>
-                                <th style="border:1px solid #334155; padding:6px 6px; text-align:left;">Category / Note</th>
-                                <th style="border:1px solid #334155; padding:6px 6px; text-align:right;">Amount</th>
-                                <th style="border:1px solid #334155; padding:6px 6px; text-align:center;">DR / CR</th>
-                                <th style="border:1px solid #334155; padding:6px 6px; text-align:right;">Net Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            uniqueAgents.forEach(agent => {
-                const agData = getAgentNetTotal(agent);
-                const isAgRecv = agData.direction === 'RECEIVE';
-
-                fullHtml += `
-                    <tr style="background:#e2e8f0; font-weight:700; color:#0f172a;">
-                        <td colspan="4" style="border:1px solid #94a3b8; padding:5px 6px;">🏛 AGENT: ${escapeHtml(agent)}</td>
-                        <td colspan="2" style="border:1px solid #94a3b8; padding:5px 6px; text-align:right; font-size:10px; color:#475569;">AGENT NET:</td>
-                        <td style="border:1px solid #94a3b8; padding:5px 6px; text-align:right; color:${isAgRecv ? '#15803d' : '#b91c1c'};">
-                            ${isAgRecv ? '+ ' : '- '}₹ ${formatINR(agData.net)}
-                        </td>
-                    </tr>
-                `;
-
-                if (agData.parties.length === 0) {
-                    fullHtml += `
-                        <tr>
-                            <td colspan="7" style="border:1px solid #cbd5e1; padding:6px; text-align:center; color:#94a3b8;">कोई पार्टी नहीं</td>
-                        </tr>
-                    `;
-                } else {
-                    agData.parties.sort().forEach(pName => {
-                        const mKey = findMasterKey(pName);
-                        const master = mKey ? personMasters[mKey] : null;
-                        const targetAmount = master ? (parseFloat(master.amount) || 0) : 0;
-                        const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
-
-                        const personTx = records
-                            .filter(r => isExactPersonMatch(r.name, pName))
-                            .sort((a,b) => new Date(a.date) - new Date(b.date));
-
-                        let running = targetAmount;
-                        let runningDir = agreedDir;
-
-                        if (targetAmount > 0) {
-                            const isRecv = runningDir === 'RECEIVE';
-                            fullHtml += `
-                                <tr style="background:#f8fafc;">
-                                    <td style="border:1px solid #cbd5e1; padding:5px; text-align:center; color:#64748b;">-</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#64748b;">${escapeHtml(agent)}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; font-weight:600;">${escapeHtml(pName)}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#475569;">Opening Balance</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:600;">₹ ${formatINR(targetAmount)}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center; font-size:10px;">${agreedDir === 'RECEIVE' ? 'CR (लेना)' : 'DR (देना)'}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:700; color:${isRecv ? '#15803d' : '#b91c1c'};">
-                                        ${isRecv ? '+ ' : '- '}₹ ${formatINR(running)}
-                                    </td>
-                                </tr>
-                            `;
-                        }
-
-                        personTx.forEach(tx => {
-                            const amt = parseFloat(tx.amount) || 0;
-                            const isDebit = tx.crdr === 'Dr';
-
-                            if (runningDir === 'RECEIVE') {
-                                if (isDebit) running += amt;
-                                else running -= amt;
-                            } else {
-                                if (isDebit) running -= amt;
-                                else running += amt;
-                            }
-
-                            if (running < 0) {
-                                running = Math.abs(running);
-                                runningDir = runningDir === 'RECEIVE' ? 'GIVE' : 'RECEIVE';
-                            }
-
-                            const isRecv = runningDir === 'RECEIVE';
-                            const detailText = tx.note ? `${escapeHtml(tx.parpas || '-')} (${escapeHtml(tx.note)})` : escapeHtml(tx.parpas || '-');
-
-                            fullHtml += `
-                                <tr>
-                                    <td style="border:1px solid #cbd5e1; padding:5px; text-align:center; color:#334155;">${formatHindiDate(tx.date)}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#475569;">${escapeHtml(agent)}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; font-weight:600;">${escapeHtml(pName)}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; color:#1e293b;">${detailText}</td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:600; color:${isDebit ? '#b91c1c' : '#15803d'};">
-                                        ₹ ${formatINR(amt)}
-                                    </td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center; font-weight:600; font-size:10px; color:${isDebit ? '#b91c1c' : '#15803d'};">
-                                        ${isDebit ? 'DR (दिया)' : 'CR (लिया)'}
-                                    </td>
-                                    <td style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right; font-weight:700; color:${isRecv ? '#15803d' : '#b91c1c'};">
-                                        ${isRecv ? '+ ' : '- '}₹ ${formatINR(running)}
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    });
-                }
-            });
-
-            fullHtml += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-            container.innerHTML = fullHtml;
         }
     </script>
 </body>
