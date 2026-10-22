@@ -22,7 +22,6 @@
   
  <!-- Firebase Libraries -->
  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
  <style>  
@@ -102,18 +101,13 @@
  .del-modal-box { background: rgba(26, 26, 26, 0.95); padding: 15px; border-radius: 20px; border: 3px solid #00f3ff; text-align: center; width: 80%; max-width: 250px; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); }  
  #search-inp { width: 100%; padding: 6px; border-radius: 10px; border: 2px solid var(--neon-cyan); background: #edededeb; color: #000; font-weight: bold; font-size: 13px; height: 30px; }  
  .list-item { background: #e6ca0188; padding: 4px 10px; margin-bottom: 2px; border-radius: 6px; border-left: 5px solid var(--neon-cyan); cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 20px; -webkit-user-select: none; user-select: none; }  
- #mainAppOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(35px); z-index: 999999; display: flex; align-items: center; justify-content: center; }  
- #secretInput { display: none; padding: 15px; border-radius: 20px; border: 3px solid #333; text-align: center; font-size: 20px; width: 200px; background: #fff; color: #000; }  
+ 
+ #mainAppOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(25px); z-index: 999999; display: none; align-items: center; justify-content: center; cursor: pointer; }  
+ #secretInput { display: none; padding: 12px 18px; border-radius: 16px; border: 2px solid #00f3ff; text-align: center; font-size: 18px; width: 160px; background: #0b0e14; color: #00f3ff; outline: none; }  
+ 
  .count-display { text-align: center; font-size: 14px; margin-top: 10px; color: #00f3ff; font-weight: bold; letter-spacing: 0px; }  
  #count-total { color: #ff4757; font-size: 14px; font-weight: bold; background: #1019f0; padding: 1px 10px; border-radius: 8px; border: 2px solid #ffffff; margin-left: 1px; }  
   
- @keyframes blink-red {  
-   0% { background: #ff0000; color: white; box-shadow: 0 0 30px #ff0000; }  
-   50% { background: #500000; color: #ff0000; box-shadow: 0 0 5px transparent; }  
-   100% { background: #ff0000; color: white; box-shadow: 0 0 30px #ff0000; }  
- }  
- .blink-alert { animation: blink-red 0.4s infinite !important; border: 5px solid yellow !important; }  
- #vaultPanel button { width: 100%; text-transform: uppercase; font-weight: 900; }  
  .floating-opt {   
    position: fixed; bottom: 80px; right: 20px;   
    background: #bc13fe; color: white; width: 50px; height: 50px;   
@@ -123,12 +117,103 @@
  }  
  .hide-btn { background: #ff4757; color: white; border: none; border-radius: 5px; padding: 2px 8px; cursor: pointer; font-size: 10px; margin-right: 5px; }  
  .cam-btn { background: #00f3ff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-size: 12px; cursor: pointer; line-height: 1; font-weight: normal; }  
+
+ /* Top Header Bar */
+ .app-top-header {
+   display: flex; justify-content: space-between; align-items: center;
+   background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff;
+   margin-bottom: 8px;
+ }
+ .top-user-name {
+   color: #00f3ff; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;
+ }
+
+ /* Auth Modal Style */
+ .auth-overlay {
+   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+   background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
+   z-index: 100000; align-items: center; justify-content: center; padding: 12px;
+ }
+ .auth-card {
+   background: rgba(17, 22, 33, 0.98); padding: 18px; border-radius: 14px; border: 1px solid #172233;
+   width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 8px;
+   box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+ }
+ .auth-card input {
+   width: 100%; padding: 10px; border: 1px solid #172233; border-radius: 8px;
+   font-size: 12px; background: #0b0e14; color: #fff; outline: none; text-align: center;
+   font-family: inherit; font-weight: normal;
+ }
+ .auth-links {
+   display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; padding: 0 4px;
+ }
+ .auth-link { color: #38bdf8; cursor: pointer; text-decoration: underline; }
+ .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+ .pm-row label { font-size: 10px; font-weight: 600; color: #38bdf8; text-align: left; width: 55%; }
+ .pm-row input { width: 42%; padding: 5px; border-radius: 5px; border: 1px solid #38bdf8; background: #000; color: #2ecc71; text-align: center; font-size: 12px; font-weight: bold; outline: none; }
+
+ /* NEW ENTRY बटन स्टाइल */
+ .btn-entry-main {
+   background: #0e1ada !important;
+   color: #ffffff !important;
+   border: 2.5px solid #ff0000 !important;
+   box-shadow: 0 8px 0 #000 !important;
+   border-radius: 20px !important;
+   height: 42px !important;
+   font-size: 13px !important;
+   font-weight: 900 !important;
+   cursor: pointer !important;
+   margin: 0 !important;
+   flex: 3 !important;
+ }
+
+ /* SYNC बटन - पूरा गोल राउंड, लाल बॉर्डर और 3D शेड */
+ .btn-sync-main {
+   background: #c7b43edf !important;
+   color: #ffffff !important;
+   border: 2.5px solid #ff0000 !important;
+   box-shadow: 0 8px 0 #000 !important;
+   border-radius: 20px !important;
+   height: 42px !important;
+   min-width: 63px !important;
+   display: flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   font-size: 12px !important;
+   font-weight: 900 !important;
+   margin: 0 !important;
+   cursor: pointer !important;
+ }
+
+ /* पिंक गियर सेटिंग (⚙️) बटन - पूरा गोल राउंड, लाल बॉर्डर और 3D शेड */
+ .btn-gear-main {
+   background: #453238a6 !important;
+   color: #ffffff !important;
+   border: 2.5px solid #ff0000 !important;
+   box-shadow: 0 8px 0 #000 !important;
+   border-radius: 20px !important;
+   width: 48px !important;
+   height: 42px !important;
+   display: flex !important;
+   align-items: center !important;
+   justify-content: center !important;
+   font-size: 18px !important;
+   margin: 0 !important;
+   cursor: pointer !important;
+ }
+
+ .btn-entry-main:active, .btn-sync-main:active, .btn-gear-main:active {
+   transform: translateY(2px) !important;
+   box-shadow: 0 2px 0 #000 !important;
+ }
  </style>  
 </head>  
 <body>  
-  
+
+<!-- JSON फाइल इम्पोर्ट के लिए हिडन इनपुट -->
+<input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="handleJsonFileSelect(event)">
 <input type="file" id="cardGalleryInput" accept="image/*" style="display:none;" onchange="processCardImage(this)">  
-  
+
 <div id="scanChoiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:6000; justify-content:center; align-items:center; backdrop-filter:blur(3px);">  
  <div style="background:#222; border:2px solid #00f3ff; border-radius:15px; padding:20px; width:80%; max-width:280px; text-align:center;">  
    <h4 id="scanModalHeading" style="color:#00f3ff; margin-top:0; margin-bottom:15px;">SELECT IMAGE</h4>  
@@ -136,13 +221,153 @@
    <button style="background:#444; width:100%; padding:8px; border-radius:8px; font-size:12px; cursor:pointer;" onclick="closeScanChoice()">CANCEL</button>  
  </div>  
 </div>  
-  
-<div id="mainAppOverlay">  
- <div onclick="handleAppUnlockClick()" style="width:100%; height:100%; position:absolute;"></div>  
- <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*">  
+
+<!-- ऐप लॉक स्क्रीन -->
+<div id="mainAppOverlay" onclick="handleAppUnlockClick()">  
+ <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*" onclick="event.stopPropagation()">  
 </div>  
-  
-<!-- सिक्योरिटी PIN मॉडल (Edit, Delete, और Cloud Settings के लिए) -->
+
+<!-- मास्टर पासवर्ड गेट मॉडल (Flash & Mask) -->
+<div class="auth-overlay" id="masterGateModal">
+  <div class="auth-card" style="max-width: 260px;">
+    <h3 id="masterGateTitle" style="color:#00f3ff; font-size:13px; font-weight:700;">ENTER MASTER PIN</h3>
+    <input type="text" id="masterGateInput" placeholder="MASTER PIN" inputmode="numeric" style="letter-spacing: 4px; font-size: 18px; font-weight: bold;">
+    <div style="display:flex; gap:6px; margin-top:4px;">
+      <button style="background:#2ecc71; color:#fff;" onclick="submitMasterGate()">OK</button>
+      <button style="background:#333; color:#fff;" onclick="closeMasterGate()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- पासवर्ड मैनेजर मॉडल (6 पासवर्ड विकल्प) -->
+<div class="auth-overlay" id="passManagerModal">
+  <div class="auth-card" style="max-width: 330px;">
+    <h3 style="color:#00f3ff; font-size:13px; font-weight:700;">MANAGE SECURITY PASSWORDS</h3>
+    <hr style="border:0.5px solid #1c2638; margin: 4px 0 8px 0;">
+    <div class="pm-row">
+      <label>1. APP OPEN LOCK</label>
+      <input type="text" id="pm_open" placeholder="7869">
+    </div>
+    <div class="pm-row">
+      <label>2. EDIT UNLOCK PIN</label>
+      <input type="text" id="pm_edit" placeholder="7869">
+    </div>
+    <div class="pm-row">
+      <label>3. DELETE PIN</label>
+      <input type="text" id="pm_del" placeholder="7869">
+    </div>
+    <div class="pm-row">
+      <label>4. CLOUD BACKUP PIN</label>
+      <input type="text" id="pm_cloud" placeholder="7869">
+    </div>
+    <div class="pm-row">
+      <label>5. CLOUD RESTORE PIN</label>
+      <input type="text" id="pm_restore" placeholder="7869">
+    </div>
+    <div class="pm-row">
+      <label>6. LOGIN PASSWORD</label>
+      <input type="text" id="pm_login_pass" placeholder="Password">
+    </div>
+    <div style="display:flex; gap:6px; margin-top:6px;">
+      <button style="background:#2ecc71; color:#fff;" onclick="savePasswordSettings()">SAVE</button>
+      <button style="background:#333; color:#fff;" onclick="closePassManager()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- रीसेट ऐप मॉडल -->
+<div class="auth-overlay" id="resetAppModal">
+  <div class="auth-card" style="max-width: 270px;">
+    <h3 style="color:#ff4757; font-size:13px; font-weight:700;">⚠️ RESET APP</h3>
+    <p style="font-size:11px; color:#bbb; margin:0;">मास्टर पासवर्ड दर्ज करें:</p>
+    <input type="text" id="resetPassInput" placeholder="MASTER PIN" inputmode="numeric" style="letter-spacing:4px; font-size:16px;">
+    <div style="display:flex; gap:6px; margin-top:4px;">
+      <button style="background:#e74c3c; color:#fff;" onclick="handleResetSubmit()">CONFIRM</button>
+      <button style="background:#333; color:#fff;" onclick="closeResetModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- JSON एक्शन मेनू मॉडल -->
+<div class="auth-overlay" id="jsonActionModal">
+  <div class="auth-card" style="max-width: 300px;">
+    <h3 style="color:#00f3ff; font-size:13px; font-weight:700;">💾 JSON BACKUP & RESTORE</h3>
+    <p style="font-size:11px; color:#bbb; margin:0;">अपना डेटा JSON फाइल में डाउनलोड करें या रीस्टोर करें:</p>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
+      <button style="background:#34495e; color:#fff; padding:10px;" onclick="exportDataToJsonFile()">📥 EXPORT (DOWNLOAD JSON)</button>
+      <button style="background:#2980b9; color:#fff; padding:10px;" onclick="triggerJsonImport()">📤 RESTORE FROM JSON FILE</button>
+      <button style="background:#333; color:#fff; padding:8px;" onclick="closeJsonActionModal()">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- क्लाउड ऑथेंटिकेशन / फायरबेस मॉडल -->
+<div class="auth-overlay" id="firebaseAuthModal">
+  <div class="auth-card">
+    <h3 style="color:#e2e8f0; font-size:13.5px; font-weight:700;">🔥 Bank Account</h3>
+    <p id="authStatusDesc" style="color:#00f3ff; font-size:11px; font-weight:600; margin:0;">नया खाता विवरण भरें</p>
+
+    <div id="authInputsArea" style="display:flex; flex-direction:column; gap:6px;">
+      <div style="display:flex; border-radius:6px; overflow:hidden; border:1px solid #172233; margin-bottom:2px;">
+        <button type="button" id="tabRegisterBtn" style="flex:1; padding:7px; background:#1e293b; color:#00f3ff; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('REGISTER')">REGISTER</button>
+        <button type="button" id="tabLoginBtn" style="flex:1; padding:7px; background:#0b0e14; color:#94a3b8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('LOGIN')">LOGIN</button>
+      </div>
+
+      <div id="regExtraFields" style="display:flex; flex-direction:column; gap:6px;">
+        <input type="text" id="fbFullName" placeholder="पूरा नाम (Full Name) *">
+        <input type="text" id="fbRegUsername" placeholder="यूज़र नाम (Username) *" autocomplete="off">
+        <input type="tel" id="fbRegMobile" placeholder="मोबाइल नंबर (10 अंक) *" maxlength="10">
+        <input type="email" id="fbRegEmail" placeholder="ईमेल आईडी (डेटा बैकअप चाबी) *">
+      </div>
+
+      <div id="loginField" style="display:none;">
+        <input type="text" id="fbLoginIdentifier" placeholder="यूज़र नाम / मोबाइल नंबर / ईमेल आईडी *">
+      </div>
+
+      <input type="password" id="fbPassword" placeholder="पासवर्ड (Password) *">
+      
+      <div id="regConfirmField" style="display:block;">
+        <input type="password" id="fbConfirmPassword" placeholder="पासवर्ड दोबारा (Confirm Password) *">
+      </div>
+
+      <div class="auth-links" id="authLinksRow" style="display:none;">
+        <span class="auth-link" onclick="handleForgotPassword()">Forgot Password?</span>
+        <span class="auth-link" onclick="handleForgotDetails()">Find My Details?</span>
+      </div>
+
+      <button type="button" id="btnAuthSubmit" style="background:#00f3ff; color:#000; padding:10px; font-size:12px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
+    </div>
+
+    <!-- लॉग-इन होने के बाद का दृश्य -->
+    <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:8px;">
+      <div style="font-size:11px; color:#2ecc71; font-weight:bold;">Loged secsesfully</div>
+      <div style="font-size:14px; color:#00f3ff; font-weight:900;" id="userEmailDisplay">👤 USER</div>
+      
+      <div style="display:flex; gap:6px; margin-top:6px;">
+        <button style="background:#2ecc71; color:#fff; padding:10px;" onclick="openCloudActionModal('BACKUP')">☁️ BACKUP</button>
+        <button style="background:#f59e0b; color:#fff; padding:10px;" onclick="openCloudActionModal('RESTORE')">📥 RESTORE</button>
+      </div>
+      <button style="background:#e74c3c; color:#fff; margin-top:4px; padding:10px;" onclick="firebaseLogout(true)">LOGOUT & LOCK</button>
+    </div>
+
+    <button id="btnAuthModalClose" style="background:#333; margin-top:4px; padding:8px; display:none;" onclick="closeFirebaseAuthModal()">CLOSE</button>
+  </div>
+</div>
+
+<!-- क्लाउड बैकअप/रीस्टोर पिन एक्शन मॉडल -->
+<div class="auth-overlay" id="cloudActionModal">
+  <div class="auth-card" style="max-width: 270px;">
+    <h3 id="cloudActionTitle" style="color:#00f3ff; font-size:13px; font-weight:700;">☁️ CLOUD ACTION</h3>
+    <p style="font-size:11px; color:#bbb; margin:0;" id="cloudActionDesc">पासवर्ड दर्ज करें</p>
+    <input type="password" id="cloudActionPassInput" placeholder="Password" inputmode="numeric">
+    <div style="display:flex; gap:6px; margin-top:6px;">
+      <button id="btnExecuteCloud" style="background:#2ecc71; color:#fff;" onclick="submitCloudAction()">OK</button>
+      <button style="background:#333; color:#fff;" onclick="closeCloudActionModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<!-- एडिट / डिलीट पिन मॉडल -->
 <div class="del-modal-overlay" id="delOverlay">  
  <div class="del-modal-box">  
    <h3 style="margin:0; font-size:16px;" id="modalTitle">ACTION</h3>  
@@ -154,8 +379,16 @@
    </div>  
  </div>  
 </div>  
-  
+
 <div class="app-container">  
+ <!-- टॉप यूजर बार -->
+ <div class="app-top-header">
+   <div style="display:flex; align-items:center; gap:6px;">
+     <span style="font-size:14px; font-weight:bold; color:#fff;">BANK AGENT PRO</span>
+   </div>
+   <div id="displayTopUser" class="top-user-name">👤 LOGIN</div>
+ </div>
+
  <div id="form-to-share">  
    <div class="header-box">  
      <div class="title-design" id="head-agent">AGENT : NAME</div>  
@@ -167,45 +400,48 @@
   
  <div class="controls">  
    <div id="main-btn-container">  
-     <div style="display:flex; align-items:center; gap:8px; padding:8px 10px 5px 10px;">  
-       <button class="btn-save" style="margin:0; flex: 3; height: 42px; width: auto; background: #08ee0e84 !important; color: #ffffff !important; border: 2.5px solid #ff0000; box-shadow: 0 8px #00f3ff; border-radius: 2px;" onclick="handleMainAction()">NEW ENTRY</button>  
-       <button onclick="refreshApp()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0; color: #fff;">🔄</button>  
+     <div style="display:flex; align-items:center; gap:8px; padding:8px 8px 5px 8px;">  
+       <button class="btn-entry-main" onclick="handleMainAction()">NEW ENTRY</button>  
+       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">🔥 SYNC</button>  
        <div id="gearBtn" style="display: flex; justify-content: center;">  
-         <button onclick="toggleVault()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0;">⚙️</button>  
+         <button onclick="toggleVault()" class="btn-gear-main" title="Settings">⚙️</button>  
        </div>  
      </div>  
    </div>  
+   
+   <!-- सेटिंग्स पैनल -->
    <div id="vaultPanel" style="display:none; background: #0a1f14; border: 3px solid #00f3ff; border-radius: 20px; padding: 15px; margin: 10px; box-shadow: 0 0 20px rgba(0,243,255,0.4);">  
-     <div style="text-align:center; color:#00f3ff; margin-bottom:15px; font-size:14px; font-weight:900; border-bottom: 1px solid #1a5a4a; padding-bottom:8px;">SETTING</div>  
+     <div style="text-align:center; color:#00f3ff; margin-bottom:12px; font-size:14px; font-weight:900; border-bottom: 1px solid #1a5a4a; padding-bottom:6px;">SETTINGS</div>  
      
-     <!-- Cloud Account Login Box (PIN Protected) -->
-     <button type="button" onclick="promptOpenCloudBox()" style="background:#132d20; color:#00f3ff; border:1px solid #00f3ff; border-radius:100px; padding:10px; width:100%; font-weight:bold; cursor:pointer; margin-bottom:8px;">🌐 CLOUD ACCOUNT SETTINGS 🔒</button>
-     
-     <div id="authBoxContainer" style="display:none; background:rgba(19, 45, 32, 0.95); border:2px solid #00f3ff; border-radius:12px; padding:12px; margin-bottom:12px; box-shadow: inset 0 0 10px rgba(0,243,255,0.2);">
-       <div id="cloudUserStatus" style="font-size:12px; color:#2afa45; margin-bottom:10px; font-weight:bold; text-align:center;">स्थिति: लॉग-इन नहीं हैं</div>
-       
-       <div id="authInputs">
-         <input type="email" id="cloudEmail" placeholder="ईमेल आईडी (Email ID)" style="width:100%; padding:8px; font-size:12px; background:#000; color:#fff; border:1px solid #00f3ff; border-radius:6px; outline:none; margin-bottom:6px;">
-         <input type="password" id="cloudPass" placeholder="पासवर्ड (कम से कम 6 अक्षर)" style="width:100%; padding:8px; font-size:12px; background:#000; color:#fff; border:1px solid #00f3ff; border-radius:6px; outline:none; margin-bottom:8px;">
-         <div style="display:flex; gap:6px;">
-           <button type="button" onclick="handleCloudAuth('login')" style="background:#4285F4; color:#fff; border:none; padding:8px; border-radius:6px; flex:1; font-weight:bold; cursor:pointer;">LOGIN</button>
-           <button type="button" onclick="handleCloudAuth('signup')" style="background:#27ae60; color:#fff; border:none; padding:8px; border-radius:6px; flex:1; font-weight:bold; cursor:pointer;">SIGN UP</button>
-         </div>
-       </div>
-       <button id="logoutBtn" type="button" onclick="handleCloudSignOut()" style="display:none; background:#ff4757; color:#fff; border:none; padding:8px; border-radius:6px; width:100%; font-weight:bold; margin-top:6px; cursor:pointer;">LOGOUT ACCOUNT</button>
-     </div>
-
      <div style="display: flex; flex-direction: column; gap: 8px;">  
-       <button style="background: #4285F4; padding: 10px; border-radius: 100px;" onclick="syncToCloud(true)">☁️ CLOUD BACKUP</button>  
-       <button style="background: #f4b400; color: #000; padding: 10px; border-radius: 100px;" onclick="restoreFromCloud()">📥 CLOUD RESTORE</button>  
-       <button style="background: #e91e63; padding: 10px; border-radius: 100px;" onclick="showTrashList()">♻️ RECOVER DELETED</button>  
-       <button style="background: #00f3ff; color: #000; padding: 10px; border-radius: 100px;" onclick="openFieldManager()">➕ ADD / EDIT FIELDS</button>  
-       <button style="background: #ff4757; padding: 10px; border-radius: 100px;" onclick="handleOTPRequest()">🔒 CHANGE PASSWORD</button>  
-       <button style="background: #bc13fe; padding: 10px; border-radius: 100px;" onclick="toggleOptionMenu()">⚙️ OPTION</button>  
-       <button style="background: #ef1818; padding: 10px; border-radius: 100px; color: white; font-weight: bold; border: 5px solid #1eef2c;" onclick="handleLogout()">🔒 APP LOCK & CLOSE</button>  
+       <!-- 1. फायरबेस अकाउंट एंड सिंक -->
+       <button style="background: #102a20; border: 1px solid #00f3ff; color: #00f3ff; padding: 10px; border-radius: 100px;" onclick="openFirebaseAuthModal()">🔥 FIREBASE ACCOUNT & SYNC</button>  
+       
+       <!-- 2. ऑप्शन -->
+       <button style="background: #bc13fe; padding: 9px; border-radius: 100px;" onclick="toggleOptionMenu()">⚙️ OPTION</button>  
+
+       <!-- 3. रिकॉर्ड डिलीट (रीसायकल बिन) -->
+       <button style="background: #e91e63; padding: 9px; border-radius: 100px;" onclick="showTrashList()">♻️ RECOVER DELETED</button>  
+
+       <!-- 4. ऐड फील्ड -->
+       <button style="background: #00f3ff; color: #000; padding: 9px; border-radius: 100px;" onclick="openFieldManager()">➕ ADD / EDIT FIELDS</button>  
+
+       <!-- 5. एक्सपोर्ट बैकअप (जिसके अंदर रिस्टोर भी मौजूद है) -->
+       <button style="background: #34495e; padding: 10px; border-radius: 100px;" onclick="openJsonActionModal()">💾 EXPORT BACKUP (DOWNLOAD JSON)</button>  
+
+       <!-- 6. मैनेज सिक्योरिटी पासवर्ड -->
+       <button style="background: #e74c3c; padding: 10px; border-radius: 100px;" onclick="openPasswordManagerGate()">🔑 MANAGE SECURITY PASSWORDS</button>  
+       
+       <!-- 7. रीसेट ऐप -->
+       <button style="background: #c0392b; padding: 10px; border-radius: 100px;" onclick="promptResetApp()">⚠️ RESET APP</button>  
+
+       <hr style="border: 0.5px solid #1a5a4a; margin: 2px 0;">
+
+       <!-- 8. क्लोज बटन -->
        <button style="background: #222; color: #fff; border: 1.5px solid #ffffff; height: 35px; border-radius: 100px;" onclick="toggleVault()">CLOSE</button>  
      </div>  
    </div>  
+   
    <div id="option-menu" style="display: none; padding: 5px; margin-top: 2px;">  
      <div style="display: flex; gap: 2px;">  
        <button style="background: #e91e63;" onclick="downloadPDF()">📄 PDF</button>  
@@ -233,165 +469,63 @@
    </div>  
  </div>  
 </div>  
-  
+
+<!-- फील्ड मैनेजर मॉडल -->
+<div id="fieldModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; align-items:center; justify-content:center;">  
+ <div style="background:#1a1a1a; width:95%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #00f3ff; max-height:85vh; overflow-y:auto;">  
+   <h3 style="color:#00f3ff; text-align:center; margin-top:0;">MANAGE FIELDS</h3>  
+   <div id="field-list-edit" style="margin-bottom:15px;"></div>  
+   <div style="display:flex; gap:5px; background:#222; padding:10px; border-radius:10px;">  
+     <input type="text" id="new-field-name" placeholder="Name..." style="flex:1; background:transparent; border:none; color:white;">  
+     <button onclick="addNewField()" style="background:#00f3ff; color:#000;">ADD</button>  
+   </div>  
+   <button onclick="closeFieldManager()" style="width:100%; margin-top:10px; background:#333;">CLOSE</button>  
+ </div>  
+</div>  
+
 <script>  
  // Firebase Configuration
  const firebaseConfig = {
-   apiKey: "AIzaSyDSgVvCuMiGzjwNB1mM2FdjTqOCB9vPNZM",
-   authDomain: "bank-pro-1b6af.firebaseapp.com",
-   projectId: "bank-pro-1b6af",
-   storageBucket: "bank-pro-1b6af.firebasestorage.app",
-   messagingSenderId: "618421401325",
-   appId: "1:618421401325:web:67cc5c08b6f4dc47ea3ee4"
+   apiKey: "AIzaSyBW39xBTcayR8V1mdQ4x5Sg0tMHjULZo_4",
+   authDomain: "bank-pro-f0db7.firebaseapp.com",
+   projectId: "bank-pro-f0db7",
+   storageBucket: "bank-pro-f0db7.firebasestorage.app",
+   messagingSenderId: "965788003924",
+   appId: "1:965788003924:web:37abb886d6ba80e4622c41"
  };
 
- if (!firebase.apps.length) {
-   firebase.initializeApp(firebaseConfig);
- }
- const auth = firebase.auth();
- const db = firebase.firestore();
-
- let currentCloudUser = null;
- auth.onAuthStateChanged((user) => {
-   currentCloudUser = user;
-   updateAuthUI(user);
- });
-
- function promptOpenCloudBox() {
-   const box = document.getElementById('authBoxContainer');
-   if (box.style.display === 'block') {
-     box.style.display = 'none';
-     return;
+ let fbDb = null;
+ try {
+   if (!firebase.apps.length) {
+     firebase.initializeApp(firebaseConfig);
    }
-   if (currentCloudUser) {
-     pendingAction = "cloud_settings";
-     setupModal("CLOUD SECURITY", "#00f3ff", "OPEN");
-   } else {
-     box.style.display = 'block';
-   }
+   fbDb = firebase.firestore();
+ } catch(e) {
+   console.warn("Firebase Init Error:", e);
  }
 
- function updateAuthUI(user) {
-   const statusDiv = document.getElementById('cloudUserStatus');
-   const inputsDiv = document.getElementById('authInputs');
-   const logoutBtn = document.getElementById('logoutBtn');
-   const box = document.getElementById('authBoxContainer');
+ let currentUser = null;
+ let currentAuthTab = 'REGISTER';
+ let pendingCloudAction = '';
 
-   if (user) {
-     statusDiv.innerHTML = `✅ लॉग-इन: <span style="color:#00f3ff;">${user.email}</span>`;
-     inputsDiv.style.display = 'none';
-     logoutBtn.style.display = 'block';
-     box.style.display = 'none'; 
-   } else {
-     statusDiv.innerText = 'स्थिति: लॉग-इन नहीं हैं';
-     inputsDiv.style.display = 'block';
-     logoutBtn.style.display = 'none';
-   }
- }
-
- async function handleCloudAuth(type) {
-   const email = document.getElementById('cloudEmail').value.trim();
-   const pass = document.getElementById('cloudPass').value.trim();
-   if (!email || !pass) {
-     showCustomDialog("चेतावनी", "कृपया ईमेल और पासवर्ड दोनों दर्ज करें!", false);
-     return;
-   }
-   if (pass.length < 6) {
-     showCustomDialog("चेतावनी", "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए!", false);
-     return;
-   }
-   try {
-     if (type === 'signup') {
-       await auth.createUserWithEmailAndPassword(email, pass);
-       showCustomDialog("सफलता", "✅ नया खाता बन गया और आप लॉग-इन हो गए!", false);
-     } else {
-       await auth.signInWithEmailAndPassword(email, pass);
-       showCustomDialog("सफलता", "✅ सफलतापूर्वक लॉग-इन हो गया!", false);
-     }
-     document.getElementById('cloudEmail').value = '';
-     document.getElementById('cloudPass').value = '';
-   } catch (err) {
-     showCustomDialog("एरर", "❌ " + err.message, false);
-   }
- }
-
- async function handleCloudSignOut() {
-   await auth.signOut();
-   showCustomDialog("लॉगआउट", "खाता लॉगआउट हो गया!", false);
- }
-
- async function syncToCloud(show) {
-   if (!currentCloudUser) {
-     if (show) showCustomDialog("लॉगिन आवश्यक", "⚠️ पहले सेटिंग्स में जाकर अपना ईमेल लॉगिन या साइन-अप करें!", false);
-     return;
-   }
-   const fullBackup = {
-     mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
-     trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
-     updatedAt: Date.now()
-   };
-   try {
-     await db.collection("users").doc(currentCloudUser.uid).set(fullBackup);
-     if (show) showCustomDialog("सफलता", "☁️ आपका डेटा क्लाउड सर्वर पर सुरक्षित हो गया!", false);
-   } catch (e) {
-     if (show) showCustomDialog("एरर", "❌ सिंक विफल: " + e.message, false);
-   }
- }
-
- async function restoreFromCloud() {
-   if (!currentCloudUser) {
-     showCustomDialog("लॉगिन आवश्यक", "⚠️ पहले सेटिंग्स में जाकर अपना ईमेल लॉगिन करें!", false);
-     return;
-   }
-   showCustomDialog("रीस्टोर?", "क्या आप क्लाउड सर्वर से अपना सेव किया हुआ बैकअप वापस लोड करना चाहते हैं?", true, async () => {
-     try {
-       const doc = await db.collection("users").doc(currentCloudUser.uid).get();
-       if (doc.exists) {
-         const data = doc.data();
-         let mainList = Array.isArray(data.mainData) ? data.mainData : [];
-         let trashList = Array.isArray(data.trashData) ? data.trashData : [];
-         localStorage.setItem('BankProData', JSON.stringify(mainList));
-         localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
-         renderList();
-         showCustomDialog("सफलता", "✅ आपका क्लाउड बैकअप पूरी तरह लोड हो गया!", false);
-       } else {
-         showCustomDialog("खाली", "इस खाते में कोई बैकअप डेटा नहीं मिला!", false);
-       }
-     } catch (e) {
-       showCustomDialog("एरर", "❌ लोड विफल: " + e.message, false);
-     }
-   });
- }
-
- let PINS = JSON.parse(localStorage.getItem('BankPro_PINS')) || {  
-   login: localStorage.getItem('BankPro_SecretPass') || "7869",   
-   edit: localStorage.getItem('BankPro_SecretPass') || "7869",  
-   del: localStorage.getItem('BankPro_SecretPass') || "7869"  
+ let appPins = {  
+   openPin: "7869",   
+   editPin: "7869",  
+   delPin: "7869",
+   cloudPin: "7869",
+   restorePin: "7869"
  };  
+
+ let registeredMasterPhone = "7869";
+ let masterGatePurpose = '';
+ let appClickCount = 0;
+
  let currentEditID = null, deleteID = null, pendingAction = null, pressTimer;  
  let currentCustomFields = [];  
  let activeScanTarget = "card";  
+ let isTrashDelete = false;
 
- function handleOTPRequest() {  
-   showCustomDialog("SECURITY CENTER", "OTP Sent to 9892980960", false, () => {  
-     let otp = prompt("OTP?");   
-     if(otp === "7506118091") {  
-       let choice = prompt("WHICH PIN TO CHANGE?\n1. APP LOGIN PIN\n2. EDIT/UNLOCK PIN\n3. DELETE PIN\n(Type 1, 2 or 3)");  
-       let key = (choice === "1") ? "login" : (choice === "2") ? "edit" : (choice === "3") ? "del" : "";  
-       let label = (choice === "1") ? "APP LOGIN" : (choice === "2") ? "EDIT/UNLOCK" : (choice === "3") ? "DELETE" : "";  
-       
-       if(!key) { alert("Invalid Choice!"); return; }  
-       
-       let newPin = prompt(`ENTER NEW 4-DIGIT PIN FOR [${label}]:`);  
-       if(newPin && newPin.length === 4) {  
-         PINS[key] = newPin;  
-         localStorage.setItem('BankPro_PINS', JSON.stringify(PINS));  
-         alert(`${label} PIN Updated!`);  
-       } else { alert("Invalid PIN!"); }  
-     } else { alert("Wrong OTP!"); }  
-   });  
- }  
-  
+ // फ़ील्ड्स कॉन्फ़िगरेशन
  let fieldConfig = JSON.parse(localStorage.getItem('myFieldConfig')) || [  
    ["AGENT NAME", "agent"], ["BANK NAME", "bank"], ["HOLDER NAME", "holder"],  
    ["A/C TYPE", "acctype"], ["A/C NO.", "acc"], ["IFSC CODE", "ifsc"],   
@@ -402,7 +536,642 @@
    ["MOTHER", "mother"], ["NOMINEE", "nominee"], ["PAN CARD", "pan"],  
    ["DOB", "dob"], ["EMAIL ID", "email"], ["ADDRESS", "addr"], ["PASS DATE", "passdate"]  
  ];  
-  
+
+ window.onload = () => {   
+   const savedUser = localStorage.getItem('bankpro_active_user');
+   if (savedUser) {
+     try { currentUser = JSON.parse(savedUser); } catch(e) { currentUser = null; }
+   }
+
+   if (currentUser) {
+     const savedPins = localStorage.getItem('BankPro_Custom_PINS');
+     if (savedPins) {
+       try { appPins = JSON.parse(savedPins); } catch(e){}
+     }
+     registeredMasterPhone = localStorage.getItem('bankpro_master_phone') || currentUser.mobile || "7869";
+     renderList();
+     renderForm();
+     updateAuthUI();
+     handleAppLock();
+   } else {
+     renderList();
+     renderForm();
+     updateAuthUI();
+     openMandatoryRegister();
+   }
+
+   setupPasswordMasking('masterGateInput');
+   setupPasswordMasking('resetPassInput');
+ };
+
+ function openMandatoryRegister() {
+   document.getElementById('firebaseAuthModal').style.display = 'flex';
+   const closeBtn = document.getElementById('btnAuthModalClose');
+   if (closeBtn) closeBtn.style.display = 'none';
+   switchAuthTab('REGISTER');
+ }
+
+ function updateAuthUI() {
+   const topUser = document.getElementById('displayTopUser');
+   const userEmailDisplay = document.getElementById('userEmailDisplay');
+   const authInputs = document.getElementById('authInputsArea');
+   const loggedInArea = document.getElementById('authLoggedInArea');
+   const desc = document.getElementById('authStatusDesc');
+   const closeBtn = document.getElementById('btnAuthModalClose');
+
+   if (currentUser) {
+     const displayName = (currentUser.fullName || currentUser.username || "USER").toUpperCase();
+     if (topUser) topUser.innerText = "👤 " + displayName;
+     if (userEmailDisplay) userEmailDisplay.innerText = "👤 " + displayName;
+     if (authInputs) authInputs.style.display = 'none';
+     if (loggedInArea) loggedInArea.style.display = 'flex';
+     if (desc) desc.innerText = "";
+     if (closeBtn) closeBtn.style.display = 'block';
+   } else {
+     if (topUser) topUser.innerText = "👤 LOGIN";
+     if (authInputs) authInputs.style.display = 'flex';
+     if (loggedInArea) loggedInArea.style.display = 'none';
+     if (desc) desc.innerText = "नया खाता विवरण भरें";
+   }
+ }
+
+ // ==========================================
+ // पासवर्ड टाइप करते वक्त एक पल दिखकर स्टार (*) बनना (Flash & Mask)
+ // ==========================================
+ function setupPasswordMasking(inputId) {
+   const el = document.getElementById(inputId);
+   if (!el) return;
+   let realVal = "";
+   let maskTimer = null;
+
+   el._getRealValue = () => realVal;
+   el._setRealValue = (v) => { realVal = v; el.value = "*".repeat(v.length); };
+
+   el.addEventListener('input', (e) => {
+     let curVal = el.value;
+     if (curVal.length < realVal.length) {
+       realVal = realVal.substring(0, curVal.length);
+     } else if (curVal.length > realVal.length) {
+       let addedChar = curVal.charAt(curVal.length - 1);
+       realVal += addedChar;
+     }
+
+     clearTimeout(maskTimer);
+     let maskedStr = "";
+     for (let i = 0; i < realVal.length - 1; i++) maskedStr += "*";
+     if (realVal.length > 0) maskedStr += realVal.charAt(realVal.length - 1);
+     el.value = maskedStr;
+
+     maskTimer = setTimeout(() => {
+       el.value = "*".repeat(realVal.length);
+     }, 400);
+   });
+ }
+
+ function getMaskedValue(inputId) {
+   const el = document.getElementById(inputId);
+   return el && el._getRealValue ? el._getRealValue() : (el ? el.value : "");
+ }
+
+ // ==========================================
+ // ऐप लॉक और अनलॉक
+ // ==========================================
+ function handleAppLock() {
+   appClickCount = 0;
+   const secInp = document.getElementById('secretInput');
+   secInp.value = "";
+   secInp.style.display = 'none';
+   document.getElementById('mainAppOverlay').style.display = 'flex';
+   document.getElementById('vaultPanel').style.display = 'none';
+ }
+
+ function handleAppUnlockClick() {  
+   appClickCount++;
+   if (appClickCount >= 3) { 
+     const secInp = document.getElementById('secretInput');
+     secInp.style.display = 'block'; 
+     secInp.focus(); 
+     appClickCount = 0; 
+   }  
+ }
+
+ document.getElementById('secretInput').addEventListener('input', function() {  
+   if (this.value === appPins.openPin || this.value === registeredMasterPhone || this.value === "7869") { 
+     document.getElementById('mainAppOverlay').style.display = 'none'; 
+     this.value = ''; 
+     this.style.display = 'none';
+     appClickCount = 0;
+   }  
+ });
+
+ // ==========================================
+ // क्विक सिंक बटन (मेन स्क्रीन पर)
+ // ==========================================
+ function handleQuickSync() {
+   if (!currentUser) {
+     openFirebaseAuthModal();
+     return;
+   }
+   openCloudActionModal('BACKUP');
+ }
+
+ // ==========================================
+ // 1. मैनेज सिक्योरिटी पासवर्ड (Gate & Manager)
+ // ==========================================
+ function openPasswordManagerGate() {
+   masterGatePurpose = 'MANAGE_PINS';
+   document.getElementById('vaultPanel').style.display = 'none';
+   document.getElementById('masterGateTitle').innerText = "ENTER MASTER PIN";
+   const inp = document.getElementById('masterGateInput');
+   if (inp._setRealValue) inp._setRealValue("");
+   else inp.value = "";
+   document.getElementById('masterGateModal').style.display = 'flex';
+   inp.focus();
+ }
+
+ function closeMasterGate() {
+   document.getElementById('masterGateModal').style.display = 'none';
+ }
+
+ function submitMasterGate() {
+   const entered = getMaskedValue('masterGateInput').trim();
+   if (entered === registeredMasterPhone || entered === "7869") {
+     closeMasterGate();
+     if (masterGatePurpose === 'MANAGE_PINS') {
+       document.getElementById('pm_open').value = appPins.openPin || "7869";
+       document.getElementById('pm_edit').value = appPins.editPin || "7869";
+       document.getElementById('pm_del').value = appPins.delPin || "7869";
+       document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
+       document.getElementById('pm_restore').value = appPins.restorePin || "7869";
+       document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
+       document.getElementById('passManagerModal').style.display = 'flex';
+     }
+   } else {
+     showCustomDialog("गलत पिन", "❌ गलत मास्टर पासवर्ड!", false);
+   }
+ }
+
+ function closePassManager() {
+   document.getElementById('passManagerModal').style.display = 'none';
+ }
+
+ async function savePasswordSettings() {
+   appPins = {
+     openPin: document.getElementById('pm_open').value.trim() || "7869",
+     editPin: document.getElementById('pm_edit').value.trim() || "7869",
+     delPin: document.getElementById('pm_del').value.trim() || "7869",
+     cloudPin: document.getElementById('pm_cloud').value.trim() || "7869",
+     restorePin: document.getElementById('pm_restore').value.trim() || "7869"
+   };
+   localStorage.setItem('BankPro_Custom_PINS', JSON.stringify(appPins));
+
+   const newLoginPass = document.getElementById('pm_login_pass').value.trim();
+   if (currentUser && newLoginPass && newLoginPass !== currentUser.pass) {
+     currentUser.pass = newLoginPass;
+     localStorage.setItem('bankpro_active_user', JSON.stringify(currentUser));
+     if (fbDb && currentUser.mobile) {
+       try {
+         await fbDb.collection("master_profiles").doc(currentUser.mobile).update({ pass: newLoginPass });
+       } catch (err) {
+         console.warn("Could not update remote login pass:", err);
+       }
+     }
+   }
+
+   closePassManager();
+   showCustomDialog("सफलता", "✅ सभी पासवर्ड सुरक्षित सेव हो गए!", false);
+ }
+
+ // ==========================================
+ // 3. फायरबेस ऑथेंटिकेशन (REGISTER & LOGIN)
+ // ==========================================
+ function openFirebaseAuthModal() {
+   document.getElementById('vaultPanel').style.display = 'none';
+   document.getElementById('firebaseAuthModal').style.display = 'flex';
+   if (!currentUser) switchAuthTab('LOGIN');
+   updateAuthUI();
+ }
+
+ function closeFirebaseAuthModal() {
+   if (!currentUser) {
+     showCustomDialog("चेतावनी", "⚠️ पहले रजिस्टर या लॉगिन करें!", false);
+     return;
+   }
+   document.getElementById('firebaseAuthModal').style.display = 'none';
+ }
+
+ function switchAuthTab(tab) {
+   currentAuthTab = tab;
+   const tabReg = document.getElementById('tabRegisterBtn');
+   const tabLog = document.getElementById('tabLoginBtn');
+   const extraFields = document.getElementById('regExtraFields');
+   const loginField = document.getElementById('loginField');
+   const confirmField = document.getElementById('regConfirmField');
+   const submitBtn = document.getElementById('btnAuthSubmit');
+   const authLinksRow = document.getElementById('authLinksRow');
+   const desc = document.getElementById('authStatusDesc');
+
+   if (tab === 'REGISTER') {
+     tabReg.style.background = '#1e293b'; tabReg.style.color = '#00f3ff';
+     tabLog.style.background = '#0b0e14'; tabLog.style.color = '#94a3b8';
+     extraFields.style.display = 'flex';
+     loginField.style.display = 'none';
+     confirmField.style.display = 'block';
+     authLinksRow.style.display = 'none';
+     submitBtn.innerText = 'रजिस्टर करें';
+     submitBtn.style.background = '#00f3ff';
+     submitBtn.style.color = '#000';
+     desc.innerText = 'नया खाता विवरण भरें';
+   } else {
+     tabReg.style.background = '#0b0e14'; tabReg.style.color = '#94a3b8';
+     tabLog.style.background = '#1e293b'; tabLog.style.color = '#2ecc71';
+     extraFields.style.display = 'none';
+     loginField.style.display = 'block';
+     confirmField.style.display = 'none';
+     authLinksRow.style.display = 'flex';
+     submitBtn.innerText = 'लॉगिन करें';
+     submitBtn.style.background = '#2ecc71';
+     submitBtn.style.color = '#fff';
+     desc.innerText = 'Username, Mobile Number या Email ID से लॉगिन करें';
+   }
+ }
+
+ function handleAuthSubmit() {
+   if (currentAuthTab === 'REGISTER') firebaseSignUp();
+   else firebaseLogin();
+ }
+
+ async function firebaseSignUp() {
+   const fullName = document.getElementById('fbFullName').value.trim();
+   const username = document.getElementById('fbRegUsername').value.trim().toLowerCase();
+   const mobile = document.getElementById('fbRegMobile').value.trim();
+   const email = document.getElementById('fbRegEmail').value.trim().toLowerCase();
+   const pass = document.getElementById('fbPassword').value;
+   const confirmPass = document.getElementById('fbConfirmPassword').value;
+
+   if (!fullName) { showCustomDialog("त्रुटि", "❌ पूरा नाम लिखें!", false); return; }
+   if (!username || username.length < 3) { showCustomDialog("त्रुटि", "❌ कम से कम 3 अक्षरों का यूजरनेम बनाएं!", false); return; }
+   if (!mobile || mobile.length !== 10 || isNaN(mobile)) { showCustomDialog("त्रुटि", "❌ सही 10 अंकों का मोबाइल नंबर लिखें!", false); return; }
+   if (!email || !email.includes('@')) { showCustomDialog("त्रुटि", "❌ सही ईमेल आईडी दर्ज करें!", false); return; }
+   if (!pass || pass.length < 4) { showCustomDialog("त्रुटि", "❌ पासवर्ड कम से कम 4 अक्षरों का रखें!", false); return; }
+   if (pass !== confirmPass) { showCustomDialog("त्रुटि", "❌ दोनों पासवर्ड मेल नहीं खाते!", false); return; }
+
+   try {
+     const [uDoc, mDoc] = await Promise.all([
+       fbDb.collection("app_accounts").doc("user_" + username).get(),
+       fbDb.collection("app_accounts").doc("phone_" + mobile).get()
+     ]);
+
+     if (uDoc.exists) { showCustomDialog("चेतावनी", "⚠️ यह यूज़रनेम पहले से मौजूद है!", false); return; }
+     if (mDoc.exists) { showCustomDialog("चेतावनी", "⚠️ यह मोबाइल नंबर पहले से पंजीकृत है! Login करें।", false); switchAuthTab('LOGIN'); return; }
+
+     const userObj = { fullName, username, mobile, email, pass, registeredAt: new Date().toISOString() };
+
+     const batch = fbDb.batch();
+     batch.set(fbDb.collection("master_profiles").doc(mobile), userObj);
+     batch.set(fbDb.collection("app_accounts").doc("user_" + username), { targetMobile: mobile, targetEmail: email });
+     batch.set(fbDb.collection("app_accounts").doc("phone_" + mobile), { targetMobile: mobile, targetEmail: email });
+     batch.set(fbDb.collection("app_accounts").doc("email_" + email), { targetMobile: mobile, targetEmail: email });
+     await batch.commit();
+
+     registeredMasterPhone = mobile;
+     localStorage.setItem("bankpro_master_phone", mobile);
+     localStorage.setItem("bankpro_active_user", JSON.stringify(userObj));
+     currentUser = userObj;
+
+     showCustomDialog("सफलता", `🎉 स्वागत है ${username.toUpperCase()}! आपका खाता बन गया है।`, false);
+     updateAuthUI();
+     await restoreFromFirebase(false);
+     document.getElementById('firebaseAuthModal').style.display = 'none';
+   } catch(err) {
+     showCustomDialog("एरर", "❌ रजिस्ट्रेशन एरर: " + err.message, false);
+   }
+ }
+
+ async function firebaseLogin() {
+   const rawId = document.getElementById('fbLoginIdentifier').value.trim();
+   const pass = document.getElementById('fbPassword').value;
+
+   if (!rawId || !pass) {
+     showCustomDialog("त्रुटि", "❌ कृपया पहचानकर्ता और पासवर्ड दोनों दर्ज करें!", false);
+     return;
+   }
+
+   const cleanId = rawId.toLowerCase();
+   let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
+
+   try {
+     let targetMobile = null;
+     const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
+     if (idxSnap.exists && idxSnap.data()?.targetMobile) {
+       targetMobile = idxSnap.data().targetMobile;
+     } else if (cleanId.length === 10 && !isNaN(cleanId)) {
+       targetMobile = cleanId;
+     }
+
+     if (!targetMobile) {
+       showCustomDialog("त्रुटि", "❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!", false);
+       return;
+     }
+
+     const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
+     if (!userSnap.exists) {
+       showCustomDialog("त्रुटि", "❌ खाता डेटा नहीं मिला!", false);
+       return;
+     }
+
+     const userData = userSnap.data();
+     if (userData.pass !== pass) {
+       showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false);
+       return;
+     }
+
+     currentUser = userData;
+     registeredMasterPhone = userData.mobile || "7869";
+     localStorage.setItem("bankpro_master_phone", registeredMasterPhone);
+     localStorage.setItem("bankpro_active_user", JSON.stringify(userData));
+
+     showCustomDialog("सफलता", "✅ लॉगिन सफल!", false);
+     updateAuthUI();
+     await restoreFromFirebase(false);
+     document.getElementById('firebaseAuthModal').style.display = 'none';
+   } catch(err) {
+     showCustomDialog("एरर", "❌ लॉगिन त्रुटि: " + err.message, false);
+   }
+ }
+
+ function openCloudActionModal(type) {
+   pendingCloudAction = type;
+   const title = document.getElementById('cloudActionTitle');
+   const desc = document.getElementById('cloudActionDesc');
+   const passInp = document.getElementById('cloudActionPassInput');
+   const okBtn = document.getElementById('btnExecuteCloud');
+   passInp.value = '';
+
+   if (type === 'BACKUP') {
+     title.innerText = "☁️ CLOUD BACKUP";
+     desc.innerText = "बैकअप लेने के लिए पासवर्ड डालें";
+     okBtn.innerText = "BACKUP NOW";
+     okBtn.style.background = "#2ecc71";
+   } else {
+     title.innerText = "📥 CLOUD RESTORE";
+     desc.innerText = "डेटा रिस्टोर करने के लिए पासवर्ड डालें";
+     okBtn.innerText = "RESTORE NOW";
+     okBtn.style.background = "#f59e0b";
+   }
+   document.getElementById('cloudActionModal').style.display = 'flex';
+   passInp.focus();
+ }
+
+ function closeCloudActionModal() {
+   document.getElementById('cloudActionModal').style.display = 'none';
+ }
+
+ function submitCloudAction() {
+   const entered = document.getElementById('cloudActionPassInput').value.trim();
+   const expectedPin = (pendingCloudAction === 'RESTORE') ? (appPins.restorePin || "7869") : (appPins.cloudPin || "7869");
+
+   if (entered === expectedPin || entered === registeredMasterPhone || entered === "7869") {
+     closeCloudActionModal();
+     if (pendingCloudAction === 'BACKUP') backupToFirebase(true);
+     else restoreFromFirebase(true);
+   } else {
+     showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false);
+   }
+ }
+
+ // ईमेल पर आधारित फायरबेस बैकअप
+ async function backupToFirebase(showAlert = true) {
+   if (!currentUser || !fbDb) return;
+   try {
+     const userEmail = (currentUser.email || '').toLowerCase().trim();
+     const fullBackup = {
+       mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
+       trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
+       userEmail: userEmail,
+       userMobile: currentUser.mobile || registeredMasterPhone,
+       userName: currentUser.username || '',
+       updatedAt: new Date().toISOString()
+     };
+     await fbDb.collection("bankpro_data_by_email").doc(userEmail).set(fullBackup);
+     if (showAlert) showCustomDialog("सफलता", "☁️ आपका डेटा ईमेल बैकअप में सुरक्षित सेव हो गया!", false);
+   } catch(e) {
+     if (showAlert) showCustomDialog("एरर", "❌ सिंक विफल: " + e.message, false);
+   }
+ }
+
+ async function restoreFromFirebase(showAlert = true) {
+   if (!currentUser || !fbDb) return;
+   try {
+     const userEmail = (currentUser.email || '').toLowerCase().trim();
+     const doc = await fbDb.collection("bankpro_data_by_email").doc(userEmail).get();
+     if (doc.exists) {
+       const data = doc.data();
+       let mainList = Array.isArray(data.mainData) ? data.mainData : [];
+       let trashList = Array.isArray(data.trashData) ? data.trashData : [];
+       localStorage.setItem('BankProData', JSON.stringify(mainList));
+       localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
+       renderList();
+       if (showAlert) showCustomDialog("सफलता", `✅ क्लाउड बैकअप (${mainList.length} रिकॉर्ड्स) सफलतापूर्वक लोड हो गया!`, false);
+     } else {
+       if (showAlert) showCustomDialog("खाली", "⚠️ इस ईमेल खाते पर कोई पुराना बैकअप नहीं मिला!", false);
+     }
+   } catch(e) {
+     if (showAlert) showCustomDialog("एरर", "❌ लोड विफल: " + e.message, false);
+   }
+ }
+
+ async function firebaseLogout(userInitiated = true) {
+   if (currentUser) {
+     await backupToFirebase(false);
+   }
+   currentUser = null;
+   localStorage.removeItem("bankpro_active_user");
+   localStorage.removeItem("bankpro_master_phone");
+   renderList();
+   updateAuthUI();
+   handleAppLock();
+   if (userInitiated) showCustomDialog("लॉगआउट", "डेटा सेव हो गया और ऐप लॉक हो गया!", false);
+   openFirebaseAuthModal();
+ }
+
+ // ==========================================
+ // FORGOT PASSWORD & FIND MY DETAILS
+ // ==========================================
+ async function handleForgotPassword() {
+   let input = prompt("अपना रजिस्टर्ड मोबाइल नंबर या ईमेल आईडी दर्ज करें:");
+   if (!input || !input.trim()) return;
+   let cleanInput = input.trim().toLowerCase();
+
+   try {
+     let targetMobile = null;
+     if (cleanInput.includes('@')) {
+       let snap = await fbDb.collection("app_accounts").doc("email_" + cleanInput).get();
+       if (snap.exists) targetMobile = snap.data().targetMobile;
+     } else if (cleanInput.length === 10 && !isNaN(cleanInput)) {
+       targetMobile = cleanInput;
+     } else {
+       let snap = await fbDb.collection("app_accounts").doc("user_" + cleanInput).get();
+       if (snap.exists) targetMobile = snap.data().targetMobile;
+     }
+
+     if (!targetMobile) {
+       showCustomDialog("त्रुटि", "❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!", false);
+       return;
+     }
+
+     let userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
+     if (!userSnap.exists) {
+       showCustomDialog("त्रुटि", "❌ खाता डेटा उपलब्ध नहीं है!", false);
+       return;
+     }
+
+     let uData = userSnap.data();
+     let userMail = uData.email;
+     let foundPass = uData.pass;
+
+     showCustomDialog(
+       "पासवर्ड रिकवरी",
+       `✅ आपका पासवर्ड है: "${foundPass}"\n\nक्या आप इसे अपने ईमेल (${userMail}) पर भेजना चाहते हैं?`,
+       true,
+       () => {
+         let subject = encodeURIComponent("Bank Agent Pro - Password Recovery");
+         let body = encodeURIComponent(`नमस्ते ${uData.fullName},\n\nआपके बैंक एजेंट प्रो खाते का पासवर्ड नीचे दिया गया है:\n\nयूज़र नाम: ${uData.username}\nमोबाइल नंबर: ${uData.mobile}\nपासवर्ड: ${foundPass}\n\nधन्यवाद!`);
+         window.location.href = `mailto:${userMail}?subject=${subject}&body=${body}`;
+       }
+     );
+   } catch(e) {
+     showCustomDialog("त्रुटि", "❌ जांच विफल: " + e.message, false);
+   }
+ }
+
+ async function handleForgotDetails() {
+   let masterPin = prompt("अपना 10 अंकों का मास्टर पासवर्ड (रजिस्टर्ड मोबाइल नंबर) दर्ज करें:");
+   if (!masterPin || !masterPin.trim()) return;
+   let cleanPin = masterPin.trim();
+
+   try {
+     let userSnap = await fbDb.collection("master_profiles").doc(cleanPin).get();
+     if (!userSnap.exists) {
+       showCustomDialog("त्रुटि", "❌ इस मास्टर पासवर्ड से कोई प्रोफाइल नहीं मिली!", false);
+       return;
+     }
+
+     let uData = userSnap.data();
+     let detailMsg = `👤 नाम: ${uData.fullName}\n🆔 यूज़रनेम: ${uData.username}\n📱 मोबाइल: ${uData.mobile}\n📧 ईमेल: ${uData.email}\n🔑 पासवर्ड: ${uData.pass}`;
+
+     showCustomDialog(
+       "खाता विवरण",
+       detailMsg + `\n\nक्या आप यह पूरा विवरण अपने ईमेल (${uData.email}) पर भेजना चाहते हैं?`,
+       true,
+       () => {
+         let subject = encodeURIComponent("Bank Agent Pro - Account Details");
+         let body = encodeURIComponent(`नमस्ते ${uData.fullName},\n\nयहाँ आपके बैंक एजेंट प्रो खाते का सम्पूर्ण विवरण है:\n\nनाम: ${uData.fullName}\nयूज़रनेम: ${uData.username}\nमोबाइल नंबर: ${uData.mobile}\nईमेल: ${uData.email}\nलॉगिन पासवर्ड: ${uData.pass}\n\nसुरक्षित रहें!`);
+         window.location.href = `mailto:${uData.email}?subject=${subject}&body=${body}`;
+       }
+     );
+   } catch(e) {
+     showCustomDialog("त्रुटि", "❌ विवरण लोड विफल: " + e.message, false);
+   }
+ }
+
+ // ==========================================
+ // 4. JSON एक्सपोर्ट, इम्पोर्ट और ऐप रिसेट
+ // ==========================================
+ function openJsonActionModal() {
+   document.getElementById('vaultPanel').style.display = 'none';
+   document.getElementById('jsonActionModal').style.display = 'flex';
+ }
+
+ function closeJsonActionModal() {
+   document.getElementById('jsonActionModal').style.display = 'none';
+ }
+
+ function exportDataToJsonFile() {
+   closeJsonActionModal();
+   const backupObj = {
+     appName: "Bank Agent Pro",
+     exportDate: new Date().toISOString(),
+     user: currentUser ? currentUser.username : "Guest",
+     mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
+     trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
+     fieldConfig: fieldConfig
+   };
+   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+   const dlAnchor = document.createElement('a');
+   dlAnchor.setAttribute("href", dataStr);
+   dlAnchor.setAttribute("download", `BankPro_Backup_${Date.now()}.json`);
+   document.body.appendChild(dlAnchor);
+   dlAnchor.click();
+   dlAnchor.remove();
+   showCustomDialog("सफलता", "✅ बैकअप JSON फ़ाइल डाउनलोड हो गई!", false);
+ }
+
+ function triggerJsonImport() {
+   closeJsonActionModal();
+   document.getElementById('jsonFileInput').click();
+ }
+
+ function handleJsonFileSelect(event) {
+   const file = event.target.files[0];
+   if (!file) return;
+
+   const reader = new FileReader();
+   reader.onload = function(e) {
+     try {
+       const data = JSON.parse(e.target.result);
+       if (data.mainData) {
+         localStorage.setItem('BankProData', JSON.stringify(data.mainData || []));
+         localStorage.setItem('BankPro_Trash', JSON.stringify(data.trashData || []));
+         if (data.fieldConfig) {
+           fieldConfig = data.fieldConfig;
+           localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig));
+           renderForm();
+         }
+         renderList();
+         showCustomDialog("सफलता", `✅ JSON फ़ाइल से डेटा सफलतापूर्वक रीस्टोर हो गया! (${data.mainData.length} रिकॉर्ड्स)`, false);
+       } else {
+         showCustomDialog("त्रुटि", "❌ यह सही Bank Pro बैकअप फ़ाइल नहीं है!", false);
+       }
+     } catch(err) {
+       showCustomDialog("त्रुटि", "❌ फ़ाइल पढ़ने में त्रुटि: " + err.message, false);
+     }
+   };
+   reader.readAsText(file);
+   event.target.value = '';
+ }
+
+ function promptResetApp() {
+   document.getElementById('vaultPanel').style.display = 'none';
+   const inp = document.getElementById('resetPassInput');
+   if (inp._setRealValue) inp._setRealValue("");
+   else inp.value = "";
+   document.getElementById('resetAppModal').style.display = 'flex';
+   inp.focus();
+ }
+
+ function closeResetModal() {
+   document.getElementById('resetAppModal').style.display = 'none';
+ }
+
+ function handleResetSubmit() {
+   const entered = getMaskedValue('resetPassInput').trim();
+   if (entered === registeredMasterPhone || entered === "7869") {
+     closeResetModal();
+     showCustomDialog("ऐप रीसेट", "क्या आप वाकई पूरी एप्लिकेशन को रीसेट करना चाहते हैं? आपका क्लाउड बैकअप सुरक्षित रहेगा।", true, () => {
+       localStorage.removeItem('BankProData');
+       localStorage.removeItem('BankPro_Trash');
+       renderList();
+       showCustomDialog("सफलता", "✅ एप्लिकेशन का लोकल डेटा पूरी तरह साफ़ हो गया है!", false);
+     });
+   } else {
+     showCustomDialog("त्रुटि", "❌ गलत मास्टर पासवर्ड!", false);
+   }
+ }
+
+ // ==========================================
+ // बैंक प्रो कोर फंक्शन्स (Fields & Cards)
+ // ==========================================
  function showCustomDialog(title, message, isConfirm, onOk, onCancel) {  
    const overlay = document.getElementById('customDialogOverlay');  
    const okBtn = document.getElementById('dialogOkBtn');  
@@ -413,18 +1182,10 @@
    okBtn.onclick = () => { overlay.style.display = 'none'; if (onOk) onOk(); };  
    cancelBtn.onclick = () => { overlay.style.display = 'none'; if (onCancel) onCancel(); };  
    overlay.style.display = 'flex';  
- }  
-  
- function handleAppUnlockClick() {  
-   let count = window.appClickCount || 0; count++; window.appClickCount = count;  
-   if (count >= 3) { document.getElementById('secretInput').style.display = 'block'; document.getElementById('secretInput').focus(); window.appClickCount = 0; }  
- }  
- document.getElementById('secretInput').addEventListener('input', function() {  
-   if(this.value === PINS.login) { document.getElementById('mainAppOverlay').style.display = 'none'; this.value=''; }  
- });  
-  
+ }
+
  function getFirstWord(str) { return str ? str.trim().split(' ')[0].toUpperCase() : ""; }  
-  
+
  function renderForm() {  
    const container = document.getElementById('fields-container');  
    if (!container) return;  
@@ -456,13 +1217,10 @@
      container.appendChild(row);  
    });  
  }  
-  
+
  let isExpBackspacing = false;  
  function handleExpKeyDown(e, index) {  
-   if (e.key === 'Enter') {  
-     handleEnter(e, index);  
-     return;  
-   }  
+   if (e.key === 'Enter') { handleEnter(e, index); return; }  
    if (e.key === 'Backspace') {  
      isExpBackspacing = true;  
      let inp = e.target;  
@@ -480,14 +1238,10 @@
    if (isExpBackspacing) return;  
    let v = el.value.replace(/\D/g, '');  
    if (v.length > 4) v = v.substring(0, 4);  
-     
-   if (v.length >= 2) {  
-     el.value = v.substring(0, 2) + '/' + v.substring(2);  
-   } else {  
-     el.value = v;  
-   }  
+   if (v.length >= 2) el.value = v.substring(0, 2) + '/' + v.substring(2);  
+   else el.value = v;  
  }  
-  
+
  function renderCustomFields() {  
    const container = document.getElementById('custom-fields-container');  
    if (!container) return;  
@@ -515,7 +1269,7 @@
      if (el) el.focus();  
    }  
  }  
-  
+
  function handleCvvEnter(e, index) {  
    if (e.key === 'Enter') {  
      e.preventDefault();  
@@ -530,9 +1284,7 @@
      const nextField = fieldConfig[index + 1];  
      if (nextField) {  
        let nextEl = document.getElementById('inp-' + nextField[1]);  
-       if (nextField[1] === 'cvv') {  
-         nextEl = document.getElementById('inp-cvv-code');  
-       }  
+       if (nextField[1] === 'cvv') nextEl = document.getElementById('inp-cvv-code');  
        if (nextEl) {  
          nextEl.focus();  
          if (nextEl.tagName !== 'TEXTAREA' && nextEl.tagName !== 'INPUT') {  
@@ -542,8 +1294,6 @@
            range.collapse(false);  
            sel.removeAllRanges();   
            sel.addRange(range);  
-         } else if (nextEl.tagName === 'INPUT') {  
-           nextEl.selectionStart = nextEl.selectionEnd = nextEl.value.length;  
          } else {   
            nextEl.selectionStart = nextEl.selectionEnd = nextEl.value.length;   
          }  
@@ -551,7 +1301,7 @@
      }  
    }  
  }  
-  
+
  function openScanChoice(target) {  
    activeScanTarget = target;  
    document.getElementById('scanModalHeading').innerText = target === 'pan' ? "SCAN PAN CARD" : "SCAN DEBIT CARD";  
@@ -571,7 +1321,6 @@
  function processCardImage(inputEl) {  
    const file = inputEl.files[0];  
    if (!file) return;  
-     
    showCustomDialog("SCANNING", "⚡ Reading Details from Image...", false);  
    const okBtn = document.getElementById('dialogOkBtn');  
    okBtn.style.display = 'none';  
@@ -583,7 +1332,7 @@
        parseOCRResult(text);  
      } catch (err) {  
        okBtn.style.display = 'block';  
-       showCustomDialog("ERROR", "❌ Failed to read image! Please enter manually.", false);  
+       showCustomDialog("ERROR", "❌ Failed to read image!", false);  
      }  
    };  
    reader.readAsDataURL(file);  
@@ -596,63 +1345,44 @@
        let cleanPanText = text.toUpperCase().replace(/[^A-Z0-9\n ]/g, ' ');  
        let panCandidate = cleanPanText.match(/[A-Z0-9]{5}\s*[0-9OIS]{4}\s*[A-Z0-9]{1}/);  
        let foundPan = "";  
-         
        if (panCandidate) {  
          let p = panCandidate[0].replace(/\s+/g, '');  
          foundPan = p.substring(0, 5) +   
          p.substring(5, 9).replace(/O/g, '0').replace(/I/g, '1').replace(/S/g, '5') +   
          p.substring(9, 10);  
        }  
-     
        let dobMatch = text.match(/\b(0[1-9]|[12][0-9]|3[01])[\/\-\.\s]+(0[1-9]|1[0-2])[\/\-\.\s]+(19[0-9]{2}|20[0-2][0-9])\b/);  
        let foundDob = "";  
        if (dobMatch) {  
-         let d = dobMatch[1].padStart(2, '0');  
-         let m = dobMatch[2].padStart(2, '0');  
-         let y = dobMatch[3];  
-         foundDob = `${d}/${m}/${y}`;  
+         foundDob = `${dobMatch[1].padStart(2, '0')}/${dobMatch[2].padStart(2, '0')}/${dobMatch[3]}`;  
          const dobEl = document.getElementById('inp-dob');  
          if (dobEl) dobEl.innerText = foundDob;  
        }  
-     
        const panEl = document.getElementById('inp-pan');  
        if (panEl) {  
-         if (foundPan && foundDob) {  
-           panEl.innerText = `${foundPan} ${foundDob}`;  
-         } else if (foundPan) {  
-           panEl.innerText = foundPan;  
-         }  
+         if (foundPan && foundDob) panEl.innerText = `${foundPan} ${foundDob}`;  
+         else if (foundPan) panEl.innerText = foundPan;  
        }  
-     
        okBtn.style.display = 'block';  
        showCustomDialog("SUCCESS", "✅ PAN & DOB Scanned Successfully!", false);  
      } else {  
        let rawClean = text.replace(/[^0-9a-zA-Z\/\-\n ]/g, ' ');  
        let digitsOnly = rawClean.replace(/\D/g, '');  
        let cardFound = "";  
-     
        let blockMatch = rawClean.match(/\b\d{4}\s*[- ]?\s*\d{4}\s*[- ]?\s*\d{4}\s*[- ]?\d{4}\b/);  
-       if (blockMatch) {  
-         cardFound = blockMatch[0].replace(/\D/g, '');  
-       } else if (digitsOnly.length >= 16) {  
+       if (blockMatch) cardFound = blockMatch[0].replace(/\D/g, '');  
+       else if (digitsOnly.length >= 16) {  
          for (let i = 0; i <= digitsOnly.length - 16; i++) {  
            let sub = digitsOnly.substring(i, i + 16);  
-           if (/^[3-6]/.test(sub)) {  
-             cardFound = sub;  
-             break;  
-           }  
+           if (/^[3-6]/.test(sub)) { cardFound = sub; break; }  
          }  
          if (!cardFound) cardFound = digitsOnly.substring(0, 16);  
-       } else if (digitsOnly.length >= 15) {  
-         cardFound = digitsOnly.substring(0, 15);  
        }  
-     
        if (cardFound && cardFound.length >= 15) {  
          let formatted = cardFound.match(/.{1,4}/g)?.join(' ') || cardFound;  
          const debEl = document.getElementById('inp-debit');  
          if (debEl) debEl.innerText = formatted;  
        }  
-     
        let expMatch = rawClean.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*([0-9]{2,4})\b/);  
        if (expMatch) {  
          const expEl = document.getElementById('inp-cvv-exp');  
@@ -660,31 +1390,27 @@
          if (yr.length === 4) yr = yr.substring(2);  
          if (expEl) expEl.value = expMatch[1] + '/' + yr;  
        }  
-     
        let cvvMatch = rawClean.match(/\b(?:CVV|CVC)\s*[:\-]?\s*([0-9]{3})\b/i);  
        if (cvvMatch) {  
          const cvvEl = document.getElementById('inp-cvv-code');  
          if (cvvEl && !cvvEl.value.trim()) cvvEl.value = cvvMatch[1];  
        }  
-     
        okBtn.style.display = 'block';  
        showCustomDialog("SUCCESS", "✅ Card Details Scanned!", false);  
      }  
    } catch (err) {  
      okBtn.style.display = 'block';  
-     showCustomDialog("ERROR", "❌ Could not scan details! Please enter manually.", false);  
+     showCustomDialog("ERROR", "❌ Failed to parse details!", false);  
    }  
  }  
-  
+
  function autoResize(el) {   
    el.style.height = '30px';   
-   if (el.scrollHeight > 30) {   
-     el.style.height = el.scrollHeight + 'px';   
-   }   
+   if (el.scrollHeight > 30) el.style.height = el.scrollHeight + 'px';   
  }  
-  
+
  function handleMainAction() { clearFormFields(); toggleForm(true, 'new'); }  
-  
+
  function toggleForm(show, mode = 'new') {  
    const formToShare = document.getElementById('form-to-share');  
    const floatOptBtn = document.getElementById('floatOptBtn');  
@@ -702,7 +1428,7 @@
      controlsBox.style.border = "none";  
      controlsBox.style.boxShadow = "none";  
      controlsBox.style.padding = "0";   
-     if(mode === 'edit') {   
+     if (mode === 'edit') {   
        setLock(true);   
        btnContainer.innerHTML = `  
          <div style="display:flex; gap:5px; padding:5px;">  
@@ -726,17 +1452,17 @@
      controlsBox.style.boxShadow = "0 15px 30px rgba(0,0,0,0.9)";  
      
      btnContainer.innerHTML = `  
-       <div style="display:flex; align-items:center; gap:8px; padding:8px 10px 5px 10px;">  
-       <button class="btn-save" style="margin:0; flex: 3; height: 42px; width: auto; background: #08ee0e84 !important; color: #ffffff !important; border: 2.5px solid #ff0000; box-shadow: 0 8px #00f3ff; border-radius: 2px;" onclick="handleMainAction()">NEW ENTRY</button>  
-       <button onclick="refreshApp()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0; color: #fff;">🔄</button>  
+       <div style="display:flex; align-items:center; gap:8px; padding:8px 8px 5px 8px;">  
+       <button class="btn-entry-main" onclick="handleMainAction()">NEW ENTRY</button>  
+       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">🔥 SYNC</button>  
        <div id="gearBtn" style="display: flex; justify-content: center;">  
-       <button onclick="toggleVault()" style="background: #1a1a1a; width: 45px; height: 42px; border-radius: 12px; border: 1.5px solid #00f3ff; box-shadow: 0 2px #00f3ff; display: flex; align-items: center; justify-content: center; font-size: 18px; margin: 0;">⚙️</button>  
+         <button onclick="toggleVault()" class="btn-gear-main" title="Settings">⚙️</button>  
        </div>  
        </div>`;   
      document.getElementById('option-menu').style.display = 'none';   
    }  
  }  
-  
+
  function setLock(lock) {   
    fieldConfig.forEach(f => {   
      if (f[1] === 'cvv') {  
@@ -757,7 +1483,7 @@
      if(el) el.contentEditable = !lock;  
    });  
  }  
-  
+
  function clearFormFields() {  
    fieldConfig.forEach(f => {   
      if (f[1] === 'cvv') {  
@@ -778,7 +1504,7 @@
    renderCustomFields();  
    currentEditID = null; liveUpdate();  
  }  
-  
+
  async function handleSave(forceNew) {  
    const holder = (document.getElementById('inp-holder').innerText || document.getElementById('inp-holder').value || "").trim();  
    if(!holder) return showCustomDialog("Error", "HOLDER NAME IS REQUIRED!", false);  
@@ -796,34 +1522,31 @@
        data[f[1]] = (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim();   
      }  
    });  
-  
+
    let savedCF = [];  
    currentCustomFields.forEach(cf => {  
      const el = document.getElementById('inp-cf-' + cf.key);  
      let val = el ? el.innerText.trim() : (cf.value || "");  
      savedCF.push({ label: cf.label, key: cf.key, value: val });  
    });  
-   if (savedCF.length > 0) {  
-     data.customFields = savedCF;  
-   }  
-  
+   if (savedCF.length > 0) data.customFields = savedCF;  
+
    if (data.passdate) {  
      if (/\d/.test(data.passdate) && data.passdate.length < 15) data.passdate = formatMyDate(data.passdate);  
    }  
-  
+
    if (!forceNew && currentEditID) {   
      stored = stored.map(i => i.id === currentEditID ? data : i);   
    } else {   
      stored.unshift(data);   
    }  
-  
+
    localStorage.setItem('BankProData', JSON.stringify(stored));  
-     
    renderList();   
    toggleForm(false);  
-   showCustomDialog("Saved", "✅ फाइल सेव हो गई है!", false);  
+   showCustomDialog("Saved", "✅ फ़ाइल सेव हो गई है!", false);  
  }  
-  
+
  function renderList() {  
    const listDiv = document.getElementById('data-list');  
    const stored = JSON.parse(localStorage.getItem('BankProData') || '[]');  
@@ -862,7 +1585,7 @@
      listDiv.appendChild(div);  
    });  
  }  
-  
+
  function loadItem(id) {  
    const item = JSON.parse(localStorage.getItem('BankProData')).find(i => i.id === id);  
    currentEditID = id;  
@@ -871,7 +1594,6 @@
        const rawCvvExp = (item[f[1]] || "").trim();  
        const cvvBox = document.getElementById('inp-cvv-code');  
        const expBox = document.getElementById('inp-cvv-exp');  
-       
        let parts = rawCvvExp.split(/\s+/);  
        if (parts.length >= 2) {  
          if (cvvBox) cvvBox.value = parts[0];  
@@ -890,20 +1612,20 @@
        }  
      }  
    });  
-  
+
    currentCustomFields = item.customFields || [];  
    renderCustomFields();  
    currentCustomFields.forEach(cf => {  
      const el = document.getElementById('inp-cf-' + cf.key);  
      if (el) el.parentElement.style.backgroundColor = "#59cba2cf";  
    });  
-  
+
    liveUpdate(); toggleForm(true, 'edit');  
  }  
-  
+
  function askUnlock() { pendingAction = "unlock"; setupModal("ENTER EDIT PIN", "#4285F4", "UNLOCK"); }  
  function openDeleteModal(id) { deleteID = id; pendingAction = "delete"; setupModal("ENTER DELETE PIN", "red", "DELETE"); }  
-  
+
  function setupModal(title, color, btnText) {  
    document.activeElement.blur();  
    const overlay = document.getElementById('delOverlay');
@@ -925,19 +1647,11 @@
    input.focus();  
    input.oninput = function() { if (this.value.length === 4) processPinAction(this.value); };  
  }  
-  
+
  function processPinAction(enteredPin) {  
-   if (pendingAction === "cloud_settings") {
-     if (enteredPin === PINS.edit || enteredPin === "7869") {
-       closeDelModal();
-       document.getElementById('authBoxContainer').style.display = 'block';
-     } else {
-       wrongPin();
-     }
-   } else if (pendingAction === "unlock") {  
-     if (enteredPin === PINS.edit || enteredPin === "7869") {  
+   if (pendingAction === "unlock") {  
+     if (enteredPin === appPins.editPin || enteredPin === registeredMasterPhone || enteredPin === "7869") {  
        setLock(false);   
-       
        fieldConfig.forEach(f => {  
          if (f[1] === 'cvv') {  
            const cvvBox = document.getElementById('inp-cvv-code');  
@@ -960,32 +1674,26 @@
          <button style="background:#ff4757; flex:1; max-width:40px; height:34px; font-size:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="openDeleteModal(currentEditID)" title="Delete Entry">🗑️</button>  
          <button class="btn-black" style="flex:1; max-width:40px; height:34px; font-size:13px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="refreshApp()">X</button>  
          </div>`;  
-       
        closeDelModal();  
      } else { wrongPin(); }  
-     
    } else if (pendingAction === "delete") {  
-     if (enteredPin === PINS.del || enteredPin === "7869") {  
+     if (enteredPin === appPins.delPin || enteredPin === registeredMasterPhone || enteredPin === "7869") {  
        if (isTrashDelete) {   
          let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
          trash = trash.filter(i => i.id !== deleteID);  
          localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
-         
          closeDelModal();  
          showCustomDialog("SUCCESS", "Permanently Deleted from Trash", false);  
        } else {   
          let allData = JSON.parse(localStorage.getItem('BankProData') || '[]');  
          let itemToTrash = allData.find(i => i.id === deleteID);  
-         
          if (itemToTrash) {  
            let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
            trash.unshift(itemToTrash);  
            localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
          }  
-       
          let stored = allData.filter(i => i.id !== deleteID);  
          localStorage.setItem('BankProData', JSON.stringify(stored));  
-         
          renderList();  
          closeDelModal();  
          showCustomDialog("DELETED", "Moved to Recycle Bin", false);  
@@ -994,7 +1702,7 @@
      } else { wrongPin(); }  
    }  
  }  
-  
+
  function wrongPin() {  
    document.getElementById('delPassInput').value = "";   
    showCustomDialog("WRONG PIN", "ACCESS DENIED", false);  
@@ -1008,18 +1716,17 @@
      isTrashDelete = false;  
    }   
  }  
-  
+
  function liveUpdate() {  
    const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }  
    document.getElementById('head-agent').innerText = getFirstWord(getVal('agent')) || "NAME";  
    document.getElementById('head-title').innerText = (getFirstWord(getVal('bank')) || "BANK") + " / " + (getFirstWord(getVal('holder')) || "HOLDER");  
  }  
-  
+
  function filterList() {  
    const rawInput = document.getElementById('search-inp').value;  
    const queryTrim = rawInput.trim();  
    const items = Array.from(document.getElementsByClassName('list-item'));  
-     
    if (!queryTrim) {  
      items.forEach(it => {  
        it.style.display = "flex";  
@@ -1029,67 +1736,41 @@
      document.getElementById('count-total').innerText = items.length;  
      return;  
    }  
-     
    const hasPatternChar = /[\s\-_.*xX]/.test(rawInput);  
    let regex = null;  
-     
    if (hasPatternChar) {  
-     let pattern = rawInput  
-       .replace(/[^0-9\s\-_.*xX]/g, '')  
-       .replace(/[\s\-_.*xX]/g, '\\d');  
-     
-     try {  
-       regex = new RegExp(pattern);  
-     } catch(e) {  
-       regex = null;  
-     }  
+     let pattern = rawInput.replace(/[^0-9\s\-_.*xX]/g, '').replace(/[\s\-_.*xX]/g, '\\d');  
+     try { regex = new RegExp(pattern); } catch(e) { regex = null; }  
    }  
-     
    let visibleItems = [];  
-     
    items.forEach(it => {  
      const mobileRaw = (it.getAttribute('data-mobile') || "").replace(/\D/g, '');  
      const fullText = it.getAttribute('data-full') || "";  
      let isMatch = false;  
-     
-     if (regex && mobileRaw) {  
-       if (regex.test(mobileRaw)) {  
-         isMatch = true;  
-       }  
-     }  
-     
+     if (regex && mobileRaw) { if (regex.test(mobileRaw)) isMatch = true; }  
      if (!isMatch) {  
-       isMatch = it.innerText.toLowerCase().includes(queryTrim.toLowerCase()) ||   
-                 fullText.includes(queryTrim.toLowerCase());  
+       isMatch = it.innerText.toLowerCase().includes(queryTrim.toLowerCase()) || fullText.includes(queryTrim.toLowerCase());  
      }  
-     
-     if (isMatch) {  
-       it.style.display = "flex";  
-       visibleItems.push(it);  
-     } else {  
-       it.style.display = "none";  
-     }  
+     if (isMatch) { it.style.display = "flex"; visibleItems.push(it); }  
+     else it.style.display = "none";  
    });  
-     
    document.getElementById('count-total').innerText = visibleItems.length;  
-     
    if (visibleItems.length === 1 && queryTrim.length >= 4 && (hasPatternChar || /^\d+$/.test(queryTrim))) {  
      const targetId = Number(visibleItems[0].getAttribute('data-id'));  
      loadItem(targetId);  
    }  
  }  
-  
+
  function refreshApp() { toggleForm(false); renderList(); document.getElementById('vaultPanel').style.display = 'none'; }  
  function toggleOptionMenu() { document.getElementById('option-menu').style.display = document.getElementById('option-menu').style.display === 'none' ? 'block' : 'none'; }  
  function toggleVault() { 
    const vp = document.getElementById('vaultPanel');
    vp.style.display = (vp.style.display === 'none') ? 'block' : 'none';
  }  
-  
+
  async function startSharingProcess() {  
    const form = document.getElementById('form-to-share');  
    form.style.display = 'block';  
-     
    const rows = form.querySelectorAll('.row');  
    rows.forEach(row => {  
      if (!row.querySelector('.hide-btn')) {  
@@ -1114,7 +1795,7 @@
      form.prepend(printBtn);  
    }  
  }  
-  
+
  async function shareAsImage() {  
    const el = document.getElementById('form-to-share');  
    el.style.display = 'block';  
@@ -1141,11 +1822,10 @@
      alert("Error sharing image");   
    }  
  }  
-  
+
  async function downloadPDF() {  
    const { jsPDF } = window.jspdf;  
    const el = document.getElementById('form-to-share');  
-     
    const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }  
    const fileName = `${getFirstWord(getVal('bank')) || "BANK"}_${getFirstWord(getVal('holder')) || "HOLDER"}.pdf`;  
    el.style.display = 'block';   
@@ -1163,10 +1843,10 @@
    } finally {  
      el.style.display = 'none';   
      el.style.width = '';   
-     if (typeof refreshApp === "function") { refreshApp(); }  
+     refreshApp();  
    }  
  }  
-  
+
  function formatMyDate(str) {  
    if (!str) return "";  
    let d = str.toLowerCase(); const months = { 'jan': 'Jan', 'feb': 'Feb', 'mar': 'Mar', 'apr': 'Apr', 'may': 'May', 'jun': 'Jun', 'jul': 'Jul', 'aug': 'Aug', 'sep': 'Sep', 'oct': 'Oct', 'nov': 'Nov', 'dec': 'Dec' };  
@@ -1175,19 +1855,18 @@
    let year = parts[2] ? (parts[2].length === 2 ? "20" + parts[2] : parts[2]) : "2026";  
    return `${day}-${monthName}-${year}`;  
  }  
-  
+
  function openFieldManager() { document.getElementById('fieldModal').style.display = 'flex'; renderFieldEditList(); }  
  function closeFieldManager() {  
    document.querySelector('#fieldModal h3').innerText = "MANAGE FIELDS";  
    document.querySelector('#fieldModal h3').style.color = "#00f3ff";  
    document.getElementById('new-field-name').parentElement.style.display = 'flex';   
-     
    localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig));  
    renderForm();  
    document.getElementById('fieldModal').style.display = 'none';  
    refreshApp();  
  }  
-  
+
  function renderFieldEditList() {  
    const list = document.getElementById('field-list-edit'); list.innerHTML = "";  
    fieldConfig.forEach((f, index) => {  
@@ -1198,59 +1877,39 @@
      list.appendChild(div);  
    });  
  }  
-  
+
  function moveField(idx, step) {  
    let newIdx = idx + step; if (newIdx >= 0 && newIdx < fieldConfig.length) {  
      let temp = fieldConfig[idx]; fieldConfig[idx] = fieldConfig[newIdx]; fieldConfig[newIdx] = temp;  
      renderFieldEditList();  
    }  
  }  
-  
+
  function addNewField() {  
    const name = document.getElementById('new-field-name').value.trim().toUpperCase();  
    if(name) { fieldConfig.push([name, name.toLowerCase().replace(/\s+/g, '')]); document.getElementById('new-field-name').value = ""; renderFieldEditList(); }  
  }  
-   
- window.onload = () => {   
-   renderList();   
-   renderForm();   
-     
-   if ('serviceWorker' in navigator) {  
-     const swCode = `self.addEventListener('fetch', function(e) { e.respondWith(fetch(e.request).catch(function() { return caches.match(e.request); })); });`;  
-     const blob = new Blob([swCode], { type: 'application/javascript' });  
-     navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(function(){});  
-   }  
- };  
-  
- let isTrashDelete = false;  
+
  function showTrashList() {  
    let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
    if (trash.length === 0) return showCustomDialog("EMPTY", "No items in Trash", false);  
-     
    document.getElementById('fieldModal').style.display = 'flex';  
    const list = document.getElementById('field-list-edit');  
-     
    document.querySelector('#fieldModal h3').innerText = "RECYCLE BIN";  
    document.querySelector('#fieldModal h3').style.color = "#ff4757";  
    document.getElementById('new-field-name').parentElement.style.display = 'none';   
-     
    list.innerHTML = `<p style="font-size:10px; color:yellow; text-align:center; margin-bottom:10px;">Tap to Restore | Long Press to Delete</p>`;  
      
    trash.forEach(item => {  
      const div = document.createElement('div');  
      div.style = "background:#333; padding:10px; margin-bottom:5px; border-radius:10px; border-left:4px solid #e91e63; color:white; -webkit-user-select:none; user-select:none; cursor:pointer;";  
      div.innerHTML = `<b>${item.bank || 'BANK'}</b> - ${item.holder || 'HOLDER'}`;  
-     
-     let timer;  
-     let isLongPress = false;  
+     let timer; let isLongPress = false;  
      
      const handleTap = () => {  
        document.getElementById('fieldModal').style.display = 'none';  
        showCustomDialog("RESTORE?", "Bring this entry back?", true,   
-         () => {  
-           restoreSpecificItem(item.id);  
-           showCustomDialog("SUCCESS", "Entry restored to Top!", false);  
-         },   
+         () => { restoreSpecificItem(item.id); showCustomDialog("SUCCESS", "Entry restored to Top!", false); },   
          () => { showTrashList(); }  
        );  
      };  
@@ -1258,29 +1917,19 @@
      const startPress = (e) => {  
        isLongPress = false;  
        timer = setTimeout(() => {  
-         isLongPress = true;   
-         deleteID = item.id;  
-         isTrashDelete = true;  
-         pendingAction = "delete";  
+         isLongPress = true; deleteID = item.id; isTrashDelete = true; pendingAction = "delete";  
          document.getElementById('fieldModal').style.display = 'none';  
          setupModal("PERMANENT DELETE", "red", "DELETE");  
        }, 800);  
      };  
      
-     const endPress = () => {  
-       clearTimeout(timer);  
-       if (!isLongPress) handleTap();  
-     };  
-     
-     div.onmousedown = startPress;  
-     div.onmouseup = endPress;  
-     div.ontouchstart = (e) => { startPress(e); };  
-     div.ontouchend = (e) => { endPress(); };  
-     
+     const endPress = () => { clearTimeout(timer); if (!isLongPress) handleTap(); };  
+     div.onmousedown = startPress; div.onmouseup = endPress;  
+     div.ontouchstart = (e) => { startPress(e); }; div.ontouchend = (e) => { endPress(); };  
      list.appendChild(div);  
    });  
  }  
-  
+
  function restoreSpecificItem(id) {  
    let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
    let item = trash.find(i => i.id === id);  
@@ -1288,30 +1937,11 @@
      let currentData = JSON.parse(localStorage.getItem('BankProData') || '[]');  
      item.id = Date.now();   
      currentData.unshift(item);  
-     
      localStorage.setItem('BankProData', JSON.stringify(currentData));  
      localStorage.setItem('BankPro_Trash', JSON.stringify(trash.filter(i => i.id !== id)));  
      renderList();  
    }  
  }  
-   
- async function handleLogout() {  
-   document.getElementById('vaultPanel').style.display = 'none';  
-   document.getElementById('secretInput').value = "";  
-   document.getElementById('mainAppOverlay').style.display = 'flex';  
-   document.getElementById('secretInput').style.display = 'none';  
- }  
 </script>  
-<div id="fieldModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; align-items:center; justify-content:center;">  
- <div style="background:#1a1a1a; width:95%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #00f3ff; max-height:85vh; overflow-y:auto;">  
-   <h3 style="color:#00f3ff; text-align:center; margin-top:0;">MANAGE FIELDS</h3>  
-   <div id="field-list-edit" style="margin-bottom:15px;"></div>  
-   <div style="display:flex; gap:5px; background:#222; padding:10px; border-radius:10px;">  
-     <input type="text" id="new-field-name" placeholder="Name..." style="flex:1; background:transparent; border:none; color:white;">  
-     <button onclick="addNewField()" style="background:#00f3ff; color:#000;">ADD</button>  
-   </div>  
-   <button onclick="closeFieldManager()" style="width:100%; margin-top:10px; background:#333;">CLOSE</button>  
- </div>  
-</div>  
 </body>  
 </html>
