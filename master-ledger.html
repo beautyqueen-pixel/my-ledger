@@ -1,1947 +1,1405 @@
-<!DOCTYPE html>  
-<html lang="en">  
-<head>  
- <meta charset="UTF-8">  
- <meta name="viewport" content="width=device-width, initial-scale=1.0">  
- <title>Bank Agent Pro</title>  
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Master Ledger Pro</title>
+    <style>
+        :root {
+            --sahil: #1659f2;
+            --arman: #0df147;
+            --advance: #f243f2; 
+            --gray-entry: #d6d6d6;
+            --light-yellow: #fff6a3;
+            --blue-receive: #6ec6ff;
+            --red-balance: #ff4d4d;
+            --dark-green: #00c853;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            font-family: 'Segoe UI', sans-serif;
+            background: #a9a2a2c8;
+            font-size: 10px;
+        }
+
+        #appWrapper {
+            width: 100%;
+            min-height: 100%;
+            box-sizing: border-box;
+            padding: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 3-Tap App Lock Screen */
+        #mainAppOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(25px); 
+            z-index: 999999; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        #secretInput {
+            display: none; padding: 15px; border-radius: 20px; border: 3px solid #333; 
+            text-align: center; font-size: 20px; width: 160px; background: #fff;
+            z-index: 1000000;
+        }
+
+        /* Transparent Auth Modal */
+        #authOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(15px);
+            z-index: 9999999; display: none; align-items: center; justify-content: center;
+        }
+        .auth-card {
+            background: #0d1b2a; border: 2px solid #00f0ff; border-radius: 20px;
+            padding: 20px; width: 85%; max-width: 320px; box-shadow: 0 0 25px rgba(0,240,255,0.4);
+            color: #fff; text-align: center; position: relative;
+        }
+        .auth-card h2 { margin: 0 0 12px 0; font-size: 16px; color: #00f0ff; letter-spacing: 1px; }
+        .auth-card input {
+            width: 90%; padding: 8px; margin-bottom: 8px; border-radius: 8px;
+            border: 1.5px solid #00f0ff; background: #080d1a; color: #fff; font-size: 12px; text-align: center; outline: none;
+        }
+        .auth-card button {
+            width: 95%; padding: 9px; border-radius: 12px; border: none;
+            font-weight: bold; font-size: 13px; cursor: pointer; margin-top: 5px;
+        }
+        .btn-auth-main { background: #00c853; color: white; box-shadow: 0 3px 0 #00701a; }
+        .auth-switch { margin-top: 10px; font-size: 11px; color: #00f0ff; cursor: pointer; text-decoration: underline; }
+        .close-auth { position: absolute; top: 10px; right: 15px; color: #ff4757; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        .container { 
+              max-width: 100%; 
+              margin: 0; 
+              background: #43a5ee; 
+              border: 1.5px solid #333; 
+              border-radius: 25px; 
+              overflow: hidden; 
+              padding-top: 3px;
+              padding-bottom: 3px;
+              flex-shrink: 0;
+        }
+        .user-tag {
+            text-align: center; font-size: 12px; font-weight: 900; color: #ffff00;
+            background: #000; padding: 3px; border-radius: 10px; margin: 0px 115px;
+            border: 1px solid #fff; letter-spacing: 0px;
+        }
+        .tabs { display: flex; background: transparent; padding: 5px; padding-top: 5px; gap: 10px; }
+        .tab-btn { flex: 1; padding: 8px; border: 2px solid #000; font-weight: bold; border-radius: 12px; background: #555; color: #fff; box-shadow: 0 3px 0 #222; font-size: 11px; }
+        .active-sahil { background: var(--sahil) !important; border: 2px solid #fff; box-shadow: 0 0 10px #ff00ff !important; }
+        .active-arman { background: var(--arman) !important; color: black !important; border: 2px solid #fff; box-shadow: 0 0 10px #ff00ff !important; }
+        .active-advance { background: var(--advance) !important; color: black !important; border: 2px solid #fff; box-shadow: 0 0 7px #ff00ff !important; }
+        
+        .main-header { text-align: center; font-weight: bold; font-size: 16px; padding: 8px; border-radius: 80px; margin: 5px; border: 4px solid #000; outline: 2px solid #fff; outline-offset: -4px; box-shadow: 0 6px 0 #444348; }
+        .sahil-theme { background: var(--sahil); color: white; cursor: default; }
+        .arman-theme { background: var(--arman); color: black; cursor: pointer; }
+        .advance-theme { background: var(--advance); color: black; cursor: pointer; border: 4px solid #000; }
+
+        .summary-dash { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; padding: 8px; }
+        .s-box { padding: 6px 0px; border-radius: 10px; text-align: center; color: white; font-weight: bold; font-size: 9px; border: 2px solid #000; box-shadow: 0 2px 0 #000; }
+        .adv-summary-dash { display: flex; gap: 10px; padding: 10px; justify-content: center; }
   
- <!-- PWA & App Capabilities -->  
- <meta name="apple-mobile-web-app-capable" content="yes">  
- <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
- <meta name="apple-mobile-web-app-title" content="Bank Agent Pro">  
- <meta name="mobile-web-app-capable" content="yes">  
- <meta name="theme-color" content="#121212">  
-  
- <!-- Embedded Manifest JSON -->  
- <link rel="manifest" href='data:application/manifest+json,{"name":"Bank Agent Pro","short_name":"Bank Pro","start_url":".","display":"standalone","background_color":"#121212","theme_color":"#121212","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231562f5%22/><text y=%2265%22 font-size=%2255%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BP</text></svg>","sizes":"192x192","type":"image/svg+xml"},{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231562f5%22/><text y=%2265%22 font-size=%2255%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BP</text></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>  
-  
- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  
- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
- <!-- OCR Engine -->  
- <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>  
-  
- <!-- Firebase Libraries -->
- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
- <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+        .adv-s-box { 
+                flex: 1; 
+                padding: 4px; 
+                border-radius: 12px; 
+                text-align: center; 
+                color: white; 
+                font-weight: bold; 
+                font-size: 11px;
+                border: 2px solid #000; 
+                box-shadow: 0 3px 0 #000;
+                cursor: pointer;
+        }
+        .btn-sq { border: 2px solid #000; color: white; font-weight: bold; font-size: 9px; cursor: pointer; padding: 5px; box-shadow: 0 2px 0 #000; border-radius: 8px; height: 28px; }
+        .btn-add-main { 
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 8px; 
+            color: white; 
+            font-size: 13px; 
+            font-weight: bold; 
+            border-radius: 25px; 
+            border: 2px solid white; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+            cursor: pointer; 
+            text-transform: uppercase; 
+        }
 
- <style>  
- :root { --bg-body: #121212; --neon-purple: #bc13fe; --neon-cyan: #00f3ff; --danger: #ff4757; }  
- * { box-sizing: border-box; font-family: 'Arial Black', sans-serif; }  
- body { margin: 10px; background: var(--bg-body); color: #fff; display: flex; flex-direction: column; align-items: center; }  
- .app-container { width: 100%; max-width: 480px; background: #1a1a1a; min-height: 100vh; padding-bottom: 20px;}  
- #form-to-share { background: #0a1f14; padding: 4px; border: 5px solid #075e74; display: none; }   
- .header-box { background: linear-gradient(145deg, #840bd2, #840bd2); padding: 2px 20px; text-align: center; margin-bottom: 5px; border: 3px solid #fff; display: flex; flex-direction: column; align-items: center; gap: 1px; }  
- .title-design { background: linear-gradient(180deg, #840b 50%, #840b 50%); padding: 2px 8px; border-radius: 9px; color: white; border: 3px solid #fff657; min-width: 50%; font-weight: 900; text-transform: uppercase; font-size: 14px; }  
- .row { display: flex; flex-direction: row; background: #fafbacc1; padding: 2px 0px; align-items: stretch; border-bottom: 1px solid #ccc; }  
- .label { width: 120px; min-width: 90px; padding: 5px 4px; font-size: 11px; font-weight: bold; color: #fff; background: #9844eb; border: 2px solid #100d0d; display: flex; align-items: center; justify-content: space-between; }  
- .input-wrapper { width: 100%; background: white; display: flex; border: 2px solid #000000; min-height: 30px; overflow: hidden; }  
- .input-box { width: 100%; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 900; color: black; padding: 4px; min-height: 24px; word-break: break-word; white-space: pre-wrap; }  
-   
- textarea.input-box {   
-   resize: none;   
-   overflow: hidden;   
-   display: block;  
-   height: auto;   
-   min-height: 30px;   
-   padding: 5px;   
-   font-family: inherit;  
- }  
- .split-cvv-inp {  
-   width: 60px;  
-   min-width: 50px;  
-   max-width: 65px;  
-   border: none;  
-   outline: none;  
-   background: transparent;  
-   font-size: 16px;  
-   font-weight: 900;  
-   color: black;  
-   padding: 2px;  
-   text-align: center;  
-   box-sizing: border-box;  
- }  
- .split-exp-inp {  
-   flex: 1;  
-   min-width: 0;  
-   width: 100%;  
-   border: none;  
-   outline: none;  
-   background: transparent;  
-   font-size: 16px;  
-   font-weight: 900;  
-   color: black;  
-   padding: 2px 5px;  
-   text-align: center;  
-   box-sizing: border-box;  
- }  
- .split-divider {  
-   width: 2px;  
-   background: #000;  
-   flex-shrink: 0;  
- }  
-  
- .controls {   
-   background: #1562f5;   
-   padding: 5px 2px;  
-   width: 95%;   
-   margin: 0px auto;  
-   border-radius: 20px;  
-   border: 2px solid #00f3ff;  
-   box-shadow: 0 15px 30px rgba(0,0,0,0.9);   
- }  
- button, .btn-custom { border: 2px solid #fff; border-radius: 10px; font-weight: 900; cursor: pointer; color: white; padding: 10px 2px; font-size: 11px; flex: 1; text-transform: uppercase; box-shadow: inset 0 2px 9px rgba(0,0,0,0.5); margin: 2px; }  
- button:active { transform: translateY(2px); box-shadow: inset 0 1px 4px rgba(0,0,0,0.8); }  
- .btn-save { background: #27ae60 !important; font-size: 14px !important; width: 100%; display: block; margin-bottom: 5px; box-shadow: 0 4px 0 #000 !important; border-radius: 15px !important; }  
- .btn-blue { background: #4285F4 !important; }  
- .btn-yellow { background: #f4b400 !important; color: #000 !important; }  
- .btn-purple { background: #bc13fe !important; }  
- .btn-black { background: #34495e !important; }  
- .btn-red { background: #ff4757 !important; max-width: 45px; }  
- .del-modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:4000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }  
- .del-modal-box { background: rgba(26, 26, 26, 0.95); padding: 15px; border-radius: 20px; border: 3px solid #00f3ff; text-align: center; width: 80%; max-width: 250px; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); }  
- #search-inp { width: 100%; padding: 6px; border-radius: 10px; border: 2px solid var(--neon-cyan); background: #edededeb; color: #000; font-weight: bold; font-size: 13px; height: 30px; }  
- .list-item { background: #e6ca0188; padding: 4px 10px; margin-bottom: 2px; border-radius: 6px; border-left: 5px solid var(--neon-cyan); cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 20px; -webkit-user-select: none; user-select: none; }  
- 
- #mainAppOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(25px); z-index: 999999; display: none; align-items: center; justify-content: center; cursor: pointer; }  
- #secretInput { display: none; padding: 12px 18px; border-radius: 16px; border: 2px solid #00f3ff; text-align: center; font-size: 18px; width: 160px; background: #0b0e14; color: #00f3ff; outline: none; }  
- 
- .count-display { text-align: center; font-size: 14px; margin-top: 10px; color: #00f3ff; font-weight: bold; letter-spacing: 0px; }  
- #count-total { color: #ff4757; font-size: 14px; font-weight: bold; background: #1019f0; padding: 1px 10px; border-radius: 8px; border: 2px solid #ffffff; margin-left: 1px; }  
-  
- .floating-opt {   
-   position: fixed; bottom: 80px; right: 20px;   
-   background: #bc13fe; color: white; width: 50px; height: 50px;   
-   border-radius: 50%; display: none; align-items: center; justify-content: center;   
-   font-size: 20px; z-index: 5000; border: 3px solid white; box-shadow: 0 0 15px rgba(188,19,254,0.6);  
-   cursor: pointer;  
- }  
- .hide-btn { background: #ff4757; color: white; border: none; border-radius: 5px; padding: 2px 8px; cursor: pointer; font-size: 10px; margin-right: 5px; }  
- .cam-btn { background: #00f3ff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-size: 12px; cursor: pointer; line-height: 1; font-weight: normal; }  
+        /* टेबल की स्मूथ स्क्रोलिंग */
+        .table-scroll { 
+            overflow-x: auto !important; 
+            overflow-y: scroll !important; 
+            height: 55vh; 
+            margin-top: 5px; 
+            background: #8989923a; 
+            border-radius: 8px; 
+            border: 1px solid #999; 
+            overscroll-behavior-y: contain !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
 
- /* Top Header Bar */
- .app-top-header {
-   display: flex; justify-content: space-between; align-items: center;
-   background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff;
-   margin-bottom: 8px;
- }
- .top-user-name {
-   color: #00f3ff; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;
- }
+        table { width: 100%; border-collapse: collapse; background: #bfc0bc87; min-width: 900px; }
+        
+        th, td { 
+            border: 1px solid #ccc; 
+            text-align: center; 
+            padding: 2px 5px; 
+            height: 16px; 
+            font-size: 12px; 
+            font-weight: bold;
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
- /* Auth Modal Style */
- .auth-overlay {
-   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-   background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
-   z-index: 100000; align-items: center; justify-content: center; padding: 12px;
- }
- .auth-card {
-   background: rgba(17, 22, 33, 0.98); padding: 18px; border-radius: 14px; border: 1px solid #172233;
-   width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 8px;
-   box-shadow: 0 15px 35px rgba(0,0,0,0.7);
- }
- .auth-card input {
-   width: 100%; padding: 10px; border: 1px solid #172233; border-radius: 8px;
-   font-size: 12px; background: #0b0e14; color: #fff; outline: none; text-align: center;
-   font-family: inherit; font-weight: normal;
- }
- .auth-links {
-   display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; padding: 0 4px;
- }
- .auth-link { color: #38bdf8; cursor: pointer; text-decoration: underline; }
- .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
- .pm-row label { font-size: 10px; font-weight: 600; color: #38bdf8; text-align: left; width: 55%; }
- .pm-row input { width: 42%; padding: 5px; border-radius: 5px; border: 1px solid #38bdf8; background: #000; color: #2ecc71; text-align: center; font-size: 12px; font-weight: bold; outline: none; }
+        th { 
+            background: #3498db; 
+            color: white; 
+            border: 2px solid #333; 
+            position: sticky; 
+            top: 0; 
+            z-index: 2;
+        }
 
- /* NEW ENTRY बटन स्टाइल */
- .btn-entry-main {
-   background: #0e1ada !important;
-   color: #ffffff !important;
-   border: 2.5px solid #ff0000 !important;
-   box-shadow: 0 8px 0 #000 !important;
-   border-radius: 20px !important;
-   height: 42px !important;
-   font-size: 13px !important;
-   font-weight: 900 !important;
-   cursor: pointer !important;
-   margin: 0 !important;
-   flex: 3 !important;
- }
+        #mainTable th:nth-child(1), #mainTable td:nth-child(1) { min-width: 30px; width: 35px; }
+        #mainTable th:nth-child(4), #mainTable td:nth-child(4) { min-width: 180px; text-align: left; padding-left: 8px; }
 
- /* SYNC बटन - पूरा गोल राउंड, लाल बॉर्डर और 3D शेड */
- .btn-sync-main {
-   background: #c7b43edf !important;
-   color: #ffffff !important;
-   border: 2.5px solid #ff0000 !important;
-   box-shadow: 0 8px 0 #000 !important;
-   border-radius: 20px !important;
-   height: 42px !important;
-   min-width: 63px !important;
-   display: flex !important;
-   align-items: center !important;
-   justify-content: center !important;
-   font-size: 12px !important;
-   font-weight: 900 !important;
-   margin: 0 !important;
-   cursor: pointer !important;
- }
+        #advanceTable { min-width: 100%; }
+        #advanceTable th { background: #333; color: #ff99ff; }
+        #advanceTable td { background: white; color: black; }
 
- /* पिंक गियर सेटिंग (⚙️) बटन - पूरा गोल राउंड, लाल बॉर्डर और 3D शेड */
- .btn-gear-main {
-   background: #453238a6 !important;
-   color: #ffffff !important;
-   border: 2.5px solid #ff0000 !important;
-   box-shadow: 0 8px 0 #000 !important;
-   border-radius: 20px !important;
-   width: 48px !important;
-   height: 42px !important;
-   display: flex !important;
-   align-items: center !important;
-   justify-content: center !important;
-   font-size: 18px !important;
-   margin: 0 !important;
-   cursor: pointer !important;
- }
+        .row-gray td { background: var(--gray-entry); }
+        .row-pass td:nth-child(-n+9) { background: var(--blue-receive); }
+        .row-receive td:nth-child(-n+10) { background: var(--light-yellow); }
+        .row-part td:nth-child(-n+13) { background: var(--red-balance); color: #fff; }
+        .balance-red { background: var(--red-balance) !important; color: #fff !important; }
+        .row-full td { background: var(--dark-green); color: #000; }
 
- .btn-entry-main:active, .btn-sync-main:active, .btn-gear-main:active {
-   transform: translateY(2px) !important;
-   box-shadow: 0 2px 0 #000 !important;
- }
- </style>  
-</head>  
-<body>  
+        .search-area { padding: 5px; display: flex; gap: 4px; align-items: center; margin-top: 2px; flex-shrink: 0; }
+        #searchInp { flex: 1; padding: 4px 8px; border: 2px solid #180ce1bc; border-radius: 10px; font-size: 12px; height: 22px; background: #fff; }
+        .btn-clear { padding: 0 12px; height: 32px; font-size: 11px; font-weight: bold; border-radius: 10px; border: 2px solid #000; cursor: pointer; color: white; background: #e74c3c; display: flex; align-items: center; justify-content: center; }
 
-<!-- JSON फाइल इम्पोर्ट के लिए हिडन इनपुट -->
-<input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="handleJsonFileSelect(event)">
-<input type="file" id="cardGalleryInput" accept="image/*" style="display:none;" onchange="processCardImage(this)">  
+        .unlock-container { width: 100%; margin-bottom: 10px; display: flex; gap: 5px; align-items: center; }
+        .btn-unlock { 
+            background: #e67e22; color: white; border: 2px solid #000; font-size: 12px; 
+            font-weight: bold; box-shadow: 0 4px 0 #000; border-radius: 12px; flex: 8; padding: 6px; cursor: pointer; 
+        }
+        .btn-close-form { 
+            background: #0808b17d; color: white; border: 2px solid #000; font-size: 12px; 
+            font-weight: bold; box-shadow: 0 4px 0 #000; border-radius: 12px; flex: 2; height: 30px; cursor: pointer; display: flex; align-items: center; justify-content: center; 
+        }
+        input:disabled { 
+            background-color: #0a18a7d3 !important; font-weight: bold; color: #15fb3ddd !important; border-color: #01e229d3 !important; 
+        }
 
-<div id="scanChoiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:6000; justify-content:center; align-items:center; backdrop-filter:blur(3px);">  
- <div style="background:#222; border:2px solid #00f3ff; border-radius:15px; padding:20px; width:80%; max-width:280px; text-align:center;">  
-   <h4 id="scanModalHeading" style="color:#00f3ff; margin-top:0; margin-bottom:15px;">SELECT IMAGE</h4>  
-   <button style="background:#4285F4; width:100%; margin-bottom:15px; padding:12px; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer;" onclick="startGalleryScan()">🖼️ CHOOSE FROM GALLERY</button>  
-   <button style="background:#444; width:100%; padding:8px; border-radius:8px; font-size:12px; cursor:pointer;" onclick="closeScanChoice()">CANCEL</button>  
- </div>  
-</div>  
+        /* Generic Beautiful Transparent Popups */
+        #unlockModal, #deleteModal, #advanceDeleteModal, #cloudPassModal, #resetAppModal, #masterGateModal, #passManagerModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(15px); z-index: 10000; align-items: center; justify-content: center;
+        }
+        .unlock-card {
+            background: rgba(17, 30, 56, 0.95); padding: 18px; border-radius: 22px; border: 2px solid #00ffff;
+            box-shadow: 0 10px 30px rgba(0,255,255,0.3); width: 200px; text-align: center;
+        }
+        .unlock-card input { 
+            width: 85%; padding: 8px; border: 2px solid #00ffff; border-radius: 10px; font-size: 15px; 
+            text-align: center; margin-bottom: 12px; background: #000; color: #0fef11; outline: none;
+        }
+        .u-btn-row { display: flex; gap: 8px; }
+        .u-btn { flex: 1; padding: 8px; border: 2px solid #000; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; color: #fff; text-transform: uppercase; }
 
-<!-- ऐप लॉक स्क्रीन -->
-<div id="mainAppOverlay" onclick="handleAppUnlockClick()">  
- <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*" onclick="event.stopPropagation()">  
-</div>  
+        /* Password Manager Box */
+        .pm-card {
+            background: #0d1b2a; border: 2px solid #00f0ff; border-radius: 20px;
+            padding: 16px; width: 88%; max-width: 320px; box-shadow: 0 0 25px rgba(0,240,255,0.4);
+            color: #fff; text-align: center;
+        }
+        .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .pm-row label { font-size: 10px; font-weight: bold; color: #ffeb3b; text-align: left; width: 45%; }
+        .pm-row input { width: 50%; padding: 5px; border-radius: 6px; border: 1px solid #00f0ff; background: #000; color: #00ff66; text-align: center; font-size: 13px; font-weight: bold; outline: none; }
 
-<!-- मास्टर पासवर्ड गेट मॉडल (Flash & Mask) -->
-<div class="auth-overlay" id="masterGateModal">
-  <div class="auth-card" style="max-width: 260px;">
-    <h3 id="masterGateTitle" style="color:#00f3ff; font-size:13px; font-weight:700;">ENTER MASTER PIN</h3>
-    <input type="text" id="masterGateInput" placeholder="MASTER PIN" inputmode="numeric" style="letter-spacing: 4px; font-size: 18px; font-weight: bold;">
-    <div style="display:flex; gap:6px; margin-top:4px;">
-      <button style="background:#2ecc71; color:#fff;" onclick="submitMasterGate()">OK</button>
-      <button style="background:#333; color:#fff;" onclick="closeMasterGate()">CANCEL</button>
-    </div>
-  </div>
+        #entryArea, #advanceEntryArea { background: #c3bcbc90; padding: 10px; display: none; flex-shrink: 0; }
+        .entry-form { max-width: 400px; margin: auto; border: 2px solid #333; padding: 8px 8px 30px 8px; background: #f4fe857d; border-radius: 8px; }
+        .form-row { display: flex; margin-bottom: 5px; align-items: center; justify-content: space-between; }
+        .form-row label { width: 140px; font-weight: 900; font-size: 13px; color: #040404; text-transform: uppercase; flex-shrink: 0; }
+        .form-row input, .form-row select { 
+            flex: 1; padding: 4px; font-size: 13px; border: 2px solid #3cf842; border-radius: 8px; background: #ffffff; box-sizing: border-box; min-width: 0;
+        }
+
+        .secure-cell { cursor: pointer; position: relative; }
+        .lock-wrapper { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
+        .lock-icon { font-size: 10px; color: inherit; }
+        .lock-icon.has-date { color: #ff0000 !important; }
+        .lock-date { font-size: 8px; color: #d63031; font-weight: bold; margin-top: 1px; }
+
+        /* Sync Button Style */
+        .btn-sync {
+            flex: 0.9; height: 40px; background: #f39c12; color: #000000; border: 2px solid #fff;
+            border-radius: 20px; font-size: 11px; font-weight: 900; cursor: pointer;
+            box-shadow: 0 3px 0 #965b00; display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
+        .btn-sync:active { transform: translateY(2px); box-shadow: none; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+<!-- 3-Tap App Lock Screen -->
+<div id="mainAppOverlay" onclick="handleLockClick()">
+    <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" onclick="event.stopPropagation()">
 </div>
 
-<!-- पासवर्ड मैनेजर मॉडल (6 पासवर्ड विकल्प) -->
-<div class="auth-overlay" id="passManagerModal">
-  <div class="auth-card" style="max-width: 330px;">
-    <h3 style="color:#00f3ff; font-size:13px; font-weight:700;">MANAGE SECURITY PASSWORDS</h3>
-    <hr style="border:0.5px solid #1c2638; margin: 4px 0 8px 0;">
-    <div class="pm-row">
-      <label>1. APP OPEN LOCK</label>
-      <input type="text" id="pm_open" placeholder="7869">
+<!-- मेन ऐप रैपर -->
+<div id="appWrapper">
+
+    <!-- Firebase User Login / Registration Modal -->
+    <div id="authOverlay">
+        <div class="auth-card" id="loginBox">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>LOGIN MASTER LEDGER</h2>
+            <input type="tel" id="loginPhone" placeholder="मोबाइल नंबर (Phone)">
+            <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
+            <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
+            <div class="auth-switch" onclick="askRegisterPermission()">click hear to new account register</div>
+        </div>
+
+        <div class="auth-card" id="registerBox" style="display: none;">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>REGISTER ACCOUNT</h2>
+            <input type="text" id="regName" placeholder="पूरा नाम (Full Name)">
+            <input type="tel" id="regPhone" placeholder="मोबाइल नंबर (Phone)">
+            <input type="email" id="regEmail" placeholder="ईमेल पता (Email Address)">
+            <input type="password" id="regPass1" placeholder="पासवर्ड (Password)">
+            <input type="password" id="regPass2" placeholder="पासवर्ड दोबारा (Confirm Password)">
+            <button class="btn-auth-main" onclick="handleRegister()">REGISTER & SAVE</button>
+            <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
+        </div>
     </div>
-    <div class="pm-row">
-      <label>2. EDIT UNLOCK PIN</label>
-      <input type="text" id="pm_edit" placeholder="7869">
+
+    <!-- Master Password Prompt Modal -->
+    <div id="masterGateModal">
+        <div class="unlock-card" style="width: 220px;">
+            <h3 id="masterGateTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">ENTER MASTER PIN</h3>
+            <input type="password" id="masterGateInput" placeholder="MASTER PIN / PHONE" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#27ae60;" onclick="submitMasterGate()">OK</button>
+                <button class="u-btn" style="background:#555;" onclick="closeMasterGate()">X</button>
+            </div>
+        </div>
     </div>
-    <div class="pm-row">
-      <label>3. DELETE PIN</label>
-      <input type="text" id="pm_del" placeholder="7869">
+
+    <!-- Password Management Panel -->
+    <div id="passManagerModal">
+        <div class="pm-card">
+            <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
+            <hr style="border:0.5px solid #005577; margin-bottom:12px;">
+            
+            <div class="pm-row">
+                <label>1. APP OPEN LOCK</label>
+                <input type="text" id="pm_open" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>2. EDIT UNLOCK PIN</label>
+                <input type="text" id="pm_edit" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>3. DELETE / RECYCLE</label>
+                <input type="text" id="pm_del" placeholder="7869">
+            </div>
+            <div class="pm-row">
+                <label>4. CLOUD BACKUP PIN</label>
+                <input type="text" id="pm_cloud" placeholder="7869">
+            </div>
+            
+            <div style="display:flex; gap:8px; margin-top:14px;">
+                <button class="u-btn" style="background:#00c853;" onclick="savePasswordSettings()">SAVE PASSWORDS</button>
+                <button class="u-btn" style="background:#555;" onclick="closePassManager()">CLOSE</button>
+            </div>
+        </div>
     </div>
-    <div class="pm-row">
-      <label>4. CLOUD BACKUP PIN</label>
-      <input type="text" id="pm_cloud" placeholder="7869">
+
+    <!-- Cloud Action Password Modal -->
+    <div id="cloudPassModal">
+        <div class="unlock-card">
+            <h3 id="cloudModalTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">PASSWORD</h3>
+            <input type="password" id="cloudPassInput" placeholder="PIN" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#27ae60;" onclick="verifyCloudAction()">OK</button>
+                <button class="u-btn" style="background:#555;" onclick="closeCloudModal()">X</button>
+            </div>
+        </div>
     </div>
-    <div class="pm-row">
-      <label>5. CLOUD RESTORE PIN</label>
-      <input type="text" id="pm_restore" placeholder="7869">
+
+    <!-- Reset App Security Modal -->
+    <div id="resetAppModal">
+        <div class="unlock-card" style="width:220px;">
+            <h3 id="resetModalTitle" style="color:#ff4757; margin:0 0 10px 0; font-size:12px;">RESET APP</h3>
+            <input type="password" id="resetPassInput" placeholder="SET / ENTER PIN" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#e74c3c;" onclick="handleResetSubmit()">CONFIRM</button>
+                <button class="u-btn" style="background:#555;" onclick="closeResetModal()">X</button>
+            </div>
+        </div>
     </div>
-    <div class="pm-row">
-      <label>6. LOGIN PASSWORD</label>
-      <input type="text" id="pm_login_pass" placeholder="Password">
+
+    <div id="unlockModal">
+        <div class="unlock-card">
+            <h3 style="color:#fff; margin:0 0 10px 0;">🔐 UNLOCK</h3>
+            <input type="password" id="unlockPassInput" placeholder="PIN" inputmode="numeric">
+            <div class="u-btn-row">
+                <button class="u-btn" style="background:#27ae60;" onclick="verifyUnlock()">OK</button>
+                <button class="u-btn" style="background:#555;" onclick="closeUnlockModal()">X</button>
+            </div>
+        </div>
     </div>
-    <div style="display:flex; gap:6px; margin-top:6px;">
-      <button style="background:#2ecc71; color:#fff;" onclick="savePasswordSettings()">SAVE</button>
-      <button style="background:#333; color:#fff;" onclick="closePassManager()">CLOSE</button>
+
+    <div id="deleteModal">
+        <div class="unlock-card">
+            <h3 id="delTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE</h3>
+            <input type="password" id="delPassInput" placeholder="PIN" inputmode="numeric">
+            <div style="display: flex; gap: 5px;">
+                <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none;" onclick="confirmDeletion()">DEL</button>
+                <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none;" onclick="closeDelModal()">X</button>
+            </div>
+        </div>
     </div>
-  </div>
+
+    <div id="advanceDeleteModal">
+        <div class="unlock-card">
+            <h3 id="advDelTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE ADVANCE</h3>
+            <input type="password" id="advDelPassInput" placeholder="PIN" inputmode="numeric">
+            <div style="display: flex; gap: 5px;">
+                <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none;" onclick="confirmAdvanceDeletion()">DEL</button>
+                <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none;" onclick="closeAdvDelModal()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <div id="userDisplayTag" class="user-tag">USER: NOT LOGGED IN</div>
+
+        <div class="tabs">
+            <button id="tab-sahil" class="tab-btn active-sahil" onclick="switchTab('sahil')">SAHIL</button>
+            <button id="tab-arman" class="tab-btn" onclick="switchTab('arman')">ARMAN</button>
+            <button id="tab-advance" class="tab-btn" onclick="switchTab('advance')">ADVANCE</button>
+        </div>
+        
+        <div id="header-title" class="main-header sahil-theme">
+            <span>SAHIL ACCOUNT</span>
+        </div>
+        
+        <div id="sahilArmanSummary" class="summary-dash">
+            <div class="s-box" style="background:#1e3799; cursor:pointer;" onclick="filterByStatus('ALL')">T-COUNT <span id="stat-count">0</span></div>
+            <div class="s-box" style="background:#2980b9; cursor:pointer;" onclick="filterByStatus('PASSED')">PASSED <span id="stat-pass">0</span></div>
+            <div class="s-box" style="background:#8e44ad; cursor:pointer;" onclick="filterByStatus('PENDING')">PENDING <span id="stat-pend">0</span></div>
+            <div class="s-box" style="background:#d35400; cursor:pointer;" onclick="filterByStatus('ALL')">T-PRICE <span id="stat-price">0</span></div>
+            <div class="s-box" style="background:#27ae60; cursor:pointer;" onclick="filterByStatus('FULL RECEIVE')">RECEIVED <span id="stat-rec">0</span></div>
+            <div class="s-box" style="background:#ff4757; cursor:pointer;" onclick="filterByStatus('BALANCE')">BALANCE <span id="stat-bal">0</span></div>
+        </div>
+
+        <div id="advanceSummary" class="adv-summary-dash" style="display:none;">
+            <div class="adv-s-box" style="background:#27ae60; cursor:pointer;" onclick="filterAdvance('RECEIVED')">TOTAL RECEIVED <br> <span id="adv-stat-rec">0</span></div>
+            <div class="adv-s-box" style="background:#e74c3c; cursor:pointer;" onclick="filterAdvance('GIVEN')">TOTAL GIVEN <br> <span id="adv-stat-give">0</span></div>
+            <div class="adv-s-box" style="background:#3498db; cursor:pointer;" onclick="filterAdvance('ALL')">BALANCE <br> <span id="adv-stat-diff">0</span></div>
+        </div>
+    </div>
+
+    <div id="adminControls" style="padding: 8px; background: #0088ff; border-radius: 25px; border: 2px solid #333; margin: 3px; flex-shrink: 0;">
+        <div style="display: flex; gap: 2px; align-items: center;">
+            <button id="addEntryBtn" onclick="toggleForm()" style="flex: 4; background: #0fef11; color: white; border: 2px solid #ffffff; font-size: 13px; font-weight: bold; border-radius: 20px; height: 40px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.3);">NEW ENTRY</button>
+            <button onclick="triggerQuickBackup()" class="btn-sync" title="Direct Cloud Backup">☁️ SYNC</button>
+            <button onclick="toggleSettingsMenu()" style="flex: 0.9; height: 40px; background: #333; color: white; border: 2px solid #fff; border-radius: 20px; font-size: 18px; cursor: pointer;">⚙️</button>
+        </div>
+
+        <div id="settingsPanel" style="display: none; background: #001a1a; padding: 15px; border-radius: 25px; border: 2px solid #00ffff; margin-top: 5px;">
+            <h3 style="color: #00ffff; text-align: center; margin-top: 0; font-size: 13px; letter-spacing: 2px;">SETTINGS</h3>
+            <button class="btn-add-main" style="background: #27ae60;" onclick="openAuthModal()">👤 LOGIN / ACCOUNT</button>
+            <button class="btn-add-main" style="background: #e67e22;" onclick="openPasswordManagerGate()">🔑 MANAGE PASSWORDS</button>
+            <button class="btn-add-main" style="background: #4285f4;" onclick="askCloudAction('BACKUP')">☁️ BACKUP</button>
+            <button class="btn-add-main" style="background: #f39c12;" onclick="askCloudAction('RESTORE')">📥 RESTORE</button>
+            <button class="btn-add-main" style="background: #db4437;" onclick="showTrashList()">♻️ RECOVER DELETED</button>
+            <button class="btn-add-main" style="background: #9b59b6;" onclick="promptResetApp()">⚠️ RESET APP</button>
+            <button class="btn-add-main" style="background: #ff4757;" onclick="handleAppLock()">🔒 LOCK APP</button>
+            <button onclick="toggleSettingsMenu()" style="width: 100%; background: #333; color: white; border: 1px solid #fff; border-radius: 20px; padding: 8px; font-weight: bold; cursor: pointer;">CLOSE</button>
+        </div>
+    </div>
+
+    <div id="entryArea">
+        <div class="entry-form">
+            <div id="unlockWrapper" class="unlock-container" style="display:none;">
+                <button class="btn-unlock" onclick="askUnlock()"> UNLOCK EDIT</button>
+                <button class="btn-close-form" onclick="toggleForm()">X</button>
+            </div>
+            <input type="hidden" id="editIndex" value="-1">
+            <div class="form-row"><label>REC DATE</label><input type="text" id="f1" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>AGENT</label><input type="text" id="f2"></div>
+            <div class="form-row"><label>HOLDER</label><input type="text" id="f3"></div>
+            <div class="form-row"><label>COUNT</label><input type="number" id="f4"></div>
+            <div class="form-row"><label>BANK</label><input type="text" id="f5"></div>
+            <div class="form-row"><label>TYPE</label><input type="text" id="f6"></div>
+            <div class="form-row"><label>PRICE</label><input type="number" id="f_pr" oninput="calcBal()"></div>
+            <div class="form-row"><label>PAS DATE</label><input type="text" id="f7" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>RIC DATE</label><input type="text" id="f8" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>REC AMO.</label><input type="number" id="f_am" oninput="calcBal()"></div>
+            <div class="form-row"><label>BALANCE</label><input type="text" id="f_bal_ui" readonly style="background:#eee;"></div>
+            <div class="form-row"><label>BAL. DATE</label><input type="text" id="f9" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>PAYMENT</label><input type="number" id="f_pay_amt"></div>
+            <div class="form-row"><label>PAID DATE</label><input type="text" id="f_pay_date" onblur="smartDate(this)"></div>
+            <div style="display:flex; gap:5px; margin-top:10px; align-items: center;">
+                <button id="mainSaveBtn" class="btn-add-main" style="flex: 10; background:#27ae60; font-size: 12px; height: 32px;" onclick="submitEntry(false)">SAVE</button>
+                <button id="updateBtn" class="btn-add-main" style="flex:4; background:#f39c12; display:none; height:32px; margin-top:0;" onclick="submitEntry(false)">UPDATE</button>
+                <button id="saveAsNewBtn" class="btn-add-main" style="flex:4; background:#3498db; display:none; height:32px; margin-top:0;" onclick="submitEntry(true)">NEW</button>
+                <button id="delEntryBtn" class="btn-add-main" style="flex:4; background:#ff4757; display:none; height:32px; margin-top:0;" onclick="handleInsideDelete()">DELETE</button>
+                <button id="newCancelBtn" type="button" onclick="toggleForm()" style="flex: 1; background: #f00b0b5d; color: white; border: 2px solid #000; border-radius: 10px; height: 32px; font-weight: bold; cursor: pointer;">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="advanceEntryArea">
+        <div class="entry-form" style="background: #f3fdb39d;">
+            <h2 style="text-align:center; font-size:14px; margin:4px;">ADVANCE ENTRY</h2>
+            <input type="hidden" id="advEditIndex" value="-1">
+            <div class="form-row"><label>PARTY NAME</label><input type="text" id="adv_f1"></div>
+            <div class="form-row"><label>DATE</label><input type="text" id="adv_f2" onblur="smartDate(this)"></div>
+            <div class="form-row"><label>AMOUNT</label><input type="number" id="adv_f3"></div>
+            <div class="form-row"><label>TYPE</label>
+                <select id="adv_f4">
+                    <option value="RECEIVED">RECEIVED</option>
+                    <option value="GIVEN">GIVEN</option>
+                </select>
+            </div>
+            <div class="form-row"><label>REASON</label><input type="text" id="adv_f5"></div>
+            <div style="display:flex; gap:5px; margin-top:10px;">
+                <button class="btn-add-main" style="flex:1; background:#27ae60;" onclick="submitAdvanceEntry()">SAVE DATA</button>
+                <button class="btn-sq" style="background:#333; width:35px; margin-top:4px;" onclick="toggleAdvanceForm()">X</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-area">
+        <input type="text" id="searchInp" placeholder="🔍 Search entries..." oninput="renderData()">
+        <button onclick="clearSearch()" class="btn-clear">CLEAR</button>
+    </div>
+
+    <!-- टेबल कंटेनर -->
+    <div class="table-scroll" id="mainTableScroll">
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>Srl.</th><th>REC DATE</th><th>AGENT</th><th>HOLDER</th><th>COUNT</th><th>BANK</th><th>TYPE</th><th>PRICE</th><th>PASS DATE</th><th>REC.DATE</th><th>REC.AMO</th><th>STATUS</th><th>BALANCE</th><th>BAL.REC.DATE</th><th>PAYMENT</th><th>PROF</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
+
+    <div class="table-scroll" id="advanceTableScroll" style="display:none;">
+        <table id="advanceTable">
+            <thead>
+                <tr>
+                    <th style="color:#faf9fa; width:30px;">Srl.</th>
+                    <th style="color:#faf9fa;">PARTY NAME</th>
+                    <th style="color:#faf9fa;">DATE</th>
+                    <th style="color:#faf9fa;">AMOUNT</th>
+                    <th style="color:#faf9fa;">TYPE</th>
+                    <th style="color:#faf9fa;">REASON</th>
+                </tr>
+            </thead>
+            <tbody id="advance-table-body"></tbody>
+        </table>
+    </div>
+
+</div> <!-- appWrapper End -->
+
+<div id="trashModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; align-items:center; justify-content:center;">
+    <div style="background:#1a1a1a; width:90%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #ff4757; max-height:80vh; overflow-y:auto;">
+        <h3 style="color:#ff4757; text-align:center; margin-top:0;">RECYCLE BIN</h3>
+        <p style="font-size:10px; color:yellow; text-align:center;">Tap to Restore | Long Press to Delete</p>
+        <div id="trash-list-content"></div>
+        <button onclick="document.getElementById('trashModal').style.display='none'" style="width:100%; margin-top:10px; background:#333; color:white; padding:10px; border-radius:10px; border:none; font-weight:bold;">CLOSE</button>
+    </div>
 </div>
 
-<!-- रीसेट ऐप मॉडल -->
-<div class="auth-overlay" id="resetAppModal">
-  <div class="auth-card" style="max-width: 270px;">
-    <h3 style="color:#ff4757; font-size:13px; font-weight:700;">⚠️ RESET APP</h3>
-    <p style="font-size:11px; color:#bbb; margin:0;">मास्टर पासवर्ड दर्ज करें:</p>
-    <input type="text" id="resetPassInput" placeholder="MASTER PIN" inputmode="numeric" style="letter-spacing:4px; font-size:16px;">
-    <div style="display:flex; gap:6px; margin-top:4px;">
-      <button style="background:#e74c3c; color:#fff;" onclick="handleResetSubmit()">CONFIRM</button>
-      <button style="background:#333; color:#fff;" onclick="closeResetModal()">CANCEL</button>
-    </div>
-  </div>
-</div>
-
-<!-- JSON एक्शन मेनू मॉडल -->
-<div class="auth-overlay" id="jsonActionModal">
-  <div class="auth-card" style="max-width: 300px;">
-    <h3 style="color:#00f3ff; font-size:13px; font-weight:700;">💾 JSON BACKUP & RESTORE</h3>
-    <p style="font-size:11px; color:#bbb; margin:0;">अपना डेटा JSON फाइल में डाउनलोड करें या रीस्टोर करें:</p>
-    <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-      <button style="background:#34495e; color:#fff; padding:10px;" onclick="exportDataToJsonFile()">📥 EXPORT (DOWNLOAD JSON)</button>
-      <button style="background:#2980b9; color:#fff; padding:10px;" onclick="triggerJsonImport()">📤 RESTORE FROM JSON FILE</button>
-      <button style="background:#333; color:#fff; padding:8px;" onclick="closeJsonActionModal()">CLOSE</button>
-    </div>
-  </div>
-</div>
-
-<!-- क्लाउड ऑथेंटिकेशन / फायरबेस मॉडल -->
-<div class="auth-overlay" id="firebaseAuthModal">
-  <div class="auth-card">
-    <h3 style="color:#e2e8f0; font-size:13.5px; font-weight:700;">🔥 Bank Account</h3>
-    <p id="authStatusDesc" style="color:#00f3ff; font-size:11px; font-weight:600; margin:0;">नया खाता विवरण भरें</p>
-
-    <div id="authInputsArea" style="display:flex; flex-direction:column; gap:6px;">
-      <div style="display:flex; border-radius:6px; overflow:hidden; border:1px solid #172233; margin-bottom:2px;">
-        <button type="button" id="tabRegisterBtn" style="flex:1; padding:7px; background:#1e293b; color:#00f3ff; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('REGISTER')">REGISTER</button>
-        <button type="button" id="tabLoginBtn" style="flex:1; padding:7px; background:#0b0e14; color:#94a3b8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('LOGIN')">LOGIN</button>
-      </div>
-
-      <div id="regExtraFields" style="display:flex; flex-direction:column; gap:6px;">
-        <input type="text" id="fbFullName" placeholder="पूरा नाम (Full Name) *">
-        <input type="text" id="fbRegUsername" placeholder="यूज़र नाम (Username) *" autocomplete="off">
-        <input type="tel" id="fbRegMobile" placeholder="मोबाइल नंबर (10 अंक) *" maxlength="10">
-        <input type="email" id="fbRegEmail" placeholder="ईमेल आईडी (डेटा बैकअप चाबी) *">
-      </div>
-
-      <div id="loginField" style="display:none;">
-        <input type="text" id="fbLoginIdentifier" placeholder="यूज़र नाम / मोबाइल नंबर / ईमेल आईडी *">
-      </div>
-
-      <input type="password" id="fbPassword" placeholder="पासवर्ड (Password) *">
-      
-      <div id="regConfirmField" style="display:block;">
-        <input type="password" id="fbConfirmPassword" placeholder="पासवर्ड दोबारा (Confirm Password) *">
-      </div>
-
-      <div class="auth-links" id="authLinksRow" style="display:none;">
-        <span class="auth-link" onclick="handleForgotPassword()">Forgot Password?</span>
-        <span class="auth-link" onclick="handleForgotDetails()">Find My Details?</span>
-      </div>
-
-      <button type="button" id="btnAuthSubmit" style="background:#00f3ff; color:#000; padding:10px; font-size:12px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
-    </div>
-
-    <!-- लॉग-इन होने के बाद का दृश्य -->
-    <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:8px;">
-      <div style="font-size:11px; color:#2ecc71; font-weight:bold;">Loged secsesfully</div>
-      <div style="font-size:14px; color:#00f3ff; font-weight:900;" id="userEmailDisplay">👤 USER</div>
-      
-      <div style="display:flex; gap:6px; margin-top:6px;">
-        <button style="background:#2ecc71; color:#fff; padding:10px;" onclick="openCloudActionModal('BACKUP')">☁️ BACKUP</button>
-        <button style="background:#f59e0b; color:#fff; padding:10px;" onclick="openCloudActionModal('RESTORE')">📥 RESTORE</button>
-      </div>
-      <button style="background:#e74c3c; color:#fff; margin-top:4px; padding:10px;" onclick="firebaseLogout(true)">LOGOUT & LOCK</button>
-    </div>
-
-    <button id="btnAuthModalClose" style="background:#333; margin-top:4px; padding:8px; display:none;" onclick="closeFirebaseAuthModal()">CLOSE</button>
-  </div>
-</div>
-
-<!-- क्लाउड बैकअप/रीस्टोर पिन एक्शन मॉडल -->
-<div class="auth-overlay" id="cloudActionModal">
-  <div class="auth-card" style="max-width: 270px;">
-    <h3 id="cloudActionTitle" style="color:#00f3ff; font-size:13px; font-weight:700;">☁️ CLOUD ACTION</h3>
-    <p style="font-size:11px; color:#bbb; margin:0;" id="cloudActionDesc">पासवर्ड दर्ज करें</p>
-    <input type="password" id="cloudActionPassInput" placeholder="Password" inputmode="numeric">
-    <div style="display:flex; gap:6px; margin-top:6px;">
-      <button id="btnExecuteCloud" style="background:#2ecc71; color:#fff;" onclick="submitCloudAction()">OK</button>
-      <button style="background:#333; color:#fff;" onclick="closeCloudActionModal()">CANCEL</button>
-    </div>
-  </div>
-</div>
-
-<!-- एडिट / डिलीट पिन मॉडल -->
-<div class="del-modal-overlay" id="delOverlay">  
- <div class="del-modal-box">  
-   <h3 style="margin:0; font-size:16px;" id="modalTitle">ACTION</h3>  
-   <p id="modalSubText" style="margin: 5px 0; font-size: 12px; color: #bbb;">ENTER 4-DIGIT PIN</p>  
-   <input type="password" id="delPassInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" style="width:90%; padding:10px; margin:12px 0; text-align:center; border:2px solid #00f3ff; background:#111; color:#00f3ff; border-radius:10px; font-size: 22px; letter-spacing: 8px; outline:none;">  
-   <div style="display:flex; gap:8px;">  
-     <button id="confirmDelBtn" style="border-radius:8px; padding:10px 0;">CONFIRM</button>  
-     <button style="background:#333; border-radius:8px; padding:10px 0;" onclick="closeDelModal()">CANCEL</button>  
-   </div>  
- </div>  
-</div>  
-
-<div class="app-container">  
- <!-- टॉप यूजर बार -->
- <div class="app-top-header">
-   <div style="display:flex; align-items:center; gap:6px;">
-     <span style="font-size:14px; font-weight:bold; color:#fff;">BANK AGENT PRO</span>
-   </div>
-   <div id="displayTopUser" class="top-user-name">👤 LOGIN</div>
- </div>
-
- <div id="form-to-share">  
-   <div class="header-box">  
-     <div class="title-design" id="head-agent">AGENT : NAME</div>  
-     <div class="title-design" id="head-title">BANK / HOLDER</div>  
-   </div>  
-   <div id="fields-container"></div>  
-   <div id="custom-fields-container"></div>  
- </div>  
-  
- <div class="controls">  
-   <div id="main-btn-container">  
-     <div style="display:flex; align-items:center; gap:8px; padding:8px 8px 5px 8px;">  
-       <button class="btn-entry-main" onclick="handleMainAction()">NEW ENTRY</button>  
-       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">🔥 SYNC</button>  
-       <div id="gearBtn" style="display: flex; justify-content: center;">  
-         <button onclick="toggleVault()" class="btn-gear-main" title="Settings">⚙️</button>  
-       </div>  
-     </div>  
-   </div>  
-   
-   <!-- सेटिंग्स पैनल -->
-   <div id="vaultPanel" style="display:none; background: #0a1f14; border: 3px solid #00f3ff; border-radius: 20px; padding: 15px; margin: 10px; box-shadow: 0 0 20px rgba(0,243,255,0.4);">  
-     <div style="text-align:center; color:#00f3ff; margin-bottom:12px; font-size:14px; font-weight:900; border-bottom: 1px solid #1a5a4a; padding-bottom:6px;">SETTINGS</div>  
-     
-     <div style="display: flex; flex-direction: column; gap: 8px;">  
-       <!-- 1. फायरबेस अकाउंट एंड सिंक -->
-       <button style="background: #102a20; border: 1px solid #00f3ff; color: #00f3ff; padding: 10px; border-radius: 100px;" onclick="openFirebaseAuthModal()">🔥 FIREBASE ACCOUNT & SYNC</button>  
-       
-       <!-- 2. ऑप्शन -->
-       <button style="background: #bc13fe; padding: 9px; border-radius: 100px;" onclick="toggleOptionMenu()">⚙️ OPTION</button>  
-
-       <!-- 3. रिकॉर्ड डिलीट (रीसायकल बिन) -->
-       <button style="background: #e91e63; padding: 9px; border-radius: 100px;" onclick="showTrashList()">♻️ RECOVER DELETED</button>  
-
-       <!-- 4. ऐड फील्ड -->
-       <button style="background: #00f3ff; color: #000; padding: 9px; border-radius: 100px;" onclick="openFieldManager()">➕ ADD / EDIT FIELDS</button>  
-
-       <!-- 5. एक्सपोर्ट बैकअप (जिसके अंदर रिस्टोर भी मौजूद है) -->
-       <button style="background: #34495e; padding: 10px; border-radius: 100px;" onclick="openJsonActionModal()">💾 EXPORT BACKUP (DOWNLOAD JSON)</button>  
-
-       <!-- 6. मैनेज सिक्योरिटी पासवर्ड -->
-       <button style="background: #e74c3c; padding: 10px; border-radius: 100px;" onclick="openPasswordManagerGate()">🔑 MANAGE SECURITY PASSWORDS</button>  
-       
-       <!-- 7. रीसेट ऐप -->
-       <button style="background: #c0392b; padding: 10px; border-radius: 100px;" onclick="promptResetApp()">⚠️ RESET APP</button>  
-
-       <hr style="border: 0.5px solid #1a5a4a; margin: 2px 0;">
-
-       <!-- 8. क्लोज बटन -->
-       <button style="background: #222; color: #fff; border: 1.5px solid #ffffff; height: 35px; border-radius: 100px;" onclick="toggleVault()">CLOSE</button>  
-     </div>  
-   </div>  
-   
-   <div id="option-menu" style="display: none; padding: 5px; margin-top: 2px;">  
-     <div style="display: flex; gap: 2px;">  
-       <button style="background: #e91e63;" onclick="downloadPDF()">📄 PDF</button>  
-       <button style="background: #25D366;" onclick="startSharingProcess()">📤 SHARE IMAGE</button>  
-     </div>  
-   </div>  
-   <div style="display:flex; align-items:center; gap:2px; margin-top:8px; padding: 0 10px;">  
-     <input type="text" id="search-inp" placeholder="🔍 SEARCH..." onkeyup="filterList()" style="flex:8;">  
-     <button onclick="document.getElementById('search-inp').value=''; filterList();" style="width:80px; height:30px; background:red; color:white; border-radius:10px;">Clear</button>  
-   </div>  
-   <div class="count-display">TOTAL: <span id="count-total">0</span></div>  
- </div>   
- <div id="floatOptBtn" class="floating-opt" onclick="toggleOptionMenu()">⚙️</div>  
-   
- <div id="data-list" style="width: 100%; padding: 10px;"></div>  
-  
- <div id="customDialogOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:5000; justify-content:center; align-items:center;">  
-   <div style="background:#222; padding:20px; border-radius:15px; border:2px solid #555; text-align:center; width:80%; max-width:300px; color:#fff;">  
-     <h3 id="dialogTitle" style="margin-top:0;">Dialog</h3>  
-     <p id="dialogMessage" style="font-size:14px; color:#ccc;">Message goes here.</p>  
-     <div id="dialogButtons" style="display:flex; gap:10px; margin-top:20px;">  
-       <button id="dialogOkBtn" style="background:#27ae60; flex:1; border:none; padding:10px; border-radius:8px; color:white; font-weight:bold; cursor:pointer;">OK</button>  
-       <button id="dialogCancelBtn" style="background:#333; flex:1; border:none; padding:10px; border-radius:8px; color:white; font-weight:bold; cursor:pointer; display:none;">Cancel</button>  
-     </div>  
-   </div>  
- </div>  
-</div>  
-
-<!-- फील्ड मैनेजर मॉडल -->
-<div id="fieldModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; align-items:center; justify-content:center;">  
- <div style="background:#1a1a1a; width:95%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #00f3ff; max-height:85vh; overflow-y:auto;">  
-   <h3 style="color:#00f3ff; text-align:center; margin-top:0;">MANAGE FIELDS</h3>  
-   <div id="field-list-edit" style="margin-bottom:15px;"></div>  
-   <div style="display:flex; gap:5px; background:#222; padding:10px; border-radius:10px;">  
-     <input type="text" id="new-field-name" placeholder="Name..." style="flex:1; background:transparent; border:none; color:white;">  
-     <button onclick="addNewField()" style="background:#00f3ff; color:#000;">ADD</button>  
-   </div>  
-   <button onclick="closeFieldManager()" style="width:100%; margin-top:10px; background:#333;">CLOSE</button>  
- </div>  
-</div>  
-
-<script>  
- // Firebase Configuration
- const firebaseConfig = {
-   apiKey: "AIzaSyBW39xBTcayR8V1mdQ4x5Sg0tMHjULZo_4",
-   authDomain: "bank-pro-f0db7.firebaseapp.com",
-   projectId: "bank-pro-f0db7",
-   storageBucket: "bank-pro-f0db7.firebasestorage.app",
-   messagingSenderId: "965788003924",
-   appId: "1:965788003924:web:37abb886d6ba80e4622c41"
- };
-
- let fbDb = null;
- try {
-   if (!firebase.apps.length) {
-     firebase.initializeApp(firebaseConfig);
-   }
-   fbDb = firebase.firestore();
- } catch(e) {
-   console.warn("Firebase Init Error:", e);
- }
-
- let currentUser = null;
- let currentAuthTab = 'REGISTER';
- let pendingCloudAction = '';
-
- let appPins = {  
-   openPin: "7869",   
-   editPin: "7869",  
-   delPin: "7869",
-   cloudPin: "7869",
-   restorePin: "7869"
- };  
-
- let registeredMasterPhone = "7869";
- let masterGatePurpose = '';
- let appClickCount = 0;
-
- let currentEditID = null, deleteID = null, pendingAction = null, pressTimer;  
- let currentCustomFields = [];  
- let activeScanTarget = "card";  
- let isTrashDelete = false;
-
- // फ़ील्ड्स कॉन्फ़िगरेशन
- let fieldConfig = JSON.parse(localStorage.getItem('myFieldConfig')) || [  
-   ["AGENT NAME", "agent"], ["BANK NAME", "bank"], ["HOLDER NAME", "holder"],  
-   ["A/C TYPE", "acctype"], ["A/C NO.", "acc"], ["IFSC CODE", "ifsc"],   
-   ["BRANCH", "branch"], ["MOBILE NO.", "mobile"], ["CUST ID", "custid"],  
-   ["USER ID", "userid"], ["NET L PASS", "netl"], ["NET T PASS", "nett"],  
-   ["MOB M PIN", "mpin"], ["MOB T PIN", "mobt"], ["UPI PIN", "upi"],   
-   ["DEBIT CARD", "debit"], ["ATM PIN", "atmpin"], ["CVV/EXP", "cvv"],   
-   ["MOTHER", "mother"], ["NOMINEE", "nominee"], ["PAN CARD", "pan"],  
-   ["DOB", "dob"], ["EMAIL ID", "email"], ["ADDRESS", "addr"], ["PASS DATE", "passdate"]  
- ];  
-
- window.onload = () => {   
-   const savedUser = localStorage.getItem('bankpro_active_user');
-   if (savedUser) {
-     try { currentUser = JSON.parse(savedUser); } catch(e) { currentUser = null; }
-   }
-
-   if (currentUser) {
-     const savedPins = localStorage.getItem('BankPro_Custom_PINS');
-     if (savedPins) {
-       try { appPins = JSON.parse(savedPins); } catch(e){}
-     }
-     registeredMasterPhone = localStorage.getItem('bankpro_master_phone') || currentUser.mobile || "7869";
-     renderList();
-     renderForm();
-     updateAuthUI();
-     handleAppLock();
-   } else {
-     renderList();
-     renderForm();
-     updateAuthUI();
-     openMandatoryRegister();
-   }
-
-   setupPasswordMasking('masterGateInput');
-   setupPasswordMasking('resetPassInput');
- };
-
- function openMandatoryRegister() {
-   document.getElementById('firebaseAuthModal').style.display = 'flex';
-   const closeBtn = document.getElementById('btnAuthModalClose');
-   if (closeBtn) closeBtn.style.display = 'none';
-   switchAuthTab('REGISTER');
- }
-
- function updateAuthUI() {
-   const topUser = document.getElementById('displayTopUser');
-   const userEmailDisplay = document.getElementById('userEmailDisplay');
-   const authInputs = document.getElementById('authInputsArea');
-   const loggedInArea = document.getElementById('authLoggedInArea');
-   const desc = document.getElementById('authStatusDesc');
-   const closeBtn = document.getElementById('btnAuthModalClose');
-
-   if (currentUser) {
-     const displayName = (currentUser.fullName || currentUser.username || "USER").toUpperCase();
-     if (topUser) topUser.innerText = "👤 " + displayName;
-     if (userEmailDisplay) userEmailDisplay.innerText = "👤 " + displayName;
-     if (authInputs) authInputs.style.display = 'none';
-     if (loggedInArea) loggedInArea.style.display = 'flex';
-     if (desc) desc.innerText = "";
-     if (closeBtn) closeBtn.style.display = 'block';
-   } else {
-     if (topUser) topUser.innerText = "👤 LOGIN";
-     if (authInputs) authInputs.style.display = 'flex';
-     if (loggedInArea) loggedInArea.style.display = 'none';
-     if (desc) desc.innerText = "नया खाता विवरण भरें";
-   }
- }
-
- // ==========================================
- // पासवर्ड टाइप करते वक्त एक पल दिखकर स्टार (*) बनना (Flash & Mask)
- // ==========================================
- function setupPasswordMasking(inputId) {
-   const el = document.getElementById(inputId);
-   if (!el) return;
-   let realVal = "";
-   let maskTimer = null;
-
-   el._getRealValue = () => realVal;
-   el._setRealValue = (v) => { realVal = v; el.value = "*".repeat(v.length); };
-
-   el.addEventListener('input', (e) => {
-     let curVal = el.value;
-     if (curVal.length < realVal.length) {
-       realVal = realVal.substring(0, curVal.length);
-     } else if (curVal.length > realVal.length) {
-       let addedChar = curVal.charAt(curVal.length - 1);
-       realVal += addedChar;
-     }
-
-     clearTimeout(maskTimer);
-     let maskedStr = "";
-     for (let i = 0; i < realVal.length - 1; i++) maskedStr += "*";
-     if (realVal.length > 0) maskedStr += realVal.charAt(realVal.length - 1);
-     el.value = maskedStr;
-
-     maskTimer = setTimeout(() => {
-       el.value = "*".repeat(realVal.length);
-     }, 400);
-   });
- }
-
- function getMaskedValue(inputId) {
-   const el = document.getElementById(inputId);
-   return el && el._getRealValue ? el._getRealValue() : (el ? el.value : "");
- }
-
- // ==========================================
- // ऐप लॉक और अनलॉक
- // ==========================================
- function handleAppLock() {
-   appClickCount = 0;
-   const secInp = document.getElementById('secretInput');
-   secInp.value = "";
-   secInp.style.display = 'none';
-   document.getElementById('mainAppOverlay').style.display = 'flex';
-   document.getElementById('vaultPanel').style.display = 'none';
- }
-
- function handleAppUnlockClick() {  
-   appClickCount++;
-   if (appClickCount >= 3) { 
-     const secInp = document.getElementById('secretInput');
-     secInp.style.display = 'block'; 
-     secInp.focus(); 
-     appClickCount = 0; 
-   }  
- }
-
- document.getElementById('secretInput').addEventListener('input', function() {  
-   if (this.value === appPins.openPin || this.value === registeredMasterPhone || this.value === "7869") { 
-     document.getElementById('mainAppOverlay').style.display = 'none'; 
-     this.value = ''; 
-     this.style.display = 'none';
-     appClickCount = 0;
-   }  
- });
-
- // ==========================================
- // क्विक सिंक बटन (मेन स्क्रीन पर)
- // ==========================================
- function handleQuickSync() {
-   if (!currentUser) {
-     openFirebaseAuthModal();
-     return;
-   }
-   openCloudActionModal('BACKUP');
- }
-
- // ==========================================
- // 1. मैनेज सिक्योरिटी पासवर्ड (Gate & Manager)
- // ==========================================
- function openPasswordManagerGate() {
-   masterGatePurpose = 'MANAGE_PINS';
-   document.getElementById('vaultPanel').style.display = 'none';
-   document.getElementById('masterGateTitle').innerText = "ENTER MASTER PIN";
-   const inp = document.getElementById('masterGateInput');
-   if (inp._setRealValue) inp._setRealValue("");
-   else inp.value = "";
-   document.getElementById('masterGateModal').style.display = 'flex';
-   inp.focus();
- }
-
- function closeMasterGate() {
-   document.getElementById('masterGateModal').style.display = 'none';
- }
-
- function submitMasterGate() {
-   const entered = getMaskedValue('masterGateInput').trim();
-   if (entered === registeredMasterPhone || entered === "7869") {
-     closeMasterGate();
-     if (masterGatePurpose === 'MANAGE_PINS') {
-       document.getElementById('pm_open').value = appPins.openPin || "7869";
-       document.getElementById('pm_edit').value = appPins.editPin || "7869";
-       document.getElementById('pm_del').value = appPins.delPin || "7869";
-       document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
-       document.getElementById('pm_restore').value = appPins.restorePin || "7869";
-       document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
-       document.getElementById('passManagerModal').style.display = 'flex';
-     }
-   } else {
-     showCustomDialog("गलत पिन", "❌ गलत मास्टर पासवर्ड!", false);
-   }
- }
-
- function closePassManager() {
-   document.getElementById('passManagerModal').style.display = 'none';
- }
-
- async function savePasswordSettings() {
-   appPins = {
-     openPin: document.getElementById('pm_open').value.trim() || "7869",
-     editPin: document.getElementById('pm_edit').value.trim() || "7869",
-     delPin: document.getElementById('pm_del').value.trim() || "7869",
-     cloudPin: document.getElementById('pm_cloud').value.trim() || "7869",
-     restorePin: document.getElementById('pm_restore').value.trim() || "7869"
-   };
-   localStorage.setItem('BankPro_Custom_PINS', JSON.stringify(appPins));
-
-   const newLoginPass = document.getElementById('pm_login_pass').value.trim();
-   if (currentUser && newLoginPass && newLoginPass !== currentUser.pass) {
-     currentUser.pass = newLoginPass;
-     localStorage.setItem('bankpro_active_user', JSON.stringify(currentUser));
-     if (fbDb && currentUser.mobile) {
-       try {
-         await fbDb.collection("master_profiles").doc(currentUser.mobile).update({ pass: newLoginPass });
-       } catch (err) {
-         console.warn("Could not update remote login pass:", err);
-       }
-     }
-   }
-
-   closePassManager();
-   showCustomDialog("सफलता", "✅ सभी पासवर्ड सुरक्षित सेव हो गए!", false);
- }
-
- // ==========================================
- // 3. फायरबेस ऑथेंटिकेशन (REGISTER & LOGIN)
- // ==========================================
- function openFirebaseAuthModal() {
-   document.getElementById('vaultPanel').style.display = 'none';
-   document.getElementById('firebaseAuthModal').style.display = 'flex';
-   if (!currentUser) switchAuthTab('LOGIN');
-   updateAuthUI();
- }
-
- function closeFirebaseAuthModal() {
-   if (!currentUser) {
-     showCustomDialog("चेतावनी", "⚠️ पहले रजिस्टर या लॉगिन करें!", false);
-     return;
-   }
-   document.getElementById('firebaseAuthModal').style.display = 'none';
- }
-
- function switchAuthTab(tab) {
-   currentAuthTab = tab;
-   const tabReg = document.getElementById('tabRegisterBtn');
-   const tabLog = document.getElementById('tabLoginBtn');
-   const extraFields = document.getElementById('regExtraFields');
-   const loginField = document.getElementById('loginField');
-   const confirmField = document.getElementById('regConfirmField');
-   const submitBtn = document.getElementById('btnAuthSubmit');
-   const authLinksRow = document.getElementById('authLinksRow');
-   const desc = document.getElementById('authStatusDesc');
-
-   if (tab === 'REGISTER') {
-     tabReg.style.background = '#1e293b'; tabReg.style.color = '#00f3ff';
-     tabLog.style.background = '#0b0e14'; tabLog.style.color = '#94a3b8';
-     extraFields.style.display = 'flex';
-     loginField.style.display = 'none';
-     confirmField.style.display = 'block';
-     authLinksRow.style.display = 'none';
-     submitBtn.innerText = 'रजिस्टर करें';
-     submitBtn.style.background = '#00f3ff';
-     submitBtn.style.color = '#000';
-     desc.innerText = 'नया खाता विवरण भरें';
-   } else {
-     tabReg.style.background = '#0b0e14'; tabReg.style.color = '#94a3b8';
-     tabLog.style.background = '#1e293b'; tabLog.style.color = '#2ecc71';
-     extraFields.style.display = 'none';
-     loginField.style.display = 'block';
-     confirmField.style.display = 'none';
-     authLinksRow.style.display = 'flex';
-     submitBtn.innerText = 'लॉगिन करें';
-     submitBtn.style.background = '#2ecc71';
-     submitBtn.style.color = '#fff';
-     desc.innerText = 'Username, Mobile Number या Email ID से लॉगिन करें';
-   }
- }
-
- function handleAuthSubmit() {
-   if (currentAuthTab === 'REGISTER') firebaseSignUp();
-   else firebaseLogin();
- }
-
- async function firebaseSignUp() {
-   const fullName = document.getElementById('fbFullName').value.trim();
-   const username = document.getElementById('fbRegUsername').value.trim().toLowerCase();
-   const mobile = document.getElementById('fbRegMobile').value.trim();
-   const email = document.getElementById('fbRegEmail').value.trim().toLowerCase();
-   const pass = document.getElementById('fbPassword').value;
-   const confirmPass = document.getElementById('fbConfirmPassword').value;
-
-   if (!fullName) { showCustomDialog("त्रुटि", "❌ पूरा नाम लिखें!", false); return; }
-   if (!username || username.length < 3) { showCustomDialog("त्रुटि", "❌ कम से कम 3 अक्षरों का यूजरनेम बनाएं!", false); return; }
-   if (!mobile || mobile.length !== 10 || isNaN(mobile)) { showCustomDialog("त्रुटि", "❌ सही 10 अंकों का मोबाइल नंबर लिखें!", false); return; }
-   if (!email || !email.includes('@')) { showCustomDialog("त्रुटि", "❌ सही ईमेल आईडी दर्ज करें!", false); return; }
-   if (!pass || pass.length < 4) { showCustomDialog("त्रुटि", "❌ पासवर्ड कम से कम 4 अक्षरों का रखें!", false); return; }
-   if (pass !== confirmPass) { showCustomDialog("त्रुटि", "❌ दोनों पासवर्ड मेल नहीं खाते!", false); return; }
-
-   try {
-     const [uDoc, mDoc] = await Promise.all([
-       fbDb.collection("app_accounts").doc("user_" + username).get(),
-       fbDb.collection("app_accounts").doc("phone_" + mobile).get()
-     ]);
-
-     if (uDoc.exists) { showCustomDialog("चेतावनी", "⚠️ यह यूज़रनेम पहले से मौजूद है!", false); return; }
-     if (mDoc.exists) { showCustomDialog("चेतावनी", "⚠️ यह मोबाइल नंबर पहले से पंजीकृत है! Login करें।", false); switchAuthTab('LOGIN'); return; }
-
-     const userObj = { fullName, username, mobile, email, pass, registeredAt: new Date().toISOString() };
-
-     const batch = fbDb.batch();
-     batch.set(fbDb.collection("master_profiles").doc(mobile), userObj);
-     batch.set(fbDb.collection("app_accounts").doc("user_" + username), { targetMobile: mobile, targetEmail: email });
-     batch.set(fbDb.collection("app_accounts").doc("phone_" + mobile), { targetMobile: mobile, targetEmail: email });
-     batch.set(fbDb.collection("app_accounts").doc("email_" + email), { targetMobile: mobile, targetEmail: email });
-     await batch.commit();
-
-     registeredMasterPhone = mobile;
-     localStorage.setItem("bankpro_master_phone", mobile);
-     localStorage.setItem("bankpro_active_user", JSON.stringify(userObj));
-     currentUser = userObj;
-
-     showCustomDialog("सफलता", `🎉 स्वागत है ${username.toUpperCase()}! आपका खाता बन गया है।`, false);
-     updateAuthUI();
-     await restoreFromFirebase(false);
-     document.getElementById('firebaseAuthModal').style.display = 'none';
-   } catch(err) {
-     showCustomDialog("एरर", "❌ रजिस्ट्रेशन एरर: " + err.message, false);
-   }
- }
-
- async function firebaseLogin() {
-   const rawId = document.getElementById('fbLoginIdentifier').value.trim();
-   const pass = document.getElementById('fbPassword').value;
-
-   if (!rawId || !pass) {
-     showCustomDialog("त्रुटि", "❌ कृपया पहचानकर्ता और पासवर्ड दोनों दर्ज करें!", false);
-     return;
-   }
-
-   const cleanId = rawId.toLowerCase();
-   let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
-
-   try {
-     let targetMobile = null;
-     const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
-     if (idxSnap.exists && idxSnap.data()?.targetMobile) {
-       targetMobile = idxSnap.data().targetMobile;
-     } else if (cleanId.length === 10 && !isNaN(cleanId)) {
-       targetMobile = cleanId;
-     }
-
-     if (!targetMobile) {
-       showCustomDialog("त्रुटि", "❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!", false);
-       return;
-     }
-
-     const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
-     if (!userSnap.exists) {
-       showCustomDialog("त्रुटि", "❌ खाता डेटा नहीं मिला!", false);
-       return;
-     }
-
-     const userData = userSnap.data();
-     if (userData.pass !== pass) {
-       showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false);
-       return;
-     }
-
-     currentUser = userData;
-     registeredMasterPhone = userData.mobile || "7869";
-     localStorage.setItem("bankpro_master_phone", registeredMasterPhone);
-     localStorage.setItem("bankpro_active_user", JSON.stringify(userData));
-
-     showCustomDialog("सफलता", "✅ लॉगिन सफल!", false);
-     updateAuthUI();
-     await restoreFromFirebase(false);
-     document.getElementById('firebaseAuthModal').style.display = 'none';
-   } catch(err) {
-     showCustomDialog("एरर", "❌ लॉगिन त्रुटि: " + err.message, false);
-   }
- }
-
- function openCloudActionModal(type) {
-   pendingCloudAction = type;
-   const title = document.getElementById('cloudActionTitle');
-   const desc = document.getElementById('cloudActionDesc');
-   const passInp = document.getElementById('cloudActionPassInput');
-   const okBtn = document.getElementById('btnExecuteCloud');
-   passInp.value = '';
-
-   if (type === 'BACKUP') {
-     title.innerText = "☁️ CLOUD BACKUP";
-     desc.innerText = "बैकअप लेने के लिए पासवर्ड डालें";
-     okBtn.innerText = "BACKUP NOW";
-     okBtn.style.background = "#2ecc71";
-   } else {
-     title.innerText = "📥 CLOUD RESTORE";
-     desc.innerText = "डेटा रिस्टोर करने के लिए पासवर्ड डालें";
-     okBtn.innerText = "RESTORE NOW";
-     okBtn.style.background = "#f59e0b";
-   }
-   document.getElementById('cloudActionModal').style.display = 'flex';
-   passInp.focus();
- }
-
- function closeCloudActionModal() {
-   document.getElementById('cloudActionModal').style.display = 'none';
- }
-
- function submitCloudAction() {
-   const entered = document.getElementById('cloudActionPassInput').value.trim();
-   const expectedPin = (pendingCloudAction === 'RESTORE') ? (appPins.restorePin || "7869") : (appPins.cloudPin || "7869");
-
-   if (entered === expectedPin || entered === registeredMasterPhone || entered === "7869") {
-     closeCloudActionModal();
-     if (pendingCloudAction === 'BACKUP') backupToFirebase(true);
-     else restoreFromFirebase(true);
-   } else {
-     showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false);
-   }
- }
-
- // ईमेल पर आधारित फायरबेस बैकअप
- async function backupToFirebase(showAlert = true) {
-   if (!currentUser || !fbDb) return;
-   try {
-     const userEmail = (currentUser.email || '').toLowerCase().trim();
-     const fullBackup = {
-       mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
-       trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
-       userEmail: userEmail,
-       userMobile: currentUser.mobile || registeredMasterPhone,
-       userName: currentUser.username || '',
-       updatedAt: new Date().toISOString()
-     };
-     await fbDb.collection("bankpro_data_by_email").doc(userEmail).set(fullBackup);
-     if (showAlert) showCustomDialog("सफलता", "☁️ आपका डेटा ईमेल बैकअप में सुरक्षित सेव हो गया!", false);
-   } catch(e) {
-     if (showAlert) showCustomDialog("एरर", "❌ सिंक विफल: " + e.message, false);
-   }
- }
-
- async function restoreFromFirebase(showAlert = true) {
-   if (!currentUser || !fbDb) return;
-   try {
-     const userEmail = (currentUser.email || '').toLowerCase().trim();
-     const doc = await fbDb.collection("bankpro_data_by_email").doc(userEmail).get();
-     if (doc.exists) {
-       const data = doc.data();
-       let mainList = Array.isArray(data.mainData) ? data.mainData : [];
-       let trashList = Array.isArray(data.trashData) ? data.trashData : [];
-       localStorage.setItem('BankProData', JSON.stringify(mainList));
-       localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
-       renderList();
-       if (showAlert) showCustomDialog("सफलता", `✅ क्लाउड बैकअप (${mainList.length} रिकॉर्ड्स) सफलतापूर्वक लोड हो गया!`, false);
-     } else {
-       if (showAlert) showCustomDialog("खाली", "⚠️ इस ईमेल खाते पर कोई पुराना बैकअप नहीं मिला!", false);
-     }
-   } catch(e) {
-     if (showAlert) showCustomDialog("एरर", "❌ लोड विफल: " + e.message, false);
-   }
- }
-
- async function firebaseLogout(userInitiated = true) {
-   if (currentUser) {
-     await backupToFirebase(false);
-   }
-   currentUser = null;
-   localStorage.removeItem("bankpro_active_user");
-   localStorage.removeItem("bankpro_master_phone");
-   renderList();
-   updateAuthUI();
-   handleAppLock();
-   if (userInitiated) showCustomDialog("लॉगआउट", "डेटा सेव हो गया और ऐप लॉक हो गया!", false);
-   openFirebaseAuthModal();
- }
-
- // ==========================================
- // FORGOT PASSWORD & FIND MY DETAILS
- // ==========================================
- async function handleForgotPassword() {
-   let input = prompt("अपना रजिस्टर्ड मोबाइल नंबर या ईमेल आईडी दर्ज करें:");
-   if (!input || !input.trim()) return;
-   let cleanInput = input.trim().toLowerCase();
-
-   try {
-     let targetMobile = null;
-     if (cleanInput.includes('@')) {
-       let snap = await fbDb.collection("app_accounts").doc("email_" + cleanInput).get();
-       if (snap.exists) targetMobile = snap.data().targetMobile;
-     } else if (cleanInput.length === 10 && !isNaN(cleanInput)) {
-       targetMobile = cleanInput;
-     } else {
-       let snap = await fbDb.collection("app_accounts").doc("user_" + cleanInput).get();
-       if (snap.exists) targetMobile = snap.data().targetMobile;
-     }
-
-     if (!targetMobile) {
-       showCustomDialog("त्रुटि", "❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!", false);
-       return;
-     }
-
-     let userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
-     if (!userSnap.exists) {
-       showCustomDialog("त्रुटि", "❌ खाता डेटा उपलब्ध नहीं है!", false);
-       return;
-     }
-
-     let uData = userSnap.data();
-     let userMail = uData.email;
-     let foundPass = uData.pass;
-
-     showCustomDialog(
-       "पासवर्ड रिकवरी",
-       `✅ आपका पासवर्ड है: "${foundPass}"\n\nक्या आप इसे अपने ईमेल (${userMail}) पर भेजना चाहते हैं?`,
-       true,
-       () => {
-         let subject = encodeURIComponent("Bank Agent Pro - Password Recovery");
-         let body = encodeURIComponent(`नमस्ते ${uData.fullName},\n\nआपके बैंक एजेंट प्रो खाते का पासवर्ड नीचे दिया गया है:\n\nयूज़र नाम: ${uData.username}\nमोबाइल नंबर: ${uData.mobile}\nपासवर्ड: ${foundPass}\n\nधन्यवाद!`);
-         window.location.href = `mailto:${userMail}?subject=${subject}&body=${body}`;
-       }
-     );
-   } catch(e) {
-     showCustomDialog("त्रुटि", "❌ जांच विफल: " + e.message, false);
-   }
- }
-
- async function handleForgotDetails() {
-   let masterPin = prompt("अपना 10 अंकों का मास्टर पासवर्ड (रजिस्टर्ड मोबाइल नंबर) दर्ज करें:");
-   if (!masterPin || !masterPin.trim()) return;
-   let cleanPin = masterPin.trim();
-
-   try {
-     let userSnap = await fbDb.collection("master_profiles").doc(cleanPin).get();
-     if (!userSnap.exists) {
-       showCustomDialog("त्रुटि", "❌ इस मास्टर पासवर्ड से कोई प्रोफाइल नहीं मिली!", false);
-       return;
-     }
-
-     let uData = userSnap.data();
-     let detailMsg = `👤 नाम: ${uData.fullName}\n🆔 यूज़रनेम: ${uData.username}\n📱 मोबाइल: ${uData.mobile}\n📧 ईमेल: ${uData.email}\n🔑 पासवर्ड: ${uData.pass}`;
-
-     showCustomDialog(
-       "खाता विवरण",
-       detailMsg + `\n\nक्या आप यह पूरा विवरण अपने ईमेल (${uData.email}) पर भेजना चाहते हैं?`,
-       true,
-       () => {
-         let subject = encodeURIComponent("Bank Agent Pro - Account Details");
-         let body = encodeURIComponent(`नमस्ते ${uData.fullName},\n\nयहाँ आपके बैंक एजेंट प्रो खाते का सम्पूर्ण विवरण है:\n\nनाम: ${uData.fullName}\nयूज़रनेम: ${uData.username}\nमोबाइल नंबर: ${uData.mobile}\nईमेल: ${uData.email}\nलॉगिन पासवर्ड: ${uData.pass}\n\nसुरक्षित रहें!`);
-         window.location.href = `mailto:${uData.email}?subject=${subject}&body=${body}`;
-       }
-     );
-   } catch(e) {
-     showCustomDialog("त्रुटि", "❌ विवरण लोड विफल: " + e.message, false);
-   }
- }
-
- // ==========================================
- // 4. JSON एक्सपोर्ट, इम्पोर्ट और ऐप रिसेट
- // ==========================================
- function openJsonActionModal() {
-   document.getElementById('vaultPanel').style.display = 'none';
-   document.getElementById('jsonActionModal').style.display = 'flex';
- }
-
- function closeJsonActionModal() {
-   document.getElementById('jsonActionModal').style.display = 'none';
- }
-
- function exportDataToJsonFile() {
-   closeJsonActionModal();
-   const backupObj = {
-     appName: "Bank Agent Pro",
-     exportDate: new Date().toISOString(),
-     user: currentUser ? currentUser.username : "Guest",
-     mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
-     trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
-     fieldConfig: fieldConfig
-   };
-   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
-   const dlAnchor = document.createElement('a');
-   dlAnchor.setAttribute("href", dataStr);
-   dlAnchor.setAttribute("download", `BankPro_Backup_${Date.now()}.json`);
-   document.body.appendChild(dlAnchor);
-   dlAnchor.click();
-   dlAnchor.remove();
-   showCustomDialog("सफलता", "✅ बैकअप JSON फ़ाइल डाउनलोड हो गई!", false);
- }
-
- function triggerJsonImport() {
-   closeJsonActionModal();
-   document.getElementById('jsonFileInput').click();
- }
-
- function handleJsonFileSelect(event) {
-   const file = event.target.files[0];
-   if (!file) return;
-
-   const reader = new FileReader();
-   reader.onload = function(e) {
-     try {
-       const data = JSON.parse(e.target.result);
-       if (data.mainData) {
-         localStorage.setItem('BankProData', JSON.stringify(data.mainData || []));
-         localStorage.setItem('BankPro_Trash', JSON.stringify(data.trashData || []));
-         if (data.fieldConfig) {
-           fieldConfig = data.fieldConfig;
-           localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig));
-           renderForm();
-         }
-         renderList();
-         showCustomDialog("सफलता", `✅ JSON फ़ाइल से डेटा सफलतापूर्वक रीस्टोर हो गया! (${data.mainData.length} रिकॉर्ड्स)`, false);
-       } else {
-         showCustomDialog("त्रुटि", "❌ यह सही Bank Pro बैकअप फ़ाइल नहीं है!", false);
-       }
-     } catch(err) {
-       showCustomDialog("त्रुटि", "❌ फ़ाइल पढ़ने में त्रुटि: " + err.message, false);
-     }
-   };
-   reader.readAsText(file);
-   event.target.value = '';
- }
-
- function promptResetApp() {
-   document.getElementById('vaultPanel').style.display = 'none';
-   const inp = document.getElementById('resetPassInput');
-   if (inp._setRealValue) inp._setRealValue("");
-   else inp.value = "";
-   document.getElementById('resetAppModal').style.display = 'flex';
-   inp.focus();
- }
-
- function closeResetModal() {
-   document.getElementById('resetAppModal').style.display = 'none';
- }
-
- function handleResetSubmit() {
-   const entered = getMaskedValue('resetPassInput').trim();
-   if (entered === registeredMasterPhone || entered === "7869") {
-     closeResetModal();
-     showCustomDialog("ऐप रीसेट", "क्या आप वाकई पूरी एप्लिकेशन को रीसेट करना चाहते हैं? आपका क्लाउड बैकअप सुरक्षित रहेगा।", true, () => {
-       localStorage.removeItem('BankProData');
-       localStorage.removeItem('BankPro_Trash');
-       renderList();
-       showCustomDialog("सफलता", "✅ एप्लिकेशन का लोकल डेटा पूरी तरह साफ़ हो गया है!", false);
-     });
-   } else {
-     showCustomDialog("त्रुटि", "❌ गलत मास्टर पासवर्ड!", false);
-   }
- }
-
- // ==========================================
- // बैंक प्रो कोर फंक्शन्स (Fields & Cards)
- // ==========================================
- function showCustomDialog(title, message, isConfirm, onOk, onCancel) {  
-   const overlay = document.getElementById('customDialogOverlay');  
-   const okBtn = document.getElementById('dialogOkBtn');  
-   const cancelBtn = document.getElementById('dialogCancelBtn');  
-   document.getElementById('dialogTitle').innerText = title;  
-   document.getElementById('dialogMessage').innerText = message;  
-   cancelBtn.style.display = isConfirm ? 'block' : 'none';  
-   okBtn.onclick = () => { overlay.style.display = 'none'; if (onOk) onOk(); };  
-   cancelBtn.onclick = () => { overlay.style.display = 'none'; if (onCancel) onCancel(); };  
-   overlay.style.display = 'flex';  
- }
-
- function getFirstWord(str) { return str ? str.trim().split(' ')[0].toUpperCase() : ""; }  
-
- function renderForm() {  
-   const container = document.getElementById('fields-container');  
-   if (!container) return;  
-   container.innerHTML = "";   
-   fieldConfig.forEach((f, index) => {  
-     const row = document.createElement('div'); row.className = 'row'; row.id = 'row-' + f[1];   
-     
-     let labelHtml = f[0];  
-     if (f[1] === 'debit') {  
-       labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('card')" title="Scan Debit Card">📷</button>`;  
-     } else if (f[1] === 'pan') {  
-       labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('pan')" title="Scan Pan Card">📷</button>`;  
-     }  
-     
-     let inputHtml = "";  
-     if (f[1] === 'addr') {  
-       inputHtml = `<textarea class="input-box" id="inp-${f[1]}" style="height:30px;" oninput="liveUpdate(); autoResize(this);" onkeydown="handleEnter(event, ${index})"></textarea>`;  
-     } else if (f[1] === 'cvv') {  
-       inputHtml = `  
-         <input type="text" class="split-cvv-inp" id="inp-cvv-code" maxlength="4" placeholder="CVV" onkeydown="handleCvvEnter(event, ${index})">  
-         <div class="split-divider"></div>  
-         <input type="text" class="split-exp-inp" id="inp-cvv-exp" maxlength="5" placeholder="MM/YY" onkeydown="handleExpKeyDown(event, ${index})" oninput="handleExpInput(this)">  
-       `;  
-     } else {  
-       inputHtml = `<div class="input-box" id="inp-${f[1]}" contenteditable="true" oninput="liveUpdate()" onkeydown="handleEnter(event, ${index})"></div>`;  
-     }  
-      
-     row.innerHTML = `<div class="label">${labelHtml}</div><div class="input-wrapper">${inputHtml}</div>`;  
-     container.appendChild(row);  
-   });  
- }  
-
- let isExpBackspacing = false;  
- function handleExpKeyDown(e, index) {  
-   if (e.key === 'Enter') { handleEnter(e, index); return; }  
-   if (e.key === 'Backspace') {  
-     isExpBackspacing = true;  
-     let inp = e.target;  
-     let val = inp.value;  
-     if (val.length === 3 && val.endsWith('/')) {  
-       e.preventDefault();  
-       inp.value = val.substring(0, 1);  
-     }  
-   } else {  
-     isExpBackspacing = false;  
-   }  
- }  
-  
- function handleExpInput(el) {  
-   if (isExpBackspacing) return;  
-   let v = el.value.replace(/\D/g, '');  
-   if (v.length > 4) v = v.substring(0, 4);  
-   if (v.length >= 2) el.value = v.substring(0, 2) + '/' + v.substring(2);  
-   else el.value = v;  
- }  
-
- function renderCustomFields() {  
-   const container = document.getElementById('custom-fields-container');  
-   if (!container) return;  
-   container.innerHTML = "";  
-   currentCustomFields.forEach((cf) => {  
-     const row = document.createElement('div');   
-     row.className = 'row';   
-     row.id = 'row-cf-' + cf.key;  
-     row.innerHTML = `<div class="label" style="background:#5a2399;">${cf.label}</div>  
-     <div class="input-wrapper">  
-     <div class="input-box" id="inp-cf-${cf.key}" contenteditable="true">${cf.value || ""}</div>  
-     </div>`;  
-     container.appendChild(row);  
-   });  
- }  
-  
- function promptAddCustomField() {  
-   let name = prompt("ENTER EXTRA FIELD NAME:");  
-   if (name && name.trim()) {  
-     name = name.trim().toUpperCase();  
-     let key = "cf_" + Date.now();  
-     currentCustomFields.push({ label: name, key: key, value: "" });  
-     renderCustomFields();  
-     const el = document.getElementById('inp-cf-' + key);  
-     if (el) el.focus();  
-   }  
- }  
-
- function handleCvvEnter(e, index) {  
-   if (e.key === 'Enter') {  
-     e.preventDefault();  
-     const expEl = document.getElementById('inp-cvv-exp');  
-     if (expEl) expEl.focus();  
-   }  
- }  
-  
- function handleEnter(e, index) {  
-   if (e.key === 'Enter') {  
-     e.preventDefault();  
-     const nextField = fieldConfig[index + 1];  
-     if (nextField) {  
-       let nextEl = document.getElementById('inp-' + nextField[1]);  
-       if (nextField[1] === 'cvv') nextEl = document.getElementById('inp-cvv-code');  
-       if (nextEl) {  
-         nextEl.focus();  
-         if (nextEl.tagName !== 'TEXTAREA' && nextEl.tagName !== 'INPUT') {  
-           const range = document.createRange();   
-           const sel = window.getSelection();  
-           range.selectNodeContents(nextEl);   
-           range.collapse(false);  
-           sel.removeAllRanges();   
-           sel.addRange(range);  
-         } else {   
-           nextEl.selectionStart = nextEl.selectionEnd = nextEl.value.length;   
-         }  
-       }  
-     }  
-   }  
- }  
-
- function openScanChoice(target) {  
-   activeScanTarget = target;  
-   document.getElementById('scanModalHeading').innerText = target === 'pan' ? "SCAN PAN CARD" : "SCAN DEBIT CARD";  
-   document.getElementById('scanChoiceModal').style.display = 'flex';  
- }  
- function closeScanChoice() {  
-   document.getElementById('scanChoiceModal').style.display = 'none';  
- }  
-  
- function startGalleryScan() {  
-   closeScanChoice();  
-   const galInp = document.getElementById('cardGalleryInput');  
-   galInp.value = "";  
-   galInp.click();  
- }  
-  
- function processCardImage(inputEl) {  
-   const file = inputEl.files[0];  
-   if (!file) return;  
-   showCustomDialog("SCANNING", "⚡ Reading Details from Image...", false);  
-   const okBtn = document.getElementById('dialogOkBtn');  
-   okBtn.style.display = 'none';  
-     
-   const reader = new FileReader();  
-   reader.onload = async function(e) {  
-     try {  
-       const { data: { text } } = await Tesseract.recognize(e.target.result, 'eng');  
-       parseOCRResult(text);  
-     } catch (err) {  
-       okBtn.style.display = 'block';  
-       showCustomDialog("ERROR", "❌ Failed to read image!", false);  
-     }  
-   };  
-   reader.readAsDataURL(file);  
- }  
-  
- function parseOCRResult(text) {  
-   const okBtn = document.getElementById('dialogOkBtn');  
-   try {  
-     if (activeScanTarget === 'pan') {  
-       let cleanPanText = text.toUpperCase().replace(/[^A-Z0-9\n ]/g, ' ');  
-       let panCandidate = cleanPanText.match(/[A-Z0-9]{5}\s*[0-9OIS]{4}\s*[A-Z0-9]{1}/);  
-       let foundPan = "";  
-       if (panCandidate) {  
-         let p = panCandidate[0].replace(/\s+/g, '');  
-         foundPan = p.substring(0, 5) +   
-         p.substring(5, 9).replace(/O/g, '0').replace(/I/g, '1').replace(/S/g, '5') +   
-         p.substring(9, 10);  
-       }  
-       let dobMatch = text.match(/\b(0[1-9]|[12][0-9]|3[01])[\/\-\.\s]+(0[1-9]|1[0-2])[\/\-\.\s]+(19[0-9]{2}|20[0-2][0-9])\b/);  
-       let foundDob = "";  
-       if (dobMatch) {  
-         foundDob = `${dobMatch[1].padStart(2, '0')}/${dobMatch[2].padStart(2, '0')}/${dobMatch[3]}`;  
-         const dobEl = document.getElementById('inp-dob');  
-         if (dobEl) dobEl.innerText = foundDob;  
-       }  
-       const panEl = document.getElementById('inp-pan');  
-       if (panEl) {  
-         if (foundPan && foundDob) panEl.innerText = `${foundPan} ${foundDob}`;  
-         else if (foundPan) panEl.innerText = foundPan;  
-       }  
-       okBtn.style.display = 'block';  
-       showCustomDialog("SUCCESS", "✅ PAN & DOB Scanned Successfully!", false);  
-     } else {  
-       let rawClean = text.replace(/[^0-9a-zA-Z\/\-\n ]/g, ' ');  
-       let digitsOnly = rawClean.replace(/\D/g, '');  
-       let cardFound = "";  
-       let blockMatch = rawClean.match(/\b\d{4}\s*[- ]?\s*\d{4}\s*[- ]?\s*\d{4}\s*[- ]?\d{4}\b/);  
-       if (blockMatch) cardFound = blockMatch[0].replace(/\D/g, '');  
-       else if (digitsOnly.length >= 16) {  
-         for (let i = 0; i <= digitsOnly.length - 16; i++) {  
-           let sub = digitsOnly.substring(i, i + 16);  
-           if (/^[3-6]/.test(sub)) { cardFound = sub; break; }  
-         }  
-         if (!cardFound) cardFound = digitsOnly.substring(0, 16);  
-       }  
-       if (cardFound && cardFound.length >= 15) {  
-         let formatted = cardFound.match(/.{1,4}/g)?.join(' ') || cardFound;  
-         const debEl = document.getElementById('inp-debit');  
-         if (debEl) debEl.innerText = formatted;  
-       }  
-       let expMatch = rawClean.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*([0-9]{2,4})\b/);  
-       if (expMatch) {  
-         const expEl = document.getElementById('inp-cvv-exp');  
-         let yr = expMatch[2];  
-         if (yr.length === 4) yr = yr.substring(2);  
-         if (expEl) expEl.value = expMatch[1] + '/' + yr;  
-       }  
-       let cvvMatch = rawClean.match(/\b(?:CVV|CVC)\s*[:\-]?\s*([0-9]{3})\b/i);  
-       if (cvvMatch) {  
-         const cvvEl = document.getElementById('inp-cvv-code');  
-         if (cvvEl && !cvvEl.value.trim()) cvvEl.value = cvvMatch[1];  
-       }  
-       okBtn.style.display = 'block';  
-       showCustomDialog("SUCCESS", "✅ Card Details Scanned!", false);  
-     }  
-   } catch (err) {  
-     okBtn.style.display = 'block';  
-     showCustomDialog("ERROR", "❌ Failed to parse details!", false);  
-   }  
- }  
-
- function autoResize(el) {   
-   el.style.height = '30px';   
-   if (el.scrollHeight > 30) el.style.height = el.scrollHeight + 'px';   
- }  
-
- function handleMainAction() { clearFormFields(); toggleForm(true, 'new'); }  
-
- function toggleForm(show, mode = 'new') {  
-   const formToShare = document.getElementById('form-to-share');  
-   const floatOptBtn = document.getElementById('floatOptBtn');  
-   const searchArea = document.getElementById('search-inp').parentElement;   
-   const countDisplay = document.querySelector('.count-display');   
-   const btnContainer = document.getElementById('main-btn-container');  
-   const controlsBox = document.querySelector('.controls');   
-   formToShare.style.display = show ? 'block' : 'none';  
-   floatOptBtn.style.display = show ? 'flex' : 'none';   
-   searchArea.style.display = show ? 'none' : 'flex';  
-   if (countDisplay) countDisplay.style.display = show ? 'none' : 'block';  
-     
-   if (show) {  
-     controlsBox.style.background = "none";  
-     controlsBox.style.border = "none";  
-     controlsBox.style.boxShadow = "none";  
-     controlsBox.style.padding = "0";   
-     if (mode === 'edit') {   
-       setLock(true);   
-       btnContainer.innerHTML = `  
-         <div style="display:flex; gap:5px; padding:5px;">  
-         <button class="btn-yellow" style="flex:5; height:38px; font-size:14px; border-radius:10px;" onclick="askUnlock()">🔓 UNLOCK TO EDIT</button>  
-         <button class="btn-black" style="flex:1; max-width:45px; height:38px; font-size:14px; border-radius:10px;" onclick="refreshApp()">X</button>  
-         </div>`;   
-     } else {   
-       setLock(false);   
-       btnContainer.innerHTML = `  
-         <div style="display:flex; gap:5px; padding:5px;">  
-         <button class="btn-blue" style="flex:4; height:38px; font-size:13px; border-radius:10px;" onclick="handleSave(false)">💾 SAVE NEW ENTRY</button>  
-         <button style="background:#00f3ff; color:#000; flex:1; max-width:45px; height:38px; font-size:18px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>  
-         <button class="btn-red" style="flex:1; max-width:45px; height:38px; font-size:14px; border-radius:10px;" onclick="refreshApp()">X</button>  
-         </div>`;   
-     }  
-   } else {  
-     controlsBox.style.background = "#1562f5";   
-     controlsBox.style.border = "2px solid #00f3ff";  
-     controlsBox.style.borderRadius = "20px";  
-     controlsBox.style.padding = "5px 2px";  
-     controlsBox.style.boxShadow = "0 15px 30px rgba(0,0,0,0.9)";  
-     
-     btnContainer.innerHTML = `  
-       <div style="display:flex; align-items:center; gap:8px; padding:8px 8px 5px 8px;">  
-       <button class="btn-entry-main" onclick="handleMainAction()">NEW ENTRY</button>  
-       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">🔥 SYNC</button>  
-       <div id="gearBtn" style="display: flex; justify-content: center;">  
-         <button onclick="toggleVault()" class="btn-gear-main" title="Settings">⚙️</button>  
-       </div>  
-       </div>`;   
-     document.getElementById('option-menu').style.display = 'none';   
-   }  
- }  
-
- function setLock(lock) {   
-   fieldConfig.forEach(f => {   
-     if (f[1] === 'cvv') {  
-       const cvvBox = document.getElementById('inp-cvv-code');  
-       const expBox = document.getElementById('inp-cvv-exp');  
-       if (cvvBox) cvvBox.disabled = lock;  
-       if (expBox) expBox.disabled = lock;  
-     } else {  
-       const el = document.getElementById('inp-'+f[1]);   
-       if(el) {  
-         if(el.tagName === 'TEXTAREA') el.readOnly = lock;   
-         else el.contentEditable = !lock;   
-       }  
-     }  
-   });   
-   currentCustomFields.forEach(cf => {  
-     const el = document.getElementById('inp-cf-' + cf.key);  
-     if(el) el.contentEditable = !lock;  
-   });  
- }  
-
- function clearFormFields() {  
-   fieldConfig.forEach(f => {   
-     if (f[1] === 'cvv') {  
-       const cvvBox = document.getElementById('inp-cvv-code');  
-       const expBox = document.getElementById('inp-cvv-exp');  
-       if (cvvBox) { cvvBox.value = ""; cvvBox.parentElement.style.backgroundColor = "#fff"; }  
-       if (expBox) { expBox.value = ""; }  
-     } else {  
-       const el = document.getElementById('inp-'+f[1]);   
-       if(el) {  
-         if(el.tagName === 'TEXTAREA') { el.value = ""; el.style.height = '30px'; }   
-         else { el.innerText = ""; }   
-         el.parentElement.style.backgroundColor = "#fff";   
-       }  
-     }  
-   });  
-   currentCustomFields = [];  
-   renderCustomFields();  
-   currentEditID = null; liveUpdate();  
- }  
-
- async function handleSave(forceNew) {  
-   const holder = (document.getElementById('inp-holder').innerText || document.getElementById('inp-holder').value || "").trim();  
-   if(!holder) return showCustomDialog("Error", "HOLDER NAME IS REQUIRED!", false);  
-     
-   let stored = JSON.parse(localStorage.getItem('BankProData') || '[]');  
-   const data = { id: forceNew ? Date.now() : (currentEditID || Date.now()) };  
-     
-   fieldConfig.forEach(f => {   
-     if (f[1] === 'cvv') {  
-       const cvvVal = (document.getElementById('inp-cvv-code')?.value || "").trim();  
-       const expVal = (document.getElementById('inp-cvv-exp')?.value || "").trim();  
-       data[f[1]] = cvvVal ? `${cvvVal} ${expVal}` : expVal;  
-     } else {  
-       const el = document.getElementById('inp-'+f[1]);   
-       data[f[1]] = (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim();   
-     }  
-   });  
-
-   let savedCF = [];  
-   currentCustomFields.forEach(cf => {  
-     const el = document.getElementById('inp-cf-' + cf.key);  
-     let val = el ? el.innerText.trim() : (cf.value || "");  
-     savedCF.push({ label: cf.label, key: cf.key, value: val });  
-   });  
-   if (savedCF.length > 0) data.customFields = savedCF;  
-
-   if (data.passdate) {  
-     if (/\d/.test(data.passdate) && data.passdate.length < 15) data.passdate = formatMyDate(data.passdate);  
-   }  
-
-   if (!forceNew && currentEditID) {   
-     stored = stored.map(i => i.id === currentEditID ? data : i);   
-   } else {   
-     stored.unshift(data);   
-   }  
-
-   localStorage.setItem('BankProData', JSON.stringify(stored));  
-   renderList();   
-   toggleForm(false);  
-   showCustomDialog("Saved", "✅ फ़ाइल सेव हो गई है!", false);  
- }  
-
- function renderList() {  
-   const listDiv = document.getElementById('data-list');  
-   const stored = JSON.parse(localStorage.getItem('BankProData') || '[]');  
-   listDiv.innerHTML = "";   
-   document.getElementById('count-total').innerText = stored.length;  
-     
-   stored.forEach(item => {  
-     const div = document.createElement('div');   
-     div.className = 'list-item';  
-     div.style.flexDirection = "column";  
-     div.style.alignItems = "flex-start";  
-     div.style.gap = "2px";  
-     div.setAttribute('data-id', item.id);  
-     div.setAttribute('data-full', JSON.stringify(item).toLowerCase());  
-     div.setAttribute('data-mobile', (item.mobile || "").trim());  
-     
-     let passDisplay = "";  
-     if (item.passdate) {  
-       const isDate = item.passdate.includes('-') || item.passdate.includes('/');  
-       passDisplay = `<span style="color:${isDate ? '#40fa59' : '#f50606'}; font-size:11px; font-weight:bold; margin-left:4px;">(${item.passdate})</span>`;  
-     }  
-     
-     const mobText = item.mobile ? item.mobile : "No Number";  
-     
-     div.innerHTML = `  
-       <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">  
-       <div><b style="color:#e7f557;">${getFirstWord(item.bank || "")}</b> - ${getFirstWord(item.holder || "")} ${passDisplay}</div>  
-       <div style="color:#2afa45; font-size:13px; font-weight:bold;">${getFirstWord(item.agent || "")}</div>  
-       </div>  
-       <div class="mob-preview" style="font-size:12px; font-family:monospace; letter-spacing:1px; font-weight:bold;">  
-       <span style="color:#25D366; font-size:15px;">&#9742;</span> <span class="mob-num-text" style="color:#ffffff;">${mobText}</span>  
-       </div>  
-     `;  
-     
-     div.onclick = () => loadItem(item.id);  
-     listDiv.appendChild(div);  
-   });  
- }  
-
- function loadItem(id) {  
-   const item = JSON.parse(localStorage.getItem('BankProData')).find(i => i.id === id);  
-   currentEditID = id;  
-   fieldConfig.forEach(f => {   
-     if (f[1] === 'cvv') {  
-       const rawCvvExp = (item[f[1]] || "").trim();  
-       const cvvBox = document.getElementById('inp-cvv-code');  
-       const expBox = document.getElementById('inp-cvv-exp');  
-       let parts = rawCvvExp.split(/\s+/);  
-       if (parts.length >= 2) {  
-         if (cvvBox) cvvBox.value = parts[0];  
-         if (expBox) expBox.value = parts.slice(1).join(' ');  
-       } else {  
-         if (cvvBox) cvvBox.value = "";  
-         if (expBox) expBox.value = rawCvvExp;  
-       }  
-       if (cvvBox) cvvBox.parentElement.style.backgroundColor="#59cba2cf";  
-     } else {  
-       const el = document.getElementById('inp-'+f[1]);   
-       if(el) {  
-         if(el.tagName === 'TEXTAREA') { el.value = item[f[1]] || ""; autoResize(el); }   
-         else { el.innerText = item[f[1]] || ""; }   
-         el.parentElement.style.backgroundColor="#59cba2cf";   
-       }  
-     }  
-   });  
-
-   currentCustomFields = item.customFields || [];  
-   renderCustomFields();  
-   currentCustomFields.forEach(cf => {  
-     const el = document.getElementById('inp-cf-' + cf.key);  
-     if (el) el.parentElement.style.backgroundColor = "#59cba2cf";  
-   });  
-
-   liveUpdate(); toggleForm(true, 'edit');  
- }  
-
- function askUnlock() { pendingAction = "unlock"; setupModal("ENTER EDIT PIN", "#4285F4", "UNLOCK"); }  
- function openDeleteModal(id) { deleteID = id; pendingAction = "delete"; setupModal("ENTER DELETE PIN", "red", "DELETE"); }  
-
- function setupModal(title, color, btnText) {  
-   document.activeElement.blur();  
-   const overlay = document.getElementById('delOverlay');
-   const input = document.getElementById('delPassInput');
-   const box = overlay.querySelector('.del-modal-box');
-   
-   overlay.style.display = 'flex';  
-   document.getElementById('modalTitle').innerText = title;  
-   document.getElementById('modalTitle').style.color = color;  
-   box.style.borderColor = color;
-   box.style.boxShadow = `0 0 25px ${color}66`;
-   
-   const confirmBtn = document.getElementById('confirmDelBtn');
-   confirmBtn.style.background = color;  
-   confirmBtn.innerText = btnText;
-   confirmBtn.onclick = () => processPinAction(input.value);
-
-   input.value = ""; 
-   input.focus();  
-   input.oninput = function() { if (this.value.length === 4) processPinAction(this.value); };  
- }  
-
- function processPinAction(enteredPin) {  
-   if (pendingAction === "unlock") {  
-     if (enteredPin === appPins.editPin || enteredPin === registeredMasterPhone || enteredPin === "7869") {  
-       setLock(false);   
-       fieldConfig.forEach(f => {  
-         if (f[1] === 'cvv') {  
-           const cvvBox = document.getElementById('inp-cvv-code');  
-           if (cvvBox) cvvBox.parentElement.style.backgroundColor = "#ffffff";  
-         } else {  
-           const el = document.getElementById('inp-' + f[1]);  
-           if (el) el.parentElement.style.backgroundColor = "#ffffff";   
-         }  
-       });  
-       currentCustomFields.forEach(cf => {  
-         const el = document.getElementById('inp-cf-' + cf.key);  
-         if (el) el.parentElement.style.backgroundColor = "#ffffff";  
-       });  
-       
-       document.getElementById('main-btn-container').innerHTML = `  
-         <div style="display:flex; gap:4px; padding:5px; align-items:center;">  
-         <button class="btn-blue" style="flex:3; height:34px; font-size:11px; margin:0;" onclick="handleSave(false)">🆕 UPDATE</button>  
-         <button class="btn-purple" style="flex:2; height:34px; font-size:11px; margin:0;" onclick="handleSave(true)">➕ NEW</button>  
-         <button style="background:#00f3ff; color:#000; flex:1; max-width:40px; height:34px; font-size:16px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>  
-         <button style="background:#ff4757; flex:1; max-width:40px; height:34px; font-size:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="openDeleteModal(currentEditID)" title="Delete Entry">🗑️</button>  
-         <button class="btn-black" style="flex:1; max-width:40px; height:34px; font-size:13px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="refreshApp()">X</button>  
-         </div>`;  
-       closeDelModal();  
-     } else { wrongPin(); }  
-   } else if (pendingAction === "delete") {  
-     if (enteredPin === appPins.delPin || enteredPin === registeredMasterPhone || enteredPin === "7869") {  
-       if (isTrashDelete) {   
-         let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
-         trash = trash.filter(i => i.id !== deleteID);  
-         localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
-         closeDelModal();  
-         showCustomDialog("SUCCESS", "Permanently Deleted from Trash", false);  
-       } else {   
-         let allData = JSON.parse(localStorage.getItem('BankProData') || '[]');  
-         let itemToTrash = allData.find(i => i.id === deleteID);  
-         if (itemToTrash) {  
-           let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
-           trash.unshift(itemToTrash);  
-           localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
-         }  
-         let stored = allData.filter(i => i.id !== deleteID);  
-         localStorage.setItem('BankProData', JSON.stringify(stored));  
-         renderList();  
-         closeDelModal();  
-         showCustomDialog("DELETED", "Moved to Recycle Bin", false);  
-       }  
-       isTrashDelete = false;  
-     } else { wrongPin(); }  
-   }  
- }  
-
- function wrongPin() {  
-   document.getElementById('delPassInput').value = "";   
-   showCustomDialog("WRONG PIN", "ACCESS DENIED", false);  
- }  
-  
- function closeDelModal() {   
-   document.getElementById('delOverlay').style.display = 'none';  
-   pendingAction = null;
-   if(isTrashDelete) {   
-     showTrashList();   
-     isTrashDelete = false;  
-   }   
- }  
-
- function liveUpdate() {  
-   const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }  
-   document.getElementById('head-agent').innerText = getFirstWord(getVal('agent')) || "NAME";  
-   document.getElementById('head-title').innerText = (getFirstWord(getVal('bank')) || "BANK") + " / " + (getFirstWord(getVal('holder')) || "HOLDER");  
- }  
-
- function filterList() {  
-   const rawInput = document.getElementById('search-inp').value;  
-   const queryTrim = rawInput.trim();  
-   const items = Array.from(document.getElementsByClassName('list-item'));  
-   if (!queryTrim) {  
-     items.forEach(it => {  
-       it.style.display = "flex";  
-       const numSpan = it.querySelector('.mob-num-text');  
-       if(numSpan) numSpan.innerText = it.getAttribute('data-mobile') || "No Number";  
-     });  
-     document.getElementById('count-total').innerText = items.length;  
-     return;  
-   }  
-   const hasPatternChar = /[\s\-_.*xX]/.test(rawInput);  
-   let regex = null;  
-   if (hasPatternChar) {  
-     let pattern = rawInput.replace(/[^0-9\s\-_.*xX]/g, '').replace(/[\s\-_.*xX]/g, '\\d');  
-     try { regex = new RegExp(pattern); } catch(e) { regex = null; }  
-   }  
-   let visibleItems = [];  
-   items.forEach(it => {  
-     const mobileRaw = (it.getAttribute('data-mobile') || "").replace(/\D/g, '');  
-     const fullText = it.getAttribute('data-full') || "";  
-     let isMatch = false;  
-     if (regex && mobileRaw) { if (regex.test(mobileRaw)) isMatch = true; }  
-     if (!isMatch) {  
-       isMatch = it.innerText.toLowerCase().includes(queryTrim.toLowerCase()) || fullText.includes(queryTrim.toLowerCase());  
-     }  
-     if (isMatch) { it.style.display = "flex"; visibleItems.push(it); }  
-     else it.style.display = "none";  
-   });  
-   document.getElementById('count-total').innerText = visibleItems.length;  
-   if (visibleItems.length === 1 && queryTrim.length >= 4 && (hasPatternChar || /^\d+$/.test(queryTrim))) {  
-     const targetId = Number(visibleItems[0].getAttribute('data-id'));  
-     loadItem(targetId);  
-   }  
- }  
-
- function refreshApp() { toggleForm(false); renderList(); document.getElementById('vaultPanel').style.display = 'none'; }  
- function toggleOptionMenu() { document.getElementById('option-menu').style.display = document.getElementById('option-menu').style.display === 'none' ? 'block' : 'none'; }  
- function toggleVault() { 
-   const vp = document.getElementById('vaultPanel');
-   vp.style.display = (vp.style.display === 'none') ? 'block' : 'none';
- }  
-
- async function startSharingProcess() {  
-   const form = document.getElementById('form-to-share');  
-   form.style.display = 'block';  
-   const rows = form.querySelectorAll('.row');  
-   rows.forEach(row => {  
-     if (!row.querySelector('.hide-btn')) {  
-       const btn = document.createElement('button');  
-       btn.innerText = "➖";  
-       btn.className = "hide-btn";  
-       btn.onclick = () => row.remove();  
-       row.prepend(btn);  
-     }  
-   });  
-   if (!document.getElementById('temp-print-btn')) {  
-     const printBtn = document.createElement('button');  
-     printBtn.id = "temp-print-btn";  
-     printBtn.innerText = "✅ PRINT IMAGE NOW";  
-     printBtn.style = "width:100%; padding:15px; background:#25D366; color:white; font-weight:bold; border:2px solid white; margin-bottom:10px;";  
-     printBtn.onclick = async () => {  
-       printBtn.remove();  
-       form.querySelectorAll('.hide-btn').forEach(b => b.remove());  
-       await shareAsImage();  
-       location.reload();   
-     };  
-     form.prepend(printBtn);  
-   }  
- }  
-
- async function shareAsImage() {  
-   const el = document.getElementById('form-to-share');  
-   el.style.display = 'block';  
-   const agentBar = document.getElementById('head-agent');  
-   const agentRow = document.getElementById('row-agent');  
-   const passRow = document.getElementById('row-passdate');  
-   if (agentBar) agentBar.style.display = 'none';  
-   if (agentRow) agentRow.style.display = 'none';  
-   if (passRow) passRow.style.display = 'none';   
-   try {  
-     const canvas = await html2canvas(el, { backgroundColor: "#0a1f14", scale: 2, useCORS: true });  
-     if (agentBar) agentBar.style.display = 'block';  
-     if (agentRow) agentRow.style.display = 'block';  
-     if (passRow) passRow.style.display = 'block';  
-     el.style.display = 'none';  
-     const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));  
-     const file = new File([blob], "BankDetails.png", { type: 'image/png' });  
-     if (navigator.share) { await navigator.share({ files: [file], title: 'Bank Details' }); }  
-   } catch (err) {   
-     if (agentBar) agentBar.style.display = 'block';  
-     if (agentRow) agentRow.style.display = 'block';  
-     if (passRow) passRow.style.display = 'block';  
-     el.style.display = 'none';   
-     alert("Error sharing image");   
-   }  
- }  
-
- async function downloadPDF() {  
-   const { jsPDF } = window.jspdf;  
-   const el = document.getElementById('form-to-share');  
-   const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }  
-   const fileName = `${getFirstWord(getVal('bank')) || "BANK"}_${getFirstWord(getVal('holder')) || "HOLDER"}.pdf`;  
-   el.style.display = 'block';   
-   el.style.width = '450px';   
-   try {  
-     const canvas = await html2canvas(el, { backgroundColor: "#0a1f14", scale: 2, useCORS: true });  
-     const imgData = canvas.toDataURL('image/jpeg', 0.9);  
-     const imgWidth = 190;   
-     const imgHeight = (canvas.height * imgWidth) / canvas.width;   
-     const pdf = new jsPDF('p', 'mm', [imgWidth + 20, imgHeight + 20]);  
-     pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);  
-     pdf.save(fileName);  
-   } catch (err) {  
-     alert("PDF Error: " + err);  
-   } finally {  
-     el.style.display = 'none';   
-     el.style.width = '';   
-     refreshApp();  
-   }  
- }  
-
- function formatMyDate(str) {  
-   if (!str) return "";  
-   let d = str.toLowerCase(); const months = { 'jan': 'Jan', 'feb': 'Feb', 'mar': 'Mar', 'apr': 'Apr', 'may': 'May', 'jun': 'Jun', 'jul': 'Jul', 'aug': 'Aug', 'sep': 'Sep', 'oct': 'Oct', 'nov': 'Nov', 'dec': 'Dec' };  
-   let parts = d.match(/(\d+)|([a-z]+)/g); if (!parts || parts.length < 2) return str;  
-   let day = parts[0].padStart(2, '0'); let monthName = months[parts[1].substring(0,3)] || "Jan";  
-   let year = parts[2] ? (parts[2].length === 2 ? "20" + parts[2] : parts[2]) : "2026";  
-   return `${day}-${monthName}-${year}`;  
- }  
-
- function openFieldManager() { document.getElementById('fieldModal').style.display = 'flex'; renderFieldEditList(); }  
- function closeFieldManager() {  
-   document.querySelector('#fieldModal h3').innerText = "MANAGE FIELDS";  
-   document.querySelector('#fieldModal h3').style.color = "#00f3ff";  
-   document.getElementById('new-field-name').parentElement.style.display = 'flex';   
-   localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig));  
-   renderForm();  
-   document.getElementById('fieldModal').style.display = 'none';  
-   refreshApp();  
- }  
-
- function renderFieldEditList() {  
-   const list = document.getElementById('field-list-edit'); list.innerHTML = "";  
-   fieldConfig.forEach((f, index) => {  
-     const div = document.createElement('div'); div.style = "display:flex; justify-content:space-between; background:#262626; padding:10px; margin-bottom:5px; border-radius:10px;";  
-     div.innerHTML = `<span>${f[0]}</span><div><span onclick="moveField(${index}, -1)">🔼</span><span onclick="moveField(${index}, 1)">🔽</span></div>`;  
-     div.ontouchstart = () => pressTimer = setTimeout(() => { if(confirm("Delete?")){ fieldConfig.splice(index, 1); localStorage.setItem('myFieldConfig', JSON.stringify(fieldConfig)); renderFieldEditList(); } }, 800);  
-     div.ontouchend = () => clearTimeout(pressTimer);  
-     list.appendChild(div);  
-   });  
- }  
-
- function moveField(idx, step) {  
-   let newIdx = idx + step; if (newIdx >= 0 && newIdx < fieldConfig.length) {  
-     let temp = fieldConfig[idx]; fieldConfig[idx] = fieldConfig[newIdx]; fieldConfig[newIdx] = temp;  
-     renderFieldEditList();  
-   }  
- }  
-
- function addNewField() {  
-   const name = document.getElementById('new-field-name').value.trim().toUpperCase();  
-   if(name) { fieldConfig.push([name, name.toLowerCase().replace(/\s+/g, '')]); document.getElementById('new-field-name').value = ""; renderFieldEditList(); }  
- }  
-
- function showTrashList() {  
-   let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
-   if (trash.length === 0) return showCustomDialog("EMPTY", "No items in Trash", false);  
-   document.getElementById('fieldModal').style.display = 'flex';  
-   const list = document.getElementById('field-list-edit');  
-   document.querySelector('#fieldModal h3').innerText = "RECYCLE BIN";  
-   document.querySelector('#fieldModal h3').style.color = "#ff4757";  
-   document.getElementById('new-field-name').parentElement.style.display = 'none';   
-   list.innerHTML = `<p style="font-size:10px; color:yellow; text-align:center; margin-bottom:10px;">Tap to Restore | Long Press to Delete</p>`;  
-     
-   trash.forEach(item => {  
-     const div = document.createElement('div');  
-     div.style = "background:#333; padding:10px; margin-bottom:5px; border-radius:10px; border-left:4px solid #e91e63; color:white; -webkit-user-select:none; user-select:none; cursor:pointer;";  
-     div.innerHTML = `<b>${item.bank || 'BANK'}</b> - ${item.holder || 'HOLDER'}`;  
-     let timer; let isLongPress = false;  
-     
-     const handleTap = () => {  
-       document.getElementById('fieldModal').style.display = 'none';  
-       showCustomDialog("RESTORE?", "Bring this entry back?", true,   
-         () => { restoreSpecificItem(item.id); showCustomDialog("SUCCESS", "Entry restored to Top!", false); },   
-         () => { showTrashList(); }  
-       );  
-     };  
-     
-     const startPress = (e) => {  
-       isLongPress = false;  
-       timer = setTimeout(() => {  
-         isLongPress = true; deleteID = item.id; isTrashDelete = true; pendingAction = "delete";  
-         document.getElementById('fieldModal').style.display = 'none';  
-         setupModal("PERMANENT DELETE", "red", "DELETE");  
-       }, 800);  
-     };  
-     
-     const endPress = () => { clearTimeout(timer); if (!isLongPress) handleTap(); };  
-     div.onmousedown = startPress; div.onmouseup = endPress;  
-     div.ontouchstart = (e) => { startPress(e); }; div.ontouchend = (e) => { endPress(); };  
-     list.appendChild(div);  
-   });  
- }  
-
- function restoreSpecificItem(id) {  
-   let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
-   let item = trash.find(i => i.id === id);  
-   if (item) {  
-     let currentData = JSON.parse(localStorage.getItem('BankProData') || '[]');  
-     item.id = Date.now();   
-     currentData.unshift(item);  
-     localStorage.setItem('BankProData', JSON.stringify(currentData));  
-     localStorage.setItem('BankPro_Trash', JSON.stringify(trash.filter(i => i.id !== id)));  
-     renderList();  
-   }  
- }  
-</script>  
-</body>  
+<!-- Firebase Module Script -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDyu7d9_kN5lGqnCUA9gbAs6W2GianQ164",
+      authDomain: "master-ledger-6e31c.firebaseapp.com",
+      projectId: "master-ledger-6e31c",
+      storageBucket: "master-ledger-6e31c.firebasestorage.app",
+      messagingSenderId: "910783110594",
+      appId: "1:910783110594:web:2cd23c4b51a775526bca5b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const firestoreDb = getFirestore(app);
+
+    window.fbSaveUser = async function(userData) {
+        await setDoc(doc(firestoreDb, "users", userData.phone), userData);
+    };
+
+    window.fbGetUser = async function(phone) {
+        const docRef = await getDoc(doc(firestoreDb, "users", phone));
+        return docRef.exists() ? docRef.data() : null;
+    };
+
+    window.fbPushData = async function(phone, payload) {
+        await setDoc(doc(firestoreDb, "ledgers", phone), payload);
+    };
+
+    window.fbFetchData = async function(phone) {
+        const docRef = await getDoc(doc(firestoreDb, "ledgers", phone));
+        return docRef.exists() ? docRef.data() : null;
+    };
+</script>
+
+<script>
+    const MASTER_PHONE_PIN = "9892980960"; // मास्टर पासवर्ड
+
+    // Dynamic Passwords Store
+    let appPins = JSON.parse(localStorage.getItem('master_custom_pins')) || {
+        openPin: "7869",
+        editPin: "7869",
+        delPin: "7869",
+        cloudPin: "7869"
+    };
+
+    let isPermanentDelete = false;
+    let db = JSON.parse(localStorage.getItem('shared_master_v19')) || [];
+    let db_advance = JSON.parse(localStorage.getItem('master_advance_v1')) || [];
+    let trash = JSON.parse(localStorage.getItem('master_trash_v1')) || [];
+    
+    let currentMode = 'sahil';
+    let currentAdvFilter = 'ALL';
+    let deleteIdx = -1;
+    let advDeleteIdx = -1;
+    let currentFilter = 'ALL';
+    let clickCount = 0;
+    let activeTimers = {};
+    let pendingCloudAction = '';
+    let masterGatePurpose = ''; 
+    let tempNewPins = null;
+    let currentUser = JSON.parse(localStorage.getItem('master_active_user') || 'null');
+
+    // --- 3-Tap App Lock ---
+    function handleLockClick() {
+        clickCount++;
+        if (clickCount >= 3) {
+            const secInp = document.getElementById('secretInput');
+            secInp.style.display = 'block';
+            secInp.focus();
+            clickCount = 0;
+        }
+    }
+
+    document.getElementById('secretInput').addEventListener('input', function() {
+        if(this.value === appPins.openPin || this.value === MASTER_PHONE_PIN) { 
+            document.getElementById('mainAppOverlay').style.display = 'none'; 
+            this.value = "";
+            this.style.display = 'none';
+            clickCount = 0;
+        }
+    });
+
+    function handleAppLock() {
+        clickCount = 0;
+        document.getElementById('secretInput').value = "";
+        document.getElementById('secretInput').style.display = 'none';
+        document.getElementById('mainAppOverlay').style.display = 'flex';
+        document.getElementById('settingsPanel').style.display = 'none';
+    }
+
+    // --- Master Password Verification Gate ---
+    function openPasswordManagerGate() {
+        masterGatePurpose = 'OPEN_PM';
+        document.getElementById('masterGateTitle').innerText = "ENTER MASTER PIN";
+        document.getElementById('masterGateInput').value = "";
+        document.getElementById('masterGateModal').style.display = 'flex';
+        document.getElementById('masterGateInput').focus();
+        toggleSettingsMenu(true);
+    }
+
+    function closeMasterGate() {
+        document.getElementById('masterGateModal').style.display = 'none';
+        document.getElementById('masterGateInput').value = "";
+    }
+
+    function submitMasterGate() {
+        const entered = document.getElementById('masterGateInput').value.trim();
+        if (entered === MASTER_PHONE_PIN) {
+            closeMasterGate();
+            if (masterGatePurpose === 'OPEN_PM') {
+                showPasswordManagerUI();
+            } else if (masterGatePurpose === 'CONFIRM_SAVE_PINS') {
+                if (tempNewPins) {
+                    appPins = tempNewPins;
+                    localStorage.setItem('master_custom_pins', JSON.stringify(appPins));
+                    tempNewPins = null;
+                    closePassManager();
+                    alert("✅ सभी नए पासवर्ड सफलतापूर्वक सेव हो गए!");
+                }
+            }
+        } else {
+            alert("❌ गलत मास्टर पासवर्ड! (Incorrect Master PIN)");
+            document.getElementById('masterGateInput').value = "";
+        }
+    }
+
+    // --- Password Manager Panel UI ---
+    function showPasswordManagerUI() {
+        document.getElementById('pm_open').value = appPins.openPin;
+        document.getElementById('pm_edit').value = appPins.editPin;
+        document.getElementById('pm_del').value = appPins.delPin;
+        document.getElementById('pm_cloud').value = appPins.cloudPin;
+        document.getElementById('passManagerModal').style.display = 'flex';
+    }
+
+    function closePassManager() {
+        document.getElementById('passManagerModal').style.display = 'none';
+    }
+
+    function savePasswordSettings() {
+        const oPin = document.getElementById('pm_open').value.trim();
+        const ePin = document.getElementById('pm_edit').value.trim();
+        const dPin = document.getElementById('pm_del').value.trim();
+        const cPin = document.getElementById('pm_cloud').value.trim();
+
+        if (!oPin || !ePin || !dPin || !cPin) {
+            alert("कृपया सभी पासवर्ड भरें!");
+            return;
+        }
+
+        tempNewPins = { openPin: oPin, editPin: ePin, delPin: dPin, cloudPin: cPin };
+        masterGatePurpose = 'CONFIRM_SAVE_PINS';
+        document.getElementById('masterGateTitle').innerText = "CONFIRM MASTER PIN";
+        document.getElementById('masterGateInput').value = "";
+        document.getElementById('masterGateModal').style.display = 'flex';
+        document.getElementById('masterGateInput').focus();
+    }
+
+    // --- User Registration & Login ---
+    function openAuthModal() {
+        document.getElementById('regName').value = "";
+        document.getElementById('regPhone').value = "";
+        document.getElementById('regEmail').value = "";
+        document.getElementById('regPass1').value = "";
+        document.getElementById('regPass2').value = "";
+        document.getElementById('loginPhone').value = "";
+        document.getElementById('loginPass').value = "";
+
+        document.getElementById('loginBox').style.display = 'block';
+        document.getElementById('registerBox').style.display = 'none';
+        document.getElementById('authOverlay').style.display = 'flex';
+        toggleSettingsMenu(true);
+    }
+
+    function closeAuthModal() {
+        document.getElementById('authOverlay').style.display = 'none';
+    }
+
+    function askRegisterPermission() {
+        if (currentUser && currentUser.phone) {
+            let masterPin = prompt("⚠️ प्राइवेसी सुरक्षा: नया खाता बनाने के लिए मास्टर पासवर्ड दर्ज करें:");
+            if (masterPin === MASTER_PHONE_PIN) {
+                let agree = confirm("⚠️ ध्यान दें: नया रजिस्टर करते ही यह ऐप रिसेट होकर फ्रेश हो जाएगा!\n\nपुराने खाते (" + (currentUser.email || currentUser.phone) + ") का बैकअप क्लाउड सर्वर पर सुरक्षित रहेगा, पर इस नए खाते के लिए स्क्रीन खाली हो जाएगी।\n\nक्या आप सहमत हैं?");
+                if (agree) {
+                    db = [];
+                    db_advance = [];
+                    trash = [];
+                    localStorage.removeItem('shared_master_v19');
+                    localStorage.removeItem('master_advance_v1');
+                    localStorage.removeItem('master_trash_v1');
+                    localStorage.removeItem('master_active_user');
+                    currentUser = null;
+                    applyUserSession();
+                    renderData();
+                    toggleAuthMode('register');
+                }
+            } else {
+                alert("❌ गलत मास्टर पासवर्ड! आप नया रजिस्टर नहीं कर सकते।");
+            }
+        } else {
+            toggleAuthMode('register');
+        }
+    }
+
+    function toggleAuthMode(mode) {
+        if (mode === 'login') {
+            document.getElementById('registerBox').style.display = 'none';
+            document.getElementById('loginBox').style.display = 'block';
+        } else {
+            document.getElementById('registerBox').style.display = 'block';
+            document.getElementById('loginBox').style.display = 'none';
+        }
+    }
+
+    async function handleRegister() {
+        const name = document.getElementById('regName').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const p1 = document.getElementById('regPass1').value;
+        const p2 = document.getElementById('regPass2').value;
+
+        if (!name || !phone || !email || !p1 || !p2) { alert("कृपया सभी विवरण भरें!"); return; }
+        if (p1 !== p2) { alert("दोनों पासवर्ड समान नहीं हैं!"); return; }
+
+        const userObj = { name: name, phone: phone, email: email, pass: p1 };
+        try {
+            await window.fbSaveUser(userObj);
+            localStorage.setItem('master_active_user', JSON.stringify(userObj));
+            currentUser = userObj;
+            applyUserSession();
+            closeAuthModal();
+            alert("पंजीकरण सफल! आपका स्वागत है, " + name);
+        } catch(e) {
+            alert("रजिस्ट्रेशन विफल: " + e.message);
+        }
+    }
+
+    async function handleLogin() {
+        const phone = document.getElementById('loginPhone').value.trim();
+        const pass = document.getElementById('loginPass').value;
+
+        if (!phone || !pass) { alert("फ़ोन और पासवर्ड डालें!"); return; }
+
+        try {
+            const user = await window.fbGetUser(phone);
+            if (!user) { alert("यह नंबर पंजीकृत नहीं है!"); return; }
+            if (user.pass !== pass) { alert("गलत पासवर्ड!"); return; }
+
+            localStorage.setItem('master_active_user', JSON.stringify(user));
+            currentUser = user;
+            applyUserSession();
+            closeAuthModal();
+            alert("लॉगिन सफल! स्वागत है, " + user.name);
+        } catch(e) {
+            alert("लॉगिन में त्रुटि: " + e.message);
+        }
+    }
+
+    function applyUserSession() {
+        if (currentUser && currentUser.name) {
+            document.getElementById('userDisplayTag').innerText = "👤 USER: " + currentUser.name.toUpperCase();
+        } else {
+            document.getElementById('userDisplayTag').innerText = "USER: NOT LOGIN";
+        }
+    }
+
+    // --- केवल बैकअप लेने वाला बटन ---
+    async function triggerQuickBackup() {
+        if (!currentUser) {
+            alert("कृपया पहले लॉगिन करें!");
+            openAuthModal();
+            return;
+        }
+        await executeCloudBackup();
+    }
+
+    function askCloudAction(actionType) {
+        if (!currentUser) {
+            alert("कृपया पहले लॉगिन करें!");
+            openAuthModal();
+            return;
+        }
+        pendingCloudAction = actionType;
+        document.getElementById('cloudModalTitle').innerText = actionType + " PASSWORD";
+        document.getElementById('cloudPassInput').value = "";
+        document.getElementById('cloudPassModal').style.display = 'flex';
+        document.getElementById('cloudPassInput').focus();
+    }
+
+    function closeCloudModal() {
+        document.getElementById('cloudPassModal').style.display = 'none';
+        document.getElementById('cloudPassInput').value = "";
+    }
+
+    async function verifyCloudAction() {
+        const pin = document.getElementById('cloudPassInput').value;
+        if (pin === appPins.cloudPin || pin === MASTER_PHONE_PIN) {
+            closeCloudModal();
+            if (pendingCloudAction === 'BACKUP') {
+                await executeCloudBackup();
+            } else if (pendingCloudAction === 'RESTORE') {
+                await executeCloudRestore();
+            }
+        } else {
+            alert(" Wrong Password ");
+        }
+    }
+
+    async function executeCloudBackup() {
+        try {
+            const payload = {
+                shared_master_v19: db,
+                master_advance_v1: db_advance,
+                master_trash_v1: trash,
+                lastSync: new Date().toISOString()
+            };
+            await window.fbPushData(currentUser.phone, payload);
+            alert("✅ BACKUP SUCSES DUN !");
+        } catch(e) {
+            alert("❌  BACKUP FAIL: " + e.message);
+        }
+    }
+
+    async function executeCloudRestore() {
+        try {
+            const remoteData = await window.fbFetchData(currentUser.phone);
+            if (remoteData) {
+                db = remoteData.shared_master_v19 || [];
+                db_advance = remoteData.master_advance_v1 || [];
+                trash = remoteData.master_trash_v1 || [];
+                localStorage.setItem('shared_master_v19', JSON.stringify(db));
+                localStorage.setItem('master_advance_v1', JSON.stringify(db_advance));
+                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                renderData();
+                alert("✅ Restore sucsesfully!");
+            } else {
+                alert("सर्वर पर कोई बैकअप नहीं मिला!");
+            }
+        } catch(e) {
+            alert("❌ restore fail: "+ e.message);
+        }
+    }
+
+    // --- Reset App Functionality ---
+    function promptResetApp() {
+        const savedResetPin = localStorage.getItem('master_reset_auth_pin');
+        const modal = document.getElementById('resetAppModal');
+        const title = document.getElementById('resetModalTitle');
+        const inp = document.getElementById('resetPassInput');
+        
+        inp.value = "";
+        if (!savedResetPin) {
+            title.innerText = "SET NEW RESET PIN";
+            inp.placeholder = "नया पिन बनाएँ";
+        } else {
+            title.innerText = "ENTER RESET PIN";
+            inp.placeholder = "पिन डालें";
+        }
+        modal.style.display = 'flex';
+        inp.focus();
+    }
+
+    function closeResetModal() {
+        document.getElementById('resetAppModal').style.display = 'none';
+        document.getElementById('resetPassInput').value = "";
+    }
+
+    function handleResetSubmit() {
+        const entered = document.getElementById('resetPassInput').value.trim();
+        const savedResetPin = localStorage.getItem('master_reset_auth_pin');
+
+        if (!entered) { alert("पिन दर्ज करें!"); return; }
+
+        if (!savedResetPin) {
+            localStorage.setItem('master_reset_auth_pin', entered);
+            alert("✅ रिसेट पिन सेट हो गया: " + entered);
+            closeResetModal();
+        } else {
+            if (entered === savedResetPin || entered === MASTER_PHONE_PIN) {
+                if (confirm("⚠️ क्या आप वाकई ऐप रीसेट करना चाहते हैं?\nसभी एंट्रियां साफ़ हो जाएँगी और ऐप खाली हो जाएगा!")) {
+                    db = [];
+                    db_advance = [];
+                    trash = [];
+                    localStorage.removeItem('shared_master_v19');
+                    localStorage.removeItem('master_advance_v1');
+                    localStorage.removeItem('master_trash_v1');
+                    localStorage.removeItem('master_active_user');
+                    currentUser = null;
+                    
+                    closeResetModal();
+                    toggleSettingsMenu(true);
+                    applyUserSession();
+                    renderData();
+                    alert("✅ ऐप सफलतापूर्वक रीसेट हो गया है!");
+                }
+            } else {
+                alert("❌ गलत रिसेट पिन!");
+            }
+        }
+    }
+
+    function submitEntry(forceNew) {
+        let idxVal = document.getElementById('editIndex').value;
+        let idx = Number(idxVal); 
+        if (forceNew) idx = -1;
+        let pr = Number(document.getElementById('f_pr').value) || 0;
+        let am = Number(document.getElementById('f_am').value) || 0;
+        let bDate = document.getElementById('f9').value;
+        let finalK = bDate;
+        let finalRec = am;
+        if (bDate && bDate.trim() !== "") {
+            let actualBalance = pr - am;
+            if (actualBalance > 0) {
+                finalK = `${bDate} (${actualBalance})`; 
+                finalRec = pr; 
+            }
+        }
+        let entry = { 
+            a: document.getElementById('f1').value, 
+            b: document.getElementById('f2').value, 
+            c: document.getElementById('f3').value, 
+            d: document.getElementById('f4').value, 
+            e: document.getElementById('f5').value, 
+            f: document.getElementById('f6').value, 
+            g: pr.toString(), 
+            h: document.getElementById('f7').value, 
+            i: document.getElementById('f8').value, 
+            j: finalRec.toString(),
+            k: finalK,
+            payAmt: document.getElementById('f_pay_amt').value,
+            payDate: document.getElementById('f_pay_date').value
+        };
+        if (idx === -1) { db.push(entry); } else { db[idx] = entry; }
+        localStorage.setItem('shared_master_v19', JSON.stringify(db)); 
+        toggleForm(); 
+        renderData();
+    }
+
+    function submitAdvanceEntry() {
+        let idxVal = document.getElementById('advEditIndex').value;
+        let idx = Number(idxVal);
+        const entry = {
+            name: document.getElementById('adv_f1').value,
+            date: document.getElementById('adv_f2').value,
+            amount: document.getElementById('adv_f3').value,
+            type: document.getElementById('adv_f4').value,
+            reason: document.getElementById('adv_f5').value
+        };
+        if (!entry.name || !entry.amount) { alert("Enter Name and Amount!"); return; }
+        if (idx === -1) { db_advance.push(entry); } else { db_advance[idx] = entry; }
+        localStorage.setItem('master_advance_v1', JSON.stringify(db_advance));
+        toggleAdvanceForm();
+        renderAdvanceData(); 
+    }
+
+    function handleInsideDelete() {
+        let idx = Number(document.getElementById('editIndex').value);
+        if (idx >= 0) {
+            deleteIdx = idx;
+            document.getElementById('delTitle').innerText = "DELETE SRL: " + (idx + 1);
+            document.getElementById('deleteModal').style.display = 'flex';
+            document.getElementById('delPassInput').value = "";
+            document.getElementById('delPassInput').focus();
+        }
+    }
+
+    function confirmDeletion() { 
+        const entered = document.getElementById('delPassInput').value;
+        if(entered === appPins.delPin || entered === MASTER_PHONE_PIN) { 
+            if (isPermanentDelete) {
+                trash.splice(deleteIdx, 1);
+                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                alert("Permanently Deleted!");
+            } else {
+                let entryToSave = { actualData: db[deleteIdx], oldPos: deleteIdx };
+                trash.unshift(entryToSave); 
+                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                db.splice(deleteIdx, 1); 
+                localStorage.setItem('shared_master_v19', JSON.stringify(db)); 
+                alert("Moved to Recycle Bin!");
+            }
+            isPermanentDelete = false; 
+            toggleForm();
+            renderData(); 
+            closeDelModal();
+        } else { alert("Wrong PIN!"); }
+    }
+
+    function showTrashList() {
+        const modal = document.getElementById('trashModal');
+        const list = document.getElementById('trash-list-content');
+        list.innerHTML = "";
+        if (trash.length === 0) { alert("Trash is Empty!"); return; }
+        modal.style.display = 'flex';
+        trash.forEach((item, index) => {
+            const displayData = item.actualData ? item.actualData : item;
+            const div = document.createElement('div');
+            div.style = "background:#222; padding:10px; margin-bottom:6px; border-radius:10px; border-left:4px solid #ff4757; color:white; cursor:pointer;";
+            div.innerHTML = `<b>${displayData.e || 'BANK'}</b> - ${displayData.c || 'HOLDER'} <br><small style="color:yellow;">Pos: ${item.oldPos !== undefined ? item.oldPos + 1 : 'New'}</small>`;
+            
+            let pressTimer;
+            const startPress = () => {
+                pressTimer = setTimeout(() => {
+                    deleteIdx = index;
+                    isPermanentDelete = true;
+                    document.getElementById('delTitle').innerText = "PERMANENT DELETE";
+                    modal.style.display = 'none';
+                    document.getElementById('deleteModal').style.display = 'flex';
+                    document.getElementById('delPassInput').value = "";
+                    document.getElementById('delPassInput').focus();
+                }, 700);
+            };
+            const cancelPress = () => clearTimeout(pressTimer);
+
+            div.onmousedown = startPress;
+            div.onmouseup = cancelPress;
+            div.ontouchstart = startPress;
+            div.ontouchend = cancelPress;
+
+            div.onclick = () => {
+                if(confirm("Restore to original position?")) {
+                    if (item.oldPos !== undefined) {
+                        db.splice(item.oldPos, 0, item.actualData);
+                    } else {
+                        db.unshift(displayData);
+                    }
+                    trash.splice(index, 1);
+                    localStorage.setItem('shared_master_v19', JSON.stringify(db));
+                    localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+                    renderData();
+                    showTrashList();
+                    if(trash.length === 0) modal.style.display='none';
+                }
+            };
+            list.appendChild(div);
+        });
+    }
+
+    function confirmAdvanceDeletion() { 
+        const entered = document.getElementById('advDelPassInput').value;
+        if(entered === appPins.delPin || entered === MASTER_PHONE_PIN) { 
+            db_advance.splice(advDeleteIdx, 1); 
+            localStorage.setItem('master_advance_v1', JSON.stringify(db_advance)); 
+            renderAdvanceData(); 
+            closeAdvDelModal(); 
+        } else {
+            alert("Wrong PIN!");
+        }
+    }
+
+    function toggleCellSecret(cell, uniqueId, rawContent, defaultLockStructure) {
+        if (activeTimers[uniqueId]) clearTimeout(activeTimers[uniqueId]);
+
+        if (cell.getAttribute('data-hidden') === 'true') {
+            cell.setAttribute('data-hidden', 'false');
+            cell.innerHTML = rawContent;
+            activeTimers[uniqueId] = setTimeout(() => {
+                cell.setAttribute('data-hidden', 'true');
+                cell.innerHTML = defaultLockStructure;
+                delete activeTimers[uniqueId];
+            }, 1000);
+        } else {
+            cell.setAttribute('data-hidden', 'true');
+            cell.innerHTML = defaultLockStructure;
+        }
+    }
+
+    function renderData() {
+        if (currentMode === 'advance') { renderAdvanceData(); return; }
+        const tbody = document.getElementById('table-body');
+        const search = document.getElementById('searchInp').value.toLowerCase().trim();
+        tbody.innerHTML = '';
+        
+        let tCount=0, tPass=0, tPend=0, tPrice=0, tRec=0, tTotalBal=0;
+
+        db.forEach((item, i) => {
+            let price = Number(item.g) || 0;
+            let rec = Number(item.j) || 0;
+            let bal = price - rec;
+            let status = "PENDING", rowClass = "row-gray";
+            
+            if (item.h && !item.i) { rowClass = "row-pass"; status = "PASSED"; }
+            if (item.i && rec === 0) { rowClass = "row-receive"; status = "RECEIVE"; }
+            if (rec > 0 && rec < price) { rowClass = "row-part"; status = "PART PAYMENT"; }
+            if (item.k || (rec >= price && price > 0)) { rowClass = "row-full"; status = "FULL RECEIVE"; rec = price; bal = 0; }
+
+            if (currentFilter !== 'ALL') {
+                if (currentFilter === 'BALANCE' && (bal <= 0 || !item.h)) return; 
+                if (currentFilter !== 'BALANCE' && status !== currentFilter) return; 
+            }
+            if (search && !Object.values(item).join(' ').toLowerCase().includes(search)) return;
+
+            let advText = "";
+            let tdClass = "";
+            let displayBal = (item.h && bal > 0) ? bal : ""; 
+            let srlNumber = (i + 1).toString();
+
+            let matchedAdv = db_advance.find(adv => adv.reason && adv.reason.trim() === srlNumber);
+            if (matchedAdv) {
+                let adjustAmount = Number(matchedAdv.amount);
+                advText = `<br><span style="font-size:8px; color:white; background:#2217d5; padding:1px 2px; border-radius:10px; font-weight:bold;">Adv: ${adjustAmount}</span>`;
+                tdClass = "balance-red"; 
+            } else if (item.h && bal > 0) {
+                tdClass = "balance-red";
+            }
+
+            let payVal = Number(item.payAmt) || 0;
+            let profVal = price - payVal;
+            let paymentHTML = payVal > 0 ? `${payVal}<br><span style="color:red; font-size:10px;">${item.payDate || ''}</span>` : '';
+            let profitHTML = `${profVal}`;
+
+            const row = document.createElement('tr');
+            row.className = rowClass;
+            row.innerHTML = `
+                <td>${i+1}</td>
+                <td>${item.a||''}</td>
+                <td>${item.b||''}</td>
+                <td>${item.c||''}</td>
+                <td>${item.d||''}</td>
+                <td>${item.e||''}</td>
+                <td>${item.f||''}</td>
+                <td>${price}</td>
+                <td>${item.h||''}</td>
+                <td>${item.i||''}</td>
+                <td>${rec}</td>
+                <td>${status}</td>
+                <td class="${tdClass}">${displayBal} ${advText}</td>
+                <td>${item.k||''}</td>
+            `;
+
+            const tdPayment = document.createElement('td');
+            tdPayment.className = "secure-cell";
+            if (payVal > 0) {
+                tdPayment.setAttribute('data-hidden', 'true');
+                let hasDateClass = (item.payDate && item.payDate.trim() !== "") ? "has-date" : "";
+                let dateTextHTML = (item.payDate && item.payDate.trim() !== "") ? `<span class="lock-date">${item.payDate}</span>` : "";
+                let defaultLock = `<div class="lock-wrapper"><span class="lock-icon ${hasDateClass}">🔒</span>${dateTextHTML}</div>`;
+                tdPayment.innerHTML = defaultLock;
+                tdPayment.onclick = (e) => { e.stopPropagation(); toggleCellSecret(tdPayment, `pay-${i}`, paymentHTML, defaultLock); };
+            }
+
+            const tdProf = document.createElement('td');
+            tdProf.style.background = "#f1c40f"; tdProf.style.color = "#000"; tdProf.className = "secure-cell";
+            if (profVal !== 0) {
+                tdProf.setAttribute('data-hidden', 'true');
+                let defaultLock = `<div class="lock-wrapper"><span class="lock-icon">🔒</span></div>`;
+                tdProf.innerHTML = defaultLock;
+                tdProf.onclick = (e) => { e.stopPropagation(); toggleCellSecret(tdProf, `prof-${i}`, profitHTML, defaultLock); };
+            } else { tdProf.innerHTML = "0"; }
+
+            row.appendChild(tdPayment);
+            row.appendChild(tdProf);
+
+            row.addEventListener('click', (e) => {
+                if (!e.target.closest('.secure-cell')) {
+                    if(currentMode === 'sahil') editRow(i);
+                }
+            });
+
+            tbody.appendChild(row);
+            tCount++; 
+            if(status !== "PENDING") tPass++; else tPend++; 
+            tPrice += price; tRec += rec; 
+            if (item.h && bal > 0) tTotalBal += bal;
+        });
+
+        document.getElementById('stat-count').innerText = tCount; 
+        document.getElementById('stat-pass').innerText = tPass; 
+        document.getElementById('stat-pend').innerText = tPend; 
+        document.getElementById('stat-price').innerText = tPrice; 
+        document.getElementById('stat-rec').innerText = tRec; 
+        document.getElementById('stat-bal').innerText = tTotalBal;
+    }
+
+    function renderAdvanceData() {
+        const tbody = document.getElementById('advance-table-body');
+        const search = document.getElementById('searchInp').value.toLowerCase().trim();
+        tbody.innerHTML = '';
+        let tRec = 0, tGive = 0;
+        db_advance.forEach((item, i) => {
+            if (currentAdvFilter !== 'ALL' && item.type !== currentAdvFilter) return;
+            if (search && !Object.values(item).join(' ').toLowerCase().includes(search)) return;
+            let amt = Number(item.amount) || 0;
+            if(item.type === 'RECEIVED') tRec += amt; else tGive += amt;
+            const row = document.createElement('tr');
+            row.onclick = () => { editAdvanceRow(i); };
+            row.oncontextmenu = (e) => { 
+                e.preventDefault(); 
+                advDeleteIdx = i; 
+                document.getElementById('advDelTitle').innerText = "DELETE SRL: " + (i + 1);
+                document.getElementById('advanceDeleteModal').style.display='flex';
+            };
+            row.innerHTML = `<td>${i+1}</td><td>${item.name}</td><td>${item.date}</td><td>${item.amount}</td><td style="color:${item.type === 'RECEIVED' ? 'green' : 'red'}; font-weight:bold;">${item.type}</td><td>${item.reason}</td>`;
+            tbody.appendChild(row);
+        });
+        document.getElementById('adv-stat-rec').innerText = tRec;
+        document.getElementById('adv-stat-give').innerText = tGive;
+        document.getElementById('adv-stat-diff').innerText = tRec - tGive;
+    }
+
+    function toggleForm() {
+        const area = document.getElementById('entryArea');
+        if (area.style.display === 'block') {
+            area.style.display = 'none';
+            document.getElementById('editIndex').value = "-1";
+            document.querySelectorAll('#entryArea input').forEach(i => i.value = "");
+            setInputsLock(false); 
+            document.getElementById('unlockWrapper').style.display = 'none';
+            document.getElementById('mainSaveBtn').style.display = 'block';
+            document.getElementById('updateBtn').style.display = 'none';
+            document.getElementById('saveAsNewBtn').style.display = 'none';
+            document.getElementById('delEntryBtn').style.display = 'none';
+            document.getElementById('newCancelBtn').style.display = 'block';
+        } else { 
+            area.style.display = 'block'; 
+            document.getElementById('editIndex').value = "-1";
+            setInputsLock(false);
+            document.getElementById('unlockWrapper').style.display = 'none';
+            document.getElementById('mainSaveBtn').style.display = 'block';
+            document.getElementById('updateBtn').style.display = 'none';
+            document.getElementById('saveAsNewBtn').style.display = 'none';
+            document.getElementById('delEntryBtn').style.display = 'none';
+        }
+    }
+
+    function setInputsLock(isLocked) {
+        const inputs = document.querySelectorAll('#entryArea input:not([type="hidden"])');
+        inputs.forEach(inp => { if(inp.id !== 'f_bal_ui') inp.disabled = isLocked; });
+    }
+
+    function editRow(i) {
+        let item = db[i];
+        document.getElementById('editIndex').value = i;
+        document.getElementById('f1').value = item.a; document.getElementById('f2').value = item.b; 
+        document.getElementById('f3').value = item.c; document.getElementById('f4').value = item.d; 
+        document.getElementById('f5').value = item.e; document.getElementById('f6').value = item.f; 
+        document.getElementById('f_pr').value = item.g; document.getElementById('f7').value = item.h; 
+        document.getElementById('f8').value = item.i; document.getElementById('f_am').value = item.j;
+        document.getElementById('f9').value = item.k ? item.k.split(' (')[0] : "";
+        document.getElementById('f_pay_amt').value = item.payAmt || "";
+        document.getElementById('f_pay_date').value = item.payDate || "";
+
+        document.getElementById('entryArea').style.display = 'block';
+        document.getElementById('mainSaveBtn').style.display = 'none'; 
+        document.getElementById('newCancelBtn').style.display = 'none'; 
+        document.getElementById('delEntryBtn').style.display = 'none';
+        document.getElementById('unlockWrapper').style.display = 'flex';
+        setInputsLock(true);
+        calcBal();
+    }
+
+    function editAdvanceRow(i) {
+        let item = db_advance[i];
+        document.getElementById('advEditIndex').value = i;
+        document.getElementById('adv_f1').value = item.name; 
+        document.getElementById('adv_f2').value = item.date; 
+        document.getElementById('adv_f3').value = item.amount; 
+        document.getElementById('adv_f4').value = item.type; 
+        document.getElementById('adv_f5').value = item.reason;
+        document.getElementById('advanceEntryArea').style.display = 'block';
+    }
+
+    function switchTab(mode) { 
+        currentMode = mode; 
+        const header = document.getElementById('header-title');
+        const mainTable = document.getElementById('mainTableScroll');
+        const advTable = document.getElementById('advanceTableScroll');
+        const summary = document.getElementById('sahilArmanSummary');
+        const advSummary = document.getElementById('advanceSummary'); 
+        const adminControls = document.getElementById('adminControls');
+        document.getElementById('tab-sahil').className = "tab-btn " + (mode === 'sahil' ? "active-sahil" : ""); 
+        document.getElementById('tab-arman').className = "tab-btn " + (mode === 'arman' ? "active-arman" : ""); 
+        document.getElementById('tab-advance').className = "tab-btn " + (mode === 'advance' ? "active-advance" : ""); 
+        adminControls.style.display = (mode === 'sahil' ? 'block' : 'none');
+        if (mode === 'advance') {
+            header.className = "main-header advance-theme";
+            header.innerHTML = "<span>ADVANCE LEDGER</span>";
+            header.onclick = () => { toggleAdvanceForm(); };
+            mainTable.style.display = 'none';
+            advTable.style.display = 'block';
+            summary.style.display = 'none';
+            advSummary.style.display = 'flex'; 
+            document.querySelector('.container').style.background = "#f99bf8ab"; 
+            renderAdvanceData();
+        } else {
+            header.className = "main-header " + (mode === 'sahil' ? "sahil-theme" : "arman-theme"); 
+            header.innerHTML = "<span>" + mode.toUpperCase() + " ACCOUNT</span>"; 
+            header.onclick = () => { captureReport(); };
+            mainTable.style.display = 'block';
+            advTable.style.display = 'none';
+            summary.style.display = 'grid';
+            advSummary.style.display = 'none'; 
+            document.querySelector('.container').style.background = (mode === 'arman' ? "#b2fab4" : "#43a5ee"); 
+            renderData(); 
+        }
+    }
+
+    function smartDate(input) {
+        let v = input.value.trim().toLowerCase(); if (!v) return;
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let day, month, year;
+        let numOnly = v.replace(/\D/g, '');
+        if (numOnly.length === 6) { day = numOnly.substring(0, 2); month = monthNames[parseInt(numOnly.substring(2, 4)) - 1] || "Jan"; year = "20" + numOnly.substring(4, 6); }
+        else { let parts = v.split(/[\s-]+/); if (parts.length >= 2) { day = parts[0].padStart(2, '0'); let mVal = parts[1].substring(0, 3); month = mVal.charAt(0).toUpperCase() + mVal.slice(1); year = (parts[2] && parts[2].length === 2) ? "20" + parts[2] : (parts[2] || "2026"); } }
+        if (day && month && year) { let finalDate = `${day}-${month}-${year}`; input.value = finalDate; }
+    }
+
+    function calcBal() { let pr = Number(document.getElementById('f_pr').value) || 0; let am = Number(document.getElementById('f_am').value) || 0; document.getElementById('f_bal_ui').value = pr - am; }
+    function askUnlock() { document.getElementById('unlockModal').style.display = 'flex'; document.getElementById('unlockPassInput').focus(); }
+    function closeUnlockModal() { document.getElementById('unlockModal').style.display = 'none'; document.getElementById('unlockPassInput').value = ""; }
+    
+    function verifyUnlock() { 
+        const entered = document.getElementById('unlockPassInput').value;
+        if (entered === appPins.editPin || entered === MASTER_PHONE_PIN) { 
+            setInputsLock(false); 
+            document.getElementById('unlockWrapper').style.setProperty('display', 'none', 'important'); 
+            document.getElementById('mainSaveBtn').style.display = 'none';
+            document.getElementById('updateBtn').style.display = 'block'; 
+            document.getElementById('saveAsNewBtn').style.display = 'block'; 
+            document.getElementById('delEntryBtn').style.display = 'block'; 
+            document.getElementById('newCancelBtn').style.display = 'block'; 
+            closeUnlockModal(); 
+        } else { alert("Incorrect PIN!"); } 
+    }
+
+    function toggleAdvanceForm() {
+        const area = document.getElementById('advanceEntryArea');
+        if (area.style.display === 'block') {
+            area.style.display = 'none';
+            document.getElementById('advEditIndex').value = "-1"; 
+            document.querySelectorAll('#advanceEntryArea input').forEach(i => i.value = "");
+        } else {
+            area.style.display = 'block';
+            document.getElementById('advEditIndex').value = "-1";
+        }
+    }
+
+    function filterAdvance(status) { currentAdvFilter = status; renderAdvanceData(); }
+    function filterByStatus(status) { currentFilter = status; renderData(); }
+    function clearSearch() { document.getElementById('searchInp').value = ""; renderData(); }
+    function closeDelModal() { document.getElementById('deleteModal').style.display = 'none'; document.getElementById('delPassInput').value = ""; isPermanentDelete = false; }
+    function closeAdvDelModal() { document.getElementById('advanceDeleteModal').style.display = 'none'; document.getElementById('advDelPassInput').value = ""; }
+
+    function captureReport() {
+        const table = currentMode === 'advance' ? document.getElementById("advanceTable") : document.getElementById("mainTable");
+        const scrollDiv = currentMode === 'advance' ? document.getElementById('advanceTableScroll') : document.getElementById('mainTableScroll');
+        const oldH = scrollDiv.style.height;
+        scrollDiv.style.height = "auto";
+        html2canvas(table, { backgroundColor: "#ffffff", scale: 2, logging: false, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = currentMode.toUpperCase() + '_REPORT.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            scrollDiv.style.height = oldH;
+            renderData(); 
+            alert(currentMode.toUpperCase() + " Report Saved!");
+        });
+    }
+
+    function toggleSettingsMenu(forceClose = false) {
+        const panel = document.getElementById('settingsPanel');
+        if (forceClose) { panel.style.display = 'none'; return; }
+        panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+    }
+
+    window.onload = function() {
+        applyUserSession();
+        switchTab('sahil');
+    };
+</script>
+
+</body>
 </html>
