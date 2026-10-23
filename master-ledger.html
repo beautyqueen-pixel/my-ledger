@@ -18,12 +18,10 @@
 
         html, body {
             width: 100%;
-            min-height: 100%;
+            height: 100%;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
-            overflow-y: auto !important;
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden !important;
             font-family: 'Segoe UI', sans-serif;
             background: #000;
             font-size: 10px;
@@ -31,11 +29,12 @@
 
         #appWrapper {
             width: 100%;
-            min-height: 100%;
+            height: 100%;
             box-sizing: border-box;
             padding: 2px;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
         
         /* 3-Tap App Lock Screen */
@@ -130,6 +129,7 @@
         .top-action-bar {
             display: flex; gap: 6px; align-items: center; justify-content: space-between;
             padding: 6px; background: #0077ff; border-radius: 18px; border: 2px solid #00d4ff; margin: 3px 0;
+            flex-shrink: 0;
         }
         .btn-new-entry-top {
             flex: 6; height: 38px;
@@ -180,6 +180,7 @@
         .search-area-box {
             display: flex; gap: 4px; align-items: center; background: #0077ff;
             padding: 5px; border-radius: 16px; border: 2px solid #00d4ff; margin: 3px 0;
+            flex-shrink: 0;
         }
         #searchInp {
             flex: 1; padding: 6px 12px; border: 2px solid #fff; border-radius: 14px;
@@ -200,12 +201,22 @@
             font-size: 11px; font-weight: 900;
         }
 
-        /* Table */
+        /* Table - नीचे तक पूरा विस्तार और सही स्क्रॉल */
         .table-scroll { 
-            overflow-x: auto !important; overflow-y: scroll !important; 
-            height: 52vh; margin-top: 3px; background: #ffffff; border-radius: 8px; 
-            border: 2px solid #0077ff; overscroll-behavior-y: contain !important;
+            overflow-x: auto !important; 
+            overflow-y: auto !important; 
+            -webkit-overflow-scrolling: touch !important;
+            flex: 1 1 auto;
+            height: 100%;
+            min-height: 0;
+            margin-top: 3px; 
+            margin-bottom: 0px !important;
+            background: #ffffff; 
+            border-radius: 8px; 
+            border: 2px solid #0077ff; 
+            overscroll-behavior-y: contain !important;
         }
+
         table { width: 100%; border-collapse: collapse; min-width: 900px; background: #fff; }
         th, td { 
             border: 1px solid #aaa; text-align: center; padding: 3px 4px; height: 18px; 
@@ -249,7 +260,7 @@
             background: #000; color: #00ff66; text-align: center; font-size: 13px; font-weight: 900; outline: none; 
         }
 
-        #entryArea, #advanceEntryArea { background: #001f3f; padding: 8px; display: none; border-radius: 14px; border: 2px solid #00f0ff; margin-bottom: 4px; }
+        #entryArea, #advanceEntryArea { background: #001f3f; padding: 8px; display: none; border-radius: 14px; border: 2px solid #00f0ff; margin-bottom: 4px; flex-shrink: 0; }
         .entry-form { max-width: 400px; margin: auto; border: 1.5px solid #00f0ff; padding: 8px; border-radius: 10px; transition: background 0.3s; }
         .form-row { display: flex; margin-bottom: 4px; align-items: center; justify-content: space-between; }
         .form-row label { width: 120px; font-weight: 900; font-size: 11px; color: #000; text-transform: uppercase; }
@@ -551,12 +562,12 @@
         </div>
     </div>
 
-    <!-- Main Table -->
+    <!-- Main Table (स्क्रीन के निचले हिस्से तक पूरा विस्तार) -->
     <div class="table-scroll" id="mainTableScroll">
         <table id="mainTable">
             <thead>
                 <tr>
-                    <th>Srl.</th><th>REC DATE</th><th>AGENT</th><th>HOLDER</th><th>COUNT</th><th>BANK</th><th>TYPE</th><th>PRICE</th><th>PAS DATE</th><th>REC.DATE</th><th>REC.AMO</th><th>STATUS</th><th>BALANCE</th><th>BAL.REC.DATE</th><th>PAYMENT</th><th>PROF</th>
+                    <th>Srl.</th><th>REC DATE</th><th>AGENT</th><th>HOLDER</th><th>COUNT</th><th>BANK</th><th>TYPE</th><th>PRICE</th><th>PASS DATE</th><th>REC.DATE</th><th>REC.AMO</th><th>STATUS</th><th>BALANCE</th><th>BAL.REC.DATE</th><th>PAYMENT</th><th>PROF</th>
                 </tr>
             </thead>
             <tbody id="table-body"></tbody>
@@ -594,7 +605,7 @@
 <!-- Firebase Module Script -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB45x0FGJjxiFWPUCACSeMGDNnxfMU1SJ0",
@@ -761,7 +772,7 @@
         document.getElementById('settingsPanel').style.display = 'none';
     }
 
-    // Modal Gate Handlers (कस्टम पासवर्ड इनपुट मॉडल)
+    // Modal Gate Handlers
     function openActionGate(title, actionType) {
         currentActionType = actionType;
         document.getElementById('actionGateTitle').innerText = title;
@@ -770,7 +781,7 @@
         document.getElementById('actionGateInput').focus();
     }
 
-        function closeActionGate() {
+    function closeActionGate() {
         document.getElementById('actionGateModal').style.display = 'none';
         document.getElementById('actionGateInput').value = "";
         if (currentActionType === 'VERIFY_EDIT_PROFILE') {
@@ -780,7 +791,6 @@
         }
         currentActionType = '';
     }
-
 
     function submitActionGate() {
         const entered = document.getElementById('actionGateInput').value.trim();
@@ -836,7 +846,6 @@
             }
         }
         else if (currentActionType === 'VERIFY_EDIT_PROFILE') {
-            // इमेज के अनुसार: एडिट प्रोफाइल के लिए कस्टम मॉडल सत्यापन
             if (masterPin && entered === masterPin) {
                 closeActionGate();
                 showProfileEditBoxActual();
@@ -1355,7 +1364,6 @@
             toggleForm();
             renderData(); 
             closeDelModal();
-            // यहाँ से ऑटो-ओवरराइट हटा दिया गया है ताकि आपका क्लाउड बैकअप सुरक्षित रहे
         } else { alert("Wrong PIN!"); }
     }
 
@@ -1749,4 +1757,3 @@
 
 </body>
 </html>
-
