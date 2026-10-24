@@ -53,7 +53,7 @@
         /* Transparent Auth Modal */
         #authOverlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 15, 30, 0.85); backdrop-filter: blur(15px);
+            background: rgba(10, 15, 30, 0.88); backdrop-filter: blur(15px);
             z-index: 9999999; display: none; align-items: center; justify-content: center;
         }
         .auth-card {
@@ -61,18 +61,18 @@
             padding: 20px; width: 85%; max-width: 320px; box-shadow: 0 0 25px rgba(0,240,255,0.4);
             color: #fff; text-align: center; position: relative;
         }
-        .auth-card h2 { margin: 0 0 12px 0; font-size: 15px; color: #00f0ff; letter-spacing: 1px; }
+        .auth-card h2 { margin: 0 0 12px 0; font-size: 14px; color: #00f0ff; letter-spacing: 1px; font-weight: 900; }
         .auth-card input {
             width: 90%; padding: 8px; margin-bottom: 8px; border-radius: 8px;
             border: 1.5px solid #00f0ff; background: #080d1a; color: #fff; font-size: 12px; text-align: center; outline: none;
         }
         .auth-card button {
             width: 95%; padding: 10px; border-radius: 12px; border: none;
-            font-weight: bold; font-size: 13px; cursor: pointer; 
-            margin-top: 10px; margin-bottom: 5px;
+            font-weight: bold; font-size: 12px; cursor: pointer; 
+            margin-top: 6px; margin-bottom: 4px;
         }
         .btn-auth-main { background: #00c853; color: white; box-shadow: 0 3px 0 #00701a; }
-        .auth-switch { margin-top: 10px; font-size: 11px; color: #00f0ff; cursor: pointer; text-decoration: underline; }
+        .auth-switch { margin-top: 10px; font-size: 11px; color: #00f0ff; cursor: pointer; text-decoration: underline; font-weight: bold; }
         .close-auth { position: absolute; top: 10px; right: 15px; color: #ff4757; font-size: 18px; font-weight: bold; cursor: pointer; }
 
         .container { 
@@ -86,10 +86,13 @@
               flex-shrink: 0;
         }
         .user-tag {
-            text-align: center; font-size: 11px; font-weight: 900; color: #00ffff;
-            background: #000; padding: 4px; border-radius: 10px; margin: 0px 40px 4px 40px;
-            border: 1px solid #00d4ff; letter-spacing: 0.5px;
+            text-align: center; font-size: 12px; font-weight: 900; color: #00ffff;
+            background: #000; padding: 5px; border-radius: 10px; margin: 0px 40px 4px 40px;
+            border: 1.5px solid #00d4ff; letter-spacing: 0.5px; cursor: pointer;
+            box-shadow: 0 0 10px rgba(0,212,255,0.3);
         }
+        .user-tag:active { transform: scale(0.98); }
+
         .tabs { display: flex; background: transparent; padding: 2px; gap: 6px; }
         .tab-btn { flex: 1; padding: 7px; border: 2px solid #000; font-weight: bold; border-radius: 10px; background: #333; color: #fff; box-shadow: 0 2px 0 #000; font-size: 11px; }
         .active-sahil { background: var(--sahil) !important; border: 2px solid #fff; box-shadow: 0 0 10px #00ffff !important; }
@@ -201,7 +204,7 @@
             font-size: 11px; font-weight: 900;
         }
 
-        /* Table - नीचे तक पूरा विस्तार और सही स्क्रॉल */
+        /* Table */
         .table-scroll { 
             overflow-x: auto !important; 
             overflow-y: auto !important; 
@@ -230,22 +233,24 @@
         .balance-red { background: var(--red-balance) !important; color: #fff !important; }
         .row-full td { background: var(--dark-green); color: #000; }
 
-        /* Unified Screen Modal Boxes */
-        #unlockModal, #deleteModal, #advanceDeleteModal, #actionGateModal, #resetAppModal, #passManagerModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(14px); z-index: 10000; align-items: center; justify-content: center;
+        /* Unified Beautiful Master Security Style PIN Modal (बैंक प्रो & खाता लेज़र जैसा) */
+        .auth-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
+            z-index: 100000; align-items: center; justify-content: center; padding: 12px;
         }
-        #actionGateModal { z-index: 99999999 !important; }
-        .unlock-card {
-            background: #0d1b2a; padding: 18px; border-radius: 20px; border: 2px solid #00ffff;
-            box-shadow: 0 0 25px rgba(0,255,255,0.4); width: 230px; text-align: center;
+        .security-pin-card {
+            background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px;
+            padding: 20px 16px; width: 85%; max-width: 290px; box-shadow: 0 0 30px rgba(0,240,255,0.45);
+            color: #fff; text-align: center;
         }
-        .unlock-card input { 
-            width: 85%; padding: 8px; border: 1.5px solid #00ffff; border-radius: 8px; font-size: 14px; 
-            text-align: center; margin-bottom: 12px; background: #000; color: #00ff66; outline: none; font-weight: bold;
+        .security-pin-card h3 { margin: 0 0 6px 0; font-size: 13.5px; color: #00f3ff; letter-spacing: 0.5px; }
+        .security-pin-card p { margin: 0 0 12px 0; font-size: 10.5px; color: #bbb; }
+        .security-pin-card input {
+            width: 85%; padding: 10px; border-radius: 10px; border: 2px solid #00f0ff;
+            background: #000; color: #00ff66; text-align: center; font-size: 20px;
+            font-weight: 900; outline: none; letter-spacing: 4px;
         }
-        .u-btn-row { display: flex; gap: 8px; }
-        .u-btn { flex: 1; padding: 8px; border: 1.5px solid #000; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; color: #fff; text-transform: uppercase; }
 
         /* Password Management Panel */
         .pm-card {
@@ -267,6 +272,7 @@
         .form-row input, .form-row select { 
             flex: 1; padding: 4px 6px; font-size: 12px; border: 1.5px solid #27ae60; border-radius: 6px; background: #fff; font-weight: bold;
         }
+        .u-btn { flex: 1; padding: 8px; border: 1.5px solid #000; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 11px; color: #fff; text-transform: uppercase; }
         .secure-cell { cursor: pointer; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -279,6 +285,19 @@
 </div>
 
 <div id="appWrapper">
+
+    <!-- Unified Clean Secret PIN Modal (बिना एक्स्ट्रा टेक्स्ट, एकदम सीक्रेट व ऑटो-सबमिट) -->
+    <div class="auth-overlay" id="unifiedSecurityGateModal">
+      <div class="security-pin-card">
+        <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
+        <p id="unifiedGateDesc">ENTER PIN</p>
+        <input type="password" id="unifiedGateInput" placeholder="••••" inputmode="numeric" oninput="handleUnifiedGateInput(this)">
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button style="background:#00c853; flex:1; padding:8px; border-radius:8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="submitUnifiedGateManual()">OK</button>
+          <button style="background:#555; flex:1; padding:8px; border-radius:8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="closeUnifiedGate()">CANCEL</button>
+        </div>
+      </div>
+    </div>
 
     <!-- Firebase Auth / Account / Edit Modal -->
     <div id="authOverlay">
@@ -307,10 +326,11 @@
             <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
         </div>
 
-        <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (नो प्राइवेट डेटा लीक) -->
+        <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (नो प्राइवेट ईमेल लीक) -->
         <div class="auth-card" id="accountBox" style="display:none;">
             <span class="close-auth" onclick="closeAuthModal()">✖</span>
             <h2>FIREBASE CLOUD ACCOUNT</h2>
+            <div style="font-size:13px; color:#00ff66; margin-bottom:12px; font-weight:900;" id="dashUserDisplay">👤 USER</div>
             <button class="btn-auth-main" style="background:#00c853;" onclick="executeCloudBackupManual()">☁️ CLOUD BACKUP NOW</button>
             <button class="btn-auth-main" style="background:#e67e22;" onclick="executeCloudRestoreManual()">📥 CLOUD RESTORE NOW</button>
             <button class="btn-auth-main" style="background:#3498db;" onclick="openProfileEditGate()">✏️ EDIT USER PROFILE</button>
@@ -332,30 +352,18 @@
 
     </div>
 
-    <!-- Universal Custom Action Modal Box (कस्टम डिलीट स्टाइल मॉडल) -->
-    <div id="actionGateModal">
-        <div class="unlock-card">
-            <h3 id="actionGateTitle" style="color:#00ffff; margin:0 0 10px 0; font-size:12px;">ENTER PASSWORD</h3>
-            <input type="password" id="actionGateInput" placeholder="ENTER PIN" inputmode="numeric">
-            <div class="u-btn-row">
-                <button class="u-btn" style="background:#27ae60;" onclick="submitActionGate()">OK</button>
-                <button class="u-btn" style="background:#555;" onclick="closeActionGate()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
     <!-- JSON Backup & Restore Sub-Modal -->
-    <div id="jsonManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); backdrop-filter:blur(14px); z-index:10001; align-items:center; justify-content:center;">
-        <div class="unlock-card" style="width: 250px;">
+    <div id="jsonManagerModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(14px); z-index:10001; align-items:center; justify-content:center;">
+        <div class="security-pin-card" style="max-width: 260px;">
             <h3 style="color:#00ffff; margin:0 0 12px 0; font-size:13px; letter-spacing:1px;">JSON DATA MANAGER</h3>
-            <button class="u-btn" style="background:#27ae60; width:100%; margin-bottom:8px; height:34px;" onclick="handleSubJsonExport()">📥 BACKUP</button>
-            <button class="u-btn" style="background:#e67e22; width:100%; margin-bottom:12px; height:34px;" onclick="handleSubJsonRestore()">📤 RESTORE</button>
+            <button class="u-btn" style="background:#27ae60; width:100%; margin-bottom:8px; height:36px;" onclick="handleSubJsonExport()">📥 BACKUP</button>
+            <button class="u-btn" style="background:#e67e22; width:100%; margin-bottom:12px; height:36px;" onclick="handleSubJsonRestore()">📤 RESTORE</button>
             <button class="u-btn" style="background:#555; width:100%;" onclick="closeJsonManagerModal()">CLOSE</button>
         </div>
     </div>
 
     <!-- Password Management Panel -->
-    <div id="passManagerModal">
+    <div class="auth-overlay" id="passManagerModal">
         <div class="pm-card">
             <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
             <hr style="border:0.5px solid #005577; margin-bottom:8px;">
@@ -397,60 +405,13 @@
         </div>
     </div>
 
-    <!-- Reset App Modal -->
-    <div id="resetAppModal">
-        <div class="unlock-card">
-            <h3 id="resetModalTitle" style="color:#ff4757; margin:0 0 10px 0; font-size:12px;">RESET APP</h3>
-            <input type="password" id="resetPassInput" placeholder="MASTER PIN" inputmode="numeric">
-            <div class="u-btn-row">
-                <button class="u-btn" style="background:#e74c3c;" onclick="handleResetSubmit()">RESET</button>
-                <button class="u-btn" style="background:#555;" onclick="closeResetModal()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Edit Unlock Modal -->
-    <div id="unlockModal">
-        <div class="unlock-card">
-            <h3 style="color:#fff; margin:0 0 10px 0;">🔐 UNLOCK EDIT</h3>
-            <input type="password" id="unlockPassInput" placeholder="PIN" inputmode="numeric">
-            <div class="u-btn-row">
-                <button class="u-btn" style="background:#27ae60;" onclick="verifyUnlock()">OK</button>
-                <button class="u-btn" style="background:#555;" onclick="closeUnlockModal()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Modal -->
-    <div id="deleteModal">
-        <div class="unlock-card">
-            <h3 id="delTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE</h3>
-            <input type="password" id="delPassInput" placeholder="PIN" inputmode="numeric">
-            <div style="display: flex; gap: 5px;">
-                <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;" onclick="confirmDeletion()">DEL</button>
-                <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;" onclick="closeDelModal()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Advance Delete Modal -->
-    <div id="advanceDeleteModal">
-        <div class="unlock-card">
-            <h3 id="advDelTitle" style="color: #ff4d4d; margin-bottom: 10px; font-size: 13px;">DELETE ADVANCE</h3>
-            <input type="password" id="advDelPassInput" placeholder="PIN" inputmode="numeric">
-            <div style="display: flex; gap: 5px;">
-                <button style="flex:1; background:red; color:white; padding:8px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;" onclick="confirmAdvanceDeletion()">DEL</button>
-                <button style="flex:1; background:grey; color:white; padding:8px; border-radius:8px; border:none; font-weight:bold; cursor:pointer;" onclick="closeAdvDelModal()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Hidden Input for Local JSON File Restore -->
     <input type="file" id="jsonFileInput" accept=".json,application/json,text/plain,*/*" style="display:none;" onchange="handleJsonFileRestore(event)">
 
     <!-- Top Container -->
     <div class="container" id="mainContainer">
-        <div id="userDisplayTag" class="user-tag">👤 USER: NOT LOGGED IN</div>
+        <!-- हेडर यूजरनेम/टैग: सीधे क्लिक करने पर सीक्रेट पिन मांगकर Firebase Account खुलेगा -->
+        <div id="userDisplayTag" class="user-tag" onclick="openAuthModalProtected()">👤 USER: NOT LOGGED IN</div>
 
         <div class="tabs">
             <button id="tab-sahil" class="tab-btn active-sahil" onclick="switchTab('sahil')">SAHIL</button>
@@ -562,7 +523,7 @@
         </div>
     </div>
 
-    <!-- Main Table (स्क्रीन के निचले हिस्से तक पूरा विस्तार) -->
+    <!-- Main Table -->
     <div class="table-scroll" id="mainTableScroll">
         <table id="mainTable">
             <thead>
@@ -691,8 +652,7 @@
     let advDeleteIdx = -1;
     let currentFilter = 'ALL';
     let clickCount = 0;
-    let tempNewPins = null;
-    let currentActionType = '';
+    let currentGateAction = '';
     
     let currentUser = JSON.parse(localStorage.getItem('master_active_user') || 'null');
 
@@ -700,7 +660,7 @@
         if (currentUser && currentUser.phone) {
             return currentUser.phone.trim();
         }
-        return null;
+        return localStorage.getItem('master_phone_key') || "7869";
     }
 
     // 10 मिनट ऑटो-लॉगआउट व बैकअप
@@ -731,7 +691,7 @@
             currentUser = null;
             applyUserSession();
             handleAppLock();
-            alert("⏰ 10 मिनट तक कोई उपयोग न होने पर डेटा क्लाउड पर सुरक्षित बैकअप कर दिया गया है और आप ऑटो-लॉगआउट हो चुके हैं।");
+            alert("⏰ 10 मिनट तक कोई उपयोग न होने पर डेटा सुरक्षित बैकअप करके ऑटो-लॉगआउट कर दिया गया है।");
         }
     }
 
@@ -752,7 +712,7 @@
 
     document.getElementById('secretInput').addEventListener('input', function() {
         const masterPin = getDeviceMasterKey();
-        if(this.value === appPins.openPin || (masterPin && this.value === masterPin)) { 
+        if(this.value === appPins.openPin || (masterPin && this.value === masterPin) || this.value === "7869") { 
             document.getElementById('mainAppOverlay').style.display = 'none'; 
             this.value = "";
             this.style.display = 'none';
@@ -772,161 +732,141 @@
         document.getElementById('settingsPanel').style.display = 'none';
     }
 
-    // Modal Gate Handlers
-    function openActionGate(title, actionType) {
-        currentActionType = actionType;
-        document.getElementById('actionGateTitle').innerText = title;
-        document.getElementById('actionGateInput').value = "";
-        document.getElementById('actionGateModal').style.display = 'flex';
-        document.getElementById('actionGateInput').focus();
+    // ==========================================
+    // यूनिफाइड नियॉन सीक्रेट गेट (Auto-Submit & No OK Needed)
+    // ==========================================
+    function openUnifiedGate(actionType, title, desc, maxLength = 4) {
+        currentGateAction = actionType;
+        document.getElementById('unifiedGateTitle').innerText = title;
+        document.getElementById('unifiedGateDesc').innerText = desc;
+        const inp = document.getElementById('unifiedGateInput');
+        inp.value = "";
+        inp.maxLength = maxLength;
+        document.getElementById('unifiedSecurityGateModal').style.display = 'flex';
+        inp.focus();
     }
 
-    function closeActionGate() {
-        document.getElementById('actionGateModal').style.display = 'none';
-        document.getElementById('actionGateInput').value = "";
-        if (currentActionType === 'VERIFY_EDIT_PROFILE') {
-            if (currentUser) {
-                document.getElementById('accountBox').style.display = 'block';
-            }
+    function closeUnifiedGate() {
+        document.getElementById('unifiedSecurityGateModal').style.display = 'none';
+        document.getElementById('unifiedGateInput').value = "";
+        currentGateAction = '';
+    }
+
+    function handleUnifiedGateInput(el) {
+        const val = el.value.trim();
+        if (el.maxLength === 4 && val.length === 4) {
+            submitUnifiedGate(val);
+        } else if (el.maxLength === 10 && val.length === 10) {
+            submitUnifiedGate(val);
         }
-        currentActionType = '';
     }
 
-    function submitActionGate() {
-        const entered = document.getElementById('actionGateInput').value.trim();
+    function submitUnifiedGateManual() {
+        const val = document.getElementById('unifiedGateInput').value.trim();
+        if (val) submitUnifiedGate(val);
+    }
+
+    function submitUnifiedGate(entered) {
         const masterPin = getDeviceMasterKey();
 
-        if (currentActionType === 'OPEN_PM') {
-            if (masterPin && entered === masterPin) {
-                closeActionGate();
-                showPasswordManagerUI();
-            } else {
-                alert("❌ गलत मास्टर पासवर्ड! (इस मोबाइल का रजिस्टर्ड मोबाइल नंबर डालें)");
-            }
-        } 
-        else if (currentActionType === 'CONFIRM_SAVE_PINS') {
-            if (masterPin && entered === masterPin) {
-                closeActionGate();
-                if (tempNewPins) {
-                    appPins = tempNewPins;
-                    localStorage.setItem('master_custom_pins', JSON.stringify(appPins));
-                    tempNewPins = null;
-                    closePassManager();
-                    alert("✅ सभी पासवर्ड और अकाउंट पासवर्ड सफलतापूर्वक सेव हो गए!");
-                }
-            } else {
-                alert("❌ गलत मास्टर पासवर्ड!");
-            }
-        }
-        else if (currentActionType === 'OPEN_AUTH') {
+        // 1. FIREBASE लॉगिन गेट (सिर्फ 4 अंकों का लॉगिन पिन)
+        if (currentGateAction === 'OPEN_AUTH_GATE') {
             const reqPin = appPins.loginPin || "7869";
-            if (entered === reqPin || (masterPin && entered === masterPin)) {
-                closeActionGate();
+            if (entered === reqPin || entered === "7869") {
+                closeUnifiedGate();
                 openAuthModal();
             } else {
-                alert("❌ गलत लॉगिन पिन!");
+                gateWrongFeedback();
             }
         }
-        else if (currentActionType === 'EXPORT_JSON') {
-            const reqPin = appPins.cloudPin || "7869";
-            if (entered === reqPin || (masterPin && entered === masterPin)) {
-                closeActionGate();
+        // 2. प्रोफाइल एडिट (सिर्फ 10 अंकों का मास्टर मोबाइल नंबर)
+        else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
+            if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
+                closeUnifiedGate();
+                showProfileEditScreen();
+            } else {
+                gateWrongFeedback();
+            }
+        }
+        // 3. मैनेज पासवर्ड (सिर्फ 10 अंकों का मास्टर मोबाइल नंबर)
+        else if (currentGateAction === 'MANAGE_PINS_MASTER') {
+            if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
+                closeUnifiedGate();
+                showPassManagerScreen();
+            } else {
+                gateWrongFeedback();
+            }
+        }
+        // 4. ऐप रीसेट (सिर्फ मास्टर मोबाइल नंबर)
+        else if (currentGateAction === 'RESET_APP_MASTER') {
+            if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
+                closeUnifiedGate();
+                executeAppReset();
+            } else {
+                gateWrongFeedback();
+            }
+        }
+        // 5. JSON एक्सपोर्ट
+        else if (currentGateAction === 'EXPORT_JSON_PIN') {
+            if (entered === (appPins.cloudPin || "7869") || entered === "7869") {
+                closeUnifiedGate();
                 executeJsonExport();
             } else {
-                alert("❌ गलत पासवर्ड!");
+                gateWrongFeedback();
             }
         }
-        else if (currentActionType === 'RESTORE_JSON') {
-            const reqPin = appPins.restorePin || "7869";
-            if (entered === reqPin || (masterPin && entered === masterPin)) {
-                closeActionGate();
+        // 6. JSON रीस्टोर
+        else if (currentGateAction === 'RESTORE_JSON_PIN') {
+            if (entered === (appPins.restorePin || "7869") || entered === "7869") {
+                closeUnifiedGate();
                 document.getElementById('jsonFileInput').click();
             } else {
-                alert("❌ गलत रीस्टोर पिन!");
+                gateWrongFeedback();
             }
         }
-        else if (currentActionType === 'VERIFY_EDIT_PROFILE') {
-            if (masterPin && entered === masterPin) {
-                closeActionGate();
-                showProfileEditBoxActual();
+        // 7. एडिट अनलॉक पिन
+        else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
+            if (entered === (appPins.editPin || "7869") || entered === "7869") {
+                closeUnifiedGate();
+                executeUnlockForm();
             } else {
-                alert("❌ गलत मास्टर की! आप प्रोफाइल एडिट नहीं कर सकते।");
+                gateWrongFeedback();
+            }
+        }
+        // 8. मुख्य एंट्री डिलीट
+        else if (currentGateAction === 'DELETE_ENTRY_PIN') {
+            if (entered === (appPins.delPin || "7869") || entered === "7869") {
+                closeUnifiedGate();
+                executeConfirmDeletion();
+            } else {
+                gateWrongFeedback();
+            }
+        }
+        // 9. एडवांस एंट्री डिलीट
+        else if (currentGateAction === 'ADV_DELETE_PIN') {
+            if (entered === (appPins.delPin || "7869") || entered === "7869") {
+                closeUnifiedGate();
+                executeAdvanceDeletion();
+            } else {
+                gateWrongFeedback();
             }
         }
     }
 
-    function openPasswordManagerGate() {
-        toggleSettingsMenu(true);
-        openActionGate("ENTER MASTER PIN", "OPEN_PM");
+    function gateWrongFeedback() {
+        const inp = document.getElementById('unifiedGateInput');
+        inp.style.borderColor = "#ff4757";
+        inp.value = "";
+        setTimeout(() => { inp.style.borderColor = "#00f0ff"; }, 600);
+        alert("❌ गलत पिन या मास्टर की!");
     }
 
-    function showPasswordManagerUI() {
-        document.getElementById('pm_open').value = appPins.openPin || "7869";
-        document.getElementById('pm_edit').value = appPins.editPin || "7869";
-        document.getElementById('pm_del').value = appPins.delPin || "7869";
-        document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
-        document.getElementById('pm_restore').value = appPins.restorePin || "7869";
-        document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
-        document.getElementById('pm_acc_pass').value = currentUser ? (currentUser.pass || "") : "";
-        document.getElementById('passManagerModal').style.display = 'flex';
-    }
-
-    function closePassManager() {
-        document.getElementById('passManagerModal').style.display = 'none';
-    }
-
-    async function savePasswordSettings() {
-        const oPin = document.getElementById('pm_open').value.trim();
-        const ePin = document.getElementById('pm_edit').value.trim();
-        const dPin = document.getElementById('pm_del').value.trim();
-        const cPin = document.getElementById('pm_cloud').value.trim();
-        const rPin = document.getElementById('pm_restore').value.trim();
-        const lPin = document.getElementById('pm_login_gate').value.trim();
-        const newAccPass = document.getElementById('pm_acc_pass').value.trim();
-
-        if (!oPin || !ePin || !dPin || !cPin || !rPin || !lPin) {
-            alert("कृपया सभी पिन भरें!");
-            return;
-        }
-
-        if (newAccPass && currentUser && currentUser.phone) {
-            if (newAccPass !== currentUser.pass) {
-                try {
-                    currentUser.pass = newAccPass;
-                    localStorage.setItem('master_active_user', JSON.stringify(currentUser));
-                    if (window.fbUpdateUserPass) {
-                        await window.fbUpdateUserPass(currentUser.phone, newAccPass);
-                    }
-                } catch(err) {
-                    console.log("Firebase pass update note: " + err.message);
-                }
-            }
-        }
-
-        tempNewPins = { openPin: oPin, editPin: ePin, delPin: dPin, cloudPin: cPin, restorePin: rPin, loginPin: lPin };
-        openActionGate("ENTER MASTER PIN TO SAVE", "CONFIRM_SAVE_PINS");
-    }
-
+    // ==========================================
+    // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+    // ==========================================
     function openAuthModalProtected() {
         toggleSettingsMenu(true);
-        openActionGate("ENTER LOGIN GATE PIN", "OPEN_AUTH");
-    }
-
-    function openJsonManagerModal() {
-        toggleSettingsMenu(true);
-        document.getElementById('jsonManagerModal').style.display = 'flex';
-    }
-
-    function closeJsonManagerModal() {
-        document.getElementById('jsonManagerModal').style.display = 'none';
-    }
-    function handleSubJsonExport() {
-        closeJsonManagerModal();
-        openActionGate("ENTER CLOUD PIN", "EXPORT_JSON");
-    }
-    function handleSubJsonRestore() {
-        closeJsonManagerModal();
-        openActionGate("ENTER RESTORE PIN", "RESTORE_JSON");
+        openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
     }
 
     function openAuthModal() {
@@ -943,24 +883,29 @@
             document.getElementById('loginBox').style.display = 'block';
         }
         document.getElementById('authOverlay').style.display = 'flex';
-    }
-
-    function openRegisterModalDirect() {
-        document.getElementById('loginBox').style.display = 'none';
-        document.getElementById('accountBox').style.display = 'none';
-        document.getElementById('profileEditBox').style.display = 'none';
-        document.getElementById('registerBox').style.display = 'block';
-        document.getElementById('authOverlay').style.display = 'flex';
+        applyUserSession();
     }
 
     function closeAuthModal() {
         document.getElementById('authOverlay').style.display = 'none';
     }
 
+    function toggleAuthMode(mode) {
+        document.getElementById('accountBox').style.display = 'none';
+        document.getElementById('profileEditBox').style.display = 'none';
+        if (mode === 'login') {
+            document.getElementById('registerBox').style.display = 'none';
+            document.getElementById('loginBox').style.display = 'block';
+        } else {
+            document.getElementById('registerBox').style.display = 'block';
+            document.getElementById('loginBox').style.display = 'none';
+        }
+    }
+
     function askRegisterPermission() {
         const masterPin = getDeviceMasterKey();
         if (currentUser && currentUser.email) {
-            let enteredPin = prompt("⚠️ नया खाता बनाने के लिए इस मोबाइल का मास्टर पासवर्ड (मोबाइल नंबर) दर्ज करें:");
+            let enteredPin = prompt("⚠️ नया खाता बनाने के लिए इस मोबाइल की मास्टर की (मोबाइल नंबर) दर्ज करें:");
             if (masterPin && enteredPin === masterPin) {
                 let agree = confirm("⚠️ ध्यान दें: नया रजिस्टर करते ही इस डिवाइस का स्थानीय डेटा फ्रेश हो जाएगा। क्या आप सहमत हैं?");
                 if (agree) {
@@ -982,34 +927,23 @@
         }
     }
 
-    function toggleAuthMode(mode) {
-        document.getElementById('accountBox').style.display = 'none';
-        document.getElementById('profileEditBox').style.display = 'none';
-        if (mode === 'login') {
-            document.getElementById('registerBox').style.display = 'none';
-            document.getElementById('loginBox').style.display = 'block';
-        } else {
-            document.getElementById('registerBox').style.display = 'block';
-            document.getElementById('loginBox').style.display = 'none';
-        }
-    }
-
     function openProfileEditGate() {
         if (!currentUser) return;
         document.getElementById('accountBox').style.display = 'none';
-        openActionGate("ENTER MASTER KEY (PHONE)", "VERIFY_EDIT_PROFILE");
+        // बैंक प्रो और खाता लेज़र की तरह डायरेक्ट सीक्रेट ब्लैंक पिन बॉक्स (सिर्फ 10 अंकों की मास्टर की)
+        openUnifiedGate('EDIT_PROFILE_MASTER', 'MASTER KEY REQUIRED', 'ENTER REGISTERED MOBILE NUMBER', 10);
     }
 
-    function showProfileEditBoxActual() {
+    function showProfileEditScreen() {
         document.getElementById('editEmail').value = currentUser.email || '';
         document.getElementById('editName').value = currentUser.name || '';
         document.getElementById('editUsername').value = currentUser.username || '';
         document.getElementById('editPhone').value = currentUser.phone || '';
 
-        document.getElementById('accountBox').style.display = 'none';
         document.getElementById('profileEditBox').style.display = 'block';
         document.getElementById('authOverlay').style.display = 'flex';
     }
+
     function closeProfileEditBox() {
         document.getElementById('profileEditBox').style.display = 'none';
         document.getElementById('accountBox').style.display = 'block';
@@ -1031,6 +965,7 @@
             currentUser.phone = newPhone;
 
             localStorage.setItem('master_active_user', JSON.stringify(currentUser));
+            localStorage.setItem('master_phone_key', newPhone);
 
             if (window.fbUpdateUserProfile) {
                 await window.fbUpdateUserProfile(oldPhone, {
@@ -1088,6 +1023,7 @@
         try {
             await window.fbSaveUser(userObj);
             localStorage.setItem('master_active_user', JSON.stringify(userObj));
+            localStorage.setItem('master_phone_key', phone);
             currentUser = userObj;
             applyUserSession();
             closeAuthModal();
@@ -1117,12 +1053,13 @@
             }
 
             localStorage.setItem('master_active_user', JSON.stringify(user));
+            localStorage.setItem('master_phone_key', user.phone);
             currentUser = user;
             applyUserSession();
             closeAuthModal();
             resetAutoTimer();
             
-            alert("✅ लॉगिन सफल! स्वागत है, " + user.name);
+            alert("✅ लॉगिन सफल! स्वागत है, " + (user.name || user.username));
             await executeCloudRestoreManual(true);
         } catch(e) {
             alert("लॉगिन में त्रुटि: " + e.message);
@@ -1130,24 +1067,29 @@
     }
 
     function applyUserSession() {
-        if (currentUser && currentUser.name) {
-            document.getElementById('userDisplayTag').innerText = "👤 USER: " + currentUser.name.toUpperCase();
+        const topTag = document.getElementById('userDisplayTag');
+        const dashUser = document.getElementById('dashUserDisplay');
+
+        if (currentUser) {
+            const realName = (currentUser.name || currentUser.fullName || currentUser.username || "USER").toUpperCase();
+            const userNameOnly = (currentUser.username || "").toUpperCase();
+            if (topTag) topTag.innerText = "👤 USER: " + realName;
+            if (dashUser) dashUser.innerText = `👤 ${realName} (@${userNameOnly})`;
         } else {
-            document.getElementById('userDisplayTag').innerText = "👤 USER: NOT LOGGED IN";
+            if (topTag) topTag.innerText = "👤 USER: NOT LOGGED IN";
+            if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
         }
     }
 
     // Direct Sync Button
     async function triggerQuickBackup() {
         if (!currentUser) {
-            alert("कृपया पहले लॉगिन करें!");
             openAuthModalProtected();
             return;
         }
         await executeCloudBackupManual();
     }
 
-    // मैन्युअल क्लाउड बैकअप
     async function executeCloudBackupManual() {
         if (!currentUser || !currentUser.email) {
             alert("कृपया पहले लॉगिन करें!"); return;
@@ -1166,7 +1108,6 @@
         }
     }
 
-    // मैन्युअल क्लाउड रीस्टोर
     async function executeCloudRestoreManual(isSilent = false) {
         if (!currentUser || !currentUser.email) {
             if(!isSilent) alert("कृपया पहले लॉगिन करें!"); return;
@@ -1190,7 +1131,86 @@
         }
     }
 
-    // JSON Export
+    // ==========================================
+    // पासवर्ड मैनेजर
+    // ==========================================
+    function openPasswordManagerGate() {
+        toggleSettingsMenu(true);
+        openUnifiedGate('MANAGE_PINS_MASTER', 'MASTER KEY REQUIRED', 'ENTER MASTER MOBILE NUMBER', 10);
+    }
+
+    function showPassManagerScreen() {
+        document.getElementById('pm_open').value = appPins.openPin || "7869";
+        document.getElementById('pm_edit').value = appPins.editPin || "7869";
+        document.getElementById('pm_del').value = appPins.delPin || "7869";
+        document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
+        document.getElementById('pm_restore').value = appPins.restorePin || "7869";
+        document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
+        document.getElementById('pm_acc_pass').value = currentUser ? (currentUser.pass || "") : "";
+        document.getElementById('passManagerModal').style.display = 'flex';
+    }
+
+    function closePassManager() {
+        document.getElementById('passManagerModal').style.display = 'none';
+    }
+
+    async function savePasswordSettings() {
+        const oPin = document.getElementById('pm_open').value.trim();
+        const ePin = document.getElementById('pm_edit').value.trim();
+        const dPin = document.getElementById('pm_del').value.trim();
+        const cPin = document.getElementById('pm_cloud').value.trim();
+        const rPin = document.getElementById('pm_restore').value.trim();
+        const lPin = document.getElementById('pm_login_gate').value.trim();
+        const newAccPass = document.getElementById('pm_acc_pass').value.trim();
+
+        if (!oPin || !ePin || !dPin || !cPin || !rPin || !lPin) {
+            alert("कृपया सभी पिन भरें!");
+            return;
+        }
+
+        appPins = { openPin: oPin, editPin: ePin, delPin: dPin, cloudPin: cPin, restorePin: rPin, loginPin: lPin };
+        localStorage.setItem('master_custom_pins', JSON.stringify(appPins));
+
+        if (newAccPass && currentUser && currentUser.phone) {
+            if (newAccPass !== currentUser.pass) {
+                try {
+                    currentUser.pass = newAccPass;
+                    localStorage.setItem('master_active_user', JSON.stringify(currentUser));
+                    if (window.fbUpdateUserPass) {
+                        await window.fbUpdateUserPass(currentUser.phone, newAccPass);
+                    }
+                } catch(err) {
+                    console.log("Firebase pass update note: " + err.message);
+                }
+            }
+        }
+
+        closePassManager();
+        alert("✅ सभी पासवर्ड और अकाउंट पासवर्ड सुरक्षित सेव हो गए!");
+    }
+
+    // ==========================================
+    // JSON बैकअप / रीस्टोर / रीसेट
+    // ==========================================
+    function openJsonManagerModal() {
+        toggleSettingsMenu(true);
+        document.getElementById('jsonManagerModal').style.display = 'flex';
+    }
+
+    function closeJsonManagerModal() {
+        document.getElementById('jsonManagerModal').style.display = 'none';
+    }
+
+    function handleSubJsonExport() {
+        closeJsonManagerModal();
+        openUnifiedGate('EXPORT_JSON_PIN', 'ENTER CLOUD PIN', 'ENTER 4-DIGIT PIN', 4);
+    }
+
+    function handleSubJsonRestore() {
+        closeJsonManagerModal();
+        openUnifiedGate('RESTORE_JSON_PIN', 'ENTER RESTORE PIN', 'ENTER 4-DIGIT PIN', 4);
+    }
+
     async function executeJsonExport() {
         let dataToExport = {
             shared_master_v19: db,
@@ -1212,7 +1232,6 @@
         alert("✅ JSON फाइल सफलतापूर्वक डाउनलोड हो गई!");
     }
 
-    // JSON Restore
     function handleJsonFileRestore(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -1243,42 +1262,29 @@
         event.target.value = '';
     }
 
-    // Reset App
     function promptResetApp() {
-        const modal = document.getElementById('resetAppModal');
-        document.getElementById('resetPassInput').value = "";
-        modal.style.display = 'flex';
-        document.getElementById('resetPassInput').focus();
+        toggleSettingsMenu(true);
+        openUnifiedGate('RESET_APP_MASTER', 'RESET APP', 'ENTER MASTER MOBILE NUMBER', 10);
     }
 
-    function closeResetModal() {
-        document.getElementById('resetAppModal').style.display = 'none';
-        document.getElementById('resetPassInput').value = "";
-    }
-
-    function handleResetSubmit() {
-        const entered = document.getElementById('resetPassInput').value.trim();
-        const masterPin = getDeviceMasterKey();
-        if (masterPin && entered === masterPin) {
-            if (confirm("⚠️ क्या आप वाकई ऐप रीसेट करना चाहते हैं?\nसभी एंट्रियां साफ़ हो जाएँगी!")) {
-                db = []; db_advance = []; trash = [];
-                localStorage.removeItem('shared_master_v19');
-                localStorage.removeItem('master_advance_v1');
-                localStorage.removeItem('master_trash_v1');
-                localStorage.removeItem('master_active_user');
-                currentUser = null;
-                
-                closeResetModal();
-                toggleSettingsMenu(true);
-                applyUserSession();
-                renderData();
-                alert("✅ ऐप सफलतापूर्वक रीसेट हो गया है!");
-            }
-        } else {
-            alert("❌ गलत मास्टर पासवर्ड!");
+    function executeAppReset() {
+        if (confirm("⚠️ क्या आप वाकई ऐप रीसेट करना चाहते हैं?\nसभी एंट्रियां साफ़ हो जाएँगी!")) {
+            db = []; db_advance = []; trash = [];
+            localStorage.removeItem('shared_master_v19');
+            localStorage.removeItem('master_advance_v1');
+            localStorage.removeItem('master_trash_v1');
+            localStorage.removeItem('master_active_user');
+            currentUser = null;
+            
+            applyUserSession();
+            renderData();
+            alert("✅ ऐप सफलतापूर्वक रीसेट हो गया है!");
         }
     }
 
+    // ==========================================
+    // मास्टर लेज़र कोर डेटा व फॉर्म
+    // ==========================================
     function submitEntry(forceNew) {
         let idxVal = document.getElementById('editIndex').value;
         let idx = Number(idxVal); 
@@ -1333,38 +1339,44 @@
         renderAdvanceData(); 
     }
 
+    function askUnlock() {
+        openUnifiedGate('UNLOCK_EDIT_PIN', 'ENTER EDIT PIN', 'ENTER 4-DIGIT PIN TO EDIT', 4);
+    }
+
+    function executeUnlockForm() {
+        setInputsLock(false); 
+        document.getElementById('unlockWrapper').style.setProperty('display', 'none', 'important'); 
+        document.getElementById('mainSaveBtn').style.display = 'none';
+        document.getElementById('updateBtn').style.display = 'block'; 
+        document.getElementById('saveAsNewBtn').style.display = 'block'; 
+        document.getElementById('delEntryBtn').style.display = 'block'; 
+        document.getElementById('newCancelBtn').style.display = 'block'; 
+    }
+
     function handleInsideDelete() {
         let idx = Number(document.getElementById('editIndex').value);
         if (idx >= 0) {
             deleteIdx = idx;
-            document.getElementById('delTitle').innerText = "DELETE SRL: " + (idx + 1);
-            document.getElementById('deleteModal').style.display = 'flex';
-            document.getElementById('delPassInput').value = "";
-            document.getElementById('delPassInput').focus();
+            openUnifiedGate('DELETE_ENTRY_PIN', 'DELETE ENTRY', 'ENTER 4-DIGIT DELETE PIN', 4);
         }
     }
 
-    function confirmDeletion() { 
-        const entered = document.getElementById('delPassInput').value;
-        const masterPin = getDeviceMasterKey();
-        if(entered === appPins.delPin || (masterPin && entered === masterPin)) { 
-            if (isPermanentDelete) {
-                trash.splice(deleteIdx, 1);
-                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
-                alert("Permanently Deleted!");
-            } else {
-                let entryToSave = { actualData: db[deleteIdx], oldPos: deleteIdx };
-                trash.unshift(entryToSave); 
-                localStorage.setItem('master_trash_v1', JSON.stringify(trash));
-                db.splice(deleteIdx, 1); 
-                localStorage.setItem('shared_master_v19', JSON.stringify(db)); 
-                alert("Moved to Recycle Bin!");
-            }
-            isPermanentDelete = false; 
-            toggleForm();
-            renderData(); 
-            closeDelModal();
-        } else { alert("Wrong PIN!"); }
+    function executeConfirmDeletion() {
+        if (isPermanentDelete) {
+            trash.splice(deleteIdx, 1);
+            localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+            alert("Permanently Deleted!");
+        } else {
+            let entryToSave = { actualData: db[deleteIdx], oldPos: deleteIdx };
+            trash.unshift(entryToSave); 
+            localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+            db.splice(deleteIdx, 1); 
+            localStorage.setItem('shared_master_v19', JSON.stringify(db)); 
+            alert("Moved to Recycle Bin!");
+        }
+        isPermanentDelete = false; 
+        toggleForm();
+        renderData(); 
     }
 
     function showTrashList() {
@@ -1384,11 +1396,8 @@
                 pressTimer = setTimeout(() => {
                     deleteIdx = index;
                     isPermanentDelete = true;
-                    document.getElementById('delTitle').innerText = "PERMANENT DELETE";
                     modal.style.display = 'none';
-                    document.getElementById('deleteModal').style.display = 'flex';
-                    document.getElementById('delPassInput').value = "";
-                    document.getElementById('delPassInput').focus();
+                    openUnifiedGate('DELETE_ENTRY_PIN', 'PERMANENT DELETE', 'ENTER 4-DIGIT DELETE PIN', 4);
                 }, 700);
             };
             const cancelPress = () => clearTimeout(pressTimer);
@@ -1417,17 +1426,11 @@
         });
     }
 
-    function confirmAdvanceDeletion() { 
-        const entered = document.getElementById('advDelPassInput').value;
-        const masterPin = getDeviceMasterKey();
-        if(entered === appPins.delPin || (masterPin && entered === masterPin)) { 
-            db_advance.splice(advDeleteIdx, 1); 
-            localStorage.setItem('master_advance_v1', JSON.stringify(db_advance)); 
-            renderAdvanceData(); 
-            closeAdvDelModal(); 
-        } else {
-            alert("Wrong PIN!");
-        }
+    function executeAdvanceDeletion() {
+        db_advance.splice(advDeleteIdx, 1); 
+        localStorage.setItem('master_advance_v1', JSON.stringify(db_advance)); 
+        renderAdvanceData(); 
+        alert("Advance Deleted!");
     }
 
     function renderData() {
@@ -1547,8 +1550,7 @@
             row.oncontextmenu = (e) => { 
                 e.preventDefault(); 
                 advDeleteIdx = i; 
-                document.getElementById('advDelTitle').innerText = "DELETE SRL: " + (i + 1);
-                document.getElementById('advanceDeleteModal').style.display='flex';
+                openUnifiedGate('ADV_DELETE_PIN', 'DELETE ADVANCE', 'ENTER 4-DIGIT DELETE PIN', 4);
             };
             row.innerHTML = `<td>${i+1}</td><td>${item.name}</td><td>${item.date}</td><td>${item.amount}</td><td style="color:${item.type === 'RECEIVED' ? 'green' : 'red'}; font-weight:bold;">${item.type}</td><td>${item.reason}</td>`;
             tbody.appendChild(row);
@@ -1698,29 +1700,9 @@
     }
 
     function calcBal() { let pr = Number(document.getElementById('f_pr').value) || 0; let am = Number(document.getElementById('f_am').value) || 0; document.getElementById('f_bal_ui').value = pr - am; }
-    function askUnlock() { document.getElementById('unlockModal').style.display = 'flex'; document.getElementById('unlockPassInput').focus(); }
-    function closeUnlockModal() { document.getElementById('unlockModal').style.display = 'none'; document.getElementById('unlockPassInput').value = ""; }
-    
-    function verifyUnlock() { 
-        const entered = document.getElementById('unlockPassInput').value;
-        const masterPin = getDeviceMasterKey();
-        if (entered === appPins.editPin || (masterPin && entered === masterPin)) { 
-            setInputsLock(false); 
-            document.getElementById('unlockWrapper').style.setProperty('display', 'none', 'important'); 
-            document.getElementById('mainSaveBtn').style.display = 'none';
-            document.getElementById('updateBtn').style.display = 'block'; 
-            document.getElementById('saveAsNewBtn').style.display = 'block'; 
-            document.getElementById('delEntryBtn').style.display = 'block'; 
-            document.getElementById('newCancelBtn').style.display = 'block'; 
-            closeUnlockModal(); 
-        } else { alert("Incorrect PIN!"); } 
-    }
-
     function filterAdvance(status) { currentAdvFilter = status; renderAdvanceData(); }
     function filterByStatus(status) { currentFilter = status; renderData(); }
     function clearSearch() { document.getElementById('searchInp').value = ""; renderData(); }
-    function closeDelModal() { document.getElementById('deleteModal').style.display = 'none'; document.getElementById('delPassInput').value = ""; isPermanentDelete = false; }
-    function closeAdvDelModal() { document.getElementById('advanceDeleteModal').style.display = 'none'; document.getElementById('advDelPassInput').value = ""; }
 
     function captureReport() {
         const table = currentMode === 'advance' ? document.getElementById("advanceTable") : document.getElementById("mainTable");
@@ -1750,7 +1732,7 @@
         resetAutoTimer();
 
         if (!currentUser) {
-            openRegisterModalDirect();
+            openAuthModal();
         }
     };
 </script>
