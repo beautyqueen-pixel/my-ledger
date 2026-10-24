@@ -2,22 +2,19 @@
 <html lang="en">  
 <head>  
  <meta charset="UTF-8">  
- <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  
  <title>Bank Agent Pro</title>  
   
- <!-- PWA & App Capabilities -->  
  <meta name="apple-mobile-web-app-capable" content="yes">  
  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">  
  <meta name="apple-mobile-web-app-title" content="Bank Agent Pro">  
  <meta name="mobile-web-app-capable" content="yes">  
  <meta name="theme-color" content="#121212">  
   
- <!-- Embedded Manifest JSON -->  
  <link rel="manifest" href='data:application/manifest+json,{"name":"Bank Agent Pro","short_name":"Bank Pro","start_url":".","display":"standalone","background_color":"#121212","theme_color":"#121212","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231562f5%22/><text y=%2265%22 font-size=%2255%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BP</text></svg>","sizes":"192x192","type":"image/svg+xml"},{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%231562f5%22/><text y=%2265%22 font-size=%2255%22 x=%2250%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>BP</text></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>  
   
  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
- <!-- OCR Engine -->  
  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>  
   
  <!-- Firebase Libraries -->
@@ -26,7 +23,7 @@
 
  <style>  
  :root { --bg-body: #121212; --neon-purple: #bc13fe; --neon-cyan: #00f3ff; --danger: #ff4757; }  
- * { box-sizing: border-box; font-family: 'Arial Black', sans-serif; }  
+ * { box-sizing: border-box; font-family: 'Arial Black', sans-serif; -webkit-tap-highlight-color: transparent; }  
  body { margin: 10px; background: var(--bg-body); color: #fff; display: flex; flex-direction: column; align-items: center; }  
  .app-container { width: 100%; max-width: 480px; background: #1a1a1a; min-height: 100vh; padding-bottom: 20px;}  
  #form-to-share { background: #0a1f14; padding: 4px; border: 5px solid #075e74; display: none; }   
@@ -37,58 +34,12 @@
  .input-wrapper { width: 100%; background: white; display: flex; border: 2px solid #000000; min-height: 30px; overflow: hidden; }  
  .input-box { width: 100%; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 900; color: black; padding: 4px; min-height: 24px; word-break: break-word; white-space: pre-wrap; }  
    
- textarea.input-box {   
-   resize: none;   
-   overflow: hidden;   
-   display: block;  
-   height: auto;   
-   min-height: 30px;   
-   padding: 5px;   
-   font-family: inherit;  
- }  
- .split-cvv-inp {  
-   width: 60px;  
-   min-width: 50px;  
-   max-width: 65px;  
-   border: none;  
-   outline: none;  
-   background: transparent;  
-   font-size: 16px;  
-   font-weight: 900;  
-   color: black;  
-   padding: 2px;  
-   text-align: center;  
-   box-sizing: border-box;  
- }  
- .split-exp-inp {  
-   flex: 1;  
-   min-width: 0;  
-   width: 100%;  
-   border: none;  
-   outline: none;  
-   background: transparent;  
-   font-size: 16px;  
-   font-weight: 900;  
-   color: black;  
-   padding: 2px 5px;  
-   text-align: center;  
-   box-sizing: border-box;  
- }  
- .split-divider {  
-   width: 2px;  
-   background: #000;  
-   flex-shrink: 0;  
- }  
+ textarea.input-box { resize: none; overflow: hidden; display: block; height: auto; min-height: 30px; padding: 5px; font-family: inherit; }  
+ .split-cvv-inp { width: 60px; min-width: 50px; max-width: 65px; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 900; color: black; padding: 2px; text-align: center; box-sizing: border-box; }  
+ .split-exp-inp { flex: 1; min-width: 0; width: 100%; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 900; color: black; padding: 2px 5px; text-align: center; box-sizing: border-box; }  
+ .split-divider { width: 2px; background: #000; flex-shrink: 0; }  
   
- .controls {   
-   background: #1562f5;   
-   padding: 5px 2px;  
-   width: 95%;   
-   margin: 0px auto;  
-   border-radius: 20px;  
-   border: 2px solid #00f3ff;  
-   box-shadow: 0 15px 30px rgba(0,0,0,0.9);   
- }  
+ .controls { background: #1562f5; padding: 5px 2px; width: 95%; margin: 0px auto; border-radius: 20px; border: 2px solid #00f3ff; box-shadow: 0 15px 30px rgba(0,0,0,0.9); }  
  button, .btn-custom { border: 2px solid #fff; border-radius: 10px; font-weight: 900; cursor: pointer; color: white; padding: 10px 2px; font-size: 11px; flex: 1; text-transform: uppercase; box-shadow: inset 0 2px 9px rgba(0,0,0,0.5); margin: 2px; }  
  button:active { transform: translateY(2px); box-shadow: inset 0 1px 4px rgba(0,0,0,0.8); }  
  .btn-save { background: #27ae60 !important; font-size: 14px !important; width: 100%; display: block; margin-bottom: 5px; box-shadow: 0 4px 0 #000 !important; border-radius: 15px !important; }  
@@ -97,120 +48,65 @@
  .btn-purple { background: #bc13fe !important; }  
  .btn-black { background: #34495e !important; }  
  .btn-red { background: #ff4757 !important; max-width: 45px; }  
- .del-modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:4000; justify-content:center; align-items:center; backdrop-filter: blur(5px); }  
- .del-modal-box { background: rgba(26, 26, 26, 0.95); padding: 15px; border-radius: 20px; border: 3px solid #00f3ff; text-align: center; width: 80%; max-width: 250px; box-shadow: 0 0 25px rgba(0, 243, 255, 0.4); }  
+ 
  #search-inp { width: 100%; padding: 6px; border-radius: 10px; border: 2px solid var(--neon-cyan); background: #edededeb; color: #000; font-weight: bold; font-size: 13px; height: 30px; }  
  .list-item { background: #e6ca0188; padding: 4px 10px; margin-bottom: 2px; border-radius: 6px; border-left: 5px solid var(--neon-cyan); cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 20px; -webkit-user-select: none; user-select: none; }  
  
  #mainAppOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(25px); z-index: 999999; display: none; align-items: center; justify-content: center; cursor: pointer; }  
  #secretInput { display: none; padding: 12px 18px; border-radius: 16px; border: 2px solid #00f3ff; text-align: center; font-size: 18px; width: 160px; background: #0b0e14; color: #00f3ff; outline: none; }  
  
- .count-display { text-align: center; font-size: 14px; margin-top: 10px; color: #00f3ff; font-weight: bold; letter-spacing: 0px; }  
+ .count-display { text-align: center; font-size: 14px; margin-top: 10px; color: #00f3ff; font-weight: bold; }  
  #count-total { color: #ff4757; font-size: 14px; font-weight: bold; background: #1019f0; padding: 1px 10px; border-radius: 8px; border: 2px solid #ffffff; margin-left: 1px; }  
   
- .floating-opt {   
-   position: fixed; bottom: 80px; right: 20px;   
-   background: #bc13fe; color: white; width: 50px; height: 50px;   
-   border-radius: 50%; display: none; align-items: center; justify-content: center;   
-   font-size: 20px; z-index: 5000; border: 3px solid white; box-shadow: 0 0 15px rgba(188,19,254,0.6);  
-   cursor: pointer;  
- }  
+ .floating-opt { position: fixed; bottom: 80px; right: 20px; background: #bc13fe; color: white; width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; z-index: 5000; border: 3px solid white; box-shadow: 0 0 15px rgba(188,19,254,0.6); cursor: pointer; }  
  .hide-btn { background: #ff4757; color: white; border: none; border-radius: 5px; padding: 2px 8px; cursor: pointer; font-size: 10px; margin-right: 5px; }  
  .cam-btn { background: #00f3ff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-size: 12px; cursor: pointer; line-height: 1; font-weight: normal; }  
 
  /* Top Header Bar */
- .app-top-header {
-   display: flex; justify-content: space-between; align-items: center;
-   background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff;
-   margin-bottom: 8px;
+ .app-top-header { display: flex; justify-content: space-between; align-items: center; background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff; margin-bottom: 8px; }
+ .top-user-name { color: #00f3ff; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; cursor: pointer; }
+
+ /* Transparent Master Ledger Style Auth Modal */
+ #authOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 30, 0.88); backdrop-filter: blur(15px); z-index: 9999999; display: none; align-items: center; justify-content: center; }
+ .auth-card { background: #0d1b2a; border: 2px solid #00f0ff; border-radius: 20px; padding: 18px; width: 88%; max-width: 320px; box-shadow: 0 0 25px rgba(0,240,255,0.4); color: #fff; text-align: center; position: relative; }
+ .auth-card h2 { margin: 0 0 10px 0; font-size: 14px; color: #00f0ff; letter-spacing: 1px; font-weight: 900; }
+ .auth-card input { width: 92%; padding: 8px; margin-bottom: 7px; border-radius: 8px; border: 1.5px solid #00f0ff; background: #080d1a; color: #fff; font-size: 12px; text-align: center; outline: none; }
+ .auth-card button { width: 95%; padding: 9px; border-radius: 12px; border: none; font-weight: 900; font-size: 12px; cursor: pointer; margin-top: 6px; margin-bottom: 4px; }
+ .btn-auth-main { background: #00c853; color: white; box-shadow: 0 3px 0 #00701a; }
+ .auth-switch { margin-top: 8px; font-size: 11px; color: #00f0ff; cursor: pointer; text-decoration: underline; font-weight: bold; }
+ .close-auth { position: absolute; top: 8px; right: 12px; color: #ff4757; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+ .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px); z-index: 100000; align-items: center; justify-content: center; padding: 12px; }
+
+ /* Beautiful Master Security Style PIN Modal */
+ .security-pin-card {
+   background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px;
+   padding: 20px 16px; width: 85%; max-width: 290px; box-shadow: 0 0 30px rgba(0,240,255,0.45);
+   color: #fff; text-align: center;
  }
- .top-user-name {
-   color: #00f3ff; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;
+ .security-pin-card h3 { margin: 0 0 6px 0; font-size: 13.5px; color: #00f3ff; letter-spacing: 0.5px; }
+ .security-pin-card p { margin: 0 0 12px 0; font-size: 10.5px; color: #bbb; }
+ .security-pin-card input {
+   width: 85%; padding: 10px; border-radius: 10px; border: 2px solid #00f0ff;
+   background: #000; color: #00ff66; text-align: center; font-size: 20px;
+   font-weight: 900; outline: none; letter-spacing: 4px;
  }
 
- /* Auth Modal Style */
- .auth-overlay {
-   display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-   background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
-   z-index: 100000; align-items: center; justify-content: center; padding: 12px;
- }
- .auth-card {
-   background: rgba(17, 22, 33, 0.98); padding: 18px; border-radius: 14px; border: 1px solid #172233;
-   width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 8px;
-   box-shadow: 0 15px 35px rgba(0,0,0,0.7);
- }
- .auth-card input {
-   width: 100%; padding: 10px; border: 1px solid #172233; border-radius: 8px;
-   font-size: 12px; background: #0b0e14; color: #fff; outline: none; text-align: center;
-   font-family: inherit; font-weight: normal;
- }
- .auth-links {
-   display: flex; justify-content: space-between; font-size: 10px; margin-top: 4px; padding: 0 4px;
- }
- .auth-link { color: #38bdf8; cursor: pointer; text-decoration: underline; }
+ /* Password Manager Modal */
+ .pm-card { background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px; padding: 16px 14px; width: 92%; max-width: 340px; box-shadow: 0 0 30px rgba(0,240,255,0.45); color: #fff; text-align: center; }
  .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
- .pm-row label { font-size: 10px; font-weight: 600; color: #38bdf8; text-align: left; width: 55%; }
- .pm-row input { width: 42%; padding: 5px; border-radius: 5px; border: 1px solid #38bdf8; background: #000; color: #2ecc71; text-align: center; font-size: 12px; font-weight: bold; outline: none; }
+ .pm-row label { font-size: 9.5px; font-weight: 900; color: #ffeb3b; text-align: left; width: 55%; letter-spacing: 0.3px; }
+ .pm-row input { width: 42%; padding: 5px; border-radius: 6px; border: 1.5px solid #00f0ff; background: #000; color: #00ff66; text-align: center; font-size: 12px; font-weight: 900; outline: none; }
 
- /* NEW ENTRY बटन स्टाइल */
- .btn-entry-main {
-   background: #0e1ada !important;
-   color: #ffffff !important;
-   border: 2.5px solid #ff0000 !important;
-   box-shadow: 0 8px 0 #000 !important;
-   border-radius: 20px !important;
-   height: 42px !important;
-   font-size: 13px !important;
-   font-weight: 900 !important;
-   cursor: pointer !important;
-   margin: 0 !important;
-   flex: 3 !important;
- }
-
- /* SYNC बटन - पूरा गोल राउंड, लाल बॉर्डर और 3D शेड */
- .btn-sync-main {
-   background: #c7b43edf !important;
-   color: #ffffff !important;
-   border: 2.5px solid #ff0000 !important;
-   box-shadow: 0 8px 0 #000 !important;
-   border-radius: 20px !important;
-   height: 42px !important;
-   min-width: 63px !important;
-   display: flex !important;
-   align-items: center !important;
-   justify-content: center !important;
-   font-size: 12px !important;
-   font-weight: 900 !important;
-   margin: 0 !important;
-   cursor: pointer !important;
- }
-
- /* पिंक गियर सेटिंग (⚙️) बटन - पूरा गोल राउंड, लाल बॉर्डर और 3D शेड */
- .btn-gear-main {
-   background: #453238a6 !important;
-   color: #ffffff !important;
-   border: 2.5px solid #ff0000 !important;
-   box-shadow: 0 8px 0 #000 !important;
-   border-radius: 20px !important;
-   width: 48px !important;
-   height: 42px !important;
-   display: flex !important;
-   align-items: center !important;
-   justify-content: center !important;
-   font-size: 18px !important;
-   margin: 0 !important;
-   cursor: pointer !important;
- }
-
- .btn-entry-main:active, .btn-sync-main:active, .btn-gear-main:active {
-   transform: translateY(2px) !important;
-   box-shadow: 0 2px 0 #000 !important;
- }
+ /* Buttons */
+ .btn-entry-main { background: #0e1ada !important; color: #ffffff !important; border: 2.5px solid #ff0000 !important; box-shadow: 0 8px 0 #000 !important; border-radius: 20px !important; height: 42px !important; font-size: 13px !important; font-weight: 900 !important; cursor: pointer !important; margin: 0 !important; flex: 3 !important; }
+ .btn-sync-main { background: #c7b43edf !important; color: #ffffff !important; border: 2.5px solid #ff0000 !important; box-shadow: 0 8px 0 #000 !important; border-radius: 20px !important; height: 42px !important; min-width: 63px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 12px !important; font-weight: 900 !important; margin: 0 !important; cursor: pointer !important; }
+ .btn-gear-main { background: #453238a6 !important; color: #ffffff !important; border: 2.5px solid #ff0000 !important; box-shadow: 0 8px 0 #000 !important; border-radius: 20px !important; width: 48px !important; height: 42px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 18px !important; margin: 0 !important; cursor: pointer !important; }
+ .btn-entry-main:active, .btn-sync-main:active, .btn-gear-main:active { transform: translateY(2px) !important; box-shadow: 0 2px 0 #000 !important; }
  </style>  
 </head>  
 <body>  
 
-<!-- JSON फाइल इम्पोर्ट के लिए हिडन इनपुट -->
 <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="handleJsonFileSelect(event)">
 <input type="file" id="cardGalleryInput" accept="image/*" style="display:none;" onchange="processCardImage(this)">  
 
@@ -222,68 +118,95 @@
  </div>  
 </div>  
 
-<!-- ऐप लॉक स्क्रीन -->
+<!-- 3-Tap App Lock Screen -->
 <div id="mainAppOverlay" onclick="handleAppUnlockClick()">  
  <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*" onclick="event.stopPropagation()">  
 </div>  
 
-<!-- मास्टर पासवर्ड गेट मॉडल (Flash & Mask) -->
-<div class="auth-overlay" id="masterGateModal">
-  <div class="auth-card" style="max-width: 260px;">
-    <h3 id="masterGateTitle" style="color:#00f3ff; font-size:13px; font-weight:700;">ENTER MASTER PIN</h3>
-    <input type="text" id="masterGateInput" placeholder="MASTER PIN" inputmode="numeric" style="letter-spacing: 4px; font-size: 18px; font-weight: bold;">
-    <div style="display:flex; gap:6px; margin-top:4px;">
-      <button style="background:#2ecc71; color:#fff;" onclick="submitMasterGate()">OK</button>
-      <button style="background:#333; color:#fff;" onclick="closeMasterGate()">CANCEL</button>
+<!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल (सभी पिन व मास्टर की के लिए) -->
+<div class="auth-overlay" id="unifiedSecurityGateModal">
+  <div class="security-pin-card">
+    <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
+    <p id="unifiedGateDesc">ENTER PIN</p>
+    <input type="password" id="unifiedGateInput" placeholder="••••" inputmode="numeric" oninput="handleUnifiedGateInput(this)">
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <button style="background:#00c853; flex:1; padding:8px; border-radius:8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="submitUnifiedGateManual()">OK</button>
+      <button style="background:#555; flex:1; padding:8px; border-radius:8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="closeUnifiedGate()">CANCEL</button>
     </div>
   </div>
 </div>
 
-<!-- पासवर्ड मैनेजर मॉडल (6 पासवर्ड विकल्प) -->
+<!-- मास्टर लेजर स्टाइल ऑथेंटिकेशन ओवरले -->
+<div id="authOverlay">
+    <!-- 1. LOGIN BOX -->
+    <div class="auth-card" id="loginBox" style="display:none;">
+        <span class="close-auth" onclick="closeAuthModal()">✖</span>
+        <h2>LOGIN BANK PRO</h2>
+        <input type="text" id="loginIdentifier" placeholder="यूज़रनेम / मोबाइल / ईमेल ID">
+        <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
+        <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
+        <div class="auth-switch" onclick="askRegisterPermission()">नया खाता बनाएँ (Register)</div>
+    </div>
+
+    <!-- 2. REGISTER BOX -->
+    <div class="auth-card" id="registerBox" style="display:none;">
+        <span class="close-auth" onclick="closeAuthModal()">✖</span>
+        <h2>REGISTER DEVICE ACCOUNT</h2>
+        <input type="text" id="regName" placeholder="पूरा नाम (Full Name)">
+        <input type="text" id="regUsername" placeholder="डिवाइस यूज़रनेम (Username)">
+        <input type="tel" id="regPhone" placeholder="मोबाइल नंबर (Master Key)">
+        <input type="email" id="regEmail" placeholder="क्लाउड सिंक ईमेल पता (Shared Email)">
+        <input type="password" id="regPass1" placeholder="पासवर्ड (Password)">
+        <input type="password" id="regPass2" placeholder="पासवर्ड दोबारा (Confirm Password)">
+        <button class="btn-auth-main" onclick="handleRegister()">REGISTER & SAVE</button>
+        <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
+    </div>
+
+    <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (ईमेल पूरी तरह से हटा दी गई है) -->
+    <div class="auth-card" id="accountBox" style="display:none;">
+        <span class="close-auth" onclick="closeAuthModal()">✖</span>
+        <h2>FIREBASE CLOUD ACCOUNT</h2>
+        <div style="font-size:13px; color:#00ff66; margin-bottom:12px; font-weight:900;" id="dashUserDisplay">👤 USER</div>
+        <button class="btn-auth-main" style="background:#00c853;" onclick="executeCloudBackupManual()">☁️ CLOUD BACKUP NOW</button>
+        <button class="btn-auth-main" style="background:#e67e22;" onclick="executeCloudRestoreManual()">📥 CLOUD RESTORE NOW</button>
+        <button class="btn-auth-main" style="background:#3498db;" onclick="openProfileEditGate()">✏️ EDIT USER PROFILE</button>
+        <button class="btn-auth-main" style="background:#c0392b;" onclick="handleManualLogout()">🚪 LOGOUT & LOCK</button>
+    </div>
+
+    <!-- 4. PROFILE EDIT BOX -->
+    <div class="auth-card" id="profileEditBox" style="display:none;">
+        <span class="close-auth" onclick="closeProfileEditBox()">✖</span>
+        <h2>EDIT DEVICE PROFILE</h2>
+        <p style="font-size:10px; color:#aaa; margin:0 0 6px 0;">सिंक ईमेल स्थायी (Default) रहेगा</p>
+        <input type="text" id="editEmail" disabled style="background:#222; color:#777; border-color:#555;">
+        <input type="text" id="editName" placeholder="पूरा नाम (Full Name)">
+        <input type="text" id="editUsername" placeholder="यूज़रनेम (Username)">
+        <input type="tel" id="editPhone" placeholder="मोबाइल नंबर (New Master Key)">
+        <button class="btn-auth-main" style="background:#27ae60;" onclick="saveEditedProfile()">SAVE CHANGES</button>
+        <button class="btn-auth-main" style="background:#555;" onclick="closeProfileEditBox()">BACK</button>
+    </div>
+</div>
+
+<!-- पासवर्ड मैनेजर मॉडल (6 पिन + 🔑 ACCOUNT LOGIN PASS) -->
 <div class="auth-overlay" id="passManagerModal">
-  <div class="auth-card" style="max-width: 330px;">
-    <h3 style="color:#00f3ff; font-size:13px; font-weight:700;">MANAGE SECURITY PASSWORDS</h3>
-    <hr style="border:0.5px solid #1c2638; margin: 4px 0 8px 0;">
+  <div class="pm-card">
+    <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
+    <hr style="border:0.5px solid #005577; margin-bottom:8px;">
+    <div class="pm-row"><label>1. APP OPEN LOCK</label><input type="text" id="pm_open" placeholder="7869"></div>
+    <div class="pm-row"><label>2. EDIT UNLOCK PIN</label><input type="text" id="pm_edit" placeholder="7869"></div>
+    <div class="pm-row"><label>3. DELETE PIN</label><input type="text" id="pm_del" placeholder="7869"></div>
+    <div class="pm-row"><label>4. CLOUD BACKUP PIN</label><input type="text" id="pm_cloud" placeholder="7869"></div>
+    <div class="pm-row"><label>5. CLOUD RESTORE PIN</label><input type="text" id="pm_restore" placeholder="7869"></div>
+    <div class="pm-row"><label>6. GATE PIN (LOGIN BTN)</label><input type="text" id="pm_login_gate" placeholder="7869"></div>
+    
     <div class="pm-row">
-      <label>1. APP OPEN LOCK</label>
-      <input type="text" id="pm_open" placeholder="7869">
-    </div>
-    <div class="pm-row">
-      <label>2. EDIT UNLOCK PIN</label>
-      <input type="text" id="pm_edit" placeholder="7869">
-    </div>
-    <div class="pm-row">
-      <label>3. DELETE PIN</label>
-      <input type="text" id="pm_del" placeholder="7869">
-    </div>
-    <div class="pm-row">
-      <label>4. CLOUD BACKUP PIN</label>
-      <input type="text" id="pm_cloud" placeholder="7869">
-    </div>
-    <div class="pm-row">
-      <label>5. CLOUD RESTORE PIN</label>
-      <input type="text" id="pm_restore" placeholder="7869">
-    </div>
-    <div class="pm-row">
-      <label>6. LOGIN PASSWORD</label>
+      <label style="color:#00ff66;">🔑 ACCOUNT LOGIN PASS</label>
       <input type="text" id="pm_login_pass" placeholder="Password">
     </div>
-    <div style="display:flex; gap:6px; margin-top:6px;">
-      <button style="background:#2ecc71; color:#fff;" onclick="savePasswordSettings()">SAVE</button>
-      <button style="background:#333; color:#fff;" onclick="closePassManager()">CLOSE</button>
-    </div>
-  </div>
-</div>
-
-<!-- रीसेट ऐप मॉडल -->
-<div class="auth-overlay" id="resetAppModal">
-  <div class="auth-card" style="max-width: 270px;">
-    <h3 style="color:#ff4757; font-size:13px; font-weight:700;">⚠️ RESET APP</h3>
-    <p style="font-size:11px; color:#bbb; margin:0;">मास्टर पासवर्ड दर्ज करें:</p>
-    <input type="text" id="resetPassInput" placeholder="MASTER PIN" inputmode="numeric" style="letter-spacing:4px; font-size:16px;">
-    <div style="display:flex; gap:6px; margin-top:4px;">
-      <button style="background:#e74c3c; color:#fff;" onclick="handleResetSubmit()">CONFIRM</button>
-      <button style="background:#333; color:#fff;" onclick="closeResetModal()">CANCEL</button>
+    
+    <div style="display:flex; gap:6px; margin-top:10px;">
+      <button style="background:#00c853; color:#fff; border-radius:8px; padding:8px; flex:1;" onclick="savePasswordSettings()">SAVE</button>
+      <button style="background:#555; color:#fff; border-radius:8px; padding:8px; flex:1;" onclick="closePassManager()">CLOSE</button>
     </div>
   </div>
 </div>
@@ -291,8 +214,7 @@
 <!-- JSON एक्शन मेनू मॉडल -->
 <div class="auth-overlay" id="jsonActionModal">
   <div class="auth-card" style="max-width: 300px;">
-    <h3 style="color:#00f3ff; font-size:13px; font-weight:700;">💾 JSON BACKUP & RESTORE</h3>
-    <p style="font-size:11px; color:#bbb; margin:0;">अपना डेटा JSON फाइल में डाउनलोड करें या रीस्टोर करें:</p>
+    <h2 style="color:#00f3ff; font-size:13px;">💾 JSON BACKUP & RESTORE</h2>
     <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
       <button style="background:#34495e; color:#fff; padding:10px;" onclick="exportDataToJsonFile()">📥 EXPORT (DOWNLOAD JSON)</button>
       <button style="background:#2980b9; color:#fff; padding:10px;" onclick="triggerJsonImport()">📤 RESTORE FROM JSON FILE</button>
@@ -301,92 +223,12 @@
   </div>
 </div>
 
-<!-- क्लाउड ऑथेंटिकेशन / फायरबेस मॉडल -->
-<div class="auth-overlay" id="firebaseAuthModal">
-  <div class="auth-card">
-    <h3 style="color:#e2e8f0; font-size:13.5px; font-weight:700;">🔥 Bank Account</h3>
-    <p id="authStatusDesc" style="color:#00f3ff; font-size:11px; font-weight:600; margin:0;">नया खाता विवरण भरें</p>
-
-    <div id="authInputsArea" style="display:flex; flex-direction:column; gap:6px;">
-      <div style="display:flex; border-radius:6px; overflow:hidden; border:1px solid #172233; margin-bottom:2px;">
-        <button type="button" id="tabRegisterBtn" style="flex:1; padding:7px; background:#1e293b; color:#00f3ff; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('REGISTER')">REGISTER</button>
-        <button type="button" id="tabLoginBtn" style="flex:1; padding:7px; background:#0b0e14; color:#94a3b8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('LOGIN')">LOGIN</button>
-      </div>
-
-      <div id="regExtraFields" style="display:flex; flex-direction:column; gap:6px;">
-        <input type="text" id="fbFullName" placeholder="पूरा नाम (Full Name) *">
-        <input type="text" id="fbRegUsername" placeholder="यूज़र नाम (Username) *" autocomplete="off">
-        <input type="tel" id="fbRegMobile" placeholder="मोबाइल नंबर (10 अंक) *" maxlength="10">
-        <input type="email" id="fbRegEmail" placeholder="ईमेल आईडी (डेटा बैकअप चाबी) *">
-      </div>
-
-      <div id="loginField" style="display:none;">
-        <input type="text" id="fbLoginIdentifier" placeholder="यूज़र नाम / मोबाइल नंबर / ईमेल आईडी *">
-      </div>
-
-      <input type="password" id="fbPassword" placeholder="पासवर्ड (Password) *">
-      
-      <div id="regConfirmField" style="display:block;">
-        <input type="password" id="fbConfirmPassword" placeholder="पासवर्ड दोबारा (Confirm Password) *">
-      </div>
-
-      <div class="auth-links" id="authLinksRow" style="display:none;">
-        <span class="auth-link" onclick="handleForgotPassword()">Forgot Password?</span>
-        <span class="auth-link" onclick="handleForgotDetails()">Find My Details?</span>
-      </div>
-
-      <button type="button" id="btnAuthSubmit" style="background:#00f3ff; color:#000; padding:10px; font-size:12px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
-    </div>
-
-    <!-- लॉग-इन होने के बाद का दृश्य -->
-    <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:8px;">
-      <div style="font-size:11px; color:#2ecc71; font-weight:bold;">Loged secsesfully</div>
-      <div style="font-size:14px; color:#00f3ff; font-weight:900;" id="userEmailDisplay">👤 USER</div>
-      
-      <div style="display:flex; gap:6px; margin-top:6px;">
-        <button style="background:#2ecc71; color:#fff; padding:10px;" onclick="openCloudActionModal('BACKUP')">☁️ BACKUP</button>
-        <button style="background:#f59e0b; color:#fff; padding:10px;" onclick="openCloudActionModal('RESTORE')">📥 RESTORE</button>
-      </div>
-      <button style="background:#e74c3c; color:#fff; margin-top:4px; padding:10px;" onclick="firebaseLogout(true)">LOGOUT & LOCK</button>
-    </div>
-
-    <button id="btnAuthModalClose" style="background:#333; margin-top:4px; padding:8px; display:none;" onclick="closeFirebaseAuthModal()">CLOSE</button>
-  </div>
-</div>
-
-<!-- क्लाउड बैकअप/रीस्टोर पिन एक्शन मॉडल -->
-<div class="auth-overlay" id="cloudActionModal">
-  <div class="auth-card" style="max-width: 270px;">
-    <h3 id="cloudActionTitle" style="color:#00f3ff; font-size:13px; font-weight:700;">☁️ CLOUD ACTION</h3>
-    <p style="font-size:11px; color:#bbb; margin:0;" id="cloudActionDesc">पासवर्ड दर्ज करें</p>
-    <input type="password" id="cloudActionPassInput" placeholder="Password" inputmode="numeric">
-    <div style="display:flex; gap:6px; margin-top:6px;">
-      <button id="btnExecuteCloud" style="background:#2ecc71; color:#fff;" onclick="submitCloudAction()">OK</button>
-      <button style="background:#333; color:#fff;" onclick="closeCloudActionModal()">CANCEL</button>
-    </div>
-  </div>
-</div>
-
-<!-- एडिट / डिलीट पिन मॉडल -->
-<div class="del-modal-overlay" id="delOverlay">  
- <div class="del-modal-box">  
-   <h3 style="margin:0; font-size:16px;" id="modalTitle">ACTION</h3>  
-   <p id="modalSubText" style="margin: 5px 0; font-size: 12px; color: #bbb;">ENTER 4-DIGIT PIN</p>  
-   <input type="password" id="delPassInput" maxlength="4" inputmode="numeric" pattern="[0-9]*" style="width:90%; padding:10px; margin:12px 0; text-align:center; border:2px solid #00f3ff; background:#111; color:#00f3ff; border-radius:10px; font-size: 22px; letter-spacing: 8px; outline:none;">  
-   <div style="display:flex; gap:8px;">  
-     <button id="confirmDelBtn" style="border-radius:8px; padding:10px 0;">CONFIRM</button>  
-     <button style="background:#333; border-radius:8px; padding:10px 0;" onclick="closeDelModal()">CANCEL</button>  
-   </div>  
- </div>  
-</div>  
-
 <div class="app-container">  
- <!-- टॉप यूजर बार -->
  <div class="app-top-header">
    <div style="display:flex; align-items:center; gap:6px;">
      <span style="font-size:14px; font-weight:bold; color:#fff;">BANK AGENT PRO</span>
    </div>
-   <div id="displayTopUser" class="top-user-name">👤 LOGIN</div>
+   <div id="displayTopUser" class="top-user-name" onclick="openAuthModalProtected()">👤 LOGIN</div>
  </div>
 
  <div id="form-to-share">  
@@ -409,35 +251,18 @@
      </div>  
    </div>  
    
-   <!-- सेटिंग्स पैनल -->
    <div id="vaultPanel" style="display:none; background: #0a1f14; border: 3px solid #00f3ff; border-radius: 20px; padding: 15px; margin: 10px; box-shadow: 0 0 20px rgba(0,243,255,0.4);">  
      <div style="text-align:center; color:#00f3ff; margin-bottom:12px; font-size:14px; font-weight:900; border-bottom: 1px solid #1a5a4a; padding-bottom:6px;">SETTINGS</div>  
      
      <div style="display: flex; flex-direction: column; gap: 8px;">  
-       <!-- 1. फायरबेस अकाउंट एंड सिंक -->
-       <button style="background: #102a20; border: 1px solid #00f3ff; color: #00f3ff; padding: 10px; border-radius: 100px;" onclick="openFirebaseAuthModal()">🔥 FIREBASE ACCOUNT & SYNC</button>  
-       
-       <!-- 2. ऑप्शन -->
+       <button style="background: #102a20; border: 1px solid #00f3ff; color: #00f3ff; padding: 10px; border-radius: 100px;" onclick="openAuthModalProtected()">🔥 FIREBASE ACCOUNT & SYNC</button>  
        <button style="background: #bc13fe; padding: 9px; border-radius: 100px;" onclick="toggleOptionMenu()">⚙️ OPTION</button>  
-
-       <!-- 3. रिकॉर्ड डिलीट (रीसायकल बिन) -->
        <button style="background: #e91e63; padding: 9px; border-radius: 100px;" onclick="showTrashList()">♻️ RECOVER DELETED</button>  
-
-       <!-- 4. ऐड फील्ड -->
        <button style="background: #00f3ff; color: #000; padding: 9px; border-radius: 100px;" onclick="openFieldManager()">➕ ADD / EDIT FIELDS</button>  
-
-       <!-- 5. एक्सपोर्ट बैकअप (जिसके अंदर रिस्टोर भी मौजूद है) -->
-       <button style="background: #34495e; padding: 10px; border-radius: 100px;" onclick="openJsonActionModal()">💾 EXPORT BACKUP (DOWNLOAD JSON)</button>  
-
-       <!-- 6. मैनेज सिक्योरिटी पासवर्ड -->
+       <button style="background: #34495e; padding: 10px; border-radius: 100px;" onclick="openJsonActionModal()">💾 JSON BACKUP & RESTORE</button>  
        <button style="background: #e74c3c; padding: 10px; border-radius: 100px;" onclick="openPasswordManagerGate()">🔑 MANAGE SECURITY PASSWORDS</button>  
-       
-       <!-- 7. रीसेट ऐप -->
        <button style="background: #c0392b; padding: 10px; border-radius: 100px;" onclick="promptResetApp()">⚠️ RESET APP</button>  
-
        <hr style="border: 0.5px solid #1a5a4a; margin: 2px 0;">
-
-       <!-- 8. क्लोज बटन -->
        <button style="background: #222; color: #fff; border: 1.5px solid #ffffff; height: 35px; border-radius: 100px;" onclick="toggleVault()">CLOSE</button>  
      </div>  
    </div>  
@@ -470,7 +295,6 @@
  </div>  
 </div>  
 
-<!-- फील्ड मैनेजर मॉडल -->
 <div id="fieldModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:10000; align-items:center; justify-content:center;">  
  <div style="background:#1a1a1a; width:95%; max-width:400px; padding:15px; border-radius:20px; border:2px solid #00f3ff; max-height:85vh; overflow-y:auto;">  
    <h3 style="color:#00f3ff; text-align:center; margin-top:0;">MANAGE FIELDS</h3>  
@@ -484,7 +308,6 @@
 </div>  
 
 <script>  
- // Firebase Configuration
  const firebaseConfig = {
    apiKey: "AIzaSyBW39xBTcayR8V1mdQ4x5Sg0tMHjULZo_4",
    authDomain: "bank-pro-f0db7.firebaseapp.com",
@@ -505,27 +328,29 @@
  }
 
  let currentUser = null;
- let currentAuthTab = 'REGISTER';
- let pendingCloudAction = '';
-
  let appPins = {  
    openPin: "7869",   
    editPin: "7869",  
    delPin: "7869",
    cloudPin: "7869",
-   restorePin: "7869"
+   restorePin: "7869",
+   loginPin: "7869"
  };  
 
- let registeredMasterPhone = "7869";
- let masterGatePurpose = '';
  let appClickCount = 0;
-
- let currentEditID = null, deleteID = null, pendingAction = null, pressTimer;  
+ let currentEditID = null, deleteID = null, pressTimer;  
  let currentCustomFields = [];  
  let activeScanTarget = "card";  
  let isTrashDelete = false;
 
- // फ़ील्ड्स कॉन्फ़िगरेशन
+ // वर्तमान एक्शन प्रकार और अपेक्षित पिन
+ let currentGateAction = '';
+
+ function getDeviceMasterKey() {
+   if (currentUser && currentUser.phone) return currentUser.phone.trim();
+   return localStorage.getItem('bankpro_master_phone') || "7869";
+ }
+
  let fieldConfig = JSON.parse(localStorage.getItem('myFieldConfig')) || [  
    ["AGENT NAME", "agent"], ["BANK NAME", "bank"], ["HOLDER NAME", "holder"],  
    ["A/C TYPE", "acctype"], ["A/C NO.", "acc"], ["IFSC CODE", "ifsc"],   
@@ -543,98 +368,38 @@
      try { currentUser = JSON.parse(savedUser); } catch(e) { currentUser = null; }
    }
 
-   if (currentUser) {
-     const savedPins = localStorage.getItem('BankPro_Custom_PINS');
-     if (savedPins) {
-       try { appPins = JSON.parse(savedPins); } catch(e){}
-     }
-     registeredMasterPhone = localStorage.getItem('bankpro_master_phone') || currentUser.mobile || "7869";
-     renderList();
-     renderForm();
-     updateAuthUI();
-     handleAppLock();
-   } else {
-     renderList();
-     renderForm();
-     updateAuthUI();
-     openMandatoryRegister();
+   const savedPins = localStorage.getItem('BankPro_Custom_PINS');
+   if (savedPins) {
+     try { appPins = Object.assign(appPins, JSON.parse(savedPins)); } catch(e){}
    }
 
-   setupPasswordMasking('masterGateInput');
-   setupPasswordMasking('resetPassInput');
- };
+   renderList();
+   renderForm();
+   updateAuthUI();
 
- function openMandatoryRegister() {
-   document.getElementById('firebaseAuthModal').style.display = 'flex';
-   const closeBtn = document.getElementById('btnAuthModalClose');
-   if (closeBtn) closeBtn.style.display = 'none';
-   switchAuthTab('REGISTER');
- }
+   if (currentUser) {
+     handleAppLock();
+   } else {
+     openAuthModal();
+   }
+ };
 
  function updateAuthUI() {
    const topUser = document.getElementById('displayTopUser');
-   const userEmailDisplay = document.getElementById('userEmailDisplay');
-   const authInputs = document.getElementById('authInputsArea');
-   const loggedInArea = document.getElementById('authLoggedInArea');
-   const desc = document.getElementById('authStatusDesc');
-   const closeBtn = document.getElementById('btnAuthModalClose');
-
+   const dashUser = document.getElementById('dashUserDisplay');
    if (currentUser) {
-     const displayName = (currentUser.fullName || currentUser.username || "USER").toUpperCase();
-     if (topUser) topUser.innerText = "👤 " + displayName;
-     if (userEmailDisplay) userEmailDisplay.innerText = "👤 " + displayName;
-     if (authInputs) authInputs.style.display = 'none';
-     if (loggedInArea) loggedInArea.style.display = 'flex';
-     if (desc) desc.innerText = "";
-     if (closeBtn) closeBtn.style.display = 'block';
+     const realName = (currentUser.name || currentUser.fullName || currentUser.username || "USER").toUpperCase();
+     const userNameOnly = (currentUser.username || "").toUpperCase();
+     if (topUser) topUser.innerText = "👤 " + realName;
+     if (dashUser) dashUser.innerText = `👤 ${realName} (@${userNameOnly})`;
    } else {
      if (topUser) topUser.innerText = "👤 LOGIN";
-     if (authInputs) authInputs.style.display = 'flex';
-     if (loggedInArea) loggedInArea.style.display = 'none';
-     if (desc) desc.innerText = "नया खाता विवरण भरें";
+     if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
    }
  }
 
  // ==========================================
- // पासवर्ड टाइप करते वक्त एक पल दिखकर स्टार (*) बनना (Flash & Mask)
- // ==========================================
- function setupPasswordMasking(inputId) {
-   const el = document.getElementById(inputId);
-   if (!el) return;
-   let realVal = "";
-   let maskTimer = null;
-
-   el._getRealValue = () => realVal;
-   el._setRealValue = (v) => { realVal = v; el.value = "*".repeat(v.length); };
-
-   el.addEventListener('input', (e) => {
-     let curVal = el.value;
-     if (curVal.length < realVal.length) {
-       realVal = realVal.substring(0, curVal.length);
-     } else if (curVal.length > realVal.length) {
-       let addedChar = curVal.charAt(curVal.length - 1);
-       realVal += addedChar;
-     }
-
-     clearTimeout(maskTimer);
-     let maskedStr = "";
-     for (let i = 0; i < realVal.length - 1; i++) maskedStr += "*";
-     if (realVal.length > 0) maskedStr += realVal.charAt(realVal.length - 1);
-     el.value = maskedStr;
-
-     maskTimer = setTimeout(() => {
-       el.value = "*".repeat(realVal.length);
-     }, 400);
-   });
- }
-
- function getMaskedValue(inputId) {
-   const el = document.getElementById(inputId);
-   return el && el._getRealValue ? el._getRealValue() : (el ? el.value : "");
- }
-
- // ==========================================
- // ऐप लॉक और अनलॉक
+ // 3-TAP ऐप लॉक
  // ==========================================
  function handleAppLock() {
    appClickCount = 0;
@@ -656,59 +421,394 @@
  }
 
  document.getElementById('secretInput').addEventListener('input', function() {  
-   if (this.value === appPins.openPin || this.value === registeredMasterPhone || this.value === "7869") { 
+   const mKey = getDeviceMasterKey();
+   if (this.value === appPins.openPin || (mKey && this.value === mKey) || this.value === "7869") { 
      document.getElementById('mainAppOverlay').style.display = 'none'; 
      this.value = ''; 
      this.style.display = 'none';
      appClickCount = 0;
+     if (!currentUser) openAuthModal();
    }  
  });
 
  // ==========================================
- // क्विक सिंक बटन (मेन स्क्रीन पर)
+ // यूनिफाइड नियॉन सिक्योरिटी गेट (Auto-Submit & No OK Needed)
  // ==========================================
- function handleQuickSync() {
-   if (!currentUser) {
-     openFirebaseAuthModal();
-     return;
-   }
-   openCloudActionModal('BACKUP');
- }
-
- // ==========================================
- // 1. मैनेज सिक्योरिटी पासवर्ड (Gate & Manager)
- // ==========================================
- function openPasswordManagerGate() {
-   masterGatePurpose = 'MANAGE_PINS';
-   document.getElementById('vaultPanel').style.display = 'none';
-   document.getElementById('masterGateTitle').innerText = "ENTER MASTER PIN";
-   const inp = document.getElementById('masterGateInput');
-   if (inp._setRealValue) inp._setRealValue("");
-   else inp.value = "";
-   document.getElementById('masterGateModal').style.display = 'flex';
+ function openUnifiedGate(actionType, title, desc, maxLength = 4) {
+   currentGateAction = actionType;
+   document.getElementById('unifiedGateTitle').innerText = title;
+   document.getElementById('unifiedGateDesc').innerText = desc;
+   const inp = document.getElementById('unifiedGateInput');
+   inp.value = "";
+   inp.maxLength = maxLength;
+   document.getElementById('unifiedSecurityGateModal').style.display = 'flex';
    inp.focus();
  }
 
- function closeMasterGate() {
-   document.getElementById('masterGateModal').style.display = 'none';
+ function closeUnifiedGate() {
+   document.getElementById('unifiedSecurityGateModal').style.display = 'none';
+   document.getElementById('unifiedGateInput').value = "";
+   currentGateAction = '';
  }
 
- function submitMasterGate() {
-   const entered = getMaskedValue('masterGateInput').trim();
-   if (entered === registeredMasterPhone || entered === "7869") {
-     closeMasterGate();
-     if (masterGatePurpose === 'MANAGE_PINS') {
-       document.getElementById('pm_open').value = appPins.openPin || "7869";
-       document.getElementById('pm_edit').value = appPins.editPin || "7869";
-       document.getElementById('pm_del').value = appPins.delPin || "7869";
-       document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
-       document.getElementById('pm_restore').value = appPins.restorePin || "7869";
-       document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
-       document.getElementById('passManagerModal').style.display = 'flex';
+ function handleUnifiedGateInput(el) {
+   const val = el.value.trim();
+   // 4-अंकों वाले पिन पर 4 अंक होते ही ऑटो-एग्जीक्यूट
+   if (el.maxLength === 4 && val.length === 4) {
+     submitUnifiedGate(val);
+   } 
+   // मोबाइल मास्टर की (10 अंक) पर 10 अंक होते ही ऑटो-एग्जीक्यूट
+   else if (el.maxLength === 10 && val.length === 10) {
+     submitUnifiedGate(val);
+   }
+ }
+
+ function submitUnifiedGateManual() {
+   const val = document.getElementById('unifiedGateInput').value.trim();
+   if (val) submitUnifiedGate(val);
+ }
+
+ function submitUnifiedGate(entered) {
+   const mKey = getDeviceMasterKey();
+
+   // 1. FIREBASE लॉगिन गेट (सिर्फ लॉगिन पिन चाहिए)
+   if (currentGateAction === 'OPEN_AUTH_GATE') {
+     const reqPin = appPins.loginPin || "7869";
+     if (entered === reqPin) {
+       closeUnifiedGate();
+       openAuthModal();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+   // 2. प्रोफाइल एडिट (सिर्फ मास्टर की - मोबाइल नंबर चाहिए)
+   else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
+     if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+       closeUnifiedGate();
+       showProfileEditScreen();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+   // 3. मैनेज पासवर्ड (सिर्फ मास्टर की चाहिए)
+   else if (currentGateAction === 'MANAGE_PINS_MASTER') {
+     if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+       closeUnifiedGate();
+       showPassManagerScreen();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+   // 4. ऐप रीसेट (सिर्फ मास्टर की चाहिए)
+   else if (currentGateAction === 'RESET_APP_MASTER') {
+     if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+       closeUnifiedGate();
+       executeAppReset();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+   // 5. एडिट अनलॉक पिन
+   else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
+     if (entered === appPins.editPin || entered === "7869") {
+       closeUnifiedGate();
+       executeUnlockForm();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+   // 6. डिलीट पिन
+   else if (currentGateAction === 'DELETE_ENTRY_PIN') {
+     if (entered === appPins.delPin || entered === "7869") {
+       closeUnifiedGate();
+       executeDeleteEntry();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+ }
+
+ function gateWrongFeedback() {
+   const inp = document.getElementById('unifiedGateInput');
+   inp.style.borderColor = "#ff4757";
+   inp.value = "";
+   setTimeout(() => {
+     inp.style.borderColor = "#00f0ff";
+   }, 600);
+   showCustomDialog("गलत पिन", "❌ अमान्य पिन या मास्टर की!", false);
+ }
+
+ // ==========================================
+ // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+ // ==========================================
+ function openAuthModalProtected() {
+   toggleVault(true);
+   openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
+ }
+
+ function openAuthModal() {
+   document.getElementById('vaultPanel').style.display = 'none';
+   document.getElementById('loginBox').style.display = 'none';
+   document.getElementById('registerBox').style.display = 'none';
+   document.getElementById('accountBox').style.display = 'none';
+   document.getElementById('profileEditBox').style.display = 'none';
+
+   if (currentUser && currentUser.email) {
+     document.getElementById('accountBox').style.display = 'block';
+   } else {
+     document.getElementById('loginIdentifier').value = "";
+     document.getElementById('loginPass').value = "";
+     document.getElementById('loginBox').style.display = 'block';
+   }
+   document.getElementById('authOverlay').style.display = 'flex';
+   updateAuthUI();
+ }
+
+ function closeAuthModal() {
+   document.getElementById('authOverlay').style.display = 'none';
+ }
+
+ function toggleAuthMode(mode) {
+   document.getElementById('accountBox').style.display = 'none';
+   document.getElementById('profileEditBox').style.display = 'none';
+   if (mode === 'login') {
+     document.getElementById('registerBox').style.display = 'none';
+     document.getElementById('loginBox').style.display = 'block';
+   } else {
+     document.getElementById('registerBox').style.display = 'block';
+     document.getElementById('loginBox').style.display = 'none';
+   }
+ }
+
+ function askRegisterPermission() {
+   const masterPin = getDeviceMasterKey();
+   if (currentUser && currentUser.email) {
+     let enteredPin = prompt("⚠️ नया खाता बनाने के लिए इस डिवाइस की मास्टर की (मोबाइल नंबर) दर्ज करें:");
+     if (masterPin && enteredPin === masterPin) {
+       let agree = confirm("⚠️ नया खाता बनाते ही इस डिवाइस का स्थानीय डेटा रीसेट हो जाएगा। क्या आप सहमत हैं?");
+       if (agree) {
+         localStorage.removeItem('BankProData');
+         localStorage.removeItem('BankPro_Trash');
+         localStorage.removeItem('bankpro_active_user');
+         currentUser = null;
+         renderList();
+         updateAuthUI();
+         toggleAuthMode('register');
+       }
+     } else {
+       showCustomDialog("त्रुटि", "❌ गलत मास्टर की!", false);
      }
    } else {
-     showCustomDialog("गलत पिन", "❌ गलत मास्टर पासवर्ड!", false);
+     toggleAuthMode('register');
    }
+ }
+
+ async function handleRegister() {
+   const name = document.getElementById('regName').value.trim();
+   const username = document.getElementById('regUsername').value.trim().toLowerCase();
+   const phone = document.getElementById('regPhone').value.trim();
+   const email = document.getElementById('regEmail').value.trim().toLowerCase();
+   const p1 = document.getElementById('regPass1').value;
+   const p2 = document.getElementById('regPass2').value;
+
+   if (!name || !username || !phone || !email || !p1 || !p2) { showCustomDialog("त्रुटि", "कृपया सभी विवरण भरें!", false); return; }
+   if (p1 !== p2) { showCustomDialog("त्रुटि", "दोनों पासवर्ड समान नहीं हैं!", false); return; }
+
+   const userObj = { name, username, phone, email, pass: p1, registeredAt: new Date().toISOString() };
+
+   try {
+     if (fbDb) {
+       await fbDb.collection("master_profiles").doc(phone).set(userObj);
+       await fbDb.collection("app_accounts").doc("user_" + username).set({ targetMobile: phone, targetEmail: email });
+       await fbDb.collection("app_accounts").doc("phone_" + phone).set({ targetMobile: phone, targetEmail: email });
+       await fbDb.collection("app_accounts").doc("email_" + email).set({ targetMobile: phone, targetEmail: email });
+     }
+     localStorage.setItem('bankpro_active_user', JSON.stringify(userObj));
+     localStorage.setItem('bankpro_master_phone', phone);
+     currentUser = userObj;
+     updateAuthUI();
+     closeAuthModal();
+     await executeCloudRestoreManual(true);
+     showCustomDialog("सफलता", "✅ पंजीकरण सफल!\nइस डिवाइस की मास्टर की: " + phone, false);
+   } catch(e) {
+     showCustomDialog("त्रुटि", "रजिस्ट्रेशन विफल: " + e.message, false);
+   }
+ }
+
+ async function handleLogin() {
+   const identifier = document.getElementById('loginIdentifier').value.trim();
+   const pass = document.getElementById('loginPass').value;
+
+   if (!identifier || !pass) { showCustomDialog("त्रुटि", "कृपया पहचानकर्ता और पासवर्ड दर्ज करें!", false); return; }
+
+   try {
+     const cleanId = identifier.toLowerCase();
+     let targetMobile = null;
+
+     let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
+     const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
+
+     if (idxSnap.exists && idxSnap.data()?.targetMobile) {
+       targetMobile = idxSnap.data().targetMobile;
+     } else if (cleanId.length === 10 && !isNaN(cleanId)) {
+       targetMobile = cleanId;
+     }
+
+     if (!targetMobile) { showCustomDialog("त्रुटि", "यह यूजर/मोबाइल/ईमेल पंजीकृत नहीं है!", false); return; }
+
+     const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
+     if (!userSnap.exists) { showCustomDialog("त्रुटि", "खाता डेटा नहीं मिला!", false); return; }
+
+     const user = userSnap.data();
+     if (user.pass !== pass) { showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false); return; }
+
+     localStorage.setItem('bankpro_active_user', JSON.stringify(user));
+     localStorage.setItem('bankpro_master_phone', user.phone || targetMobile);
+     currentUser = user;
+     updateAuthUI();
+     closeAuthModal();
+     showCustomDialog("सफलता", "✅ लॉगिन सफल! स्वागत है, " + (user.name || user.username), false);
+     await executeCloudRestoreManual(true);
+   } catch(e) {
+     showCustomDialog("त्रुटि", "लॉगिन में त्रुटि: " + e.message, false);
+   }
+ }
+
+ // एडिट प्रोफाइल सिर्फ मास्टर की से खुलेगी
+ function openProfileEditGate() {
+   if (!currentUser) return;
+   document.getElementById('accountBox').style.display = 'none';
+   openUnifiedGate('EDIT_PROFILE_MASTER', 'MASTER KEY REQUIRED', 'ENTER REGISTERED MOBILE NUMBER', 10);
+ }
+
+ function showProfileEditScreen() {
+   document.getElementById('editEmail').value = currentUser.email || '';
+   document.getElementById('editName').value = currentUser.name || '';
+   document.getElementById('editUsername').value = currentUser.username || '';
+   document.getElementById('editPhone').value = currentUser.phone || '';
+
+   document.getElementById('profileEditBox').style.display = 'block';
+   document.getElementById('authOverlay').style.display = 'flex';
+ }
+
+ function closeProfileEditBox() {
+   document.getElementById('profileEditBox').style.display = 'none';
+   document.getElementById('accountBox').style.display = 'block';
+ }
+
+ async function saveEditedProfile() {
+   const newName = document.getElementById('editName').value.trim();
+   const newUsername = document.getElementById('editUsername').value.trim().toLowerCase();
+   const newPhone = document.getElementById('editPhone').value.trim();
+
+   if (!newName || !newUsername || !newPhone) { showCustomDialog("त्रुटि", "कृपया सभी विवरण भरें!", false); return; }
+
+   try {
+     currentUser.name = newName;
+     currentUser.username = newUsername;
+     currentUser.phone = newPhone;
+
+     localStorage.setItem('bankpro_active_user', JSON.stringify(currentUser));
+     localStorage.setItem('bankpro_master_phone', newPhone);
+
+     if (fbDb) {
+       await fbDb.collection("master_profiles").doc(newPhone).set({
+         name: newName,
+         username: newUsername,
+         phone: newPhone,
+         email: currentUser.email,
+         pass: currentUser.pass
+       }, { merge: true });
+
+       await fbDb.collection("app_accounts").doc("user_" + newUsername).set({ targetMobile: newPhone, targetEmail: currentUser.email });
+       await fbDb.collection("app_accounts").doc("phone_" + newPhone).set({ targetMobile: newPhone, targetEmail: currentUser.email });
+     }
+
+     updateAuthUI();
+     closeProfileEditBox();
+     openAuthModal();
+     showCustomDialog("सफलता", "✅ प्रोफाइल अपडेट सफल!\nइस डिवाइस की नई मास्टर की: " + newPhone, false);
+   } catch(e) {
+     showCustomDialog("त्रुटि", "प्रोफाइल अपडेट विफल: " + e.message, false);
+   }
+ }
+
+ function handleManualLogout() {
+   if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+     currentUser = null;
+     localStorage.removeItem('bankpro_active_user');
+     updateAuthUI();
+     closeAuthModal();
+     handleAppLock();
+     showCustomDialog("लॉगआउट", "✅ आप सफलतापूर्वक लॉगआउट हो चुके हैं!", false);
+   }
+ }
+
+ // ==========================================
+ // क्लाउड सिंक व बैकअप / रीस्टोर
+ // ==========================================
+ function handleQuickSync() {
+   if (!currentUser) { openAuthModalProtected(); return; }
+   executeCloudBackupManual();
+ }
+
+ async function executeCloudBackupManual() {
+   if (!currentUser || !fbDb) { showCustomDialog("त्रुटि", "कृपया पहले लॉगिन करें!", false); return; }
+   try {
+     const userEmail = (currentUser.email || '').toLowerCase().trim();
+     const fullBackup = {
+       mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
+       trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
+       userEmail: userEmail,
+       userMobile: currentUser.phone || getDeviceMasterKey(),
+       userName: currentUser.username || '',
+       updatedAt: new Date().toISOString()
+     };
+     await fbDb.collection("bankpro_data_by_email").doc(userEmail).set(fullBackup);
+     showCustomDialog("सफलता", "☁️ क्लाउड बैकअप सुरक्षित सेव हो गया!", false);
+   } catch(e) {
+     showCustomDialog("एरर", "❌ सिंक विफल: " + e.message, false);
+   }
+ }
+
+ async function executeCloudRestoreManual(isSilent = false) {
+   if (!currentUser || !fbDb) { if (!isSilent) showCustomDialog("त्रुटि", "कृपया पहले लॉगिन करें!", false); return; }
+   try {
+     const userEmail = (currentUser.email || '').toLowerCase().trim();
+     const docSnap = await fbDb.collection("bankpro_data_by_email").doc(userEmail).get();
+     if (docSnap.exists) {
+       const data = docSnap.data();
+       let mainList = Array.isArray(data.mainData) ? data.mainData : [];
+       let trashList = Array.isArray(data.trashData) ? data.trashData : [];
+       localStorage.setItem('BankProData', JSON.stringify(mainList));
+       localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
+       renderList();
+       if (!isSilent) showCustomDialog("सफलता", `✅ क्लाउड बैकअप (${mainList.length} रिकॉर्ड्स) लोड हो गया!`, false);
+     } else {
+       if (!isSilent) showCustomDialog("खाली", "⚠️ इस ईमेल पर कोई पुराना बैकअप नहीं मिला!", false);
+     }
+   } catch(e) {
+     if (!isSilent) showCustomDialog("एरर", "❌ लोड विफल: " + e.message, false);
+   }
+ }
+
+ // ==========================================
+ // मैनेज पासवर्ड (सिर्फ मास्टर की से खुलेगा)
+ // ==========================================
+ function openPasswordManagerGate() {
+   toggleVault(true);
+   openUnifiedGate('MANAGE_PINS_MASTER', 'MASTER KEY REQUIRED', 'ENTER MASTER MOBILE NUMBER', 10);
+ }
+
+ function showPassManagerScreen() {
+   document.getElementById('pm_open').value = appPins.openPin || "7869";
+   document.getElementById('pm_edit').value = appPins.editPin || "7869";
+   document.getElementById('pm_del').value = appPins.delPin || "7869";
+   document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
+   document.getElementById('pm_restore').value = appPins.restorePin || "7869";
+   document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
+   document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
+   document.getElementById('passManagerModal').style.display = 'flex';
  }
 
  function closePassManager() {
@@ -721,7 +821,8 @@
      editPin: document.getElementById('pm_edit').value.trim() || "7869",
      delPin: document.getElementById('pm_del').value.trim() || "7869",
      cloudPin: document.getElementById('pm_cloud').value.trim() || "7869",
-     restorePin: document.getElementById('pm_restore').value.trim() || "7869"
+     restorePin: document.getElementById('pm_restore').value.trim() || "7869",
+     loginPin: document.getElementById('pm_login_gate').value.trim() || "7869"
    };
    localStorage.setItem('BankPro_Custom_PINS', JSON.stringify(appPins));
 
@@ -729,357 +830,24 @@
    if (currentUser && newLoginPass && newLoginPass !== currentUser.pass) {
      currentUser.pass = newLoginPass;
      localStorage.setItem('bankpro_active_user', JSON.stringify(currentUser));
-     if (fbDb && currentUser.mobile) {
+     if (fbDb && currentUser.phone) {
        try {
-         await fbDb.collection("master_profiles").doc(currentUser.mobile).update({ pass: newLoginPass });
+         await fbDb.collection("master_profiles").doc(currentUser.phone).update({ pass: newLoginPass });
        } catch (err) {
-         console.warn("Could not update remote login pass:", err);
+         console.warn("Remote pass update note:", err);
        }
      }
    }
 
    closePassManager();
-   showCustomDialog("सफलता", "✅ सभी पासवर्ड सुरक्षित सेव हो गए!", false);
+   showCustomDialog("सफलता", "✅ सभी पासवर्ड और अकाउंट पासवर्ड सुरक्षित सेव हो गए!", false);
  }
 
  // ==========================================
- // 3. फायरबेस ऑथेंटिकेशन (REGISTER & LOGIN)
- // ==========================================
- function openFirebaseAuthModal() {
-   document.getElementById('vaultPanel').style.display = 'none';
-   document.getElementById('firebaseAuthModal').style.display = 'flex';
-   if (!currentUser) switchAuthTab('LOGIN');
-   updateAuthUI();
- }
-
- function closeFirebaseAuthModal() {
-   if (!currentUser) {
-     showCustomDialog("चेतावनी", "⚠️ पहले रजिस्टर या लॉगिन करें!", false);
-     return;
-   }
-   document.getElementById('firebaseAuthModal').style.display = 'none';
- }
-
- function switchAuthTab(tab) {
-   currentAuthTab = tab;
-   const tabReg = document.getElementById('tabRegisterBtn');
-   const tabLog = document.getElementById('tabLoginBtn');
-   const extraFields = document.getElementById('regExtraFields');
-   const loginField = document.getElementById('loginField');
-   const confirmField = document.getElementById('regConfirmField');
-   const submitBtn = document.getElementById('btnAuthSubmit');
-   const authLinksRow = document.getElementById('authLinksRow');
-   const desc = document.getElementById('authStatusDesc');
-
-   if (tab === 'REGISTER') {
-     tabReg.style.background = '#1e293b'; tabReg.style.color = '#00f3ff';
-     tabLog.style.background = '#0b0e14'; tabLog.style.color = '#94a3b8';
-     extraFields.style.display = 'flex';
-     loginField.style.display = 'none';
-     confirmField.style.display = 'block';
-     authLinksRow.style.display = 'none';
-     submitBtn.innerText = 'रजिस्टर करें';
-     submitBtn.style.background = '#00f3ff';
-     submitBtn.style.color = '#000';
-     desc.innerText = 'नया खाता विवरण भरें';
-   } else {
-     tabReg.style.background = '#0b0e14'; tabReg.style.color = '#94a3b8';
-     tabLog.style.background = '#1e293b'; tabLog.style.color = '#2ecc71';
-     extraFields.style.display = 'none';
-     loginField.style.display = 'block';
-     confirmField.style.display = 'none';
-     authLinksRow.style.display = 'flex';
-     submitBtn.innerText = 'लॉगिन करें';
-     submitBtn.style.background = '#2ecc71';
-     submitBtn.style.color = '#fff';
-     desc.innerText = 'Username, Mobile Number या Email ID से लॉगिन करें';
-   }
- }
-
- function handleAuthSubmit() {
-   if (currentAuthTab === 'REGISTER') firebaseSignUp();
-   else firebaseLogin();
- }
-
- async function firebaseSignUp() {
-   const fullName = document.getElementById('fbFullName').value.trim();
-   const username = document.getElementById('fbRegUsername').value.trim().toLowerCase();
-   const mobile = document.getElementById('fbRegMobile').value.trim();
-   const email = document.getElementById('fbRegEmail').value.trim().toLowerCase();
-   const pass = document.getElementById('fbPassword').value;
-   const confirmPass = document.getElementById('fbConfirmPassword').value;
-
-   if (!fullName) { showCustomDialog("त्रुटि", "❌ पूरा नाम लिखें!", false); return; }
-   if (!username || username.length < 3) { showCustomDialog("त्रुटि", "❌ कम से कम 3 अक्षरों का यूजरनेम बनाएं!", false); return; }
-   if (!mobile || mobile.length !== 10 || isNaN(mobile)) { showCustomDialog("त्रुटि", "❌ सही 10 अंकों का मोबाइल नंबर लिखें!", false); return; }
-   if (!email || !email.includes('@')) { showCustomDialog("त्रुटि", "❌ सही ईमेल आईडी दर्ज करें!", false); return; }
-   if (!pass || pass.length < 4) { showCustomDialog("त्रुटि", "❌ पासवर्ड कम से कम 4 अक्षरों का रखें!", false); return; }
-   if (pass !== confirmPass) { showCustomDialog("त्रुटि", "❌ दोनों पासवर्ड मेल नहीं खाते!", false); return; }
-
-   try {
-     const [uDoc, mDoc] = await Promise.all([
-       fbDb.collection("app_accounts").doc("user_" + username).get(),
-       fbDb.collection("app_accounts").doc("phone_" + mobile).get()
-     ]);
-
-     if (uDoc.exists) { showCustomDialog("चेतावनी", "⚠️ यह यूज़रनेम पहले से मौजूद है!", false); return; }
-     if (mDoc.exists) { showCustomDialog("चेतावनी", "⚠️ यह मोबाइल नंबर पहले से पंजीकृत है! Login करें।", false); switchAuthTab('LOGIN'); return; }
-
-     const userObj = { fullName, username, mobile, email, pass, registeredAt: new Date().toISOString() };
-
-     const batch = fbDb.batch();
-     batch.set(fbDb.collection("master_profiles").doc(mobile), userObj);
-     batch.set(fbDb.collection("app_accounts").doc("user_" + username), { targetMobile: mobile, targetEmail: email });
-     batch.set(fbDb.collection("app_accounts").doc("phone_" + mobile), { targetMobile: mobile, targetEmail: email });
-     batch.set(fbDb.collection("app_accounts").doc("email_" + email), { targetMobile: mobile, targetEmail: email });
-     await batch.commit();
-
-     registeredMasterPhone = mobile;
-     localStorage.setItem("bankpro_master_phone", mobile);
-     localStorage.setItem("bankpro_active_user", JSON.stringify(userObj));
-     currentUser = userObj;
-
-     showCustomDialog("सफलता", `🎉 स्वागत है ${username.toUpperCase()}! आपका खाता बन गया है।`, false);
-     updateAuthUI();
-     await restoreFromFirebase(false);
-     document.getElementById('firebaseAuthModal').style.display = 'none';
-   } catch(err) {
-     showCustomDialog("एरर", "❌ रजिस्ट्रेशन एरर: " + err.message, false);
-   }
- }
-
- async function firebaseLogin() {
-   const rawId = document.getElementById('fbLoginIdentifier').value.trim();
-   const pass = document.getElementById('fbPassword').value;
-
-   if (!rawId || !pass) {
-     showCustomDialog("त्रुटि", "❌ कृपया पहचानकर्ता और पासवर्ड दोनों दर्ज करें!", false);
-     return;
-   }
-
-   const cleanId = rawId.toLowerCase();
-   let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
-
-   try {
-     let targetMobile = null;
-     const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
-     if (idxSnap.exists && idxSnap.data()?.targetMobile) {
-       targetMobile = idxSnap.data().targetMobile;
-     } else if (cleanId.length === 10 && !isNaN(cleanId)) {
-       targetMobile = cleanId;
-     }
-
-     if (!targetMobile) {
-       showCustomDialog("त्रुटि", "❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!", false);
-       return;
-     }
-
-     const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
-     if (!userSnap.exists) {
-       showCustomDialog("त्रुटि", "❌ खाता डेटा नहीं मिला!", false);
-       return;
-     }
-
-     const userData = userSnap.data();
-     if (userData.pass !== pass) {
-       showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false);
-       return;
-     }
-
-     currentUser = userData;
-     registeredMasterPhone = userData.mobile || "7869";
-     localStorage.setItem("bankpro_master_phone", registeredMasterPhone);
-     localStorage.setItem("bankpro_active_user", JSON.stringify(userData));
-
-     showCustomDialog("सफलता", "✅ लॉगिन सफल!", false);
-     updateAuthUI();
-     await restoreFromFirebase(false);
-     document.getElementById('firebaseAuthModal').style.display = 'none';
-   } catch(err) {
-     showCustomDialog("एरर", "❌ लॉगिन त्रुटि: " + err.message, false);
-   }
- }
-
- function openCloudActionModal(type) {
-   pendingCloudAction = type;
-   const title = document.getElementById('cloudActionTitle');
-   const desc = document.getElementById('cloudActionDesc');
-   const passInp = document.getElementById('cloudActionPassInput');
-   const okBtn = document.getElementById('btnExecuteCloud');
-   passInp.value = '';
-
-   if (type === 'BACKUP') {
-     title.innerText = "☁️ CLOUD BACKUP";
-     desc.innerText = "बैकअप लेने के लिए पासवर्ड डालें";
-     okBtn.innerText = "BACKUP NOW";
-     okBtn.style.background = "#2ecc71";
-   } else {
-     title.innerText = "📥 CLOUD RESTORE";
-     desc.innerText = "डेटा रिस्टोर करने के लिए पासवर्ड डालें";
-     okBtn.innerText = "RESTORE NOW";
-     okBtn.style.background = "#f59e0b";
-   }
-   document.getElementById('cloudActionModal').style.display = 'flex';
-   passInp.focus();
- }
-
- function closeCloudActionModal() {
-   document.getElementById('cloudActionModal').style.display = 'none';
- }
-
- function submitCloudAction() {
-   const entered = document.getElementById('cloudActionPassInput').value.trim();
-   const expectedPin = (pendingCloudAction === 'RESTORE') ? (appPins.restorePin || "7869") : (appPins.cloudPin || "7869");
-
-   if (entered === expectedPin || entered === registeredMasterPhone || entered === "7869") {
-     closeCloudActionModal();
-     if (pendingCloudAction === 'BACKUP') backupToFirebase(true);
-     else restoreFromFirebase(true);
-   } else {
-     showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false);
-   }
- }
-
- // ईमेल पर आधारित फायरबेस बैकअप
- async function backupToFirebase(showAlert = true) {
-   if (!currentUser || !fbDb) return;
-   try {
-     const userEmail = (currentUser.email || '').toLowerCase().trim();
-     const fullBackup = {
-       mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
-       trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
-       userEmail: userEmail,
-       userMobile: currentUser.mobile || registeredMasterPhone,
-       userName: currentUser.username || '',
-       updatedAt: new Date().toISOString()
-     };
-     await fbDb.collection("bankpro_data_by_email").doc(userEmail).set(fullBackup);
-     if (showAlert) showCustomDialog("सफलता", "☁️ आपका डेटा ईमेल बैकअप में सुरक्षित सेव हो गया!", false);
-   } catch(e) {
-     if (showAlert) showCustomDialog("एरर", "❌ सिंक विफल: " + e.message, false);
-   }
- }
-
- async function restoreFromFirebase(showAlert = true) {
-   if (!currentUser || !fbDb) return;
-   try {
-     const userEmail = (currentUser.email || '').toLowerCase().trim();
-     const doc = await fbDb.collection("bankpro_data_by_email").doc(userEmail).get();
-     if (doc.exists) {
-       const data = doc.data();
-       let mainList = Array.isArray(data.mainData) ? data.mainData : [];
-       let trashList = Array.isArray(data.trashData) ? data.trashData : [];
-       localStorage.setItem('BankProData', JSON.stringify(mainList));
-       localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
-       renderList();
-       if (showAlert) showCustomDialog("सफलता", `✅ क्लाउड बैकअप (${mainList.length} रिकॉर्ड्स) सफलतापूर्वक लोड हो गया!`, false);
-     } else {
-       if (showAlert) showCustomDialog("खाली", "⚠️ इस ईमेल खाते पर कोई पुराना बैकअप नहीं मिला!", false);
-     }
-   } catch(e) {
-     if (showAlert) showCustomDialog("एरर", "❌ लोड विफल: " + e.message, false);
-   }
- }
-
- async function firebaseLogout(userInitiated = true) {
-   if (currentUser) {
-     await backupToFirebase(false);
-   }
-   currentUser = null;
-   localStorage.removeItem("bankpro_active_user");
-   localStorage.removeItem("bankpro_master_phone");
-   renderList();
-   updateAuthUI();
-   handleAppLock();
-   if (userInitiated) showCustomDialog("लॉगआउट", "डेटा सेव हो गया और ऐप लॉक हो गया!", false);
-   openFirebaseAuthModal();
- }
-
- // ==========================================
- // FORGOT PASSWORD & FIND MY DETAILS
- // ==========================================
- async function handleForgotPassword() {
-   let input = prompt("अपना रजिस्टर्ड मोबाइल नंबर या ईमेल आईडी दर्ज करें:");
-   if (!input || !input.trim()) return;
-   let cleanInput = input.trim().toLowerCase();
-
-   try {
-     let targetMobile = null;
-     if (cleanInput.includes('@')) {
-       let snap = await fbDb.collection("app_accounts").doc("email_" + cleanInput).get();
-       if (snap.exists) targetMobile = snap.data().targetMobile;
-     } else if (cleanInput.length === 10 && !isNaN(cleanInput)) {
-       targetMobile = cleanInput;
-     } else {
-       let snap = await fbDb.collection("app_accounts").doc("user_" + cleanInput).get();
-       if (snap.exists) targetMobile = snap.data().targetMobile;
-     }
-
-     if (!targetMobile) {
-       showCustomDialog("त्रुटि", "❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!", false);
-       return;
-     }
-
-     let userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
-     if (!userSnap.exists) {
-       showCustomDialog("त्रुटि", "❌ खाता डेटा उपलब्ध नहीं है!", false);
-       return;
-     }
-
-     let uData = userSnap.data();
-     let userMail = uData.email;
-     let foundPass = uData.pass;
-
-     showCustomDialog(
-       "पासवर्ड रिकवरी",
-       `✅ आपका पासवर्ड है: "${foundPass}"\n\nक्या आप इसे अपने ईमेल (${userMail}) पर भेजना चाहते हैं?`,
-       true,
-       () => {
-         let subject = encodeURIComponent("Bank Agent Pro - Password Recovery");
-         let body = encodeURIComponent(`नमस्ते ${uData.fullName},\n\nआपके बैंक एजेंट प्रो खाते का पासवर्ड नीचे दिया गया है:\n\nयूज़र नाम: ${uData.username}\nमोबाइल नंबर: ${uData.mobile}\nपासवर्ड: ${foundPass}\n\nधन्यवाद!`);
-         window.location.href = `mailto:${userMail}?subject=${subject}&body=${body}`;
-       }
-     );
-   } catch(e) {
-     showCustomDialog("त्रुटि", "❌ जांच विफल: " + e.message, false);
-   }
- }
-
- async function handleForgotDetails() {
-   let masterPin = prompt("अपना 10 अंकों का मास्टर पासवर्ड (रजिस्टर्ड मोबाइल नंबर) दर्ज करें:");
-   if (!masterPin || !masterPin.trim()) return;
-   let cleanPin = masterPin.trim();
-
-   try {
-     let userSnap = await fbDb.collection("master_profiles").doc(cleanPin).get();
-     if (!userSnap.exists) {
-       showCustomDialog("त्रुटि", "❌ इस मास्टर पासवर्ड से कोई प्रोफाइल नहीं मिली!", false);
-       return;
-     }
-
-     let uData = userSnap.data();
-     let detailMsg = `👤 नाम: ${uData.fullName}\n🆔 यूज़रनेम: ${uData.username}\n📱 मोबाइल: ${uData.mobile}\n📧 ईमेल: ${uData.email}\n🔑 पासवर्ड: ${uData.pass}`;
-
-     showCustomDialog(
-       "खाता विवरण",
-       detailMsg + `\n\nक्या आप यह पूरा विवरण अपने ईमेल (${uData.email}) पर भेजना चाहते हैं?`,
-       true,
-       () => {
-         let subject = encodeURIComponent("Bank Agent Pro - Account Details");
-         let body = encodeURIComponent(`नमस्ते ${uData.fullName},\n\nयहाँ आपके बैंक एजेंट प्रो खाते का सम्पूर्ण विवरण है:\n\nनाम: ${uData.fullName}\nयूज़रनेम: ${uData.username}\nमोबाइल नंबर: ${uData.mobile}\nईमेल: ${uData.email}\nलॉगिन पासवर्ड: ${uData.pass}\n\nसुरक्षित रहें!`);
-         window.location.href = `mailto:${uData.email}?subject=${subject}&body=${body}`;
-       }
-     );
-   } catch(e) {
-     showCustomDialog("त्रुटि", "❌ विवरण लोड विफल: " + e.message, false);
-   }
- }
-
- // ==========================================
- // 4. JSON एक्सपोर्ट, इम्पोर्ट और ऐप रिसेट
+ // JSON बैकअप / रीस्टोर / रीसेट
  // ==========================================
  function openJsonActionModal() {
-   document.getElementById('vaultPanel').style.display = 'none';
+   toggleVault(true);
    document.getElementById('jsonActionModal').style.display = 'flex';
  }
 
@@ -1129,7 +897,7 @@
            renderForm();
          }
          renderList();
-         showCustomDialog("सफलता", `✅ JSON फ़ाइल से डेटा सफलतापूर्वक रीस्टोर हो गया! (${data.mainData.length} रिकॉर्ड्स)`, false);
+         showCustomDialog("सफलता", `✅ JSON फ़ाइल से डेटा रीस्टोर हो गया! (${data.mainData.length} रिकॉर्ड्स)`, false);
        } else {
          showCustomDialog("त्रुटि", "❌ यह सही Bank Pro बैकअप फ़ाइल नहीं है!", false);
        }
@@ -1142,35 +910,21 @@
  }
 
  function promptResetApp() {
-   document.getElementById('vaultPanel').style.display = 'none';
-   const inp = document.getElementById('resetPassInput');
-   if (inp._setRealValue) inp._setRealValue("");
-   else inp.value = "";
-   document.getElementById('resetAppModal').style.display = 'flex';
-   inp.focus();
+   toggleVault(true);
+   openUnifiedGate('RESET_APP_MASTER', 'RESET APP', 'ENTER MASTER MOBILE NUMBER', 10);
  }
 
- function closeResetModal() {
-   document.getElementById('resetAppModal').style.display = 'none';
- }
-
- function handleResetSubmit() {
-   const entered = getMaskedValue('resetPassInput').trim();
-   if (entered === registeredMasterPhone || entered === "7869") {
-     closeResetModal();
-     showCustomDialog("ऐप रीसेट", "क्या आप वाकई पूरी एप्लिकेशन को रीसेट करना चाहते हैं? आपका क्लाउड बैकअप सुरक्षित रहेगा।", true, () => {
-       localStorage.removeItem('BankProData');
-       localStorage.removeItem('BankPro_Trash');
-       renderList();
-       showCustomDialog("सफलता", "✅ एप्लिकेशन का लोकल डेटा पूरी तरह साफ़ हो गया है!", false);
-     });
-   } else {
-     showCustomDialog("त्रुटि", "❌ गलत मास्टर पासवर्ड!", false);
-   }
+ function executeAppReset() {
+   showCustomDialog("ऐप रीसेट", "क्या आप वाकई पूरी एप्लिकेशन को रीसेट करना चाहते हैं?", true, () => {
+     localStorage.removeItem('BankProData');
+     localStorage.removeItem('BankPro_Trash');
+     renderList();
+     showCustomDialog("सफलता", "✅ एप्लिकेशन का लोकल डेटा पूरी तरह साफ़ हो गया है!", false);
+   });
  }
 
  // ==========================================
- // बैंक प्रो कोर फंक्शन्स (Fields & Cards)
+ // बैंक प्रो कोर डेटा व फॉर्म
  // ==========================================
  function showCustomDialog(title, message, isConfirm, onOk, onCancel) {  
    const overlay = document.getElementById('customDialogOverlay');  
@@ -1623,99 +1377,63 @@
    liveUpdate(); toggleForm(true, 'edit');  
  }  
 
- function askUnlock() { pendingAction = "unlock"; setupModal("ENTER EDIT PIN", "#4285F4", "UNLOCK"); }  
- function openDeleteModal(id) { deleteID = id; pendingAction = "delete"; setupModal("ENTER DELETE PIN", "red", "DELETE"); }  
+ function askUnlock() { 
+   openUnifiedGate('UNLOCK_EDIT_PIN', 'ENTER EDIT PIN', 'ENTER 4-DIGIT PIN TO EDIT', 4);
+ } 
 
- function setupModal(title, color, btnText) {  
-   document.activeElement.blur();  
-   const overlay = document.getElementById('delOverlay');
-   const input = document.getElementById('delPassInput');
-   const box = overlay.querySelector('.del-modal-box');
+ function executeUnlockForm() {
+   setLock(false);   
+   fieldConfig.forEach(f => {  
+     if (f[1] === 'cvv') {  
+       const cvvBox = document.getElementById('inp-cvv-code');  
+       if (cvvBox) cvvBox.parentElement.style.backgroundColor = "#ffffff";  
+     } else {  
+       const el = document.getElementById('inp-' + f[1]);  
+       if (el) el.parentElement.style.backgroundColor = "#ffffff";   
+     }  
+   });  
+   currentCustomFields.forEach(cf => {  
+     const el = document.getElementById('inp-cf-' + cf.key);  
+     if (el) el.parentElement.style.backgroundColor = "#ffffff";  
+   });  
    
-   overlay.style.display = 'flex';  
-   document.getElementById('modalTitle').innerText = title;  
-   document.getElementById('modalTitle').style.color = color;  
-   box.style.borderColor = color;
-   box.style.boxShadow = `0 0 25px ${color}66`;
-   
-   const confirmBtn = document.getElementById('confirmDelBtn');
-   confirmBtn.style.background = color;  
-   confirmBtn.innerText = btnText;
-   confirmBtn.onclick = () => processPinAction(input.value);
+   document.getElementById('main-btn-container').innerHTML = `  
+     <div style="display:flex; gap:4px; padding:5px; align-items:center;">  
+     <button class="btn-blue" style="flex:3; height:34px; font-size:11px; margin:0;" onclick="handleSave(false)">🆕 UPDATE</button>  
+     <button class="btn-purple" style="flex:2; height:34px; font-size:11px; margin:0;" onclick="handleSave(true)">➕ NEW</button>  
+     <button style="background:#00f3ff; color:#000; flex:1; max-width:40px; height:34px; font-size:16px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>  
+     <button style="background:#ff4757; flex:1; max-width:40px; height:34px; font-size:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="openDeleteModal(currentEditID)" title="Delete Entry">🗑️</button>  
+     <button class="btn-black" style="flex:1; max-width:40px; height:34px; font-size:13px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="refreshApp()">X</button>  
+     </div>`;  
+ }
 
-   input.value = ""; 
-   input.focus();  
-   input.oninput = function() { if (this.value.length === 4) processPinAction(this.value); };  
- }  
+ function openDeleteModal(id) { 
+   deleteID = id; 
+   openUnifiedGate('DELETE_ENTRY_PIN', 'DELETE ENTRY', 'ENTER 4-DIGIT DELETE PIN', 4);
+ } 
 
- function processPinAction(enteredPin) {  
-   if (pendingAction === "unlock") {  
-     if (enteredPin === appPins.editPin || enteredPin === registeredMasterPhone || enteredPin === "7869") {  
-       setLock(false);   
-       fieldConfig.forEach(f => {  
-         if (f[1] === 'cvv') {  
-           const cvvBox = document.getElementById('inp-cvv-code');  
-           if (cvvBox) cvvBox.parentElement.style.backgroundColor = "#ffffff";  
-         } else {  
-           const el = document.getElementById('inp-' + f[1]);  
-           if (el) el.parentElement.style.backgroundColor = "#ffffff";   
-         }  
-       });  
-       currentCustomFields.forEach(cf => {  
-         const el = document.getElementById('inp-cf-' + cf.key);  
-         if (el) el.parentElement.style.backgroundColor = "#ffffff";  
-       });  
-       
-       document.getElementById('main-btn-container').innerHTML = `  
-         <div style="display:flex; gap:4px; padding:5px; align-items:center;">  
-         <button class="btn-blue" style="flex:3; height:34px; font-size:11px; margin:0;" onclick="handleSave(false)">🆕 UPDATE</button>  
-         <button class="btn-purple" style="flex:2; height:34px; font-size:11px; margin:0;" onclick="handleSave(true)">➕ NEW</button>  
-         <button style="background:#00f3ff; color:#000; flex:1; max-width:40px; height:34px; font-size:16px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>  
-         <button style="background:#ff4757; flex:1; max-width:40px; height:34px; font-size:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="openDeleteModal(currentEditID)" title="Delete Entry">🗑️</button>  
-         <button class="btn-black" style="flex:1; max-width:40px; height:34px; font-size:13px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="refreshApp()">X</button>  
-         </div>`;  
-       closeDelModal();  
-     } else { wrongPin(); }  
-   } else if (pendingAction === "delete") {  
-     if (enteredPin === appPins.delPin || enteredPin === registeredMasterPhone || enteredPin === "7869") {  
-       if (isTrashDelete) {   
-         let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
-         trash = trash.filter(i => i.id !== deleteID);  
-         localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
-         closeDelModal();  
-         showCustomDialog("SUCCESS", "Permanently Deleted from Trash", false);  
-       } else {   
-         let allData = JSON.parse(localStorage.getItem('BankProData') || '[]');  
-         let itemToTrash = allData.find(i => i.id === deleteID);  
-         if (itemToTrash) {  
-           let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
-           trash.unshift(itemToTrash);  
-           localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
-         }  
-         let stored = allData.filter(i => i.id !== deleteID);  
-         localStorage.setItem('BankProData', JSON.stringify(stored));  
-         renderList();  
-         closeDelModal();  
-         showCustomDialog("DELETED", "Moved to Recycle Bin", false);  
-       }  
-       isTrashDelete = false;  
-     } else { wrongPin(); }  
+ function executeDeleteEntry() {
+   if (isTrashDelete) {   
+     let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
+     trash = trash.filter(i => i.id !== deleteID);  
+     localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
+     showCustomDialog("SUCCESS", "Permanently Deleted from Trash", false);  
+   } else {   
+     let allData = JSON.parse(localStorage.getItem('BankProData') || '[]');  
+     let itemToTrash = allData.find(i => i.id === deleteID);  
+     if (itemToTrash) {  
+       let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
+       trash.unshift(itemToTrash);  
+       localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
+     }  
+     let stored = allData.filter(i => i.id !== deleteID);  
+     localStorage.setItem('BankProData', JSON.stringify(stored));  
+     renderList();  
+     refreshApp();
+     showCustomDialog("DELETED", "Moved to Recycle Bin", false);  
    }  
- }  
-
- function wrongPin() {  
-   document.getElementById('delPassInput').value = "";   
-   showCustomDialog("WRONG PIN", "ACCESS DENIED", false);  
- }  
-  
- function closeDelModal() {   
-   document.getElementById('delOverlay').style.display = 'none';  
-   pendingAction = null;
-   if(isTrashDelete) {   
-     showTrashList();   
-     isTrashDelete = false;  
-   }   
- }  
+   isTrashDelete = false;  
+ }
 
  function liveUpdate() {  
    const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }  
@@ -1763,8 +1481,9 @@
 
  function refreshApp() { toggleForm(false); renderList(); document.getElementById('vaultPanel').style.display = 'none'; }  
  function toggleOptionMenu() { document.getElementById('option-menu').style.display = document.getElementById('option-menu').style.display === 'none' ? 'block' : 'none'; }  
- function toggleVault() { 
+ function toggleVault(forceClose = false) { 
    const vp = document.getElementById('vaultPanel');
+   if (forceClose) { vp.style.display = 'none'; return; }
    vp.style.display = (vp.style.display === 'none') ? 'block' : 'none';
  }  
 
@@ -1917,9 +1636,9 @@
      const startPress = (e) => {  
        isLongPress = false;  
        timer = setTimeout(() => {  
-         isLongPress = true; deleteID = item.id; isTrashDelete = true; pendingAction = "delete";  
+         isLongPress = true; deleteID = item.id; isTrashDelete = true;  
          document.getElementById('fieldModal').style.display = 'none';  
-         setupModal("PERMANENT DELETE", "red", "DELETE");  
+         openUnifiedGate('DELETE_ENTRY_PIN', 'PERMANENT DELETE', 'ENTER 4-DIGIT PIN', 4);
        }, 800);  
      };  
      
