@@ -101,9 +101,10 @@
         .header-title { font-size: 14px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.3px; }
 
         .user-badge-header {
-            font-size: 11px; font-weight: 600; color: #38bdf8;
+            font-size: 11.5px; font-weight: 700; color: #00f3ff;
             display: flex; align-items: center; gap: 4px;
-            max-width: 160px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            cursor: pointer;
         }
 
         .header-actions { display: flex; gap: 5px; align-items: center; }
@@ -247,7 +248,6 @@
         .excel-sheet-table { width: 100%; border-collapse: collapse; font-size: 9.5px; font-family: monospace, sans-serif; background: #fff; color: #111; }
         .excel-sheet-table th { background: #1e293b; color: #fff; padding: 5px 4px; font-size: 9px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
         .excel-sheet-table td { padding: 4px 5px; border: 1px solid #e2e8f0; font-size: 9.5px; }
-        .excel-agent-banner { background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 4px 6px; border: 1px solid #bae6fd; font-size: 10px; }
 
         .simple-settings-list {
             overflow-y: scroll; flex: 1; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain !important;
@@ -297,43 +297,156 @@
         .btn-save-more { background: #1e3a5f; color: #38bdf8; border: 1px solid #38bdf8; }
         .btn-submit { background: var(--accent-recv); color: #ffffff; }
 
-        #firebaseAuthModal, #masterGateModal, #passManagerModal, #resetAppModal {
+        /* Unified Beautiful Master Security Style PIN Modal */
+        .auth-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
             z-index: 100000; align-items: center; justify-content: center; padding: 12px;
         }
-
-        #cloudActionModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(20px);
-            z-index: 200000 !important; align-items: center; justify-content: center; padding: 12px;
+        .security-pin-card {
+            background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px;
+            padding: 20px 16px; width: 85%; max-width: 290px; box-shadow: 0 0 30px rgba(0,240,255,0.45);
+            color: #fff; text-align: center;
+        }
+        .security-pin-card h3 { margin: 0 0 6px 0; font-size: 13.5px; color: #00f3ff; letter-spacing: 0.5px; }
+        .security-pin-card p { margin: 0 0 12px 0; font-size: 10.5px; color: #bbb; }
+        .security-pin-card input {
+            width: 85%; padding: 10px; border-radius: 10px; border: 2px solid #00f0ff;
+            background: #000; color: #00ff66; text-align: center; font-size: 20px;
+            font-weight: 900; outline: none; letter-spacing: 4px;
         }
 
-        .auth-card {
-            background: rgba(17, 22, 33, 0.98); padding: 18px; border-radius: 14px; border: 1px solid var(--border-soft);
-            width: 100%; max-width: 320px; text-align: center; display: flex; flex-direction: column; gap: 9px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+        /* Transparent Master Ledger Style Auth Modal */
+        #authOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(10, 15, 30, 0.88); backdrop-filter: blur(15px); 
+            z-index: 9999999; display: none; align-items: center; justify-content: center; 
         }
-        .auth-card input {
-            width: 100%; padding: 10px; border: 1px solid var(--border-soft); border-radius: 8px;
-            font-size: 12.5px; background: #0b0e14; color: #fff; outline: none; text-align: center;
+        .auth-card { 
+            background: #0d1b2a; border: 2px solid #00f0ff; border-radius: 20px; 
+            padding: 18px; width: 88%; max-width: 320px; box-shadow: 0 0 25px rgba(0,240,255,0.4); 
+            color: #fff; text-align: center; position: relative; 
+        }
+        .auth-card h2 { margin: 0 0 10px 0; font-size: 14px; color: #00f0ff; letter-spacing: 1px; font-weight: 900; }
+        .auth-card input { 
+            width: 92%; padding: 8px; margin-bottom: 7px; border-radius: 8px; 
+            border: 1.5px solid #00f0ff; background: #080d1a; color: #fff; font-size: 12px; text-align: center; outline: none; 
+        }
+        .auth-card button { 
+            width: 95%; padding: 9px; border-radius: 12px; border: none; 
+            font-weight: 900; font-size: 12px; cursor: pointer; margin-top: 6px; margin-bottom: 4px; 
+        }
+        .btn-auth-main { background: #00c853; color: white; box-shadow: 0 3px 0 #00701a; }
+        .auth-switch { margin-top: 8px; font-size: 11px; color: #00f0ff; cursor: pointer; text-decoration: underline; font-weight: bold; }
+        .close-auth { position: absolute; top: 8px; right: 12px; color: #ff4757; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        /* Password Manager Modal */
+        .pm-card { 
+            background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px; 
+            padding: 16px 14px; width: 92%; max-width: 340px; box-shadow: 0 0 30px rgba(0,240,255,0.45); 
+            color: #fff; text-align: center; 
         }
         .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-        .pm-row label { font-size: 10.5px; font-weight: 600; color: #38bdf8; text-align: left; width: 55%; }
-        .pm-row input { width: 40%; padding: 5px; border-radius: 5px; border: 1px solid #38bdf8; background: #000; color: #2ecc71; text-align: center; font-size: 12px; font-weight: bold; outline: none; }
-        
-        .auth-links {
-            display: flex; justify-content: space-between; font-size: 10.5px; margin-top: 4px; padding: 0 4px;
-        }
-        .auth-link {
-            color: #38bdf8; cursor: pointer; text-decoration: underline;
+        .pm-row label { font-size: 9.5px; font-weight: 900; color: #ffeb3b; text-align: left; width: 55%; letter-spacing: 0.3px; }
+        .pm-row input { 
+            width: 42%; padding: 5px; border-radius: 6px; border: 1.5px solid #00f0ff; 
+            background: #000; color: #00ff66; text-align: center; font-size: 12px; font-weight: 900; outline: none; 
         }
     </style>
 </head>
 <body>
 
+    <!-- 3-Tap App Lock Screen -->
     <div id="mainAppOverlay" onclick="handleLockClick()">
         <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" autocomplete="new-password" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल (Auto-Submit & No OK Needed) -->
+    <div class="auth-overlay" id="unifiedSecurityGateModal">
+      <div class="security-pin-card">
+        <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
+        <p id="unifiedGateDesc">ENTER PIN</p>
+        <input type="password" id="unifiedGateInput" placeholder="••••" inputmode="numeric" oninput="handleUnifiedGateInput(this)">
+        <div style="display:flex; gap:8px; margin-top:14px;">
+          <button style="background:#00c853; flex:1; padding:8px; border-radius:8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="submitUnifiedGateManual()">OK</button>
+          <button style="background:#555; flex:1; padding:8px; border-radius:8px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="closeUnifiedGate()">CANCEL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- मास्टर लेजर स्टाइल ऑथेंटिकेशन ओवरले -->
+    <div id="authOverlay">
+        <!-- 1. LOGIN BOX -->
+        <div class="auth-card" id="loginBox" style="display:none;">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>LOGIN KHATA LEDGER</h2>
+            <input type="text" id="loginIdentifier" placeholder="यूज़रनेम / मोबाइल / ईमेल ID">
+            <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
+            <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
+            <div class="auth-switch" onclick="askRegisterPermission()">नया खाता बनाएँ (Register)</div>
+        </div>
+
+        <!-- 2. REGISTER BOX -->
+        <div class="auth-card" id="registerBox" style="display:none;">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>REGISTER DEVICE ACCOUNT</h2>
+            <input type="text" id="regName" placeholder="पूरा नाम (Full Name)">
+            <input type="text" id="regUsername" placeholder="डिवाइस यूज़रनेम (Username)">
+            <input type="tel" id="regPhone" placeholder="मोबाइल नंबर (Master Key)">
+            <input type="email" id="regEmail" placeholder="क्लाउड सिंक ईमेल पता (Shared Email)">
+            <input type="password" id="regPass1" placeholder="पासवर्ड (Password)">
+            <input type="password" id="regPass2" placeholder="पासवर्ड दोबारा (Confirm Password)">
+            <button class="btn-auth-main" onclick="handleRegister()">REGISTER & SAVE</button>
+            <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
+        </div>
+
+        <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (ईमेल पूरी तरह से हटा दी गई है) -->
+        <div class="auth-card" id="accountBox" style="display:none;">
+            <span class="close-auth" onclick="closeAuthModal()">✖</span>
+            <h2>FIREBASE CLOUD ACCOUNT</h2>
+            <div style="font-size:13px; color:#00ff66; margin-bottom:12px; font-weight:900;" id="dashUserDisplay">👤 USER</div>
+            <button class="btn-auth-main" style="background:#00c853;" onclick="executeCloudBackupManual()">☁️ CLOUD BACKUP NOW</button>
+            <button class="btn-auth-main" style="background:#e67e22;" onclick="executeCloudRestoreManual()">📥 CLOUD RESTORE NOW</button>
+            <button class="btn-auth-main" style="background:#3498db;" onclick="openProfileEditGate()">✏️ EDIT USER PROFILE</button>
+            <button class="btn-auth-main" style="background:#c0392b;" onclick="handleManualLogout()">🚪 LOGOUT & LOCK</button>
+        </div>
+
+        <!-- 4. PROFILE EDIT BOX -->
+        <div class="auth-card" id="profileEditBox" style="display:none;">
+            <span class="close-auth" onclick="closeProfileEditBox()">✖</span>
+            <h2>EDIT DEVICE PROFILE</h2>
+            <p style="font-size:10px; color:#aaa; margin:0 0 6px 0;">सिंक ईमेल स्थायी (Default) रहेगा</p>
+            <input type="text" id="editEmail" disabled style="background:#222; color:#777; border-color:#555;">
+            <input type="text" id="editName" placeholder="पूरा नाम (Full Name)">
+            <input type="text" id="editUsername" placeholder="यूज़रनेम (Username)">
+            <input type="tel" id="editPhone" placeholder="मोबाइल नंबर (New Master Key)">
+            <button class="btn-auth-main" style="background:#27ae60;" onclick="saveEditedProfile()">SAVE CHANGES</button>
+            <button class="btn-auth-main" style="background:#555;" onclick="closeProfileEditBox()">BACK</button>
+        </div>
+    </div>
+
+    <!-- पासवर्ड मैनेजर मॉडल (6 पिन + 🔑 ACCOUNT LOGIN PASS) -->
+    <div class="auth-overlay" id="passManagerModal">
+      <div class="pm-card">
+        <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
+        <hr style="border:0.5px solid #005577; margin-bottom:8px;">
+        <div class="pm-row"><label>1. APP OPEN LOCK</label><input type="text" id="pm_open" placeholder="7869"></div>
+        <div class="pm-row"><label>2. EDIT UNLOCK PIN</label><input type="text" id="pm_edit" placeholder="7869"></div>
+        <div class="pm-row"><label>3. DELETE PIN</label><input type="text" id="pm_del" placeholder="7869"></div>
+        <div class="pm-row"><label>4. CLOUD BACKUP PIN</label><input type="text" id="pm_cloud" placeholder="7869"></div>
+        <div class="pm-row"><label>5. CLOUD RESTORE PIN</label><input type="text" id="pm_restore" placeholder="7869"></div>
+        <div class="pm-row"><label>6. GATE PIN (LOGIN BTN)</label><input type="text" id="pm_login_gate" placeholder="7869"></div>
+        
+        <div class="pm-row">
+          <label style="color:#00ff66;">🔑 ACCOUNT LOGIN PASS</label>
+          <input type="text" id="pm_login_pass" placeholder="Password">
+        </div>
+        
+        <div style="display:flex; gap:6px; margin-top:10px;">
+          <button style="background:#00c853; color:#fff; border-radius:8px; padding:8px; flex:1; border:none; font-weight:bold; cursor:pointer;" onclick="savePasswordSettings()">SAVE</button>
+          <button style="background:#555; color:#fff; border-radius:8px; padding:8px; flex:1; border:none; font-weight:bold; cursor:pointer;" onclick="closePassManager()">CLOSE</button>
+        </div>
+      </div>
     </div>
 
     <div class="app-container">
@@ -341,10 +454,10 @@
             <div class="summary-top-row">
                 <div class="header-title-box">
                     <span class="header-title">Khata Ledger Pro</span>
-                    <span id="displayUserNameHeader" class="user-badge-header">👤 Login</span>
+                    <span id="displayUserNameHeader" class="user-badge-header" onclick="openAuthModalProtected()">👤 LOGIN</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-cloud-save" onclick="handleCloudAction()">🔥 <span id="syncBtnText">Login</span></button>
+                    <button class="btn-cloud-save" onclick="handleCloudAction()">🔥 <span id="syncBtnText">Sync</span></button>
                     <button class="btn-setting" onclick="openSettingsModal()">⚙️ Settings</button>
                     <button class="btn-filter-trigger" onclick="openAccountPicker('MAIN')"><span>Accounts</span> ▾</button>
                 </div>
@@ -380,118 +493,6 @@
 
     <!-- Hidden Input for JSON file restore -->
     <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleJsonFileSelect(event)">
-
-    <div id="masterGateModal">
-        <div class="auth-card" style="max-width: 250px;">
-            <h3 id="masterGateTitle" style="color:#38bdf8; font-size:12px; font-weight:700;">ENTER MASTER PIN</h3>
-            <input type="password" id="masterGateInput" placeholder="" inputmode="numeric">
-            <div style="display:flex; gap:6px; margin-top:4px;">
-                <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="submitMasterGate()">OK</button>
-                <button class="btn-modal btn-cancel" onclick="closeMasterGate()">X</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="passManagerModal">
-        <div class="auth-card">
-            <h3 style="color:#38bdf8; font-size:13px; font-weight:700;">PASSWORD SETTINGS</h3>
-            <hr style="border:0.5px solid #1c2638; margin: 4px 0 8px 0;">
-            <div class="pm-row">
-                <label>1. APP OPEN LOCK</label>
-                <input type="text" id="pm_open" placeholder="7869">
-            </div>
-            <div class="pm-row">
-                <label>2. EDIT UNLOCK PIN</label>
-                <input type="text" id="pm_edit" placeholder="7869">
-            </div>
-            <div class="pm-row">
-                <label>3. DELETE PIN</label>
-                <input type="text" id="pm_del" placeholder="7869">
-            </div>
-            <div class="pm-row">
-                <label>4. CLOUD BACKUP PIN</label>
-                <input type="text" id="pm_cloud" placeholder="7869">
-            </div>
-            <div style="display:flex; gap:6px; margin-top:6px;">
-                <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="savePasswordSettings()">SAVE</button>
-                <button class="btn-modal btn-cancel" onclick="closePassManager()">CLOSE</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="resetAppModal">
-        <div class="auth-card" style="max-width: 260px;">
-            <h3 style="color:#ff4757; font-size:12px; font-weight:700;">⚠️ RESET APP</h3>
-            <p style="font-size:10px; color:#94a3b8;">मास्टर पासवर्ड दर्ज करें:</p>
-            <input type="password" id="resetPassInput" placeholder="MASTER PIN" inputmode="numeric">
-            <div style="display:flex; gap:6px; margin-top:4px;">
-                <button class="btn-modal" style="background:#e74c3c; color:#fff;" onclick="handleResetSubmit()">CONFIRM RESET</button>
-                <button class="btn-modal btn-cancel" onclick="closeResetModal()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="cloudActionModal">
-        <div class="auth-card" style="max-width: 280px;">
-            <h3 id="cloudActionTitle" style="color:#38bdf8; font-size:13.5px; font-weight:700;">☁️ CLOUD ACTION</h3>
-            <p style="font-size:11px; color:#94a3b8;" id="cloudActionDesc">पासवर्ड दर्ज करें</p>
-            <input type="password" id="cloudActionPassInput" placeholder="Password" inputmode="numeric">
-            <div style="display:flex; gap:6px; margin-top:6px;">
-                <button id="btnExecuteCloud" class="btn-modal" style="background:#2ecc71; color:#fff; font-weight:700;" onclick="submitCloudAction()">OK</button>
-                <button class="btn-modal btn-cancel" onclick="closeCloudActionModal()">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="firebaseAuthModal">
-        <div class="auth-card">
-            <h3 style="color:#e2e8f0; font-size:13.5px; font-weight:700;">🔥 Khata Account</h3>
-            <p id="authStatusDesc" style="color:#38bdf8; font-size:11px; font-weight:600;">नया खाता रजिस्टर करें</p>
-
-            <div id="authInputsArea" style="display:flex; flex-direction:column; gap:6px;">
-                <div style="display:flex; border-radius:6px; overflow:hidden; border:1px solid var(--border-soft); margin-bottom:2px;">
-                    <button type="button" id="tabRegisterBtn" style="flex:1; padding:7px; background:#1e293b; color:#38bdf8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('REGISTER')">REGISTER</button>
-                    <button type="button" id="tabLoginBtn" style="flex:1; padding:7px; background:#0b0e14; color:#94a3b8; border:none; font-size:11px; font-weight:600;" onclick="switchAuthTab('LOGIN')">LOGIN</button>
-                </div>
-
-                <div id="regExtraFields" style="display:flex; flex-direction:column; gap:6px;">
-                    <input type="text" id="fbFullName" placeholder="पूरा नाम (Full Name) *">
-                    <input type="text" id="fbRegUsername" placeholder="यूज़र नाम (Username) *" autocomplete="off">
-                    <input type="tel" id="fbRegMobile" placeholder="मोबाइल नंबर (10 अंक) *" maxlength="10">
-                    <input type="email" id="fbRegEmail" placeholder="ईमेल आईडी (डेटा बैकअप चाबी) *">
-                </div>
-
-                <div id="loginField" style="display:none;">
-                    <input type="text" id="fbLoginIdentifier" placeholder="यूज़र नाम / मोबाइल नंबर / ईमेल आईडी *">
-                </div>
-
-                <input type="password" id="fbPassword" placeholder="पासवर्ड (Password) *">
-                
-                <div id="regConfirmField" style="display:block;">
-                    <input type="password" id="fbConfirmPassword" placeholder="पासवर्ड दोबारा (Confirm Password) *">
-                </div>
-
-                <div class="auth-links" id="authLinksRow" style="display:none;">
-                    <span class="auth-link" onclick="handleForgotPassword()">Forgot Password?</span>
-                    <span class="auth-link" onclick="handleForgotDetails()">Find My Details?</span>
-                </div>
-
-                <button type="button" id="btnAuthSubmit" class="btn-modal" style="background:#38bdf8; color:#fff; padding:8px; font-size:11.5px; margin-top:4px;" onclick="handleAuthSubmit()">रजिस्टर करें</button>
-            </div>
-
-            <div id="authLoggedInArea" style="display:none; flex-direction:column; gap:7px;">
-                <div style="font-size:13px; color:#38bdf8; font-weight:700;" id="userEmailDisplay"></div>
-                
-                <div style="display:flex; gap:6px; margin-top:4px;">
-                    <button class="btn-modal" style="background:#2ecc71; color:#fff;" onclick="openCloudActionModal('BACKUP')">☁️ BACKUP</button>
-                    <button class="btn-modal" style="background:#f59e0b; color:#fff;" onclick="openCloudActionModal('RESTORE')">📥 RESTORE</button>
-                </div>
-                <button class="btn-modal" style="background:#e74c3c; color:#fff; margin-top:2px;" onclick="firebaseLogout(true)">LOGOUT & LOCK</button>
-            </div>
-
-            <button class="btn-modal btn-cancel" id="btnAuthModalClose" style="display:none; margin-top:4px;" onclick="closeFirebaseAuthModal()">CLOSE</button>
-        </div>
-    </div>
 
     <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
@@ -542,7 +543,7 @@
                 </div>
 
                 <div class="setting-section-title">5. Cloud Backup & Sync</div>
-                <div class="setting-item" onclick="closeSettingsModal(); openFirebaseAuthModal();">
+                <div class="setting-item" onclick="openAuthModalProtected()">
                     <span style="color:#1b11f8ea; font-weight:600;">🔥 Firebase Account & Sync</span>
                     <span style="color:#e59008;">Open ›</span>
                 </div>
@@ -701,24 +702,6 @@
         };
 
         let fbDb = null;
-        let currentUser = null;
-        let currentAuthTab = 'REGISTER';
-        let pendingCloudAction = '';
-
-        let appPins = {
-            openPin: "7869",
-            editPin: "7869",
-            delPin: "7869",
-            cloudPin: "7869"
-        };
-
-        let registeredMasterPhone = "7869";
-        let masterGatePurpose = '';
-        let clickCount = 0;
-
-        let inactivityTimer = null;
-        const INACTIVITY_LIMIT = 10 * 60 * 1000;
-
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -727,6 +710,19 @@
         } catch (e) {
             console.warn("Firebase Init Error:", e);
         }
+
+        let currentUser = null;
+        let appPins = {
+            openPin: "7869",
+            editPin: "7869",
+            delPin: "7869",
+            cloudPin: "7869",
+            restorePin: "7869",
+            loginPin: "7869"
+        };
+
+        let clickCount = 0;
+        let currentGateAction = '';
 
         const STORAGE_KEY = 'antique_khata_records_clean_v3';
         const TARGETS_STORAGE_KEY = 'antique_khata_person_masters_clean_v3';
@@ -744,69 +740,550 @@
 
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+        function getDeviceMasterKey() {
+            if (currentUser && currentUser.phone) return currentUser.phone.trim();
+            return localStorage.getItem('khata_master_phone') || "7869";
+        }
+
         window.onload = function() {
             const savedUser = localStorage.getItem('khata_active_user');
-            
             if (savedUser) {
-                try {
-                    currentUser = JSON.parse(savedUser);
-                } catch(e) { currentUser = null; }
+                try { currentUser = JSON.parse(savedUser); } catch(e) { currentUser = null; }
             }
 
-            if (currentUser) {
-                const savedPins = localStorage.getItem('khata_custom_pins');
-                if (savedPins) {
-                    try { appPins = JSON.parse(savedPins); } catch(e){}
-                }
-                registeredMasterPhone = localStorage.getItem('khata_master_phone') || currentUser.mobile || "7869";
+            const savedPins = localStorage.getItem('khata_custom_pins');
+            if (savedPins) {
+                try { appPins = Object.assign(appPins, JSON.parse(savedPins)); } catch(e){}
+            }
 
-                loadRecords();
-                updateAuthUI();
-                startInactivityTimer();
+            loadRecords();
+            updateAuthUI();
+
+            if (currentUser) {
                 handleAppLock();
             } else {
-                records = [];
-                personMasters = {};
-                renderView();
-                updateAuthUI();
-                openMandatoryRegister();
+                openAuthModal();
             }
 
             document.getElementById('inputDate').value = getTodayDate();
-            setupActivityListeners();
         };
 
-        function setupActivityListeners() {
-            ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(evt => {
-                document.addEventListener(evt, resetInactivityTimer, true);
-            });
-        }
+        function updateAuthUI() {
+            const displayHeader = document.getElementById('displayUserNameHeader');
+            const dashUser = document.getElementById('dashUserDisplay');
+            const syncBtnText = document.getElementById('syncBtnText');
 
-        function resetInactivityTimer() {
             if (currentUser) {
-                clearTimeout(inactivityTimer);
-                startInactivityTimer();
+                const realName = (currentUser.name || currentUser.fullName || currentUser.username || "USER").toUpperCase();
+                const userNameOnly = (currentUser.username || "").toUpperCase();
+                if (displayHeader) displayHeader.innerText = "👤 " + realName;
+                if (dashUser) dashUser.innerText = `👤 ${realName} (@${userNameOnly})`;
+                if (syncBtnText) syncBtnText.innerText = "Sync";
+            } else {
+                if (displayHeader) displayHeader.innerText = "👤 LOGIN";
+                if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
+                if (syncBtnText) syncBtnText.innerText = "Login";
             }
         }
 
-        function startInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            inactivityTimer = setTimeout(async () => {
-                if (currentUser) {
-                    await backupToFirebase(false);
-                    firebaseLogout(false);
+        // ==========================================
+        // 3-TAP ऐप लॉक
+        // ==========================================
+        function handleLockClick() {
+            clickCount++;
+            if (clickCount >= 3) {
+                const secInp = document.getElementById('secretInput');
+                secInp.style.display = 'block';
+                secInp.focus();
+                clickCount = 0;
+            }
+        }
+
+        document.getElementById('secretInput').addEventListener('input', function() {
+            const mKey = getDeviceMasterKey();
+            if (this.value === appPins.openPin || (mKey && this.value === mKey) || this.value === "7869") {
+                document.getElementById('mainAppOverlay').style.display = 'none';
+                this.value = "";
+                this.style.display = 'none';
+                clickCount = 0;
+                if (!currentUser) openAuthModal();
+            }
+        });
+
+        function handleAppLock() {
+            clickCount = 0;
+            document.getElementById('secretInput').value = "";
+            document.getElementById('secretInput').style.display = 'none';
+            document.getElementById('mainAppOverlay').style.display = 'flex';
+            closeSettingsModal();
+        }
+
+        // ==========================================
+        // यूनिफाइड नियॉन सिक्योरिटी गेट (Auto-Submit & No OK Needed)
+        // ==========================================
+        function openUnifiedGate(actionType, title, desc, maxLength = 4) {
+            currentGateAction = actionType;
+            document.getElementById('unifiedGateTitle').innerText = title;
+            document.getElementById('unifiedGateDesc').innerText = desc;
+            const inp = document.getElementById('unifiedGateInput');
+            inp.value = "";
+            inp.maxLength = maxLength;
+            document.getElementById('unifiedSecurityGateModal').style.display = 'flex';
+            inp.focus();
+        }
+
+        function closeUnifiedGate() {
+            document.getElementById('unifiedSecurityGateModal').style.display = 'none';
+            document.getElementById('unifiedGateInput').value = "";
+            currentGateAction = '';
+        }
+
+        function handleUnifiedGateInput(el) {
+            const val = el.value.trim();
+            if (el.maxLength === 4 && val.length === 4) {
+                submitUnifiedGate(val);
+            } else if (el.maxLength === 10 && val.length === 10) {
+                submitUnifiedGate(val);
+            }
+        }
+
+        function submitUnifiedGateManual() {
+            const val = document.getElementById('unifiedGateInput').value.trim();
+            if (val) submitUnifiedGate(val);
+        }
+
+        function submitUnifiedGate(entered) {
+            const mKey = getDeviceMasterKey();
+
+            if (currentGateAction === 'OPEN_AUTH_GATE') {
+                const reqPin = appPins.loginPin || "7869";
+                if (entered === reqPin) {
+                    closeUnifiedGate();
+                    openAuthModal();
+                } else {
+                    gateWrongFeedback();
                 }
-            }, INACTIVITY_LIMIT);
+            } else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
+                if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+                    closeUnifiedGate();
+                    showProfileEditScreen();
+                } else {
+                    gateWrongFeedback();
+                }
+            } else if (currentGateAction === 'MANAGE_PINS_MASTER') {
+                if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+                    closeUnifiedGate();
+                    showPassManagerScreen();
+                } else {
+                    gateWrongFeedback();
+                }
+            } else if (currentGateAction === 'RESET_APP_MASTER') {
+                if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+                    closeUnifiedGate();
+                    executeAppReset();
+                } else {
+                    gateWrongFeedback();
+                }
+            } else if (currentGateAction === 'DELETE_RECORD_PIN') {
+                if (entered === appPins.delPin || entered === "7869") {
+                    closeUnifiedGate();
+                    executeDeleteRecord();
+                } else {
+                    gateWrongFeedback();
+                }
+            }
         }
 
-        function openMandatoryRegister() {
-            document.getElementById('mainAppOverlay').style.display = 'none';
-            document.getElementById('firebaseAuthModal').style.display = 'flex';
-            const closeBtn = document.getElementById('btnAuthModalClose');
-            if (closeBtn) closeBtn.style.display = 'none'; 
-            switchAuthTab('REGISTER');
+        function gateWrongFeedback() {
+            const inp = document.getElementById('unifiedGateInput');
+            inp.style.borderColor = "#ff4757";
+            inp.value = "";
+            setTimeout(() => { inp.style.borderColor = "#00f0ff"; }, 600);
+            alert("❌ गलत पिन या मास्टर की!");
         }
 
+        // ==========================================
+        // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+        // ==========================================
+        function openAuthModalProtected() {
+            closeSettingsModal();
+            openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
+        }
+
+        function handleCloudAction() {
+            if (!currentUser) openAuthModal();
+            else openAuthModalProtected();
+        }
+
+        function openAuthModal() {
+            closeSettingsModal();
+            document.getElementById('loginBox').style.display = 'none';
+            document.getElementById('registerBox').style.display = 'none';
+            document.getElementById('accountBox').style.display = 'none';
+            document.getElementById('profileEditBox').style.display = 'none';
+
+            if (currentUser && currentUser.email) {
+                document.getElementById('accountBox').style.display = 'block';
+            } else {
+                document.getElementById('loginIdentifier').value = "";
+                document.getElementById('loginPass').value = "";
+                document.getElementById('loginBox').style.display = 'block';
+            }
+            document.getElementById('authOverlay').style.display = 'flex';
+            updateAuthUI();
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authOverlay').style.display = 'none';
+        }
+
+        function toggleAuthMode(mode) {
+            document.getElementById('accountBox').style.display = 'none';
+            document.getElementById('profileEditBox').style.display = 'none';
+            if (mode === 'login') {
+                document.getElementById('registerBox').style.display = 'none';
+                document.getElementById('loginBox').style.display = 'block';
+            } else {
+                document.getElementById('registerBox').style.display = 'block';
+                document.getElementById('loginBox').style.display = 'none';
+            }
+        }
+
+        function askRegisterPermission() {
+            const masterPin = getDeviceMasterKey();
+            if (currentUser && currentUser.email) {
+                let enteredPin = prompt("⚠️ नया खाता बनाने के लिए इस डिवाइस की मास्टर की (मोबाइल नंबर) दर्ज करें:");
+                if (masterPin && enteredPin === masterPin) {
+                    let agree = confirm("⚠️ नया खाता बनाते ही इस डिवाइस का स्थानीय डेटा रीसेट हो जाएगा। क्या आप सहमत हैं?");
+                    if (agree) {
+                        records = [];
+                        personMasters = {};
+                        localStorage.removeItem(STORAGE_KEY);
+                        localStorage.removeItem(TARGETS_STORAGE_KEY);
+                        localStorage.removeItem('khata_active_user');
+                        currentUser = null;
+                        renderView();
+                        updateAuthUI();
+                        toggleAuthMode('register');
+                    }
+                } else {
+                    alert("❌ गलत मास्टर की!");
+                }
+            } else {
+                toggleAuthMode('register');
+            }
+        }
+
+        async function handleRegister() {
+            const name = document.getElementById('regName').value.trim();
+            const username = document.getElementById('regUsername').value.trim().toLowerCase();
+            const phone = document.getElementById('regPhone').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const p1 = document.getElementById('regPass1').value;
+            const p2 = document.getElementById('regPass2').value;
+
+            if (!name || !username || !phone || !email || !p1 || !p2) { alert("कृपया सभी विवरण भरें!"); return; }
+            if (p1 !== p2) { alert("दोनों पासवर्ड समान नहीं हैं!"); return; }
+
+            const userObj = { name, username, phone, email, pass: p1, registeredAt: new Date().toISOString() };
+
+            try {
+                if (fbDb) {
+                    await fbDb.collection("master_profiles").doc(phone).set(userObj);
+                    await fbDb.collection("app_accounts").doc("user_" + username).set({ targetMobile: phone, targetEmail: email });
+                    await fbDb.collection("app_accounts").doc("phone_" + phone).set({ targetMobile: phone, targetEmail: email });
+                    await fbDb.collection("app_accounts").doc("email_" + email).set({ targetMobile: phone, targetEmail: email });
+                }
+                localStorage.setItem('khata_active_user', JSON.stringify(userObj));
+                localStorage.setItem('khata_master_phone', phone);
+                currentUser = userObj;
+                updateAuthUI();
+                closeAuthModal();
+                await executeCloudRestoreManual(true);
+                alert("✅ पंजीकरण सफल!\nइस डिवाइस की मास्टर की: " + phone);
+            } catch (e) {
+                alert("रजिस्ट्रेशन विफल: " + e.message);
+            }
+        }
+
+        async function handleLogin() {
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            const pass = document.getElementById('loginPass').value;
+
+            if (!identifier || !pass) { alert("कृपया पहचानकर्ता और पासवर्ड दर्ज करें!"); return; }
+
+            try {
+                const cleanId = identifier.toLowerCase();
+                let targetMobile = null;
+
+                let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
+                const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
+
+                if (idxSnap.exists && idxSnap.data()?.targetMobile) {
+                    targetMobile = idxSnap.data().targetMobile;
+                } else if (cleanId.length === 10 && !isNaN(cleanId)) {
+                    targetMobile = cleanId;
+                }
+
+                if (!targetMobile) { alert("यह यूजर/मोबाइल/ईमेल पंजीकृत नहीं है!"); return; }
+
+                const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
+                if (!userSnap.exists) { alert("खाता डेटा नहीं मिला!"); return; }
+
+                const user = userSnap.data();
+                if (user.pass !== pass) { alert("❌ गलत पासवर्ड!"); return; }
+
+                localStorage.setItem('khata_active_user', JSON.stringify(user));
+                localStorage.setItem('khata_master_phone', user.phone || targetMobile);
+                currentUser = user;
+                updateAuthUI();
+                closeAuthModal();
+                alert("✅ लॉगिन सफल! स्वागत है, " + (user.name || user.username));
+                await executeCloudRestoreManual(true);
+            } catch (e) {
+                alert("लॉगिन में त्रुटि: " + e.message);
+            }
+        }
+
+        function openProfileEditGate() {
+            if (!currentUser) return;
+            document.getElementById('accountBox').style.display = 'none';
+            openUnifiedGate('EDIT_PROFILE_MASTER', 'MASTER KEY REQUIRED', 'ENTER REGISTERED MOBILE NUMBER', 10);
+        }
+
+        function showProfileEditScreen() {
+            document.getElementById('editEmail').value = currentUser.email || '';
+            document.getElementById('editName').value = currentUser.name || '';
+            document.getElementById('editUsername').value = currentUser.username || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+
+            document.getElementById('profileEditBox').style.display = 'block';
+            document.getElementById('authOverlay').style.display = 'flex';
+        }
+
+        function closeProfileEditBox() {
+            document.getElementById('profileEditBox').style.display = 'none';
+            document.getElementById('accountBox').style.display = 'block';
+        }
+
+        async function saveEditedProfile() {
+            const newName = document.getElementById('editName').value.trim();
+            const newUsername = document.getElementById('editUsername').value.trim().toLowerCase();
+            const newPhone = document.getElementById('editPhone').value.trim();
+
+            if (!newName || !newUsername || !newPhone) { alert("कृपया सभी विवरण भरें!"); return; }
+
+            try {
+                currentUser.name = newName;
+                currentUser.username = newUsername;
+                currentUser.phone = newPhone;
+
+                localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
+                localStorage.setItem('khata_master_phone', newPhone);
+
+                if (fbDb) {
+                    await fbDb.collection("master_profiles").doc(newPhone).set({
+                        name: newName,
+                        username: newUsername,
+                        phone: newPhone,
+                        email: currentUser.email,
+                        pass: currentUser.pass
+                    }, { merge: true });
+
+                    await fbDb.collection("app_accounts").doc("user_" + newUsername).set({ targetMobile: newPhone, targetEmail: currentUser.email });
+                    await fbDb.collection("app_accounts").doc("phone_" + newPhone).set({ targetMobile: newPhone, targetEmail: currentUser.email });
+                }
+
+                updateAuthUI();
+                closeProfileEditBox();
+                openAuthModal();
+                alert("✅ प्रोफाइल अपडेट सफल!\nइस डिवाइस की नई मास्टर की (Mobile): " + newPhone);
+            } catch (e) {
+                alert("प्रोफाइल अपडेट विफल: " + e.message);
+            }
+        }
+
+        function handleManualLogout() {
+            if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+                currentUser = null;
+                localStorage.removeItem('khata_active_user');
+                updateAuthUI();
+                closeAuthModal();
+                handleAppLock();
+                alert("✅ आप सफलतापूर्वक लॉगआउट हो चुके हैं!");
+            }
+        }
+
+        // ==========================================
+        // क्लाउड सिंक व बैकअप / रीस्टोर
+        // ==========================================
+        async function executeCloudBackupManual() {
+            if (!currentUser || !fbDb) { alert("कृपया पहले लॉगिन करें!"); return; }
+            try {
+                const userEmail = (currentUser.email || '').toLowerCase().trim();
+                const userMobile = currentUser.phone || getDeviceMasterKey();
+                
+                const backupPayload = {
+                    records, 
+                    personMasters, 
+                    categories, 
+                    userEmail: userEmail,
+                    userMobile: userMobile,
+                    userName: currentUser.username || '',
+                    lastUpdated: new Date().toISOString()
+                };
+
+                await fbDb.collection("users_data_by_email").doc(userEmail).set(backupPayload);
+                alert("✅ आपका पूरा हिसाब ईमेल क्लाउड बैकअप में सुरक्षित सेव हो गया!");
+            } catch (err) {
+                alert("❌ बैकअप में त्रुटि: " + err.message);
+            }
+        }
+
+        async function executeCloudRestoreManual(isSilent = false) {
+            if (!currentUser || !fbDb) { if (!isSilent) alert("कृपया पहले लॉगिन करें!"); return; }
+            try {
+                const userEmail = (currentUser.email || '').toLowerCase().trim();
+                let docSnap = await fbDb.collection("users_data_by_email").doc(userEmail).get();
+                if (docSnap.exists) {
+                    const data = docSnap.data();
+                    records = data.records || [];
+                    personMasters = data.personMasters || {};
+                    categories = data.categories || categories;
+                    saveToStorage();
+                    renderView();
+                    if (!isSilent) alert(`✅ आपका डेटा (${records.length} रिकॉर्ड्स) सफलतापूर्वक लोड हो गया!`);
+                } else {
+                    if (!isSilent) alert("⚠️ इस ईमेल पर कोई पुराना बैकअप नहीं मिला।");
+                }
+            } catch (err) {
+                if (!isSilent) alert("❌ रीस्टोर में त्रुटि: " + err.message);
+            }
+        }
+
+        // ==========================================
+        // मैनेज पासवर्ड (सिर्फ मास्टर की से खुलेगा)
+        // ==========================================
+        function openPasswordManagerGate() {
+            closeSettingsModal();
+            openUnifiedGate('MANAGE_PINS_MASTER', 'MASTER KEY REQUIRED', 'ENTER MASTER MOBILE NUMBER', 10);
+        }
+
+        function showPassManagerScreen() {
+            document.getElementById('pm_open').value = appPins.openPin || "7869";
+            document.getElementById('pm_edit').value = appPins.editPin || "7869";
+            document.getElementById('pm_del').value = appPins.delPin || "7869";
+            document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
+            document.getElementById('pm_restore').value = appPins.restorePin || "7869";
+            document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
+            document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
+            document.getElementById('passManagerModal').style.display = 'flex';
+        }
+
+        function closePassManager() {
+            document.getElementById('passManagerModal').style.display = 'none';
+        }
+
+        async function savePasswordSettings() {
+            appPins = {
+                openPin: document.getElementById('pm_open').value.trim() || "7869",
+                editPin: document.getElementById('pm_edit').value.trim() || "7869",
+                delPin: document.getElementById('pm_del').value.trim() || "7869",
+                cloudPin: document.getElementById('pm_cloud').value.trim() || "7869",
+                restorePin: document.getElementById('pm_restore').value.trim() || "7869",
+                loginPin: document.getElementById('pm_login_gate').value.trim() || "7869"
+            };
+            localStorage.setItem('khata_custom_pins', JSON.stringify(appPins));
+
+            const newLoginPass = document.getElementById('pm_login_pass').value.trim();
+            if (currentUser && newLoginPass && newLoginPass !== currentUser.pass) {
+                currentUser.pass = newLoginPass;
+                localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
+                if (fbDb && currentUser.phone) {
+                    try {
+                        await fbDb.collection("master_profiles").doc(currentUser.phone).update({ pass: newLoginPass });
+                    } catch (err) {
+                        console.warn("Remote pass update note:", err);
+                    }
+                }
+            }
+
+            closePassManager();
+            alert("✅ सभी पासवर्ड और अकाउंट पासवर्ड सुरक्षित सेव हो गए!");
+        }
+
+        // ==========================================
+        // ऐप रीसेट व JSON बैकअप / रीस्टोर
+        // ==========================================
+        function promptResetApp() {
+            closeSettingsModal();
+            openUnifiedGate('RESET_APP_MASTER', 'RESET APP', 'ENTER MASTER MOBILE NUMBER', 10);
+        }
+
+        function executeAppReset() {
+            if (confirm("⚠️ क्या आप वाकई लोकल डेटा रीसेट करना चाहते हैं?\nFirebase में आपका क्लाउड बैकअप सुरक्षित रहेगा!")) {
+                records = [];
+                personMasters = {};
+                saveToStorage();
+                renderView();
+                alert("✅ ऐप का लोकल डेटा रीसेट हो गया है!");
+            }
+        }
+
+        function exportDataToJsonFile() {
+            closeSettingsModal();
+            const backupObj = {
+                records,
+                personMasters,
+                categories,
+                exportDate: new Date().toISOString(),
+                user: currentUser ? currentUser.username : 'User'
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `Khata_Backup_${getTodayDate()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            alert("✅ बैकअप JSON फाइल डाउनलोड हो गई!");
+        }
+
+        function triggerJsonImport() {
+            closeSettingsModal();
+            document.getElementById('jsonFileInput').click();
+        }
+
+        function handleJsonFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.records || data.personMasters) {
+                        records = data.records || [];
+                        personMasters = data.personMasters || {};
+                        if (data.categories) categories = data.categories;
+
+                        saveToStorage();
+                        renderView();
+                        alert(`✅ JSON फाइल से डेटा सफलतापूर्वक रीस्टोर हो गया! (${records.length} रिकॉर्ड्स)`);
+                    } else {
+                        alert("❌ यह सही खाता बैकअप फाइल नहीं है!");
+                    }
+                } catch (err) {
+                    alert("❌ JSON फाइल पढ़ने में त्रुटि: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ==========================================
+        // खाता लेज़र कोर फंक्शन्स
+        // ==========================================
         function getTodayDate() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -837,502 +1314,10 @@
         }
 
         function saveToStorage() {
-            if (!currentUser) return;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
             localStorage.setItem(TARGETS_STORAGE_KEY, JSON.stringify(personMasters));
             localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
             updateDataList();
-        }
-
-        function handleLockClick() {
-            clickCount++;
-            if (clickCount >= 3) {
-                const secInp = document.getElementById('secretInput');
-                secInp.style.display = 'block';
-                secInp.focus();
-                clickCount = 0;
-            }
-        }
-
-        document.getElementById('secretInput').addEventListener('input', function() {
-            if (this.value === appPins.openPin || this.value === registeredMasterPhone || this.value === "7869") {
-                document.getElementById('mainAppOverlay').style.display = 'none';
-                this.value = "";
-                this.style.display = 'none';
-                clickCount = 0;
-            }
-        });
-
-        function handleAppLock() {
-            clickCount = 0;
-            document.getElementById('secretInput').value = "";
-            document.getElementById('secretInput').style.display = 'none';
-            document.getElementById('mainAppOverlay').style.display = 'flex';
-            closeSettingsModal();
-        }
-
-        function openPasswordManagerGate() {
-            masterGatePurpose = 'OPEN_PM';
-            document.getElementById('masterGateTitle').innerText = "ENTER MASTER PIN";
-            document.getElementById('masterGateInput').value = "";
-            document.getElementById('masterGateModal').style.display = 'flex';
-            document.getElementById('masterGateInput').focus();
-            closeSettingsModal();
-        }
-
-        function closeMasterGate() {
-            document.getElementById('masterGateModal').style.display = 'none';
-        }
-
-        function submitMasterGate() {
-            const entered = document.getElementById('masterGateInput').value.trim();
-            if (entered === registeredMasterPhone || entered === "7869") {
-                closeMasterGate();
-                if (masterGatePurpose === 'OPEN_PM') {
-                    showPasswordManagerUI();
-                }
-            } else {
-                alert("❌ गलत मास्टर पासवर्ड!");
-            }
-        }
-
-        function showPasswordManagerUI() {
-            document.getElementById('pm_open').value = appPins.openPin;
-            document.getElementById('pm_edit').value = appPins.editPin;
-            document.getElementById('pm_del').value = appPins.delPin;
-            document.getElementById('pm_cloud').value = appPins.cloudPin;
-            document.getElementById('passManagerModal').style.display = 'flex';
-        }
-
-        function closePassManager() {
-            document.getElementById('passManagerModal').style.display = 'none';
-        }
-
-        function savePasswordSettings() {
-            appPins = {
-                openPin: document.getElementById('pm_open').value.trim() || "7869",
-                editPin: document.getElementById('pm_edit').value.trim() || "7869",
-                delPin: document.getElementById('pm_del').value.trim() || "7869",
-                cloudPin: document.getElementById('pm_cloud').value.trim() || "7869"
-            };
-            localStorage.setItem('khata_custom_pins', JSON.stringify(appPins));
-            closePassManager();
-            alert("✅ सभी पासवर्ड सुरक्षित सेव हो गए!");
-        }
-
-        function promptResetApp() {
-            closeSettingsModal();
-            document.getElementById('resetPassInput').value = "";
-            document.getElementById('resetAppModal').style.display = 'flex';
-            document.getElementById('resetPassInput').focus();
-        }
-
-        function closeResetModal() {
-            document.getElementById('resetAppModal').style.display = 'none';
-        }
-
-        function handleResetSubmit() {
-            const entered = document.getElementById('resetPassInput').value.trim();
-            if (entered === registeredMasterPhone || entered === "7869") {
-                if (confirm("⚠️ क्या आप वाकई लोकल डेटा रिसेट करना चाहते हैं?\nFirebase में आपका क्लाउड बैकअप सुरक्षित रहेगा!")) {
-                    records = [];
-                    personMasters = {};
-                    saveToStorage();
-                    renderView();
-                    closeResetModal();
-                    alert("✅ ऐप का लोकल डेटा रीसेट हो गया है!");
-                }
-            } else {
-                alert("❌ गलत मास्टर पासवर्ड!");
-            }
-        }
-
-        function switchAuthTab(tab) {
-            currentAuthTab = tab;
-            const tabReg = document.getElementById('tabRegisterBtn');
-            const tabLog = document.getElementById('tabLoginBtn');
-            const extraFields = document.getElementById('regExtraFields');
-            const loginField = document.getElementById('loginField');
-            const confirmField = document.getElementById('regConfirmField');
-            const submitBtn = document.getElementById('btnAuthSubmit');
-            const authLinksRow = document.getElementById('authLinksRow');
-            const desc = document.getElementById('authStatusDesc');
-
-            if (tab === 'REGISTER') {
-                tabReg.style.background = '#1e293b'; tabReg.style.color = '#38bdf8';
-                tabLog.style.background = '#0b0e14'; tabLog.style.color = '#94a3b8';
-                extraFields.style.display = 'flex';
-                loginField.style.display = 'none';
-                confirmField.style.display = 'block';
-                authLinksRow.style.display = 'none';
-                submitBtn.innerText = 'रजिस्टर करें';
-                submitBtn.style.background = '#38bdf8';
-                desc.innerText = 'नया खाता विवरण भरें';
-            } else {
-                tabReg.style.background = '#0b0e14'; tabReg.style.color = '#94a3b8';
-                tabLog.style.background = '#1e293b'; tabLog.style.color = '#2ecc71';
-                extraFields.style.display = 'none';
-                loginField.style.display = 'block';
-                confirmField.style.display = 'none';
-                authLinksRow.style.display = 'flex';
-                submitBtn.innerText = 'लॉगिन करें';
-                submitBtn.style.background = '#2ecc71';
-                desc.innerText = 'Username, Mobile Number या Email ID से लॉगिन करें';
-            }
-        }
-
-        function updateAuthUI() {
-            const syncBtnText = document.getElementById('syncBtnText');
-            const authInputs = document.getElementById('authInputsArea');
-            const loggedInArea = document.getElementById('authLoggedInArea');
-            const userDisplay = document.getElementById('userEmailDisplay');
-            const desc = document.getElementById('authStatusDesc');
-            const displayHeader = document.getElementById('displayUserNameHeader');
-            const closeBtn = document.getElementById('btnAuthModalClose');
-
-            if (currentUser) {
-                if (syncBtnText) syncBtnText.innerText = "Sync";
-                if (authInputs) authInputs.style.display = 'none';
-                if (loggedInArea) loggedInArea.style.display = 'flex';
-                if (closeBtn) closeBtn.style.display = 'block';
-
-                const displayUserName = currentUser.username || currentUser.fullName || "USER";
-                if (displayHeader) displayHeader.innerText = "👤 " + displayUserName.toUpperCase();
-                
-                if (userDisplay) userDisplay.innerText = "👤 " + (currentUser.fullName || displayUserName).toUpperCase();
-                if (desc) desc.innerText = "आप सफलतापूर्वक लॉगिन हैं!";
-            } else {
-                if (syncBtnText) syncBtnText.innerText = "Login";
-                if (authInputs) authInputs.style.display = 'flex';
-                if (loggedInArea) loggedInArea.style.display = 'none';
-                if (displayHeader) displayHeader.innerText = "👤 Login";
-                if (desc) desc.innerText = "नया खाता विवरण भरें";
-            }
-        }
-
-        function handleCloudAction() {
-            if (!currentUser) openFirebaseAuthModal();
-            else openCloudActionModal('BACKUP');
-        }
-
-        function openFirebaseAuthModal() {
-            document.getElementById('firebaseAuthModal').style.display = 'flex';
-            if (!currentUser) {
-                switchAuthTab('LOGIN');
-            }
-            updateAuthUI();
-        }
-
-        function closeFirebaseAuthModal() {
-            if (!currentUser) {
-                alert("⚠️ कृपया पहले रजिस्टर या लॉगिन करें!");
-                return;
-            }
-            document.getElementById('firebaseAuthModal').style.display = 'none';
-        }
-
-        function handleAuthSubmit() {
-            if (currentAuthTab === 'REGISTER') firebaseSignUp();
-            else firebaseLogin();
-        }
-
-        async function firebaseSignUp() {
-            const fullName = document.getElementById('fbFullName').value.trim();
-            const username = document.getElementById('fbRegUsername').value.trim().toLowerCase();
-            const mobile = document.getElementById('fbRegMobile').value.trim();
-            const email = document.getElementById('fbRegEmail').value.trim().toLowerCase();
-            const pass = document.getElementById('fbPassword').value;
-            const confirmPass = document.getElementById('fbConfirmPassword').value;
-
-            if (!fullName) { alert("❌ कृपया अपना पूरा नाम लिखें!"); return; }
-            if (!username || username.length < 3) { alert("❌ कम से कम 3 अक्षरों का यूजरनेम बनाएं!"); return; }
-            if (!mobile || mobile.length !== 10 || isNaN(mobile)) { alert("❌ सही 10 अंकों का मोबाइल नंबर लिखें!"); return; }
-            if (!email || !email.includes('@')) { alert("❌ कृपया सही ईमेल आईडी दर्ज करें!"); return; }
-            if (!pass || pass.length < 4) { alert("❌ पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!"); return; }
-            if (pass !== confirmPass) { alert("❌ दोनों पासवर्ड एक जैसे नहीं हैं!"); return; }
-
-            try {
-                const [uDoc, mDoc] = await Promise.all([
-                    fbDb.collection("app_accounts").doc("user_" + username).get(),
-                    fbDb.collection("app_accounts").doc("phone_" + mobile).get()
-                ]);
-
-                if (uDoc.exists) { alert("⚠️ यह यूज़रनेम पहले से लिया जा चुका है! दूसरा चुनें।"); return; }
-                if (mDoc.exists) { alert("⚠️ यह मोबाइल नंबर पहले से पंजीकृत है! कृपया Login करें।"); switchAuthTab('LOGIN'); return; }
-
-                const userObj = {
-                    fullName: fullName,
-                    username: username,
-                    mobile: mobile,
-                    email: email,
-                    pass: pass,
-                    registeredAt: new Date().toISOString()
-                };
-
-                const batch = fbDb.batch();
-                batch.set(fbDb.collection("master_profiles").doc(mobile), userObj);
-                batch.set(fbDb.collection("app_accounts").doc("user_" + username), { targetMobile: mobile, targetEmail: email });
-                batch.set(fbDb.collection("app_accounts").doc("phone_" + mobile), { targetMobile: mobile, targetEmail: email });
-                batch.set(fbDb.collection("app_accounts").doc("email_" + email), { targetMobile: mobile, targetEmail: email });
-
-                await batch.commit();
-
-                registeredMasterPhone = mobile;
-                localStorage.setItem("khata_master_phone", mobile);
-                localStorage.setItem("saved_user_name", username);
-                localStorage.setItem("khata_active_user", JSON.stringify(userObj));
-                currentUser = userObj;
-
-                alert(`🎉 स्वागत है ${username.toUpperCase()}! आपका खाता बन गया है।`);
-                updateAuthUI();
-                startInactivityTimer();
-
-                await restoreFromFirebase(false);
-                document.getElementById('firebaseAuthModal').style.display = 'none';
-            } catch (err) {
-                alert("❌ रजिस्ट्रेशन एरर: " + err.message);
-            }
-        }
-
-        async function firebaseLogin() {
-            const rawIdentifier = document.getElementById('fbLoginIdentifier').value.trim();
-            const pass = document.getElementById('fbPassword').value;
-
-            if (!rawIdentifier) { 
-                alert("❌ कृपया अपना Username, Mobile Number या Email ID डालें!"); 
-                return; 
-            }
-            if (!pass) { 
-                alert("❌ कृपया अपना पासवर्ड दर्ज करें!"); 
-                return; 
-            }
-
-            const cleanId = rawIdentifier.toLowerCase();
-            let indexKey = cleanId.includes('@') ? "email_" + cleanId : ((cleanId.length === 10 && !isNaN(cleanId)) ? "phone_" + cleanId : "user_" + cleanId);
-
-            try {
-                let targetMobile = null;
-                const idxSnap = await fbDb.collection("app_accounts").doc(indexKey).get();
-
-                if (idxSnap.exists && idxSnap.data()?.targetMobile) {
-                    targetMobile = idxSnap.data().targetMobile;
-                } else if (cleanId.length === 10 && !isNaN(cleanId)) {
-                    targetMobile = cleanId;
-                }
-
-                if (!targetMobile) {
-                    alert("❌ इस विवरण से कोई पंजीकृत खाता नहीं मिला!");
-                    return;
-                }
-
-                const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
-                if (!userSnap.exists) {
-                    alert("❌ खाता डेटा नहीं मिला!");
-                    return;
-                }
-
-                const userData = userSnap.data();
-                if (userData.pass !== pass) {
-                    alert("❌ गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें।");
-                    return;
-                }
-
-                currentUser = userData;
-                registeredMasterPhone = userData.mobile || "7869";
-                localStorage.setItem("khata_master_phone", registeredMasterPhone);
-                localStorage.setItem("saved_user_name", userData.username || "USER");
-                localStorage.setItem("khata_active_user", JSON.stringify(userData));
-
-                alert("✅ लॉगिन सफल!");
-                updateAuthUI();
-                startInactivityTimer();
-                
-                await restoreFromFirebase(false);
-                document.getElementById('firebaseAuthModal').style.display = 'none';
-            } catch (err) {
-                alert("❌ लॉगिन में त्रुटि: " + err.message);
-            }
-        }
-
-        function openCloudActionModal(type) {
-            pendingCloudAction = type;
-            const title = document.getElementById('cloudActionTitle');
-            const desc = document.getElementById('cloudActionDesc');
-            const passInput = document.getElementById('cloudActionPassInput');
-            const okBtn = document.getElementById('btnExecuteCloud');
-
-            passInput.value = '';
-            if (type === 'BACKUP') {
-                title.innerText = "☁️ CLOUD BACKUP";
-                desc.innerText = "डेटा बैकअप लेने के लिए पासवर्ड डालें";
-                okBtn.innerText = "BACKUP NOW";
-                okBtn.style.background = "#2ecc71";
-            } else {
-                title.innerText = "📥 CLOUD RESTORE";
-                desc.innerText = "डेटा रिस्टोर करने के लिए पासवर्ड डालें";
-                okBtn.innerText = "RESTORE NOW";
-                okBtn.style.background = "#f59e0b";
-            }
-            document.getElementById('cloudActionModal').style.display = 'flex';
-            passInput.focus();
-        }
-
-        function closeCloudActionModal() {
-            document.getElementById('cloudActionModal').style.display = 'none';
-        }
-
-        function submitCloudAction() {
-            const entered = document.getElementById('cloudActionPassInput').value.trim();
-            if (entered === appPins.cloudPin || entered === registeredMasterPhone || entered === "7869") {
-                closeCloudActionModal();
-                if (pendingCloudAction === 'BACKUP') {
-                    backupToFirebase(true);
-                } else {
-                    restoreFromFirebase(true);
-                }
-            } else {
-                alert("❌ गलत पासवर्ड!");
-            }
-        }
-
-        async function backupToFirebase(showAlert = true) {
-            if (!currentUser || !fbDb) return;
-            try {
-                const userEmail = (currentUser.email || '').toLowerCase().trim();
-                const userMobile = currentUser.mobile || registeredMasterPhone;
-                
-                const backupPayload = {
-                    records, 
-                    personMasters, 
-                    categories, 
-                    userEmail: userEmail,
-                    userMobile: userMobile,
-                    userName: currentUser.username || '',
-                    lastUpdated: new Date().toISOString()
-                };
-
-                await fbDb.collection("users_data_by_email").doc(userEmail).set(backupPayload);
-
-                if (showAlert) alert("✅ आपका पूरा हिसाब ईमेल क्लाउड बैकअप में सुरक्षित सेव हो गया!");
-            } catch (err) {
-                if (showAlert) alert("❌ बैकअप में त्रुटि: " + err.message);
-            }
-        }
-
-        async function restoreFromFirebase(showAlert = true) {
-            if (!currentUser || !fbDb) return;
-            try {
-                const userEmail = (currentUser.email || '').toLowerCase().trim();
-                let dataFound = null;
-
-                if (userEmail) {
-                    try {
-                        const eSnap = await fbDb.collection("users_data_by_email").doc(userEmail).get();
-                        if (eSnap.exists && eSnap.data()?.records) {
-                            dataFound = eSnap.data();
-                        }
-                    } catch(e) {}
-                }
-
-                if (dataFound) {
-                    records = dataFound.records || [];
-                    personMasters = dataFound.personMasters || {};
-                    categories = dataFound.categories || categories;
-                    saveToStorage();
-                    renderView();
-                    if (showAlert) alert(`✅ आपका डेटा (${records.length} रिकॉर्ड्स) सफलतापूर्वक लोड हो गया!`);
-                } else {
-                    if (showAlert) alert("⚠️ इस ईमेल पर कोई पुराना बैकअप नहीं मिला। नई एंट्री शुरू कर सकते हैं।");
-                }
-            } catch (err) {
-                if (showAlert) alert("❌ रिस्टोर में त्रुटि: " + err.message);
-            }
-        }
-
-        // ==========================================
-        // JSON FILE BACKUP & RESTORE
-        // ==========================================
-        function exportDataToJsonFile() {
-            if (!currentUser) { alert("कृपया पहले लॉगिन करें!"); return; }
-            const backupObj = {
-                records,
-                personMasters,
-                categories,
-                exportDate: new Date().toISOString(),
-                user: currentUser.username || 'User'
-            };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `Khata_Backup_${getTodayDate()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            alert("✅ बैकअप JSON फाइल डाउनलोड हो गई!");
-        }
-
-        function triggerJsonImport() {
-            if (!currentUser) { alert("कृपया पहले लॉगिन करें!"); return; }
-            document.getElementById('jsonFileInput').click();
-        }
-
-        function handleJsonFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.records || data.personMasters) {
-                        records = data.records || [];
-                        personMasters = data.personMasters || {};
-                        if (data.categories) categories = data.categories;
-
-                        saveToStorage();
-                        renderView();
-                        alert(`✅ JSON फाइल से डेटा सफलतापूर्वक रीस्टोर हो गया! (${records.length} रिकॉर्ड्स)`);
-                        closeSettingsModal();
-                    } else {
-                        alert("❌ यह सही खाता बैकअप फाइल नहीं है!");
-                    }
-                } catch (err) {
-                    alert("❌ JSON फाइल पढ़ने में त्रुटि: " + err.message);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        async function firebaseLogout(userInitiated = true) {
-            if (currentUser) {
-                await backupToFirebase(false);
-            }
-
-            clearTimeout(inactivityTimer);
-            currentUser = null;
-            localStorage.removeItem("khata_active_user");
-            localStorage.removeItem("saved_user_name");
-            
-            records = [];
-            personMasters = {};
-            renderView();
-
-            if (userInitiated) {
-                alert("✅ डेटा सुरक्षित सेव हो गया। आप लॉगआउट हो चुके हैं!");
-            } else {
-                alert("⚠️ 10 मिनट इनएक्टिविटी: ऑटो बैकअप करके लॉगआउट कर दिया गया है!");
-            }
-
-            updateAuthUI();
-            openFirebaseAuthModal();
-        }
-
-        function handleForgotPassword() {
-            alert("पासवर्ड हेल्प: आपका मास्टर पिन और डिफ़ॉल्ट पासवर्ड 7869 या आपका रजिस्टर्ड मोबाइल नंबर है।");
-        }
-        function handleForgotDetails() {
-            handleForgotPassword();
         }
 
         function findMasterKey(personName) {
@@ -1381,8 +1366,7 @@
                 target: openingAmount,
                 agreedDir: agreedDir,
                 account: account || 'Direct',
-                dr,
-                cr,
+                dr, cr,
                 netTxVal: Math.abs(netTxVal),
                 netTxType: netTxVal >= 0 ? 'GIVEN' : 'RECEIVED'
             };
@@ -1391,13 +1375,6 @@
         function calculateGrandFigures() {
             let totalRecvAgreed = 0, totalRecvSettled = 0, totalRecvBalance = 0;
             let totalGiveAgreed = 0, totalGiveSettled = 0, totalGiveBalance = 0;
-
-            if (!currentUser) {
-                return {
-                    totalRecvAgreed: 0, totalRecvSettled: 0, totalRecvBalance: 0,
-                    totalGiveAgreed: 0, totalGiveSettled: 0, totalGiveBalance: 0
-                };
-            }
 
             const allPersons = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])];
 
@@ -1431,11 +1408,6 @@
             const container = document.getElementById('transactionList');
             container.innerHTML = '';
 
-            if (!currentUser) {
-                container.innerHTML = `<div style="text-align:center; padding:45px; color:#64748b; font-size:12px;">डेटा देखने के लिए कृपया रजिस्टर या लॉगिन करें।</div>`;
-                return;
-            }
-
             let allUniqueParties = [...new Set([
                 ...records.map(r => r.name).filter(Boolean),
                 ...Object.keys(personMasters)
@@ -1455,13 +1427,9 @@
 
             allUniqueParties.forEach(pName => {
                 const bal = getPersonNetBalance(pName);
-                
-                let netTxHtml = '';
-                if (bal.netTxType === 'GIVEN') {
-                    netTxHtml = `<span class="pill-net pill-dr">दिया: ₹ ${formatINR(bal.netTxVal)}</span>`;
-                } else {
-                    netTxHtml = `<span class="pill-net pill-cr">जमा: ₹ ${formatINR(bal.netTxVal)}</span>`;
-                }
+                let netTxHtml = bal.netTxType === 'GIVEN' 
+                    ? `<span class="pill-net pill-dr">दिया: ₹ ${formatINR(bal.netTxVal)}</span>`
+                    : `<span class="pill-net pill-cr">जमा: ₹ ${formatINR(bal.netTxVal)}</span>`;
 
                 let balClass = 'bal-settled';
                 let balText = '₹ 0.00';
@@ -1489,11 +1457,122 @@
             });
         }
 
-        // ==========================================
-        // ALL PARTIES ALL LEDGERS (EXCEL SHEET PASSBOOK)
-        // ==========================================
+        function openSinglePersonStatement(personName) {
+            currentViewingPerson = personName;
+            pickerCurrentView = 'SINGLE_PERSON_STATEMENT';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
+
+            renderStatementTable(personName);
+        }
+
+        function renderStatementTable(personName) {
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const mKey = findMasterKey(personName);
+            const master = mKey ? personMasters[mKey] : null;
+            const targetAmount = master ? (parseFloat(master.amount) || 0) : 0;
+            const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+
+            const personTx = records
+                .map((r, originalIdx) => ({ ...r, originalIdx }))
+                .filter(r => isExactPersonMatch(r.name, personName))
+                .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            let currentBalance = agreedDir === 'RECEIVE' ? targetAmount : -targetAmount;
+            let rowsHtml = '';
+
+            if (targetAmount > 0) {
+                const isOpRecv = agreedDir === 'RECEIVE';
+                const opColor = isOpRecv ? '#2ecc71' : '#ff7675';
+                const opSign = isOpRecv ? '+ ' : '- ';
+
+                rowsHtml += `
+                    <tr style="border-bottom: 1px solid #161c27;">
+                        <td style="padding: 8px 4px; text-align: center; color: #64748b;">-</td>
+                        <td style="padding: 8px 4px; text-align: left; font-weight: 600; color: #38bdf8;">Opening Balance</td>
+                        <td style="padding: 8px 4px; text-align: right; font-weight: 700; color: #cbd5e1; white-space: nowrap;">₹ ${formatINR(targetAmount)}</td>
+                        <td style="padding: 8px 2px; text-align: center; font-size: 10px; color: #94a3b8;">${isOpRecv ? 'CR' : 'DR'}</td>
+                        <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${opColor}; white-space: nowrap;">
+                            ${opSign}₹ ${formatINR(targetAmount)}
+                        </td>
+                    </tr>
+                `;
+            }
+
+            personTx.forEach(tx => {
+                const amt = parseFloat(tx.amount) || 0;
+                const isDebit = tx.crdr === 'Dr';
+
+                if (isDebit) currentBalance += amt;
+                else currentBalance -= amt;
+
+                const isRecv = currentBalance >= 0;
+                const balColor = isRecv ? '#2ecc71' : '#ff7675';
+                const balSign = isRecv ? '+ ' : '- ';
+                const absBal = Math.abs(currentBalance);
+
+                rowsHtml += `
+                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27;" onclick="openEntryFormFromStatement(${tx.originalIdx})">
+                        <td style="padding: 8px 4px; font-size: 10px; text-align: center; white-space: nowrap; color: #94a3b8;">${formatHindiDate(tx.date)}</td>
+                        <td style="padding: 8px 4px; text-align: left; word-break: break-word; color: #e2e8f0;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
+                        <td style="padding: 8px 4px; text-align: right; color: ${isDebit ? '#ff7675' : '#2ecc71'}; font-weight: 700; white-space: nowrap;">
+                            ${isDebit ? '- ' : '+ '}₹ ${formatINR(amt)}
+                        </td>
+                        <td style="padding: 8px 2px; text-align: center; font-size: 10px; font-weight: 600; color: #64748b;">${isDebit ? 'DR' : 'CR'}</td>
+                        <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${balColor}; white-space: nowrap;">
+                            ${balSign}₹ ${formatINR(absBal)}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const netBal = getPersonNetBalance(personName);
+
+            container.innerHTML = `
+                <div style="background:#0b0e14; padding: 14px 12px; border-radius: 8px; border: 1px solid var(--border-soft); box-sizing: border-box; width: 100%;" id="reportCaptureArea">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; border-bottom: 1px solid #1c2638; padding-bottom: 8px;">
+                        <div>
+                            <h3 style="font-size: 14px; color: #e2e8f0; font-weight: 700;">👤 ${escapeHtml(personName)}</h3>
+                            <small style="color: #718096; font-size: 10px;">एजेंट: <b style="color: #38bdf8;">${escapeHtml(netBal.account)}</b></small>
+                        </div>
+
+                        <div style="text-align: center;">
+                            <div style="font-size: 11px; font-weight: 600; color: #ff7675;">
+                                कुल दिया: ₹ ${formatINR(netBal.netTxVal)}
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <span style="font-size: 9.5px; color: #718096; font-weight: 600;">NET BALANCE</span>
+                            <div style="font-size: 13px; font-weight: 700; color: ${netBal.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
+                                ${netBal.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(netBal.net)}
+                            </div>
+                            <small style="color: #cbd5e1; font-size: 9.5px; font-weight: bold;">${netBal.direction === 'RECEIVE' ? 'कुल लेंदार हुए' : 'कुल देनदार हुए'}</small>
+                        </div>
+                    </div>
+
+                    <div class="passbook-table-wrap" style="width: 100%; border: 1px solid var(--border-soft); border-radius: 6px; background: #080b10;">
+                        <table class="passbook-table" style="width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px;">
+                            <thead>
+                                <tr style="background: #111722; color: #94a3b8;">
+                                    <th style="width: 15%; padding: 7px 4px; text-align: center;">तारीख</th>
+                                    <th style="width: 32%; padding: 7px 4px; text-align: left;">विवरण</th>
+                                    <th style="width: 22%; padding: 7px 4px; text-align: right;">रकम</th>
+                                    <th style="width: 8%; padding: 7px 2px; text-align: center;">प्रकार</th>
+                                    <th style="width: 23%; padding: 7px 8px; text-align: right;">बैलेंस</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsHtml}</tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
         function openAllPartiesMasterSheet() {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             closeSettingsModal();
             pickerCurrentView = 'ALL_PARTIES_EXCEL_SHEET';
             document.getElementById('accountPickerModal').style.display = 'flex';
@@ -1624,7 +1703,6 @@
         }
 
         function openOverallDetailedSummary() {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             closeSettingsModal();
             pickerCurrentView = 'OVERALL_DETAILED_SUMMARY';
             document.getElementById('accountPickerModal').style.display = 'flex';
@@ -1671,126 +1749,6 @@
             `;
         }
 
-        function openSinglePersonStatement(personName) {
-            currentViewingPerson = personName;
-            pickerCurrentView = 'SINGLE_PERSON_STATEMENT';
-            document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
-
-            renderStatementTable(personName);
-        }
-
-                        function renderStatementTable(personName) {
-            const container = document.getElementById('accountListContainer');
-            container.innerHTML = '';
-
-            const mKey = findMasterKey(personName);
-            const master = mKey ? personMasters[mKey] : null;
-            const targetAmount = master ? (parseFloat(master.amount) || 0) : 0;
-            const agreedDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
-
-            const personTx = records
-                .map((r, originalIdx) => ({ ...r, originalIdx }))
-                .filter(r => isExactPersonMatch(r.name, personName))
-                .sort((a,b) => new Date(a.date) - new Date(b.date));
-
-            // प्रारंभिक दिशा सेट करना: RECEIVE (प्लस) या GIVE (माइनस)
-            let currentBalance = agreedDir === 'RECEIVE' ? targetAmount : -targetAmount;
-            let rowsHtml = '';
-
-            if (targetAmount > 0) {
-                const isOpRecv = agreedDir === 'RECEIVE';
-                const opColor = isOpRecv ? '#2ecc71' : '#ff7675';
-                const opSign = isOpRecv ? '+ ' : '- ';
-
-                rowsHtml += `
-                    <tr style="border-bottom: 1px solid #161c27;">
-                        <td style="padding: 8px 4px; text-align: center; color: #64748b;">-</td>
-                        <td style="padding: 8px 4px; text-align: left; font-weight: 600; color: #38bdf8;">Opening Balance</td>
-                        <td style="padding: 8px 4px; text-align: right; font-weight: 700; color: #cbd5e1; white-space: nowrap;">₹ ${formatINR(targetAmount)}</td>
-                        <td style="padding: 8px 2px; text-align: center; font-size: 10px; color: #94a3b8;">${isOpRecv ? 'CR' : 'DR'}</td>
-                        <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${opColor}; white-space: nowrap;">
-                            ${opSign}₹ ${formatINR(targetAmount)}
-                        </td>
-                    </tr>
-                `;
-            }
-
-            personTx.forEach(tx => {
-                const amt = parseFloat(tx.amount) || 0;
-                const isDebit = tx.crdr === 'Dr';
-
-                // डेबिट (DR दिया) होने पर बैलेंस में + जुड़ेगा, क्रेडिट (CR लिया) पर घटेगा
-                if (isDebit) {
-                    currentBalance += amt;
-                } else {
-                    currentBalance -= amt;
-                }
-
-                // अगर बैलेंस प्लस या 0 है तो 'लेना' (हरा), अगर माइनस में है तो 'देना' (लाल)
-                const isRecv = currentBalance >= 0;
-                const balColor = isRecv ? '#2ecc71' : '#ff7675';
-                const balSign = isRecv ? '+ ' : '- ';
-                const absBal = Math.abs(currentBalance);
-
-                rowsHtml += `
-                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27;" onclick="openEntryFormFromStatement(${tx.originalIdx})">
-                        <td style="padding: 8px 4px; font-size: 10px; text-align: center; white-space: nowrap; color: #94a3b8;">${formatHindiDate(tx.date)}</td>
-                        <td style="padding: 8px 4px; text-align: left; word-break: break-word; color: #e2e8f0;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
-                        <td style="padding: 8px 4px; text-align: right; color: ${isDebit ? '#ff7675' : '#2ecc71'}; font-weight: 700; white-space: nowrap;">
-                            ${isDebit ? '- ' : '+ '}₹ ${formatINR(amt)}
-                        </td>
-                        <td style="padding: 8px 2px; text-align: center; font-size: 10px; font-weight: 600; color: #64748b;">${isDebit ? 'DR' : 'CR'}</td>
-                        <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${balColor}; white-space: nowrap;">
-                            ${balSign}₹ ${formatINR(absBal)}
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const netBal = getPersonNetBalance(personName);
-
-            container.innerHTML = `
-                <div style="background:#0b0e14; padding: 14px 12px; border-radius: 8px; border: 1px solid var(--border-soft); box-sizing: border-box; width: 100%;" id="reportCaptureArea">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; border-bottom: 1px solid #1c2638; padding-bottom: 8px;">
-                        <div>
-                            <h3 style="font-size: 14px; color: #e2e8f0; font-weight: 700;">👤 ${escapeHtml(personName)}</h3>
-                            <small style="color: #718096; font-size: 10px;">एजेंट: <b style="color: #38bdf8;">${escapeHtml(netBal.account)}</b></small>
-                        </div>
-
-                        <div style="text-align: center;">
-                            <div style="font-size: 11px; font-weight: 600; color: #ff7675;">
-                                कुल दिया: ₹ ${formatINR(netBal.netTxVal)}
-                            </div>
-                        </div>
-
-                        <div style="text-align: right;">
-                            <span style="font-size: 9.5px; color: #718096; font-weight: 600;">NET BALANCE</span>
-                            <div style="font-size: 13px; font-weight: 700; color: ${netBal.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
-                                ${netBal.direction === 'RECEIVE' ? '+ ' : '- '}₹ ${formatINR(netBal.net)}
-                            </div>
-                            <small style="color: #cbd5e1; font-size: 9.5px; font-weight: bold;">${netBal.direction === 'RECEIVE' ? 'कुल लेंदार हुए' : 'कुल देनदार हुए'}</small>
-                        </div>
-                    </div>
-
-                    <div class="passbook-table-wrap" style="width: 100%; border: 1px solid var(--border-soft); border-radius: 6px; background: #080b10;">
-                        <table class="passbook-table" style="width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px;">
-                            <thead>
-                                <tr style="background: #111722; color: #94a3b8;">
-                                    <th style="width: 15%; padding: 7px 4px; text-align: center;">तारीख</th>
-                                    <th style="width: 32%; padding: 7px 4px; text-align: left;">विवरण</th>
-                                    <th style="width: 22%; padding: 7px 4px; text-align: right;">रकम</th>
-                                    <th style="width: 8%; padding: 7px 2px; text-align: center;">प्रकार</th>
-                                    <th style="width: 23%; padding: 7px 8px; text-align: right;">बैलेंस</th>
-                                </tr>
-                            </thead>
-                            <tbody>${rowsHtml}</tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-        }
         function getAgentNetTotal(agentName) {
             let allParties = [...new Set([...records.map(r => r.name).filter(Boolean), ...Object.keys(personMasters)])];
             let agentParties = allParties.filter(p => {
@@ -1816,7 +1774,6 @@
         }
 
         function openAccountPicker(src) {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             pickerCurrentView = 'MAIN_ACCOUNTS';
             currentDrillDownAccount = '';
             closeSettingsModal();
@@ -1918,7 +1875,6 @@
         }
 
         function openGroupListView(dir) {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             closeSettingsModal();
             pickerCurrentView = 'GROUP_LIST';
             document.getElementById('accountPickerModal').style.display = 'flex';
@@ -1941,7 +1897,6 @@
         }
 
         function openPersonLedgerPicker() {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             closeSettingsModal();
             pickerCurrentView = 'PERSON_LEDGER_LIST';
             document.getElementById('accountPickerModal').style.display = 'flex';
@@ -1984,7 +1939,6 @@
         }
 
         function openEntryForm(editIdx = -1) {
-            if (!currentUser) { alert("एंट्री जोड़ने के लिए कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             const modal = document.getElementById('entryModal');
             const title = document.getElementById('modalFormTitle');
             const btnDelete = document.getElementById('btnDeleteForm');
@@ -2069,7 +2023,6 @@
         }
 
         function submitRecord(keepOpen = false) {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             const editIdx = parseInt(document.getElementById('editIndex').value);
             const date = document.getElementById('inputDate').value || getTodayDate();
             const name = document.getElementById('inputName').value.trim();
@@ -2103,18 +2056,17 @@
         }
 
         function deleteCurrentFormRecord() {
+            openUnifiedGate('DELETE_RECORD_PIN', 'DELETE ENTRY', 'ENTER 4-DIGIT DELETE PIN', 4);
+        }
+
+        function executeDeleteRecord() {
             const editIdx = parseInt(document.getElementById('editIndex').value);
             if (editIdx >= 0) {
-                let pin = prompt("एंट्री डिलीट करने के लिए पासवर्ड दर्ज करें:");
-                if (pin === appPins.delPin || pin === registeredMasterPhone || pin === "7869") {
-                    records.splice(editIdx, 1);
-                    saveToStorage();
-                    renderView();
-                    closeEntryForm();
-                    alert("✅ एंट्री हटा दी गई!");
-                } else if (pin !== null) {
-                    alert("❌ गलत पासवर्ड!");
-                }
+                records.splice(editIdx, 1);
+                saveToStorage();
+                renderView();
+                closeEntryForm();
+                alert("✅ एंट्री हटा दी गई!");
             }
         }
 
@@ -2137,7 +2089,6 @@
         }
 
         function saveNewAccountMaster() {
-            if (!currentUser) { alert("कृपया पहले रजिस्टर/लॉगिन करें!"); return; }
             const person = document.getElementById('newAccPerson').value.trim();
             const account = document.getElementById('newAccMain').value.trim() || 'Direct';
             const amount = parseFloat(document.getElementById('newAccAmount').value) || 0;
@@ -2191,73 +2142,63 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-                async function captureAndSaveReportImage() {
-    const el = document.getElementById('reportCaptureArea');
-    if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
+        async function captureAndSaveReportImage() {
+            const el = document.getElementById('reportCaptureArea');
+            if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
 
-    try {
-        const isExcelSheet = pickerCurrentView === 'ALL_PARTIES_EXCEL_SHEET';
-        const finalBg = isExcelSheet ? '#ffffff' : '#070a0f';
+            try {
+                const isExcelSheet = pickerCurrentView === 'ALL_PARTIES_EXCEL_SHEET';
+                const finalBg = isExcelSheet ? '#ffffff' : '#070a0f';
 
-        // 1. कार्ड को चारों तरफ से अंदर दबाने के लिए एक रैपर (Frame) तैयार करना
-        const wrapper = document.createElement('div');
-        wrapper.style.position = 'fixed';
-        wrapper.style.left = '-9999px';
-        wrapper.style.top = '0';
-        wrapper.style.background = finalBg;
-        wrapper.style.padding = '24px'; // चारों तरफ से 24px का खुला स्पेस (बॉर्डर बिल्कुल नहीं कटेगी)
-        wrapper.style.display = 'inline-block';
-        wrapper.style.boxSizing = 'border-box';
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'fixed';
+                wrapper.style.left = '-9999px';
+                wrapper.style.top = '0';
+                wrapper.style.background = finalBg;
+                wrapper.style.padding = '24px';
+                wrapper.style.display = 'inline-block';
+                wrapper.style.boxSizing = 'border-box';
 
-        // 2. कार्ड की कॉपी बनाकर रैपर में डालना
-        const clone = el.cloneNode(true);
-        clone.style.width = isExcelSheet ? '900px' : '620px';
-        clone.style.maxWidth = 'none';
-        clone.style.margin = '0';
-        clone.style.boxSizing = 'border-box';
-        
-        wrapper.appendChild(clone);
-        document.body.appendChild(wrapper);
+                const clone = el.cloneNode(true);
+                clone.style.width = isExcelSheet ? '900px' : '620px';
+                clone.style.maxWidth = 'none';
+                clone.style.margin = '0';
+                clone.style.boxSizing = 'border-box';
+                
+                wrapper.appendChild(clone);
+                document.body.appendChild(wrapper);
 
-        // 3. पूरे फ्रेम का स्क्रीनशॉट लेना
-        const canvas = await html2canvas(wrapper, { 
-            backgroundColor: finalBg,
-            scale: 2.5,
-            useCORS: true,
-            logging: false
-        });
+                const canvas = await html2canvas(wrapper, { 
+                    backgroundColor: finalBg,
+                    scale: 2.5,
+                    useCORS: true,
+                    logging: false
+                });
 
-        // काम खत्म होने के बाद टेम्परेरी फ्रेम को हटाना
-        document.body.removeChild(wrapper);
+                document.body.removeChild(wrapper);
 
-        const safeParty = (currentViewingPerson || 'Ledger').replace(/[^a-zA-Z0-9_-]/g, '_');
-        const fileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
+                const safeParty = (currentViewingPerson || 'Ledger').replace(/[^a-zA-Z0-9_-]/g, '_');
+                const fileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
 
-        // डायरेक्ट JPG फाइल डाउनलोड
-        canvas.toBlob(function(blob) {
-            if (!blob) {
-                alert("❌ इमेज तैयार करने में समस्या आई!");
-                return;
+                canvas.toBlob(function(blob) {
+                    if (!blob) { alert("❌ इमेज तैयार करने में समस्या आई!"); return; }
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(blobUrl);
+                    }, 1000);
+                }, "image/jpeg", 0.98);
+
+            } catch (err) {
+                alert("❌ इमेज डाउनलोड में त्रुटि: " + err.message);
             }
-
-            const blobUrl = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = blobUrl;
-            link.download = fileName;
-            document.body.appendChild(link);
-            link.click();
-
-            setTimeout(() => {
-                document.body.removeChild(link);
-                URL.revokeObjectURL(blobUrl);
-            }, 1000);
-
-        }, "image/jpeg", 0.98);
-
-    } catch (err) {
-        alert("❌ इमेज डाउनलोड में त्रुटि: " + err.message);
-    }
-}
+        }
     </script>
 </body>
 </html>
