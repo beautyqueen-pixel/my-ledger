@@ -297,7 +297,7 @@
         .btn-save-more { background: #1e3a5f; color: #38bdf8; border: 1px solid #38bdf8; }
         .btn-submit { background: var(--accent-recv); color: #ffffff; }
 
-        /* Unified Beautiful Master Security Style PIN Modal */
+        /* Unified Master Security PIN Modal */
         .auth-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
@@ -316,7 +316,6 @@
             font-weight: 900; outline: none; letter-spacing: 4px;
         }
 
-        /* Transparent Master Ledger Style Auth Modal */
         #authOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(10, 15, 30, 0.88); backdrop-filter: blur(15px); 
@@ -340,7 +339,6 @@
         .auth-switch { margin-top: 8px; font-size: 11px; color: #00f0ff; cursor: pointer; text-decoration: underline; font-weight: bold; }
         .close-auth { position: absolute; top: 8px; right: 12px; color: #ff4757; font-size: 18px; font-weight: bold; cursor: pointer; }
 
-        /* Password Manager Modal */
         .pm-card { 
             background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px; 
             padding: 16px 14px; width: 92%; max-width: 340px; box-shadow: 0 0 30px rgba(0,240,255,0.45); 
@@ -352,6 +350,10 @@
             width: 42%; padding: 5px; border-radius: 6px; border: 1.5px solid #00f0ff; 
             background: #000; color: #00ff66; text-align: center; font-size: 12px; font-weight: 900; outline: none; 
         }
+
+        /* Selection styling */
+        .tx-check-col { width: 28px; text-align: center; }
+        .tx-checkbox { transform: scale(1.15); accent-color: #e74c3c; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -361,7 +363,7 @@
         <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" autocomplete="new-password" onclick="event.stopPropagation()">
     </div>
 
-    <!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल (Auto-Submit & No OK Needed) -->
+    <!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल -->
     <div class="auth-overlay" id="unifiedSecurityGateModal">
       <div class="security-pin-card">
         <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
@@ -376,7 +378,6 @@
 
     <!-- मास्टर लेजर स्टाइल ऑथेंटिकेशन ओवरले -->
     <div id="authOverlay">
-        <!-- 1. LOGIN BOX -->
         <div class="auth-card" id="loginBox" style="display:none;">
             <span class="close-auth" onclick="closeAuthModal()">✖</span>
             <h2>LOGIN KHATA LEDGER</h2>
@@ -386,7 +387,6 @@
             <div class="auth-switch" onclick="askRegisterPermission()">नया खाता बनाएँ (Register)</div>
         </div>
 
-        <!-- 2. REGISTER BOX -->
         <div class="auth-card" id="registerBox" style="display:none;">
             <span class="close-auth" onclick="closeAuthModal()">✖</span>
             <h2>REGISTER DEVICE ACCOUNT</h2>
@@ -400,7 +400,6 @@
             <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
         </div>
 
-        <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (ईमेल पूरी तरह से हटा दी गई है) -->
         <div class="auth-card" id="accountBox" style="display:none;">
             <span class="close-auth" onclick="closeAuthModal()">✖</span>
             <h2>FIREBASE CLOUD ACCOUNT</h2>
@@ -411,7 +410,6 @@
             <button class="btn-auth-main" style="background:#c0392b;" onclick="handleManualLogout()">🚪 LOGOUT & LOCK</button>
         </div>
 
-        <!-- 4. PROFILE EDIT BOX -->
         <div class="auth-card" id="profileEditBox" style="display:none;">
             <span class="close-auth" onclick="closeProfileEditBox()">✖</span>
             <h2>EDIT DEVICE PROFILE</h2>
@@ -425,7 +423,7 @@
         </div>
     </div>
 
-    <!-- पासवर्ड मैनेजर मॉडल (6 पिन + 🔑 ACCOUNT LOGIN PASS) -->
+    <!-- पासवर्ड मैनेजर मॉडल -->
     <div class="auth-overlay" id="passManagerModal">
       <div class="pm-card">
         <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
@@ -491,7 +489,6 @@
         <button class="fab-btn" onclick="openEntryForm()" title="New Entry">+</button>
     </div>
 
-    <!-- Hidden Input for JSON file restore -->
     <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleJsonFileSelect(event)">
 
     <!-- SETTINGS MODAL -->
@@ -519,6 +516,10 @@
                 </div>
 
                 <div class="setting-section-title">3. Ledger Reports & Masters</div>
+                <div class="setting-item" onclick="openManagePartiesMaster()">
+                    <span style="color:#f59e0b; font-weight:700;">👥 Manage Parties & Masters (Edit / Delete Party)</span>
+                    <span style="color:#f59e0b; font-weight:700;">Manage ›</span>
+                </div>
                 <div class="setting-item" onclick="openAccountPicker('SETTINGS')">
                     <span>Account Sheets (Agents)</span>
                     <span style="color:#718096;">›</span>
@@ -583,7 +584,7 @@
         </div>
     </div>
 
-    <!-- Add New Master Modal -->
+    <!-- Add / Edit Master Modal -->
     <div class="modal-overlay" id="addAccountModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -591,6 +592,7 @@
                 <button onclick="closeCreateAccountModal()" style="background:none; border:none; color:#888; font-size:14px; cursor:pointer;">✕</button>
             </div>
             <div class="form-body">
+                <input type="hidden" id="editingMasterOldKey" value="">
                 <div class="form-group">
                     <label>Balance Direction</label>
                     <div class="form-radio-row">
@@ -738,6 +740,12 @@
         let currentViewingPerson = '';
         let selectedAgentFilter = null;
 
+        // बल्क डिलीट स्टेट्स
+        let isSelectionMode = false;
+        let selectedIndices = new Set();
+        let pendingBulkDeleteIndices = [];
+        let pendingDeletePartyName = '';
+
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         function getDeviceMasterKey() {
@@ -819,7 +827,7 @@
         }
 
         // ==========================================
-        // यूनिफाइड नियॉन सिक्योरिटी गेट (Auto-Submit & No OK Needed)
+        // यूनिफाइड सिक्योरिटी गेट
         // ==========================================
         function openUnifiedGate(actionType, title, desc, maxLength = 4) {
             currentGateAction = actionType;
@@ -891,6 +899,20 @@
                 } else {
                     gateWrongFeedback();
                 }
+            } else if (currentGateAction === 'BULK_DELETE_PIN') {
+                if (entered === appPins.delPin || entered === "7869") {
+                    closeUnifiedGate();
+                    executeBulkDeleteConfirmed();
+                } else {
+                    gateWrongFeedback();
+                }
+            } else if (currentGateAction === 'DELETE_WHOLE_PARTY_PIN') {
+                if (entered === appPins.delPin || entered === "7869") {
+                    closeUnifiedGate();
+                    executeDeleteWholePartyConfirmed();
+                } else {
+                    gateWrongFeedback();
+                }
             }
         }
 
@@ -903,7 +925,7 @@
         }
 
         // ==========================================
-        // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+        // FIREBASE ऑथेंटिकेशन
         // ==========================================
         function openAuthModalProtected() {
             closeSettingsModal();
@@ -1162,7 +1184,7 @@
         }
 
         // ==========================================
-        // मैनेज पासवर्ड (सिर्फ मास्टर की से खुलेगा)
+        // मैनेज पासवर्ड
         // ==========================================
         function openPasswordManagerGate() {
             closeSettingsModal();
@@ -1213,7 +1235,7 @@
         }
 
         // ==========================================
-        // ऐप रीसेट व JSON बैकअप / रीस्टोर
+        // रीसेट व JSON एक्सपोर्ट/इम्पोर्ट
         // ==========================================
         function promptResetApp() {
             closeSettingsModal();
@@ -1457,14 +1479,100 @@
             });
         }
 
+        // ==========================================
+        // पार्टी स्टेटमेंट व मल्टी-डिलीट फीचर्स
+        // ==========================================
         function openSinglePersonStatement(personName) {
             currentViewingPerson = personName;
             pickerCurrentView = 'SINGLE_PERSON_STATEMENT';
+            isSelectionMode = false;
+            selectedIndices.clear();
+
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
 
             renderStatementTable(personName);
+        }
+
+        function toggleSelectMode() {
+            isSelectionMode = !isSelectionMode;
+            selectedIndices.clear();
+            renderStatementTable(currentViewingPerson);
+        }
+
+        function toggleTxSelection(idx, event) {
+            if (event) event.stopPropagation();
+            if (selectedIndices.has(idx)) {
+                selectedIndices.delete(idx);
+            } else {
+                selectedIndices.add(idx);
+            }
+            renderStatementTable(currentViewingPerson);
+        }
+
+        function toggleSelectAllTx(masterIndices) {
+            if (selectedIndices.size === masterIndices.length) {
+                selectedIndices.clear();
+            } else {
+                selectedIndices = new Set(masterIndices);
+            }
+            renderStatementTable(currentViewingPerson);
+        }
+
+        function promptBulkDelete() {
+            if (selectedIndices.size === 0) {
+                alert("कृपया पहले कम से कम एक एंट्री चुनें!");
+                return;
+            }
+            pendingBulkDeleteIndices = Array.from(selectedIndices);
+            openUnifiedGate('BULK_DELETE_PIN', 'DELETE SELECTED ENTRIES', 'ENTER 4-DIGIT DELETE PIN', 4);
+        }
+
+        function executeBulkDeleteConfirmed() {
+            if (pendingBulkDeleteIndices.length > 0) {
+                // बड़े इंडेक्स से छोटे इंडेक्स के क्रम में डिलीट करेंगे ताकि इंडेक्स न बिगड़े
+                pendingBulkDeleteIndices.sort((a, b) => b - a);
+                pendingBulkDeleteIndices.forEach(idx => {
+                    if (idx >= 0 && idx < records.length) {
+                        records.splice(idx, 1);
+                    }
+                });
+                saveToStorage();
+                selectedIndices.clear();
+                isSelectionMode = false;
+                pendingBulkDeleteIndices = [];
+                renderView();
+                renderStatementTable(currentViewingPerson);
+                alert("✅ चुनी हुई सभी एंट्रियां सफलतापूर्वक हटा दी गईं!");
+            }
+        }
+
+        function promptDeleteWholeParty(pName) {
+            pendingDeletePartyName = pName;
+            if (confirm(`⚠️ क्या आप वाकई पूरी पार्टी "${pName}" और इसके सभी रिकॉर्ड्स को हटाना चाहते हैं?`)) {
+                openUnifiedGate('DELETE_WHOLE_PARTY_PIN', 'DELETE WHOLE PARTY', 'ENTER 4-DIGIT DELETE PIN', 4);
+            }
+        }
+
+        function executeDeleteWholePartyConfirmed() {
+            if (!pendingDeletePartyName) return;
+            const target = pendingDeletePartyName;
+
+            // सारे ट्रांज़ैक्शन हटाएं
+            records = records.filter(r => !isExactPersonMatch(r.name, target));
+
+            // मास्टर हटाएं
+            const mKey = findMasterKey(target);
+            if (mKey && personMasters[mKey]) {
+                delete personMasters[mKey];
+            }
+
+            saveToStorage();
+            renderView();
+            closeAccountPicker();
+            pendingDeletePartyName = '';
+            alert(`✅ पार्टी "${target}" और उसके सभी लेन-देन पूरी तरह हटा दिए गए!`);
         }
 
         function renderStatementTable(personName) {
@@ -1481,6 +1589,8 @@
                 .filter(r => isExactPersonMatch(r.name, personName))
                 .sort((a,b) => new Date(a.date) - new Date(b.date));
 
+            const allTxOriginalIndices = personTx.map(t => t.originalIdx);
+
             let currentBalance = agreedDir === 'RECEIVE' ? targetAmount : -targetAmount;
             let rowsHtml = '';
 
@@ -1491,6 +1601,7 @@
 
                 rowsHtml += `
                     <tr style="border-bottom: 1px solid #161c27;">
+                        ${isSelectionMode ? `<td style="padding:8px 2px; text-align:center; color:#555;">-</td>` : ''}
                         <td style="padding: 8px 4px; text-align: center; color: #64748b;">-</td>
                         <td style="padding: 8px 4px; text-align: left; font-weight: 600; color: #38bdf8;">Opening Balance</td>
                         <td style="padding: 8px 4px; text-align: right; font-weight: 700; color: #cbd5e1; white-space: nowrap;">₹ ${formatINR(targetAmount)}</td>
@@ -1513,9 +1624,16 @@
                 const balColor = isRecv ? '#2ecc71' : '#ff7675';
                 const balSign = isRecv ? '+ ' : '- ';
                 const absBal = Math.abs(currentBalance);
+                const isChecked = selectedIndices.has(tx.originalIdx);
 
                 rowsHtml += `
-                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27;" onclick="openEntryFormFromStatement(${tx.originalIdx})">
+                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27; background:${isChecked ? 'rgba(231,76,60,0.18)' : 'transparent'};" 
+                        onclick="${isSelectionMode ? `toggleTxSelection(${tx.originalIdx}, event)` : `openEntryFormFromStatement(${tx.originalIdx})`}">
+                        ${isSelectionMode ? `
+                            <td class="tx-check-col" onclick="event.stopPropagation()">
+                                <input type="checkbox" class="tx-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTxSelection(${tx.originalIdx}, event)">
+                            </td>
+                        ` : ''}
                         <td style="padding: 8px 4px; font-size: 10px; text-align: center; white-space: nowrap; color: #94a3b8;">${formatHindiDate(tx.date)}</td>
                         <td style="padding: 8px 4px; text-align: left; word-break: break-word; color: #e2e8f0;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
                         <td style="padding: 8px 4px; text-align: right; color: ${isDebit ? '#ff7675' : '#2ecc71'}; font-weight: 700; white-space: nowrap;">
@@ -1531,7 +1649,35 @@
 
             const netBal = getPersonNetBalance(personName);
 
+            // कंट्रोल बार: सेलेक्ट, सेलेक्ट ऑल, डिलीट सेलेक्टेड, डिलीट पार्टी
+            let bulkControlsHtml = `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#121926; padding:6px 10px; border-radius:6px; margin-bottom:8px; border:1px solid var(--border-soft); gap:6px; flex-wrap:wrap;">
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <button onclick="toggleSelectMode()" style="background:${isSelectionMode ? '#38bdf8' : '#1e293b'}; color:${isSelectionMode ? '#000' : '#fff'}; border:1px solid #38bdf8; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">
+                            ${isSelectionMode ? 'Cancel Selection' : '☑️ Select'}
+                        </button>
+                        ${isSelectionMode ? `
+                            <button onclick="toggleSelectAllTx([${allTxOriginalIndices.join(',')}])" style="background:#223048; color:#38bdf8; border:1px solid #38bdf8; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">
+                                ${selectedIndices.size === allTxOriginalIndices.length && allTxOriginalIndices.length > 0 ? 'Deselect All' : 'Select All'}
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        ${isSelectionMode && selectedIndices.size > 0 ? `
+                            <button onclick="promptBulkDelete()" style="background:#e74c3c; color:#fff; border:none; padding:4px 9px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">
+                                🗑 Delete Selected (${selectedIndices.size})
+                            </button>
+                        ` : ''}
+                        <button onclick="promptDeleteWholeParty('${escapeHtml(personName)}')" style="background:#5c1d1d; color:#fca5a5; border:1px solid #b91c1c; padding:4px 8px; border-radius:4px; font-size:10.5px; font-weight:600; cursor:pointer;">
+                            🗑 Delete Whole Party
+                        </button>
+                    </div>
+                </div>
+            `;
+
             container.innerHTML = `
+                ${bulkControlsHtml}
                 <div style="background:#0b0e14; padding: 14px 12px; border-radius: 8px; border: 1px solid var(--border-soft); box-sizing: border-box; width: 100%;" id="reportCaptureArea">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; border-bottom: 1px solid #1c2638; padding-bottom: 8px;">
                         <div>
@@ -1558,6 +1704,7 @@
                         <table class="passbook-table" style="width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px;">
                             <thead>
                                 <tr style="background: #111722; color: #94a3b8;">
+                                    ${isSelectionMode ? `<th style="width: 28px; padding: 7px 2px;">✓</th>` : ''}
                                     <th style="width: 15%; padding: 7px 4px; text-align: center;">तारीख</th>
                                     <th style="width: 32%; padding: 7px 4px; text-align: left;">विवरण</th>
                                     <th style="width: 22%; padding: 7px 4px; text-align: right;">रकम</th>
@@ -1570,6 +1717,78 @@
                     </div>
                 </div>
             `;
+        }
+
+        // ==========================================
+        // सेटिंग्स: Manage Parties & Masters (पार्टी एडिट / डिलीट)
+        // ==========================================
+        function openManagePartiesMaster() {
+            closeSettingsModal();
+            pickerCurrentView = 'MANAGE_PARTIES_VIEW';
+            document.getElementById('accountPickerModal').style.display = 'flex';
+            document.getElementById('btnBackModal').style.display = 'block';
+            document.getElementById('accountModalTitle').innerText = 'Manage Parties (Edit / Delete)';
+
+            renderManagePartiesList();
+        }
+
+        function renderManagePartiesList() {
+            const container = document.getElementById('accountListContainer');
+            container.innerHTML = '';
+
+            const allParties = [...new Set([...Object.keys(personMasters), ...records.map(r => r.name)])].sort();
+
+            if (allParties.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:35px; color:#64748b; font-size:12px;">कोई पार्टी उपलब्ध नहीं है।</div>`;
+                return;
+            }
+
+            allParties.forEach(pName => {
+                const mKey = findMasterKey(pName);
+                const master = mKey ? personMasters[mKey] : null;
+                const bal = getPersonNetBalance(pName);
+                const opAmt = master ? (parseFloat(master.amount) || 0) : 0;
+                const opDir = master ? (master.direction || 'RECEIVE') : 'RECEIVE';
+                const agent = (master && master.account) ? master.account : (bal.account || 'Direct');
+
+                const div = document.createElement('div');
+                div.className = 'setting-item';
+                div.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px 12px; border-bottom:1px solid #1a2333;';
+
+                div.innerHTML = `
+                    <div style="flex:1; padding-right:8px;">
+                        <div style="font-weight:700; color:#e2e8f0; font-size:12.5px;">👤 ${escapeHtml(pName)}</div>
+                        <div style="font-size:10px; color:#828fa3; margin-top:2px;">
+                            एजेंट: <b style="color:#38bdf8;">${escapeHtml(agent)}</b> | ओपनिंग: ₹ ${formatINR(opAmt)} (${opDir})
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <button onclick="editPartyMaster('${escapeHtml(pName)}')" style="background:#1e3a5f; color:#38bdf8; border:1px solid #38bdf8; padding:5px 8px; border-radius:4px; font-size:10.5px; font-weight:700; cursor:pointer;">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="promptDeleteWholeParty('${escapeHtml(pName)}')" style="background:#5c1d1d; color:#fca5a5; border:1px solid #b91c1c; padding:5px 8px; border-radius:4px; font-size:10.5px; font-weight:700; cursor:pointer;">
+                            🗑 Del
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function editPartyMaster(pName) {
+            const mKey = findMasterKey(pName);
+            const master = mKey ? personMasters[mKey] : null;
+            const bal = getPersonNetBalance(pName);
+
+            document.getElementById('masterModalHeading').innerText = 'Edit Party Master';
+            document.getElementById('editingMasterOldKey').value = mKey || pName;
+            document.getElementById('newAccPerson').value = pName;
+            document.getElementById('newAccMain').value = (master && master.account) ? master.account : (bal.account || 'Direct');
+            document.getElementById('newAccAmount').value = master ? (master.amount || 0) : 0;
+            document.getElementById('newAccDesc').value = master ? (master.desc || '') : '';
+            selectAccDirection(master ? (master.direction || 'RECEIVE') : 'RECEIVE');
+
+            document.getElementById('addAccountModal').style.display = 'flex';
         }
 
         function openAllPartiesMasterSheet() {
@@ -1926,6 +2145,9 @@
                 openAgentPartiesView(currentDrillDownAccount);
             } else if (pickerCurrentView === 'AGENT_DRILLDOWN') {
                 openAccountPicker('SETTINGS');
+            } else if (pickerCurrentView === 'MANAGE_PARTIES_VIEW') {
+                closeAccountPicker();
+                openSettingsModal();
             } else {
                 closeAccountPicker();
                 openSettingsModal();
@@ -2072,6 +2294,7 @@
 
         function openCreateAccountModal(preset = '') {
             document.getElementById('masterModalHeading').innerText = 'Add Account Master';
+            document.getElementById('editingMasterOldKey').value = '';
             document.getElementById('newAccPerson').value = preset;
             document.getElementById('newAccMain').value = '';
             document.getElementById('newAccAmount').value = '';
@@ -2093,13 +2316,38 @@
             const account = document.getElementById('newAccMain').value.trim() || 'Direct';
             const amount = parseFloat(document.getElementById('newAccAmount').value) || 0;
             const desc = document.getElementById('newAccDesc').value.trim();
+            const oldKey = document.getElementById('editingMasterOldKey').value.trim();
 
             if (!person) { alert('Party Name लिखें!'); return; }
+
+            // यदि पार्टी का नाम बदला गया है तो पुराने नाम को हटाएं व रिकॉर्ड्स भी अपडेट करें
+            if (oldKey && oldKey.toLowerCase() !== person.toLowerCase()) {
+                const oldFoundKey = findMasterKey(oldKey);
+                if (oldFoundKey) delete personMasters[oldFoundKey];
+
+                records.forEach(r => {
+                    if (isExactPersonMatch(r.name, oldKey)) {
+                        r.name = person;
+                        r.account = account;
+                    }
+                });
+            } else if (oldKey) {
+                // अगर नाम वही है लेकिन एजेंट बदला है तो रिकॉर्ड्स में एजेंट अपडेट करें
+                records.forEach(r => {
+                    if (isExactPersonMatch(r.name, person)) {
+                        r.account = account;
+                    }
+                });
+            }
 
             personMasters[person] = { account, amount, direction: selectedAccDirection, desc };
             saveToStorage();
             document.getElementById('addAccountModal').style.display = 'none';
             renderView();
+
+            if (pickerCurrentView === 'MANAGE_PARTIES_VIEW') {
+                renderManagePartiesList();
+            }
         }
 
         function updateDataList() {
