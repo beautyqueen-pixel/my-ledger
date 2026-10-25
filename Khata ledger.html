@@ -12,11 +12,171 @@
     <meta name="theme-color" content="#0b0e14">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+        // ==========================================
+        // डायरेक्ट सिंक और सेटिंग्स फ़ॉन्ट साइज़ कंट्रोल
+        // ==========================================
+        function triggerDirectCloudSync() {
+            if (!currentUser || !currentUser.email) {
+                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
+                openAuthModal();
+                return;
+            }
+            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
+        }
+
+        const FONT_STORAGE_KEY = 'khata_settings_font_size';
+        function setSettingsFontSize(size, save = true) {
+            const listEl = document.getElementById('settingsListElement');
+            if (!listEl) return;
+
+            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
+
+            if (size === 'small') {
+                listEl.style.fontSize = '10px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
+                const btn = document.getElementById('btnFontSm');
+                if (btn) btn.classList.add('active-font');
+            } else if (size === 'large') {
+                listEl.style.fontSize = '14px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '12px 14px';
+                    el.style.fontSize = '13.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
+                const btn = document.getElementById('btnFontLg');
+                if (btn) btn.classList.add('active-font');
+            } else {
+                size = 'medium';
+                listEl.style.fontSize = '11.5px';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '9px 14px';
+                    el.style.fontSize = '11.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
+                const btn = document.getElementById('btnFontMd');
+                if (btn) btn.classList.add('active-font');
+            }
+
+            if (save) {
+                localStorage.setItem(FONT_STORAGE_KEY, size);
+            }
+        }
+
+    </script>
 
     <!-- FIREBASE COMPAT SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
+        // ==========================================
+        // डायरेक्ट सिंक और सेटिंग्स फ़ॉन्ट साइज़ कंट्रोल
+        // ==========================================
+        function triggerDirectCloudSync() {
+            if (!currentUser || !currentUser.email) {
+                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
+                openAuthModal();
+                return;
+            }
+            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
+        }
+
+        const FONT_STORAGE_KEY = 'khata_settings_font_size';
+        function setSettingsFontSize(size, save = true) {
+            const listEl = document.getElementById('settingsListElement');
+            if (!listEl) return;
+
+            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
+
+            if (size === 'small') {
+                listEl.style.fontSize = '10px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
+                const btn = document.getElementById('btnFontSm');
+                if (btn) btn.classList.add('active-font');
+            } else if (size === 'large') {
+                listEl.style.fontSize = '14px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '12px 14px';
+                    el.style.fontSize = '13.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
+                const btn = document.getElementById('btnFontLg');
+                if (btn) btn.classList.add('active-font');
+            } else {
+                size = 'medium';
+                listEl.style.fontSize = '11.5px';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '9px 14px';
+                    el.style.fontSize = '11.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
+                const btn = document.getElementById('btnFontMd');
+                if (btn) btn.classList.add('active-font');
+            }
+
+            if (save) {
+                localStorage.setItem(FONT_STORAGE_KEY, size);
+            }
+        }
+
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
+      
+        function triggerDirectCloudSync() {
+            if (!currentUser || !currentUser.email) {
+                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
+                openAuthModal();
+                return;
+            }
+            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
+        }
+
+        const FONT_STORAGE_KEY = 'khata_settings_font_size';
+        function setSettingsFontSize(size, save = true) {
+            const listEl = document.getElementById('settingsListElement');
+            if (!listEl) return;
+
+            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
+
+            if (size === 'small') {
+                listEl.style.fontSize = '10px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
+                const btn = document.getElementById('btnFontSm');
+                if (btn) btn.classList.add('active-font');
+            } else if (size === 'large') {
+                listEl.style.fontSize = '14px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '12px 14px';
+                    el.style.fontSize = '13.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
+                const btn = document.getElementById('btnFontLg');
+                if (btn) btn.classList.add('active-font');
+            } else {
+                size = 'medium';
+                listEl.style.fontSize = '11.5px';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '9px 14px';
+                    el.style.fontSize = '11.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
+                const btn = document.getElementById('btnFontMd');
+                if (btn) btn.classList.add('active-font');
+            }
+
+            if (save) {
+                localStorage.setItem(FONT_STORAGE_KEY, size);
+            }
+        }
+
+    </script>
 
     <style>
         :root {
@@ -98,27 +258,44 @@
         }
 
         .header-title-box { display: flex; flex-direction: column; gap: 2px; }
-        .header-title { font-size: 14px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.3px; }
+        .header-title { font-size: 10px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.3px; }
 
         .user-badge-header {
-            font-size: 11.5px; font-weight: 700; color: #00f3ff;
+            font-size: 10px; font-weight: 600; color: #00f3ff;
             display: flex; align-items: center; gap: 4px;
             max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            cursor: pointer;
+            cursor: default;
         }
 
-        .header-actions { display: flex; gap: 5px; align-items: center; }
+        .header-actions { display: flex; gap: 7px; align-items: center; }
 
-        .btn-setting, .btn-filter-trigger {
-            background: #151d2a; border: 1px solid var(--border-soft); color: #cbd5e1;
-            padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 500;
-            display: flex; align-items: center; gap: 3px;
+        .btn-header-action {
+            background: rgba(34, 197, 94, 0.12); border: 1px solid #10b981; color: #34d399;
+            padding: 8px 4px; border-radius: 9px; cursor: pointer; font-size: 10px; font-weight: 600;
+            display: flex; align-items: center; gap: 4px; white-space: nowrap; line-height: 1.2;
+            transition: all 0.15s ease;
         }
+        .btn-header-action:active { transform: scale(0.96); }
 
-        .btn-cloud-save {
-            background: #102a20; border: 1px solid rgba(46, 204, 113, 0.4); color: #2ecc71;
-            padding: 5px 9px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600;
-            display: flex; align-items: center; gap: 3px;
+        .btn-sync-header {
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid #10b981;
+            color: #34d399;
+        }
+        .btn-sync-header:hover { background: rgba(34, 197, 94, 0.22); }
+        /* Settings Font Resizer Bar */
+        .settings-font-toolbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #090e17; padding: 5px 12px; border-bottom: 1px solid var(--border-soft);
+            font-size: 11px; color: #94a3b8; flex-shrink: 0;
+        }
+        .font-btn-group { display: flex; gap: 5px; align-items: center; }
+        .btn-font-scale {
+            background: #151f2e; border: 1px solid #28374d; color: #38bdf8;
+            padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer;
+        }
+        .btn-font-scale.active-font {
+            background: #0284c7; color: #fff; border-color: #38bdf8;
         }
 
         .compact-balance-strip {
@@ -352,8 +529,8 @@
         }
 
         /* Selection styling */
-        .tx-check-col { width: 28px; text-align: center; }
-        .tx-checkbox { transform: scale(1.15); accent-color: #e74c3c; cursor: pointer; }
+        .tx-check-col { width: 32px; text-align: center; }
+        .tx-checkbox { transform: scale(1.2); accent-color: #e74c3c; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -452,12 +629,12 @@
             <div class="summary-top-row">
                 <div class="header-title-box">
                     <span class="header-title">Khata Ledger Pro</span>
-                    <span id="displayUserNameHeader" class="user-badge-header" onclick="openAuthModalProtected()">👤 LOGIN</span>
+                    <span id="displayUserNameHeader" class="user-badge-header">👤 USER</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-cloud-save" onclick="handleCloudAction()">🔥 <span id="syncBtnText">Sync</span></button>
-                    <button class="btn-setting" onclick="openSettingsModal()">⚙️ Settings</button>
-                    <button class="btn-filter-trigger" onclick="openAccountPicker('MAIN')"><span>Accounts</span> ▾</button>
+                    <button class="btn-header-action btn-sync-header" onclick="triggerDirectCloudSync()" title="Cloud Sync">🔥 Syn.</button>
+                    <button class="btn-header-action" onclick="openSettingsModal()" title="Settings">⚙️ Set.</button>
+                    <button class="btn-header-action" onclick="openAccountPicker('MAIN')" title="Accounts"><span> 📊 Acc.</span> ▾</button>
                 </div>
             </div>
         </div>
@@ -498,7 +675,15 @@
                 <span>Settings & Ledger Reports</span>
                 <button onclick="closeSettingsModal()" style="background:none; border:none; color:#aaa; font-size:15px; cursor:pointer;">✕</button>
             </div>
-            <div class="simple-settings-list">
+            <div class="settings-font-toolbar">
+                <span>🔤 फ़ॉन्ट साइज़:</span>
+                <div class="font-btn-group">
+                    <button type="button" class="btn-font-scale" id="btnFontSm" onclick="setSettingsFontSize('small')">A- छोटा</button>
+                    <button type="button" class="btn-font-scale active-font" id="btnFontMd" onclick="setSettingsFontSize('medium')">A सामान्य</button>
+                    <button type="button" class="btn-font-scale" id="btnFontLg" onclick="setSettingsFontSize('large')">A+ बड़ा</button>
+                </div>
+            </div>
+            <div class="simple-settings-list" id="settingsListElement">
                 <div class="setting-section-title">1. Overall Summary (कुल हिसाब)</div>
                 <div class="setting-item" onclick="openOverallDetailedSummary()">
                     <span style="color:#38bdf8; font-weight:600;">📊 कुल हिसाब सारांश (Full Breakdown)</span>
@@ -545,8 +730,8 @@
 
                 <div class="setting-section-title">5. Cloud Backup & Sync</div>
                 <div class="setting-item" onclick="openAuthModalProtected()">
-                    <span style="color:#1b11f8ea; font-weight:600;">🔥 Firebase Account & Sync</span>
-                    <span style="color:#e59008;">Open ›</span>
+                    <span style="color:#21f94eea; font-weight:900;">🔥 Firebase Account & Sync</span>
+                    <span style="color:#21f94eea;">Open ›</span>
                 </div>
 
                 <div class="setting-section-title">6. Backup & Restore (JSON / File)</div>
@@ -576,6 +761,8 @@
                     <span id="accountModalTitle">Statement Passbook</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 6px;">
+                    <!-- डायनेमिक एक्शन हेडर (मल्टी-डिलीट के समय डिलीट बटन यहाँ दिखेगा) -->
+                    <div id="statementActionsWrap" style="display: flex; align-items: center; gap: 6px;"></div>
                     <button id="btnExportImage" class="btn-img-export" onclick="captureAndSaveReportImage()">📸 Share</button>
                     <button onclick="closeAccountPicker()" style="background:none; border:none; color:#888; font-size:14px; cursor:pointer;">✕</button>
                 </div>
@@ -740,11 +927,13 @@
         let currentViewingPerson = '';
         let selectedAgentFilter = null;
 
-        // बल्क डिलीट स्टेट्स
+        // बल्क डिलीट एवं लॉन्ग-प्रेस स्टेट्स
         let isSelectionMode = false;
         let selectedIndices = new Set();
         let pendingBulkDeleteIndices = [];
         let pendingDeletePartyName = '';
+        let longPressTimer = null;
+        let isLongPressTriggered = false;
 
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -769,28 +958,25 @@
 
             if (currentUser) {
                 handleAppLock();
-            } else {
-                openAuthModal();
             }
 
             document.getElementById('inputDate').value = getTodayDate();
+            const savedFontSize = localStorage.getItem(FONT_STORAGE_KEY) || 'medium';
+            setSettingsFontSize(savedFontSize, false);
         };
 
         function updateAuthUI() {
             const displayHeader = document.getElementById('displayUserNameHeader');
             const dashUser = document.getElementById('dashUserDisplay');
-            const syncBtnText = document.getElementById('syncBtnText');
 
             if (currentUser) {
                 const realName = (currentUser.name || currentUser.fullName || currentUser.username || "USER").toUpperCase();
                 const userNameOnly = (currentUser.username || "").toUpperCase();
                 if (displayHeader) displayHeader.innerText = "👤 " + realName;
                 if (dashUser) dashUser.innerText = `👤 ${realName} (@${userNameOnly})`;
-                if (syncBtnText) syncBtnText.innerText = "Sync";
             } else {
-                if (displayHeader) displayHeader.innerText = "👤 LOGIN";
+                if (displayHeader) displayHeader.innerText = "👤 KHATA PRO";
                 if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
-                if (syncBtnText) syncBtnText.innerText = "Login";
             }
         }
 
@@ -814,7 +1000,6 @@
                 this.value = "";
                 this.style.display = 'none';
                 clickCount = 0;
-                if (!currentUser) openAuthModal();
             }
         });
 
@@ -863,7 +1048,15 @@
         function submitUnifiedGate(entered) {
             const mKey = getDeviceMasterKey();
 
-            if (currentGateAction === 'OPEN_AUTH_GATE') {
+            if (currentGateAction === 'DIRECT_SYNC_PIN') {
+                const reqPin = appPins.cloudPin || "7869";
+                if (entered === reqPin || entered === mKey || (mKey === "7869" && entered === "7869")) {
+                    closeUnifiedGate();
+                    executeCloudBackupManual();
+                } else {
+                    gateWrongFeedback();
+                }
+            } else if (currentGateAction === 'OPEN_AUTH_GATE') {
                 const reqPin = appPins.loginPin || "7869";
                 if (entered === reqPin) {
                     closeUnifiedGate();
@@ -925,16 +1118,11 @@
         }
 
         // ==========================================
-        // FIREBASE ऑथेंटिकेशन
+        // FIREBASE ऑथेंटिकेशन (सिर्फ सेटिंग्स से खुलेगा)
         // ==========================================
         function openAuthModalProtected() {
             closeSettingsModal();
             openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
-        }
-
-        function handleCloudAction() {
-            if (!currentUser) openAuthModal();
-            else openAuthModalProtected();
         }
 
         function openAuthModal() {
@@ -1480,7 +1668,7 @@
         }
 
         // ==========================================
-        // पार्टी स्टेटमेंट व मल्टी-डिलीट फीचर्स
+        // पार्टी स्टेटमेंट व लॉन्ग-प्रेस मल्टी-डिलीट
         // ==========================================
         function openSinglePersonStatement(personName) {
             currentViewingPerson = personName;
@@ -1495,8 +1683,8 @@
             renderStatementTable(personName);
         }
 
-        function toggleSelectMode() {
-            isSelectionMode = !isSelectionMode;
+        function cancelSelectionMode() {
+            isSelectionMode = false;
             selectedIndices.clear();
             renderStatementTable(currentViewingPerson);
         }
@@ -1511,13 +1699,37 @@
             renderStatementTable(currentViewingPerson);
         }
 
-        function toggleSelectAllTx(masterIndices) {
-            if (selectedIndices.size === masterIndices.length) {
-                selectedIndices.clear();
-            } else {
-                selectedIndices = new Set(masterIndices);
+        function handleTxTouchStart(idx) {
+            isLongPressTriggered = false;
+            longPressTimer = setTimeout(() => {
+                isLongPressTriggered = true;
+                if (!isSelectionMode) {
+                    isSelectionMode = true;
+                    selectedIndices.clear();
+                }
+                selectedIndices.add(idx);
+                renderStatementTable(currentViewingPerson);
+                if (navigator.vibrate) navigator.vibrate(60);
+            }, 550);
+        }
+
+        function handleTxTouchEnd() {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
             }
-            renderStatementTable(currentViewingPerson);
+        }
+
+        function handleTxRowClick(idx) {
+            if (isLongPressTriggered) {
+                isLongPressTriggered = false;
+                return;
+            }
+            if (isSelectionMode) {
+                toggleTxSelection(idx);
+            } else {
+                openEntryFormFromStatement(idx);
+            }
         }
 
         function promptBulkDelete() {
@@ -1531,7 +1743,6 @@
 
         function executeBulkDeleteConfirmed() {
             if (pendingBulkDeleteIndices.length > 0) {
-                // बड़े इंडेक्स से छोटे इंडेक्स के क्रम में डिलीट करेंगे ताकि इंडेक्स न बिगड़े
                 pendingBulkDeleteIndices.sort((a, b) => b - a);
                 pendingBulkDeleteIndices.forEach(idx => {
                     if (idx >= 0 && idx < records.length) {
@@ -1559,10 +1770,8 @@
             if (!pendingDeletePartyName) return;
             const target = pendingDeletePartyName;
 
-            // सारे ट्रांज़ैक्शन हटाएं
             records = records.filter(r => !isExactPersonMatch(r.name, target));
 
-            // मास्टर हटाएं
             const mKey = findMasterKey(target);
             if (mKey && personMasters[mKey]) {
                 delete personMasters[mKey];
@@ -1570,14 +1779,34 @@
 
             saveToStorage();
             renderView();
-            closeAccountPicker();
             pendingDeletePartyName = '';
             alert(`✅ पार्टी "${target}" और उसके सभी लेन-देन पूरी तरह हटा दिए गए!`);
+
+            if (pickerCurrentView === 'MANAGE_PARTIES_VIEW') {
+                renderManagePartiesList();
+            } else {
+                closeAccountPicker();
+            }
         }
 
         function renderStatementTable(personName) {
             const container = document.getElementById('accountListContainer');
+            const actionsWrap = document.getElementById('statementActionsWrap');
             container.innerHTML = '';
+
+            // हेडर में डिलीट व कैंसिल बटन (जब सिलेक्शन मोड ऑन हो)
+            if (isSelectionMode) {
+                actionsWrap.innerHTML = `
+                    <button onclick="promptBulkDelete()" style="background:#e74c3c; color:#fff; border:none; padding:5px 9px; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">
+                        🗑️ Delete (${selectedIndices.size})
+                    </button>
+                    <button onclick="cancelSelectionMode()" style="background:#334155; color:#fff; border:none; padding:5px 8px; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer;">
+                        ✕ Cancel
+                    </button>
+                `;
+            } else {
+                actionsWrap.innerHTML = '';
+            }
 
             const mKey = findMasterKey(personName);
             const master = mKey ? personMasters[mKey] : null;
@@ -1588,8 +1817,6 @@
                 .map((r, originalIdx) => ({ ...r, originalIdx }))
                 .filter(r => isExactPersonMatch(r.name, personName))
                 .sort((a,b) => new Date(a.date) - new Date(b.date));
-
-            const allTxOriginalIndices = personTx.map(t => t.originalIdx);
 
             let currentBalance = agreedDir === 'RECEIVE' ? targetAmount : -targetAmount;
             let rowsHtml = '';
@@ -1627,8 +1854,12 @@
                 const isChecked = selectedIndices.has(tx.originalIdx);
 
                 rowsHtml += `
-                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27; background:${isChecked ? 'rgba(231,76,60,0.18)' : 'transparent'};" 
-                        onclick="${isSelectionMode ? `toggleTxSelection(${tx.originalIdx}, event)` : `openEntryFormFromStatement(${tx.originalIdx})`}">
+                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27; background:${isChecked ? 'rgba(231,76,60,0.18)' : 'transparent'}; user-select:none; -webkit-user-select:none;" 
+                        onclick="handleTxRowClick(${tx.originalIdx})"
+                        ontouchstart="handleTxTouchStart(${tx.originalIdx})"
+                        ontouchend="handleTxTouchEnd()"
+                        onmousedown="handleTxTouchStart(${tx.originalIdx})"
+                        onmouseup="handleTxTouchEnd()">
                         ${isSelectionMode ? `
                             <td class="tx-check-col" onclick="event.stopPropagation()">
                                 <input type="checkbox" class="tx-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTxSelection(${tx.originalIdx}, event)">
@@ -1649,35 +1880,7 @@
 
             const netBal = getPersonNetBalance(personName);
 
-            // कंट्रोल बार: सेलेक्ट, सेलेक्ट ऑल, डिलीट सेलेक्टेड, डिलीट पार्टी
-            let bulkControlsHtml = `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#121926; padding:6px 10px; border-radius:6px; margin-bottom:8px; border:1px solid var(--border-soft); gap:6px; flex-wrap:wrap;">
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        <button onclick="toggleSelectMode()" style="background:${isSelectionMode ? '#38bdf8' : '#1e293b'}; color:${isSelectionMode ? '#000' : '#fff'}; border:1px solid #38bdf8; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">
-                            ${isSelectionMode ? 'Cancel Selection' : '☑️ Select'}
-                        </button>
-                        ${isSelectionMode ? `
-                            <button onclick="toggleSelectAllTx([${allTxOriginalIndices.join(',')}])" style="background:#223048; color:#38bdf8; border:1px solid #38bdf8; padding:4px 8px; border-radius:4px; font-size:11px; font-weight:600; cursor:pointer;">
-                                ${selectedIndices.size === allTxOriginalIndices.length && allTxOriginalIndices.length > 0 ? 'Deselect All' : 'Select All'}
-                            </button>
-                        ` : ''}
-                    </div>
-
-                    <div style="display:flex; gap:6px; align-items:center;">
-                        ${isSelectionMode && selectedIndices.size > 0 ? `
-                            <button onclick="promptBulkDelete()" style="background:#e74c3c; color:#fff; border:none; padding:4px 9px; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">
-                                🗑 Delete Selected (${selectedIndices.size})
-                            </button>
-                        ` : ''}
-                        <button onclick="promptDeleteWholeParty('${escapeHtml(personName)}')" style="background:#5c1d1d; color:#fca5a5; border:1px solid #b91c1c; padding:4px 8px; border-radius:4px; font-size:10.5px; font-weight:600; cursor:pointer;">
-                            🗑 Delete Whole Party
-                        </button>
-                    </div>
-                </div>
-            `;
-
             container.innerHTML = `
-                ${bulkControlsHtml}
                 <div style="background:#0b0e14; padding: 14px 12px; border-radius: 8px; border: 1px solid var(--border-soft); box-sizing: border-box; width: 100%;" id="reportCaptureArea">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; border-bottom: 1px solid #1c2638; padding-bottom: 8px;">
                         <div>
@@ -1704,7 +1907,7 @@
                         <table class="passbook-table" style="width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px;">
                             <thead>
                                 <tr style="background: #111722; color: #94a3b8;">
-                                    ${isSelectionMode ? `<th style="width: 28px; padding: 7px 2px;">✓</th>` : ''}
+                                    ${isSelectionMode ? `<th style="width: 32px; padding: 7px 2px;">✓</th>` : ''}
                                     <th style="width: 15%; padding: 7px 4px; text-align: center;">तारीख</th>
                                     <th style="width: 32%; padding: 7px 4px; text-align: left;">विवरण</th>
                                     <th style="width: 22%; padding: 7px 4px; text-align: right;">रकम</th>
@@ -1725,6 +1928,7 @@
         function openManagePartiesMaster() {
             closeSettingsModal();
             pickerCurrentView = 'MANAGE_PARTIES_VIEW';
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = 'Manage Parties (Edit / Delete)';
@@ -1794,6 +1998,7 @@
         function openAllPartiesMasterSheet() {
             closeSettingsModal();
             pickerCurrentView = 'ALL_PARTIES_EXCEL_SHEET';
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = 'All Parties All Ledgers';
@@ -1924,6 +2129,7 @@
         function openOverallDetailedSummary() {
             closeSettingsModal();
             pickerCurrentView = 'OVERALL_DETAILED_SUMMARY';
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = 'Overall Summary';
@@ -1996,6 +2202,7 @@
             pickerCurrentView = 'MAIN_ACCOUNTS';
             currentDrillDownAccount = '';
             closeSettingsModal();
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('accountModalTitle').innerText = 'Accounts Overview (Agents)';
             document.getElementById('btnBackModal').style.display = 'none';
@@ -2042,6 +2249,7 @@
         function openAgentPartiesView(agentName) {
             currentDrillDownAccount = agentName;
             pickerCurrentView = 'AGENT_DRILLDOWN';
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = `${agentName} (Parties)`;
 
@@ -2096,6 +2304,7 @@
         function openGroupListView(dir) {
             closeSettingsModal();
             pickerCurrentView = 'GROUP_LIST';
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = dir === 'GIVE' ? 'Give Group (देना बाकी)' : 'Receive Group (लेना बाकी)';
@@ -2118,6 +2327,7 @@
         function openPersonLedgerPicker() {
             closeSettingsModal();
             pickerCurrentView = 'PERSON_LEDGER_LIST';
+            document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = 'All Parties Ledger';
@@ -2186,6 +2396,8 @@
             } else {
                 document.getElementById('editIndex').value = -1;
                 document.getElementById('inputDate').value = getTodayDate();
+            const savedFontSize = localStorage.getItem(FONT_STORAGE_KEY) || 'medium';
+            setSettingsFontSize(savedFontSize, false);
                 document.getElementById('inputName').value = '';
                 document.getElementById('inputAccount').value = '';
                 document.getElementById('inputAmount').value = '';
@@ -2320,7 +2532,6 @@
 
             if (!person) { alert('Party Name लिखें!'); return; }
 
-            // यदि पार्टी का नाम बदला गया है तो पुराने नाम को हटाएं व रिकॉर्ड्स भी अपडेट करें
             if (oldKey && oldKey.toLowerCase() !== person.toLowerCase()) {
                 const oldFoundKey = findMasterKey(oldKey);
                 if (oldFoundKey) delete personMasters[oldFoundKey];
@@ -2332,7 +2543,6 @@
                     }
                 });
             } else if (oldKey) {
-                // अगर नाम वही है लेकिन एजेंट बदला है तो रिकॉर्ड्स में एजेंट अपडेट करें
                 records.forEach(r => {
                     if (isExactPersonMatch(r.name, person)) {
                         r.account = account;
@@ -2376,7 +2586,12 @@
 
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
         function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
-        function closeAccountPicker() { document.getElementById('accountPickerModal').style.display = 'none'; }
+        function closeAccountPicker() { 
+            isSelectionMode = false;
+            selectedIndices.clear();
+            document.getElementById('statementActionsWrap').innerHTML = '';
+            document.getElementById('accountPickerModal').style.display = 'none'; 
+        }
 
         function isExactPersonMatch(a, b) {
             return (a || '').trim().toLowerCase() === (b || '').trim().toLowerCase();
@@ -2447,6 +2662,60 @@
                 alert("❌ इमेज डाउनलोड में त्रुटि: " + err.message);
             }
         }
+    
+        // ==========================================
+        // डायरेक्ट सिंक और सेटिंग्स फ़ॉन्ट साइज़ कंट्रोल
+        // ==========================================
+        function triggerDirectCloudSync() {
+            if (!currentUser || !currentUser.email) {
+                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
+                openAuthModal();
+                return;
+            }
+            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
+        }
+
+        const FONT_STORAGE_KEY = 'khata_settings_font_size';
+        function setSettingsFontSize(size, save = true) {
+            const listEl = document.getElementById('settingsListElement');
+            if (!listEl) return;
+
+            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
+
+            if (size === 'small') {
+                listEl.style.fontSize = '10px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
+                const btn = document.getElementById('btnFontSm');
+                if (btn) btn.classList.add('active-font');
+            } else if (size === 'large') {
+                listEl.style.fontSize = '14px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '12px 14px';
+                    el.style.fontSize = '13.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
+                const btn = document.getElementById('btnFontLg');
+                if (btn) btn.classList.add('active-font');
+            } else {
+                size = 'medium';
+                listEl.style.fontSize = '11.5px';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '9px 14px';
+                    el.style.fontSize = '11.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
+                const btn = document.getElementById('btnFontMd');
+                if (btn) btn.classList.add('active-font');
+            }
+
+            if (save) {
+                localStorage.setItem(FONT_STORAGE_KEY, size);
+            }
+        }
+
     </script>
 </body>
 </html>
