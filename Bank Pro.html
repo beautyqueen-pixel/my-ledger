@@ -397,10 +397,6 @@
      if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
    }
  }
-
- // ==========================================
- // 3-TAP ऐप लॉक
- // ==========================================
  function handleAppLock() {
    appClickCount = 0;
    const secInp = document.getElementById('secretInput');
@@ -431,9 +427,6 @@
    }  
  });
 
- // ==========================================
- // यूनिफाइड नियॉन सिक्योरिटी गेट (Auto-Submit & No OK Needed)
- // ==========================================
  function openUnifiedGate(actionType, title, desc, maxLength = 4) {
    currentGateAction = actionType;
    document.getElementById('unifiedGateTitle').innerText = title;
@@ -452,12 +445,10 @@
  }
 
  function handleUnifiedGateInput(el) {
-   const val = el.value.trim();
-   // 4-अंकों वाले पिन पर 4 अंक होते ही ऑटो-एग्जीक्यूट
+   const val = el.value.trim()
    if (el.maxLength === 4 && val.length === 4) {
      submitUnifiedGate(val);
    } 
-   // मोबाइल मास्टर की (10 अंक) पर 10 अंक होते ही ऑटो-एग्जीक्यूट
    else if (el.maxLength === 10 && val.length === 10) {
      submitUnifiedGate(val);
    }
@@ -471,7 +462,6 @@
  function submitUnifiedGate(entered) {
    const mKey = getDeviceMasterKey();
 
-   // 1. FIREBASE लॉगिन गेट (सिर्फ लॉगिन पिन चाहिए)
    if (currentGateAction === 'OPEN_AUTH_GATE') {
      const reqPin = appPins.loginPin || "7869";
      if (entered === reqPin) {
@@ -481,7 +471,6 @@
        gateWrongFeedback();
      }
    }
-   // 2. प्रोफाइल एडिट (सिर्फ मास्टर की - मोबाइल नंबर चाहिए)
    else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -490,7 +479,6 @@
        gateWrongFeedback();
      }
    }
-   // 3. मैनेज पासवर्ड (सिर्फ मास्टर की चाहिए)
    else if (currentGateAction === 'MANAGE_PINS_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -498,8 +486,7 @@
      } else {
        gateWrongFeedback();
      }
-   }
-   // 4. ऐप रीसेट (सिर्फ मास्टर की चाहिए)
+   }ए)
    else if (currentGateAction === 'RESET_APP_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -508,7 +495,6 @@
        gateWrongFeedback();
      }
    }
-   // 5. एडिट अनलॉक पिन
    else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
      if (entered === appPins.editPin || entered === "7869") {
        closeUnifiedGate();
@@ -517,7 +503,6 @@
        gateWrongFeedback();
      }
    }
-   // 6. डिलीट पिन
    else if (currentGateAction === 'DELETE_ENTRY_PIN') {
      if (entered === appPins.delPin || entered === "7869") {
        closeUnifiedGate();
@@ -538,9 +523,6 @@
    showCustomDialog("गलत पिन", "❌ अमान्य पिन या मास्टर की!", false);
  }
 
- // ==========================================
- // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
- // ==========================================
  function openAuthModalProtected() {
    toggleVault(true);
    openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
