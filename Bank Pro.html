@@ -30,7 +30,19 @@
  .header-box { background: linear-gradient(145deg, #840bd2, #840bd2); padding: 2px 20px; text-align: center; margin-bottom: 5px; border: 3px solid #fff; display: flex; flex-direction: column; align-items: center; gap: 1px; }  
  .title-design { background: linear-gradient(180deg, #840b 50%, #840b 50%); padding: 2px 8px; border-radius: 9px; color: white; border: 3px solid #fff657; min-width: 50%; font-weight: 900; text-transform: uppercase; font-size: 14px; }  
  .row { display: flex; flex-direction: row; background: #fafbacc1; padding: 2px 0px; align-items: stretch; border-bottom: 1px solid #ccc; }  
- .label { width: 120px; min-width: 90px; padding: 5px 4px; font-size: 11px; font-weight: bold; color: #fff; background: #9844eb; border: 2px solid #100d0d; display: flex; align-items: center; justify-content: space-between; }  
+ .label { 
+   width: 140px; 
+   min-width: 90px; 
+   padding: 5px 4px; 
+   font-size: 11px; 
+   font-weight: bold; 
+   color: #fff; 
+   background: #9844eb; 
+   border: 2px solid #100d0d; 
+   display: flex; 
+   align-items: center; 
+   justify-content: space-between;
+ }  
  .input-wrapper { width: 100%; background: white; display: flex; border: 2px solid #000000; min-height: 30px; overflow: hidden; }  
  .input-box { width: 100%; border: none; outline: none; background: transparent; font-size: 16px; font-weight: 900; color: black; padding: 4px; min-height: 24px; word-break: break-word; white-space: pre-wrap; }  
    
@@ -60,7 +72,22 @@
   
  .floating-opt { position: fixed; bottom: 80px; right: 20px; background: #bc13fe; color: white; width: 50px; height: 50px; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 20px; z-index: 5000; border: 3px solid white; box-shadow: 0 0 15px rgba(188,19,254,0.6); cursor: pointer; }  
  .hide-btn { background: #ff4757; color: white; border: none; border-radius: 5px; padding: 2px 8px; cursor: pointer; font-size: 10px; margin-right: 5px; }  
- .cam-btn { background: #00f3ff; color: #000; border: none; border-radius: 4px; padding: 2px 5px; font-size: 12px; cursor: pointer; line-height: 1; font-weight: normal; }  
+ .cam-btn { 
+  background: #00f3ff; 
+  color: #000; 
+  border: none; 
+  border-radius: 4px; 
+  padding: 3px 6px; 
+  font-size: 12px; 
+  cursor: pointer; 
+  line-height: 1; 
+  font-weight: normal; 
+  flex: none; 
+  width: auto; 
+  box-shadow: none; 
+  margin: 0; 
+}
+  
 
  /* Top Header Bar */
  .app-top-header { display: flex; justify-content: space-between; align-items: center; background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff; margin-bottom: 8px; }
@@ -350,15 +377,14 @@
    if (currentUser && currentUser.phone) return currentUser.phone.trim();
    return localStorage.getItem('bankpro_master_phone') || "7869";
  }
-
- let fieldConfig = JSON.parse(localStorage.getItem('myFieldConfig')) || [  
-   ["AGENT NAME", "agent"], ["BANK NAME", "bank"], ["HOLDER NAME", "holder"],  
+ let fieldConfig = [  
+   ["AGENT", "agent"], ["BANK", "bank"], ["HOLDER", "holder"],  
    ["A/C TYPE", "acctype"], ["A/C NO.", "acc"], ["IFSC CODE", "ifsc"],   
    ["BRANCH", "branch"], ["MOBILE NO.", "mobile"], ["CUST ID", "custid"],  
    ["USER ID", "userid"], ["NET L PASS", "netl"], ["NET T PASS", "nett"],  
    ["MOB M PIN", "mpin"], ["MOB T PIN", "mobt"], ["UPI PIN", "upi"],   
-   ["DEBIT CARD", "debit"], ["ATM PIN", "atmpin"], ["CVV/EXP", "cvv"],   
-   ["MOTHER", "mother"], ["NOMINEE", "nominee"], ["PAN CARD", "pan"],  
+   ["ATM","atm"], ["ATM PIN", "atmpin"], ["CVV/EXP", "cvv"],   
+   ["MOTHER", "mother"], ["NOMINEE", "nominee"], ["PANCARD", "pan"],  
    ["DOB", "dob"], ["EMAIL ID", "email"], ["ADDRESS", "addr"], ["PASS DATE", "passdate"]  
  ];  
 
@@ -397,6 +423,10 @@
      if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
    }
  }
+
+ // ==========================================
+ // 3-TAP ऐप लॉक
+ // ==========================================
  function handleAppLock() {
    appClickCount = 0;
    const secInp = document.getElementById('secretInput');
@@ -427,6 +457,9 @@
    }  
  });
 
+ // ==========================================
+ // यूनिफाइड नियॉन सिक्योरिटी गेट (Auto-Submit & No OK Needed)
+ // ==========================================
  function openUnifiedGate(actionType, title, desc, maxLength = 4) {
    currentGateAction = actionType;
    document.getElementById('unifiedGateTitle').innerText = title;
@@ -445,10 +478,12 @@
  }
 
  function handleUnifiedGateInput(el) {
-   const val = el.value.trim()
+   const val = el.value.trim();
+   // 4-अंकों वाले पिन पर 4 अंक होते ही ऑटो-एग्जीक्यूट
    if (el.maxLength === 4 && val.length === 4) {
      submitUnifiedGate(val);
    } 
+   // मोबाइल मास्टर की (10 अंक) पर 10 अंक होते ही ऑटो-एग्जीक्यूट
    else if (el.maxLength === 10 && val.length === 10) {
      submitUnifiedGate(val);
    }
@@ -462,6 +497,7 @@
  function submitUnifiedGate(entered) {
    const mKey = getDeviceMasterKey();
 
+   // 1. FIREBASE लॉगिन गेट (सिर्फ लॉगिन पिन चाहिए)
    if (currentGateAction === 'OPEN_AUTH_GATE') {
      const reqPin = appPins.loginPin || "7869";
      if (entered === reqPin) {
@@ -471,6 +507,7 @@
        gateWrongFeedback();
      }
    }
+   // 2. प्रोफाइल एडिट (सिर्फ मास्टर की - मोबाइल नंबर चाहिए)
    else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -479,6 +516,7 @@
        gateWrongFeedback();
      }
    }
+   // 3. मैनेज पासवर्ड (सिर्फ मास्टर की चाहिए)
    else if (currentGateAction === 'MANAGE_PINS_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -486,7 +524,8 @@
      } else {
        gateWrongFeedback();
      }
-   }ए)
+   }
+   // 4. ऐप रीसेट (सिर्फ मास्टर की चाहिए)
    else if (currentGateAction === 'RESET_APP_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -495,6 +534,7 @@
        gateWrongFeedback();
      }
    }
+   // 5. एडिट अनलॉक पिन
    else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
      if (entered === appPins.editPin || entered === "7869") {
        closeUnifiedGate();
@@ -503,6 +543,7 @@
        gateWrongFeedback();
      }
    }
+   // 6. डिलीट पिन
    else if (currentGateAction === 'DELETE_ENTRY_PIN') {
      if (entered === appPins.delPin || entered === "7869") {
        closeUnifiedGate();
@@ -523,6 +564,9 @@
    showCustomDialog("गलत पिन", "❌ अमान्य पिन या मास्टर की!", false);
  }
 
+ // ==========================================
+ // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+ // ==========================================
  function openAuthModalProtected() {
    toggleVault(true);
    openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
@@ -930,7 +974,7 @@
      const row = document.createElement('div'); row.className = 'row'; row.id = 'row-' + f[1];   
      
      let labelHtml = f[0];  
-     if (f[1] === 'debit') {  
+     if (f[1] === 'atm') {  
        labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('card')" title="Scan Debit Card">📷</button>`;  
      } else if (f[1] === 'pan') {  
        labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('pan')" title="Scan Pan Card">📷</button>`;  
@@ -995,7 +1039,7 @@
  }  
   
  function promptAddCustomField() {  
-   let name = prompt("ENTER EXTRA FIELD NAME:");  
+   let name = prompt("ENTER FIELD NAME:");  
    if (name && name.trim()) {  
      name = name.trim().toUpperCase();  
      let key = "cf_" + Date.now();  
@@ -1116,7 +1160,7 @@
        }  
        if (cardFound && cardFound.length >= 15) {  
          let formatted = cardFound.match(/.{1,4}/g)?.join(' ') || cardFound;  
-         const debEl = document.getElementById('inp-debit');  
+         const debEl = document.getElementById('inp-atm');  
          if (debEl) debEl.innerText = formatted;  
        }  
        let expMatch = rawClean.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*([0-9]{2,4})\b/);  
