@@ -1552,7 +1552,7 @@
    form.prepend(printBtn);  
  }  
 
- async function shareAsImage() {  
+  async function shareAsImage() {  
    const el = document.getElementById('form-to-share');  
    el.style.display = 'block';  
    
@@ -1560,7 +1560,6 @@
    const agentRow = document.getElementById('row-agent');  
    const passRow = document.getElementById('row-passdate');  
    
-   // एजेंट और पासडेट अस्थायी रूप से छिपाएं
    if (agentBar) agentBar.style.display = 'none';  
    if (agentRow) agentRow.style.display = 'none';  
    if (passRow) passRow.style.display = 'none';   
@@ -1574,43 +1573,42 @@
      });  
 
      const blob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));  
-     const file = new File([blob], `BankDetails_${Date.now()}.png`, { type: 'image/png' });  
+     const cleanFileName = `BankDetails_${Date.now()}.png`;
+     const file = new File([blob], cleanFileName, { type: 'image/png' });  
 
-     let isShared = false;
-     if (navigator.canShare && navigator.canShare({ files: [file] })) {  
+     // पहले चेक करें कि ब्राउज़र सीधे WhatsApp/ऐप्स पर फाइल भेज सकता है या नहीं
+     if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {  
        try {
          await navigator.share({ 
            files: [file], 
            title: 'Bank Details',
            text: 'Bank Account Information'
          }); 
-         isShared = true;
+         return; // शेयर शीट खुल गई, आगे डाउनलोड करने की ज़रूरत नहीं
        } catch (shErr) {
-         if (shErr.name === 'AbortError') isShared = true; 
+         if (shErr.name === 'AbortError') return; // अगर यूज़र ने बैक बटन दबा दिया
        }
      }  
 
-     // अगर शेयर मेनू न खुले, तो ऑटोमैटिक डाउनलोड हो जाए
-     if (!isShared) {
-       const a = document.createElement('a');
-       a.download = `BankDetails_${Date.now()}.png`;
-       a.href = URL.createObjectURL(blob);
-       document.body.appendChild(a);
-       a.click();
-       a.remove();
-       setTimeout(() => URL.revokeObjectURL(a.href), 1500);
-       showCustomDialog("सफलता", "✅ इमेज डाउनलोड हो गई है! अब आप इसे WhatsApp पर भेज सकते हैं।", false);
-     }
+     // अगर ब्राउज़र शेयर सपोर्ट नहीं करता, तभी सिर्फ फ़ाइल डाउनलोड कराएं
+     const a = document.createElement('a');
+     a.download = cleanFileName;
+     a.href = URL.createObjectURL(blob);
+     document.body.appendChild(a);
+     a.click();
+     a.remove();
+     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+     showCustomDialog("सफलता", "✅ इमेज गैलरी / डाउनलोड में सेव हो गई है!", false);
    } catch (err) {   
-     showCustomDialog("त्रुटि", "❌ इमेज बनाने में समस्या: " + err.message, false);   
+     showCustomDialog("त्रुटि", "❌ समस्या: " + err.message, false);   
    } finally {
-     // 'block' की जगह खाली स्ट्रिंग ('') देने से फ्लेक्सबॉक्स लेआउट नहीं टूटता
      if (agentBar) agentBar.style.display = '';  
      if (agentRow) agentRow.style.display = '';  
      if (passRow) passRow.style.display = '';  
      el.querySelectorAll('.row').forEach(r => r.style.display = '');
    }  
  }
+
 
  async function downloadPDF() {  
    if (!window.jspdf || !window.jspdf.jsPDF) {
@@ -1620,8 +1618,16 @@
 
    const { jsPDF } = window.jspdf;  
    const el = document.getElementById('form-to-share');  
-   const getVal = (id) => { const elem = document.getElementById('inp-'+id); return (elem ? (elem.tagName === 'TEXTAREA' ? elem.value : elem.innerText).trim() : ""); };  
-   const fileName = `${getFirstWord(getVal('bank')) || "BANK"}_${getFirstWord(getVal('holder')) || "HOLDER"}.pdf`;  
+   const getVal = (id) => { 
+     const elem = document.getElementById('inp-' + id); 
+     return (elem ? (elem.tagName === 'TEXTAREA' ? elem.value : elem.innerText).trim() : ""); 
+   };  
+   
+   // नाम से सभी अमान्य चिन्ह हटाएँ ताकि Android "Save As" का खाली बॉक्स न दिखाए
+   let rawBank = getFirstWord(getVal('bank')) || "BANK";
+   let rawHolder = getFirstWord(getVal('holder')) || "HOLDER";
+   let cleanName = `${rawBank}_${rawHolder}`.replace(/[^a-zA-Z0-9_\-]/g, '_');
+   const fileName = `${cleanName}.pdf`;  
    
    el.style.display = 'block';   
    el.style.width = '450px';   
@@ -1645,25 +1651,18 @@
      });  
 
      pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);  
+     
+     // मोबाइल क्रोम के लिए डायरेक्ट सेव मेथड
+     pdf.save(fileName);
 
-     // Blob के ज़रिए सीधा डाउनलोड (मोबाइल क्रोम व PWA में 100% वर्किंग)
-     const pdfBlob = pdf.output('blob');
-     const blobUrl = URL.createObjectURL(pdfBlob);
-     const dlLink = document.createElement('a');
-     dlLink.href = blobUrl;
-     dlLink.download = fileName;
-     document.body.appendChild(dlLink);
-     dlLink.click();
-     dlLink.remove();
-     setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-
-     showCustomDialog("सफलता", `✅ PDF सफलतापूर्वक डाउनलोड हो गया:\n${fileName}`, false);
+     showCustomDialog("सफलता", `✅ PDF डाउनलोड हो गया:\n${fileName}`, false);
    } catch (err) {  
      showCustomDialog("त्रुटि", "❌ PDF डाउनलोड में त्रुटि: " + err.message, false);  
    } finally {  
      el.style.width = '';   
    }  
- }  
+ }
+
 
  function formatMyDate(str) {  
    if (!str) return "";  
