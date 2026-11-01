@@ -577,7 +577,7 @@
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <button id="btnStatementAddEntry" class="btn-statement-add" style="display:none;" onclick="openEntryForCurrentParty()" title="नई एंट्री">+</button>
                     <div id="statementActionsWrap" style="display: flex; align-items: center; gap: 6px;"></div>
-                    <button id="btnExportImage" class="btn-img-export" onclick="captureAndSaveReportImage()">📸 Image</button>
+                    <button id="btnExportImage" class="btn-img-export" onclick="captureAndSaveReportImage()">📸 image</button>
                     <button onclick="closeAccountPicker()" style="background:none; border:none; color:#888; font-size:14px; cursor:pointer;">✕</button>
                 </div>
             </div>
@@ -2567,18 +2567,33 @@
                     }
                 }
             };
+document.getElementById('modalDownloadBtn').onclick = async function() {
+                try {
+                    const res = await fetch(dataUrl);
+                    const blob = await res.blob();
+                    const file = new File([blob], fileName, { type: 'image/jpeg' });
 
-            // 2. गैलरी डाउनलोड बटन की कार्यप्रणाली (बिना Save As बॉक्स के सीधा डाउनलोड)
-            document.getElementById('modalDownloadBtn').onclick = function() {
-                const a = document.createElement('a');
-                a.href = dataUrl;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    alert("✅ फोटो डाउनलोड फोल्डर / गैलरी में सेव हो गई है!");
-                }, 500);
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: partyName,
+                            text: `${partyName} का खाता हिसाब`
+                        });
+                        return;
+                    }
+
+                    const a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        alert("✅ फोटो डाउनलोड हो गई है!\nनोट: यदि गैलरी में तुरंत न दिखे, तो अपने फोन के File Manager > Download फोल्डर में चेक करें या फोटो पर 1 सेकंड दबाकर (Long Press) सीधे सेव करें।");
+                    }, 500);
+                } catch (err) {
+                    alert("❌ डाउनलोड में त्रुटि: " + err.message);
+                }
             };
         }
 
