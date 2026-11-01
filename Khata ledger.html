@@ -12,171 +12,9 @@
     <meta name="theme-color" content="#0b0e14">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
-        // ==========================================
-        // डायरेक्ट सिंक और सेटिंग्स फ़ॉन्ट साइज़ कंट्रोल
-        // ==========================================
-        function triggerDirectCloudSync() {
-            if (!currentUser || !currentUser.email) {
-                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
-                openAuthModal();
-                return;
-            }
-            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
-        }
-
-        const FONT_STORAGE_KEY = 'khata_settings_font_size';
-        function setSettingsFontSize(size, save = true) {
-            const listEl = document.getElementById('settingsListElement');
-            if (!listEl) return;
-
-            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
-
-            if (size === 'small') {
-                listEl.style.fontSize = '10px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
-                const btn = document.getElementById('btnFontSm');
-                if (btn) btn.classList.add('active-font');
-            } else if (size === 'large') {
-                listEl.style.fontSize = '14px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '12px 14px';
-                    el.style.fontSize = '13.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
-                const btn = document.getElementById('btnFontLg');
-                if (btn) btn.classList.add('active-font');
-            } else {
-                size = 'medium';
-                listEl.style.fontSize = '11.5px';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '9px 14px';
-                    el.style.fontSize = '11.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
-                const btn = document.getElementById('btnFontMd');
-                if (btn) btn.classList.add('active-font');
-            }
-
-            if (save) {
-                localStorage.setItem(FONT_STORAGE_KEY, size);
-            }
-        }
-
-    </script>
-
-    <!-- FIREBASE COMPAT SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">
-        // ==========================================
-        // डायरेक्ट सिंक और सेटिंग्स फ़ॉन्ट साइज़ कंट्रोल
-        // ==========================================
-        function triggerDirectCloudSync() {
-            if (!currentUser || !currentUser.email) {
-                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
-                openAuthModal();
-                return;
-            }
-            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
-        }
-
-        const FONT_STORAGE_KEY = 'khata_settings_font_size';
-        function setSettingsFontSize(size, save = true) {
-            const listEl = document.getElementById('settingsListElement');
-            if (!listEl) return;
-
-            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
-
-            if (size === 'small') {
-                listEl.style.fontSize = '10px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
-                const btn = document.getElementById('btnFontSm');
-                if (btn) btn.classList.add('active-font');
-            } else if (size === 'large') {
-                listEl.style.fontSize = '14px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '12px 14px';
-                    el.style.fontSize = '13.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
-                const btn = document.getElementById('btnFontLg');
-                if (btn) btn.classList.add('active-font');
-            } else {
-                size = 'medium';
-                listEl.style.fontSize = '11.5px';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '9px 14px';
-                    el.style.fontSize = '11.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
-                const btn = document.getElementById('btnFontMd');
-                if (btn) btn.classList.add('active-font');
-            }
-
-            if (save) {
-                localStorage.setItem(FONT_STORAGE_KEY, size);
-            }
-        }
-
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js">
-      
-        function triggerDirectCloudSync() {
-            if (!currentUser || !currentUser.email) {
-                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
-                openAuthModal();
-                return;
-            }
-            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
-        }
-
-        const FONT_STORAGE_KEY = 'khata_settings_font_size';
-        function setSettingsFontSize(size, save = true) {
-            const listEl = document.getElementById('settingsListElement');
-            if (!listEl) return;
-
-            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
-
-            if (size === 'small') {
-                listEl.style.fontSize = '10px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
-                const btn = document.getElementById('btnFontSm');
-                if (btn) btn.classList.add('active-font');
-            } else if (size === 'large') {
-                listEl.style.fontSize = '14px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '12px 14px';
-                    el.style.fontSize = '13.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
-                const btn = document.getElementById('btnFontLg');
-                if (btn) btn.classList.add('active-font');
-            } else {
-                size = 'medium';
-                listEl.style.fontSize = '11.5px';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '9px 14px';
-                    el.style.fontSize = '11.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
-                const btn = document.getElementById('btnFontMd');
-                if (btn) btn.classList.add('active-font');
-            }
-
-            if (save) {
-                localStorage.setItem(FONT_STORAGE_KEY, size);
-            }
-        }
-
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
     <style>
         :root {
@@ -205,7 +43,6 @@
             width: 100%; height: 100%;
             overflow: hidden;
             overscroll-behavior: none !important;
-            overscroll-behavior-y: none !important;
             touch-action: pan-y !important;
             background-color: var(--bg-main);
             color: var(--text-main);
@@ -253,10 +90,7 @@
             flex-shrink: 0;
         }
 
-        .summary-top-row {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
+        .summary-top-row { display: flex; justify-content: space-between; align-items: center; }
         .header-title-box { display: flex; flex-direction: column; gap: 2px; }
         .header-title { font-size: 10px; font-weight: 700; color: #cbd5e1; letter-spacing: 0.3px; }
 
@@ -264,11 +98,9 @@
             font-size: 10px; font-weight: 600; color: #00f3ff;
             display: flex; align-items: center; gap: 4px;
             max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            cursor: default;
         }
 
         .header-actions { display: flex; gap: 7px; align-items: center; }
-
         .btn-header-action {
             background: rgba(34, 197, 94, 0.12); border: 1px solid #10b981; color: #34d399;
             padding: 8px 4px; border-radius: 9px; cursor: pointer; font-size: 10px; font-weight: 600;
@@ -277,13 +109,6 @@
         }
         .btn-header-action:active { transform: scale(0.96); }
 
-        .btn-sync-header {
-            background: rgba(34, 197, 94, 0.12);
-            border: 1px solid #10b981;
-            color: #34d399;
-        }
-        .btn-sync-header:hover { background: rgba(34, 197, 94, 0.22); }
-        /* Settings Font Resizer Bar */
         .settings-font-toolbar {
             display: flex; justify-content: space-between; align-items: center;
             background: #090e17; padding: 5px 12px; border-bottom: 1px solid var(--border-soft);
@@ -294,16 +119,13 @@
             background: #151f2e; border: 1px solid #28374d; color: #38bdf8;
             padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer;
         }
-        .btn-font-scale.active-font {
-            background: #0284c7; color: #fff; border-color: #38bdf8;
-        }
+        .btn-font-scale.active-font { background: #0284c7; color: #fff; border-color: #38bdf8; }
 
         .compact-balance-strip {
             display: flex; justify-content: space-between; align-items: center;
             padding: 8px 14px; background: #0c1017; border-bottom: 1px solid var(--border-soft);
             flex-shrink: 0;
         }
-
         .strip-item { display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 600; }
         .strip-val { font-size: 12px; font-weight: 700; }
 
@@ -333,31 +155,11 @@
             font-size: 12px; font-weight: 600; color: #e2e8f0;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 4px;
         }
-
-        .col-banner-wrap {
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        .pill-net {
-            font-size: 11px; 
-            font-weight: 600;
-            white-space: nowrap; 
-            display: inline-block;
-            padding: 0;
-        }
-        .pill-dr {
-            background: transparent !important;
-            border: none !important;
-            color: #f65655;
-        }
-        .pill-cr {
-            background: transparent !important;
-            border: none !important;
-            color: #2ecc71;
-        }
-        .col-final-balance {
-            text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap;
-        }
+        .col-banner-wrap { display: flex; justify-content: center; align-items: center; }
+        .pill-net { font-size: 11px; font-weight: 600; white-space: nowrap; display: inline-block; padding: 0; }
+        .pill-dr { background: transparent !important; border: none !important; color: #f65655; }
+        .pill-cr { background: transparent !important; border: none !important; color: #2ecc71; }
+        .col-final-balance { text-align: right; font-size: 12px; font-weight: 700; white-space: nowrap; }
         .bal-recv { color: var(--accent-recv); }
         .bal-give { color: var(--accent-give); }
         .bal-settled { color: #64748b; }
@@ -368,9 +170,7 @@
             font-size: 11px; display: flex; justify-content: space-between; align-items: center;
             flex-shrink: 0;
         }
-        .filter-status-tag button {
-            background: transparent; border: none; color: #ff7675; cursor: pointer; font-size: 11px; font-weight: 700;
-        }
+        .filter-status-tag button { background: transparent; border: none; color: #ff7675; cursor: pointer; font-size: 11px; font-weight: 700; }
 
         .fab-btn {
             position: fixed; bottom: 20px; right: calc(50% - 230px);
@@ -416,12 +216,10 @@
             width: 100%; overflow-x: auto; border-radius: 6px; border: 1px solid var(--border-soft);
             background: #0b0e14; margin-top: 8px; -webkit-overflow-scrolling: touch;
         }
-
-        .passbook-table { width: 100%; border-collapse: collapse; font-size: 11px; text-align: center; }
+        .passbook-table { width: 100%; border-collapse: collapse; font-size: 11px; }
         .passbook-table th { background: #151a24; color: #94a3b8; padding: 7px 5px; border-bottom: 1px solid var(--border-soft); font-weight: 600; }
         .passbook-table td { padding: 7px 5px; border-bottom: 1px solid #161c27; color: #cbd5e0; }
 
-        /* Master Sheet Styles */
         .excel-sheet-table { width: 100%; border-collapse: collapse; font-size: 9.5px; font-family: monospace, sans-serif; background: #fff; color: #111; }
         .excel-sheet-table th { background: #1e293b; color: #fff; padding: 5px 4px; font-size: 9px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
         .excel-sheet-table td { padding: 4px 5px; border: 1px solid #e2e8f0; font-size: 9.5px; }
@@ -447,7 +245,7 @@
             touch-action: pan-y !important;
         }
         .form-row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .form-group { display: flex; flex-direction: column; gap: 3px; }
+        .form-group { display: flex; flex-direction: column; gap: 3px; position: relative; }
         .form-group label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .form-control {
             background: #0b0e14; border: 1px solid var(--border-soft); color: #e2e8f0;
@@ -474,7 +272,6 @@
         .btn-save-more { background: #1e3a5f; color: #38bdf8; border: 1px solid #38bdf8; }
         .btn-submit { background: var(--accent-recv); color: #ffffff; }
 
-        /* Unified Master Security PIN Modal */
         .auth-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
@@ -528,9 +325,26 @@
             background: #000; color: #00ff66; text-align: center; font-size: 12px; font-weight: 900; outline: none; 
         }
 
-        /* Selection styling */
         .tx-check-col { width: 32px; text-align: center; }
         .tx-checkbox { transform: scale(1.2); accent-color: #e74c3c; cursor: pointer; }
+
+        /* सजेशन लिस्ट और '+' बटन */
+        .custom-suggest-list {
+            position: absolute; top: 100%; left: 0; right: 0; max-height: 190px;
+            overflow-y: auto; background: #0d1522; border: 1.5px solid #00f0ff;
+            border-radius: 7px; z-index: 9999999; box-shadow: 0 8px 24px rgba(0,0,0,0.85); display: none;
+        }
+        .suggest-item {
+            padding: 9px 12px; font-size: 12px; color: #e2e8f0; border-bottom: 1px solid #1a2536;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+        .suggest-item:active { background: #172a45; color: #38bdf8; }
+        .btn-statement-add {
+            background: #10b981; color: #ffffff; border: none; width: 29px; height: 29px;
+            border-radius: 6px; font-size: 20px; font-weight: 900; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; line-height: 1;
+        }
+        .btn-statement-add:active { transform: scale(0.92); }
     </style>
 </head>
 <body>
@@ -632,7 +446,7 @@
                     <span id="displayUserNameHeader" class="user-badge-header">👤 USER</span>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-header-action btn-sync-header" onclick="triggerDirectCloudSync()" title="Cloud Sync">🔥 Syn.</button>
+                    <button class="btn-header-action" onclick="triggerDirectCloudSync()" title="Cloud Sync">🔥 Syn.</button>
                     <button class="btn-header-action" onclick="openSettingsModal()" title="Settings">⚙️ Set.</button>
                     <button class="btn-header-action" onclick="openAccountPicker('MAIN')" title="Accounts"><span> 📊 Acc.</span> ▾</button>
                 </div>
@@ -756,12 +570,12 @@
     <div class="modal-overlay" id="accountPickerModal">
         <div class="modal-box" style="max-width: 520px;">
             <div class="modal-header">
-                <div style="display:flex; align-items:center; gap:6px;">
+                <div style="display:flex; align-items:center; gap:6px; flex:1; overflow:hidden;">
                     <button id="btnBackModal" class="btn-back" style="display:none;" onclick="handleModalBack()">← Back</button>
-                    <span id="accountModalTitle">Statement Passbook</span>
+                    <span id="accountModalTitle" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Statement</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    <!-- डायनेमिक एक्शन हेडर (मल्टी-डिलीट के समय डिलीट बटन यहाँ दिखेगा) -->
+                    <button id="btnStatementAddEntry" class="btn-statement-add" style="display:none;" onclick="openEntryForCurrentParty()" title="नई एंट्री">+</button>
                     <div id="statementActionsWrap" style="display: flex; align-items: center; gap: 6px;"></div>
                     <button id="btnExportImage" class="btn-img-export" onclick="captureAndSaveReportImage()">📸 Share</button>
                     <button onclick="closeAccountPicker()" style="background:none; border:none; color:#888; font-size:14px; cursor:pointer;">✕</button>
@@ -788,11 +602,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Agent / Main Account</label>
+                    <label>Main Account</label>
                     <input type="text" id="newAccMain" class="form-control" list="agentsList">
                 </div>
                 <div class="form-group">
-                    <label>Party / Person Name</label>
+                    <label>Party Name</label>
                     <input type="text" id="newAccPerson" class="form-control">
                 </div>
                 <div class="form-group">
@@ -834,13 +648,15 @@
 
                 <div class="form-group">
                     <label>Party Name</label>
-                    <input type="text" id="inputName" class="form-control" list="personsList" oninput="onPersonNameInput(this.value)" onchange="onPersonNameInput(this.value)">
+                    <input type="text" id="inputName" class="form-control" autocomplete="off" oninput="handlePartySearch(this.value)" onfocus="handlePartyFocus()" onclick="handlePartyFocus()">
+                    <div id="partySuggestions" class="custom-suggest-list"></div>
                     <datalist id="personsList"></datalist>
                 </div>
 
                 <div class="form-group">
-                    <label>Agent / Main Account</label>
-                    <input type="text" id="inputAccount" class="form-control" list="agentsList">
+                    <label>Main Account</label>
+                    <input type="text" id="inputAccount" class="form-control" autocomplete="off" oninput="handleAgentSearch(this.value)" onchange="handleAgentComplete(this.value)">
+                    <div id="agentSuggestions" class="custom-suggest-list"></div>
                     <datalist id="agentsList"></datalist>
                 </div>
 
@@ -916,6 +732,7 @@
         const STORAGE_KEY = 'antique_khata_records_clean_v3';
         const TARGETS_STORAGE_KEY = 'antique_khata_person_masters_clean_v3';
         const CATEGORY_STORAGE_KEY = 'antique_khata_categories_v1';
+        const FONT_STORAGE_KEY = 'khata_settings_font_size';
 
         let records = [];
         let personMasters = {}; 
@@ -927,7 +744,6 @@
         let currentViewingPerson = '';
         let selectedAgentFilter = null;
 
-        // बल्क डिलीट एवं लॉन्ग-प्रेस स्टेट्स
         let isSelectionMode = false;
         let selectedIndices = new Set();
         let pendingBulkDeleteIndices = [];
@@ -978,6 +794,55 @@
                 if (displayHeader) displayHeader.innerText = "👤 KHATA PRO";
                 if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
             }
+        }
+
+        function setSettingsFontSize(size, save = true) {
+            const listEl = document.getElementById('settingsListElement');
+            if (!listEl) return;
+
+            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
+
+            if (size === 'small') {
+                listEl.style.fontSize = '10px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
+                const btn = document.getElementById('btnFontSm');
+                if (btn) btn.classList.add('active-font');
+            } else if (size === 'large') {
+                listEl.style.fontSize = '14px';
+                listEl.style.transformOrigin = 'top center';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '12px 14px';
+                    el.style.fontSize = '13.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
+                const btn = document.getElementById('btnFontLg');
+                if (btn) btn.classList.add('active-font');
+            } else {
+                size = 'medium';
+                listEl.style.fontSize = '11.5px';
+                document.querySelectorAll('.setting-item').forEach(el => {
+                    el.style.padding = '9px 14px';
+                    el.style.fontSize = '11.5px';
+                });
+                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
+                const btn = document.getElementById('btnFontMd');
+                if (btn) btn.classList.add('active-font');
+            }
+
+            if (save) {
+                localStorage.setItem(FONT_STORAGE_KEY, size);
+            }
+        }
+
+        function triggerDirectCloudSync() {
+            if (!currentUser || !currentUser.email) {
+                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
+                openAuthModal();
+                return;
+            }
+            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
         }
 
         // ==========================================
@@ -1118,7 +983,7 @@
         }
 
         // ==========================================
-        // FIREBASE ऑथेंटिकेशन (सिर्फ सेटिंग्स से खुलेगा)
+        // FIREBASE ऑथेंटिकेशन
         // ==========================================
         function openAuthModalProtected() {
             closeSettingsModal();
@@ -1216,9 +1081,9 @@
             }
         }
 
-        async function handleLogin() {
+                async function handleLogin() {
             const identifier = document.getElementById('loginIdentifier').value.trim();
-            const pass = document.getElementById('loginPass').value;
+            const pass = document.getElementById('loginPass').value.trim();
 
             if (!identifier || !pass) { alert("कृपया पहचानकर्ता और पासवर्ड दर्ज करें!"); return; }
 
@@ -1243,8 +1108,11 @@
                 const user = userSnap.data();
                 if (user.pass !== pass) { alert("❌ गलत पासवर्ड!"); return; }
 
+                // सुनिश्चित करें कि यूजर ऑब्जेक्ट में फोन नंबर हमेशा सेव रहे
+                if (!user.phone) user.phone = targetMobile;
+
                 localStorage.setItem('khata_active_user', JSON.stringify(user));
-                localStorage.setItem('khata_master_phone', user.phone || targetMobile);
+                localStorage.setItem('khata_master_phone', targetMobile);
                 currentUser = user;
                 updateAuthUI();
                 closeAuthModal();
@@ -1372,7 +1240,7 @@
         }
 
         // ==========================================
-        // मैनेज पासवर्ड
+        // पासवर्ड मैनेजर
         // ==========================================
         function openPasswordManagerGate() {
             closeSettingsModal();
@@ -1394,7 +1262,7 @@
             document.getElementById('passManagerModal').style.display = 'none';
         }
 
-        async function savePasswordSettings() {
+                async function savePasswordSettings() {
             appPins = {
                 openPin: document.getElementById('pm_open').value.trim() || "7869",
                 editPin: document.getElementById('pm_edit').value.trim() || "7869",
@@ -1406,25 +1274,29 @@
             localStorage.setItem('khata_custom_pins', JSON.stringify(appPins));
 
             const newLoginPass = document.getElementById('pm_login_pass').value.trim();
-            if (currentUser && newLoginPass && newLoginPass !== currentUser.pass) {
-                currentUser.pass = newLoginPass;
-                localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
-                if (fbDb && currentUser.phone) {
+            const targetPhone = (currentUser && currentUser.phone) ? currentUser.phone : getDeviceMasterKey();
+
+            if (newLoginPass) {
+                if (currentUser) {
+                    currentUser.pass = newLoginPass;
+                    localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
+                }
+
+                // सीधे Firebase क्लाउड डेटाबेस में पासवर्ड को पक्का अपडेट करना
+                if (fbDb && targetPhone && targetPhone !== "7869") {
                     try {
-                        await fbDb.collection("master_profiles").doc(currentUser.phone).update({ pass: newLoginPass });
+                        await fbDb.collection("master_profiles").doc(targetPhone).set({ pass: newLoginPass }, { merge: true });
                     } catch (err) {
-                        console.warn("Remote pass update note:", err);
+                        alert("⚠️ क्लाउड पासवर्ड अपडेट विफल: " + err.message);
+                        return;
                     }
                 }
             }
 
             closePassManager();
-            alert("✅ सभी पासवर्ड और अकाउंट पासवर्ड सुरक्षित सेव हो गए!");
+            alert("✅ सभी पिन और अकाउंट लॉगिन पासवर्ड क्लाउड पर सुरक्षित सेव हो गए!");
         }
 
-        // ==========================================
-        // रीसेट व JSON एक्सपोर्ट/इम्पोर्ट
-        // ==========================================
         function promptResetApp() {
             closeSettingsModal();
             openUnifiedGate('RESET_APP_MASTER', 'RESET APP', 'ENTER MASTER MOBILE NUMBER', 10);
@@ -1492,7 +1364,7 @@
         }
 
         // ==========================================
-        // खाता लेज़र कोर फंक्शन्स
+        // कोर लेज़र फंक्शन्स
         // ==========================================
         function getTodayDate() {
             const today = new Date();
@@ -1668,7 +1540,7 @@
         }
 
         // ==========================================
-        // पार्टी स्टेटमेंट व लॉन्ग-प्रेस मल्टी-डिलीट
+        // पार्टी स्टेटमेंट व मल्टी-डिलीट
         // ==========================================
         function openSinglePersonStatement(personName) {
             currentViewingPerson = personName;
@@ -1678,7 +1550,10 @@
 
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
-            document.getElementById('accountModalTitle').innerText = `${personName} (Statement)`;
+            document.getElementById('accountModalTitle').innerText = personName;
+
+            const btnAdd = document.getElementById('btnStatementAddEntry');
+            if (btnAdd) btnAdd.style.display = 'flex';
 
             renderStatementTable(personName);
         }
@@ -1771,7 +1646,6 @@
             const target = pendingDeletePartyName;
 
             records = records.filter(r => !isExactPersonMatch(r.name, target));
-
             const mKey = findMasterKey(target);
             if (mKey && personMasters[mKey]) {
                 delete personMasters[mKey];
@@ -1794,7 +1668,6 @@
             const actionsWrap = document.getElementById('statementActionsWrap');
             container.innerHTML = '';
 
-            // हेडर में डिलीट व कैंसिल बटन (जब सिलेक्शन मोड ऑन हो)
             if (isSelectionMode) {
                 actionsWrap.innerHTML = `
                     <button onclick="promptBulkDelete()" style="background:#e74c3c; color:#fff; border:none; padding:5px 9px; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">
@@ -1827,12 +1700,11 @@
                 const opSign = isOpRecv ? '+ ' : '- ';
 
                 rowsHtml += `
-                    <tr style="border-bottom: 1px solid #161c27;">
+                    <tr style="border-bottom: 1px solid #161c27; vertical-align: middle;">
                         ${isSelectionMode ? `<td style="padding:8px 2px; text-align:center; color:#555;">-</td>` : ''}
-                        <td style="padding: 8px 4px; text-align: center; color: #64748b;">-</td>
-                        <td style="padding: 8px 4px; text-align: left; font-weight: 600; color: #38bdf8;">Opening Balance</td>
+                        <td style="padding: 8px 4px; text-align: center; color: #64748b; white-space: nowrap; font-size: 10px;">-</td>
+                        <td style="padding: 8px 6px; text-align: left; font-weight: 600; color: #38bdf8; word-break: break-word; white-space: normal; line-height: 1.35;">Opening Balance</td>
                         <td style="padding: 8px 4px; text-align: right; font-weight: 700; color: #cbd5e1; white-space: nowrap;">₹ ${formatINR(targetAmount)}</td>
-                        <td style="padding: 8px 2px; text-align: center; font-size: 10px; color: #94a3b8;">${isOpRecv ? 'CR' : 'DR'}</td>
                         <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${opColor}; white-space: nowrap;">
                             ${opSign}₹ ${formatINR(targetAmount)}
                         </td>
@@ -1854,23 +1726,22 @@
                 const isChecked = selectedIndices.has(tx.originalIdx);
 
                 rowsHtml += `
-                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27; background:${isChecked ? 'rgba(231,76,60,0.18)' : 'transparent'}; user-select:none; -webkit-user-select:none;" 
+                    <tr style="cursor: pointer; border-bottom: 1px solid #161c27; background:${isChecked ? 'rgba(231,76,60,0.18)' : 'transparent'}; vertical-align: middle; user-select:none;" 
                         onclick="handleTxRowClick(${tx.originalIdx})"
                         ontouchstart="handleTxTouchStart(${tx.originalIdx})"
                         ontouchend="handleTxTouchEnd()"
                         onmousedown="handleTxTouchStart(${tx.originalIdx})"
                         onmouseup="handleTxTouchEnd()">
                         ${isSelectionMode ? `
-                            <td class="tx-check-col" onclick="event.stopPropagation()">
+                            <td class="tx-check-col" onclick="event.stopPropagation()" style="width: 28px; padding: 6px 2px;">
                                 <input type="checkbox" class="tx-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTxSelection(${tx.originalIdx}, event)">
                             </td>
                         ` : ''}
-                        <td style="padding: 8px 4px; font-size: 10px; text-align: center; white-space: nowrap; color: #94a3b8;">${formatHindiDate(tx.date)}</td>
-                        <td style="padding: 8px 4px; text-align: left; word-break: break-word; color: #e2e8f0;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
+                        <td style="padding: 8px 4px; font-size: 10.5px; text-align: center; white-space: nowrap; color: #94a3b8;">${formatHindiDate(tx.date)}</td>
+                        <td style="padding: 8px 6px; text-align: left; word-break: break-word; white-space: normal; line-height: 1.35; color: #e2e8f0; font-size: 11px;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
                         <td style="padding: 8px 4px; text-align: right; color: ${isDebit ? '#ff7675' : '#2ecc71'}; font-weight: 700; white-space: nowrap;">
                             ${isDebit ? '- ' : '+ '}₹ ${formatINR(amt)}
                         </td>
-                        <td style="padding: 8px 2px; text-align: center; font-size: 10px; font-weight: 600; color: #64748b;">${isDebit ? 'DR' : 'CR'}</td>
                         <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${balColor}; white-space: nowrap;">
                             ${balSign}₹ ${formatINR(absBal)}
                         </td>
@@ -1885,15 +1756,13 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px; border-bottom: 1px solid #1c2638; padding-bottom: 8px;">
                         <div>
                             <h3 style="font-size: 14px; color: #e2e8f0; font-weight: 700;">👤 ${escapeHtml(personName)}</h3>
-                            <small style="color: #718096; font-size: 10px;">एजेंट: <b style="color: #38bdf8;">${escapeHtml(netBal.account)}</b></small>
+                            <small style="color: #718096; font-size: 10px;">मेन अकाउंट: <b style="color: #38bdf8;">${escapeHtml(netBal.account)}</b></small>
                         </div>
-
                         <div style="text-align: center;">
                             <div style="font-size: 11px; font-weight: 600; color: #ff7675;">
                                 कुल दिया: ₹ ${formatINR(netBal.netTxVal)}
                             </div>
                         </div>
-
                         <div style="text-align: right;">
                             <span style="font-size: 9.5px; color: #718096; font-weight: 600;">NET BALANCE</span>
                             <div style="font-size: 13px; font-weight: 700; color: ${netBal.direction === 'RECEIVE' ? 'var(--accent-recv)' : 'var(--accent-give)'};">
@@ -1904,15 +1773,14 @@
                     </div>
 
                     <div class="passbook-table-wrap" style="width: 100%; border: 1px solid var(--border-soft); border-radius: 6px; background: #080b10;">
-                        <table class="passbook-table" style="width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 11px;">
+                        <table class="passbook-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
                             <thead>
                                 <tr style="background: #111722; color: #94a3b8;">
-                                    ${isSelectionMode ? `<th style="width: 32px; padding: 7px 2px;">✓</th>` : ''}
-                                    <th style="width: 15%; padding: 7px 4px; text-align: center;">तारीख</th>
-                                    <th style="width: 32%; padding: 7px 4px; text-align: left;">विवरण</th>
-                                    <th style="width: 22%; padding: 7px 4px; text-align: right;">रकम</th>
-                                    <th style="width: 8%; padding: 7px 2px; text-align: center;">प्रकार</th>
-                                    <th style="width: 23%; padding: 7px 8px; text-align: right;">बैलेंस</th>
+                                    ${isSelectionMode ? `<th style="width: 28px; padding: 7px 2px;">✓</th>` : ''}
+                                    <th style="width: 72px; padding: 7px 4px; text-align: center; white-space: nowrap;">तारीख</th>
+                                    <th style="padding: 7px 6px; text-align: left;">विवरण</th>
+                                    <th style="width: 85px; padding: 7px 4px; text-align: right; white-space: nowrap;">रकम</th>
+                                    <th style="width: 95px; padding: 7px 8px; text-align: right; white-space: nowrap;">बैलेंस</th>
                                 </tr>
                             </thead>
                             <tbody>${rowsHtml}</tbody>
@@ -1922,9 +1790,6 @@
             `;
         }
 
-        // ==========================================
-        // सेटिंग्स: Manage Parties & Masters (पार्टी एडिट / डिलीट)
-        // ==========================================
         function openManagePartiesMaster() {
             closeSettingsModal();
             pickerCurrentView = 'MANAGE_PARTIES_VIEW';
@@ -1932,7 +1797,6 @@
             document.getElementById('accountPickerModal').style.display = 'flex';
             document.getElementById('btnBackModal').style.display = 'block';
             document.getElementById('accountModalTitle').innerText = 'Manage Parties (Edit / Delete)';
-
             renderManagePartiesList();
         }
 
@@ -1963,7 +1827,7 @@
                     <div style="flex:1; padding-right:8px;">
                         <div style="font-weight:700; color:#e2e8f0; font-size:12.5px;">👤 ${escapeHtml(pName)}</div>
                         <div style="font-size:10px; color:#828fa3; margin-top:2px;">
-                            एजेंट: <b style="color:#38bdf8;">${escapeHtml(agent)}</b> | ओपनिंग: ₹ ${formatINR(opAmt)} (${opDir})
+                            मेन अकाउंट: <b style="color:#38bdf8;">${escapeHtml(agent)}</b> | ओपनिंग: ₹ ${formatINR(opAmt)} (${opDir})
                         </div>
                     </div>
                     <div style="display:flex; gap:6px; align-items:center;">
@@ -2014,17 +1878,17 @@
             if (allAgents.length === 0) allAgents = ['Direct'];
 
             let fullHtml = `
-                <div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; background: #fff; border-radius: 6px;">
+                <div style="width: 100%; overflow-x: auto; background: #fff; border-radius: 6px;">
                     <div style="min-width: 760px; background: #fff; padding: 12px; color: #111;" id="reportCaptureArea">
                         <div style="text-align: center; border-bottom: 2px solid #111; padding-bottom: 5px; margin-bottom: 8px;">
                             <h2 style="font-size: 15px; font-weight: 800; letter-spacing: 0.5px; color: #000; margin: 0;">ALL PARTIES MASTER EXCEL LEDGER</h2>
                             <span style="font-size: 10px; color: #333; font-weight: 700;">${getTodayDate()}</span>
                         </div>
-                        <table class="excel-sheet-table" style="width: 100%; border-collapse: collapse; font-size: 10.5px; font-family: sans-serif;">
+                        <table class="excel-sheet-table" style="width: 100%; border-collapse: collapse; font-size: 10.5px;">
                             <thead>
                                 <tr style="background: #172554; color: #fff;">
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 75px; text-align: center;">DATE</th>
-                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 90px; text-align: left;">AGENT</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; width: 90px; text-align: left;">MAIN AC</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 110px; text-align: left;">PARTY</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; text-align: left;">DETAILS</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 85px; text-align: right;">AMOUNT</th>
@@ -2044,7 +1908,7 @@
                 fullHtml += `
                     <tr style="background: #e0f2fe;">
                         <td colspan="5" style="padding: 5px 8px; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 11px;">
-                            🏛 AGENT: ${escapeHtml(agent)}
+                            🏛 MAIN AC: ${escapeHtml(agent)}
                         </td>
                         <td style="padding: 5px; text-align: center; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 10px;">NET:</td>
                         <td style="padding: 5px 8px; text-align: right; font-weight: 800; color: ${color}; border: 1px solid #cbd5e1; font-size: 11px;">
@@ -2116,13 +1980,7 @@
                 });
             });
 
-            fullHtml += `
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-
+            fullHtml += `</tbody></table></div></div>`;
             container.innerHTML = fullHtml;
         }
 
@@ -2204,7 +2062,7 @@
             closeSettingsModal();
             document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'flex';
-            document.getElementById('accountModalTitle').innerText = 'Accounts Overview (Agents)';
+            document.getElementById('accountModalTitle').innerText = 'Accounts Overview (Main Accounts)';
             document.getElementById('btnBackModal').style.display = 'none';
 
             const container = document.getElementById('accountListContainer');
@@ -2216,7 +2074,7 @@
             ])].sort();
 
             if (unique.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई एजेंट / अकाउंट नहीं मिला।</div>`;
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:#64748b; font-size:12px;">कोई अकाउंट नहीं मिला।</div>`;
                 return;
             }
 
@@ -2263,7 +2121,7 @@
             summaryCard.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <div>
-                        <span style="color:#718096; font-size:10px; text-transform:uppercase; font-weight:600;">एजेंट कुल नेट बैलेंस</span>
+                        <span style="color:#718096; font-size:10px; text-transform:uppercase; font-weight:600;">कुल नेट बैलेंस</span>
                         <h3 style="color:#38bdf8; font-size:14px; margin-top:2px;">🏛 ${escapeHtml(agentName)}</h3>
                     </div>
                     <div style="text-align:right;">
@@ -2277,7 +2135,7 @@
             container.appendChild(summaryCard);
 
             if (agData.parties.length === 0) {
-                container.innerHTML += `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px;">इस एजेंट में कोई पार्टी नहीं है।</div>`;
+                container.innerHTML += `<div style="text-align:center; padding:25px; color:#64748b; font-size:12px;">इस अकाउंट में कोई पार्टी नहीं है।</div>`;
                 return;
             }
 
@@ -2396,8 +2254,6 @@
             } else {
                 document.getElementById('editIndex').value = -1;
                 document.getElementById('inputDate').value = getTodayDate();
-            const savedFontSize = localStorage.getItem(FONT_STORAGE_KEY) || 'medium';
-            setSettingsFontSize(savedFontSize, false);
                 document.getElementById('inputName').value = '';
                 document.getElementById('inputAccount').value = '';
                 document.getElementById('inputAmount').value = '';
@@ -2413,30 +2269,18 @@
             modal.style.display = 'flex';
         }
 
-        function closeEntryForm() { document.getElementById('entryModal').style.display = 'none'; }
+        function closeEntryForm() { 
+            document.getElementById('entryModal').style.display = 'none'; 
+            const pBox = document.getElementById('partySuggestions');
+            const aBox = document.getElementById('agentSuggestions');
+            if (pBox) pBox.style.display = 'none';
+            if (aBox) aBox.style.display = 'none';
+        }
 
         function selectType(type) {
             selectedCrDr = type;
             document.getElementById('optCr').className = type === 'Cr' ? 'radio-btn-label active-cr' : 'radio-btn-label';
             document.getElementById('optDr').className = type === 'Dr' ? 'radio-btn-label active-dr' : 'radio-btn-label';
-            updateRemainingHint();
-        }
-
-        function onPersonNameInput(nameVal) {
-            const trimmed = (nameVal || '').trim();
-            if(!trimmed) {
-                document.getElementById('inputTargetAmount').value = '';
-                updateRemainingHint();
-                return;
-            }
-            const mKey = findMasterKey(trimmed);
-            const master = mKey ? personMasters[mKey] : null;
-            if (master && master.account) {
-                document.getElementById('inputAccount').value = master.account;
-            }
-            const currentAcc = document.getElementById('inputAccount').value.trim();
-            const bal = getPersonNetBalance(trimmed, currentAcc || null);
-            document.getElementById('inputTargetAmount').value = bal.net;
             updateRemainingHint();
         }
 
@@ -2589,6 +2433,8 @@
         function closeAccountPicker() { 
             isSelectionMode = false;
             selectedIndices.clear();
+            const btnAdd = document.getElementById('btnStatementAddEntry');
+            if (btnAdd) btnAdd.style.display = 'none';
             document.getElementById('statementActionsWrap').innerHTML = '';
             document.getElementById('accountPickerModal').style.display = 'none'; 
         }
@@ -2662,60 +2508,222 @@
                 alert("❌ इमेज डाउनलोड में त्रुटि: " + err.message);
             }
         }
-    
+
         // ==========================================
-        // डायरेक्ट सिंक और सेटिंग्स फ़ॉन्ट साइज़ कंट्रोल
+        // लाइव सर्च एवं मेन अकाउंट-पार्टी लिंकेज
         // ==========================================
-        function triggerDirectCloudSync() {
-            if (!currentUser || !currentUser.email) {
-                alert("⚠️ कृपया पहले सेटिंग्स > Firebase Account में जाकर लॉगिन करें!");
-                openAuthModal();
+        function openEntryForCurrentParty() {
+            if (!currentViewingPerson) return;
+            const pName = currentViewingPerson;
+            const mKey = findMasterKey(pName);
+            const master = mKey ? personMasters[mKey] : null;
+            const bal = getPersonNetBalance(pName);
+            const agName = (master && master.account) ? master.account : (bal.account || 'Direct');
+
+            closeAccountPicker();
+            openEntryForm();
+
+            document.getElementById('inputName').value = pName;
+            document.getElementById('inputAccount').value = agName;
+            document.getElementById('inputTargetAmount').value = bal.net;
+            updateRemainingHint();
+            
+            setTimeout(() => {
+                const amtInp = document.getElementById('inputAmount');
+                if (amtInp) amtInp.focus();
+            }, 250);
+        }
+
+        function getPartiesForAgent(agentName) {
+            const cleanAg = (agentName || '').trim().toLowerCase();
+            if (!cleanAg) return [];
+            const allParties = [...new Set([
+                ...records.map(r => r.name).filter(Boolean),
+                ...Object.keys(personMasters)
+            ])].sort();
+
+            return allParties.filter(p => {
+                const bal = getPersonNetBalance(p);
+                const ag = (bal.account || 'Direct').trim().toLowerCase();
+                return ag === cleanAg;
+            });
+        }
+
+        function renderPartyDropdown(parties, agentName = '') {
+            const pBox = document.getElementById('partySuggestions');
+            if (!pBox) return;
+
+            if (!parties || parties.length === 0) {
+                pBox.style.display = 'none';
+                pBox.innerHTML = '';
                 return;
             }
-            openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
+
+            pBox.innerHTML = parties.slice(0, 25).map(p => {
+                const bal = getPersonNetBalance(p, agentName || null);
+                const ag = agentName || bal.account || 'Direct';
+                const balSign = bal.direction === 'RECEIVE' ? '+ ' : '- ';
+                const balColor = bal.direction === 'RECEIVE' ? '#2ecc71' : '#ff7675';
+                return `<div class="suggest-item" onclick="selectPartyFromSuggest('${escapeHtml(p)}')">
+                    <div>
+                        <div style="font-weight:700; color:#fff;">👤 ${escapeHtml(p)}</div>
+                        <small style="color:#38bdf8; font-size:10px;">मेन अकाउंट: ${escapeHtml(ag)}</small>
+                    </div>
+                    <div style="text-align:right;">
+                        <span style="font-size:11px; font-weight:bold; color:${balColor};">${balSign}₹ ${formatINR(bal.net)}</span>
+                    </div>
+                </div>`;
+            }).join('');
+            pBox.style.display = 'block';
         }
 
-        const FONT_STORAGE_KEY = 'khata_settings_font_size';
-        function setSettingsFontSize(size, save = true) {
-            const listEl = document.getElementById('settingsListElement');
-            if (!listEl) return;
+        function handlePartyFocus() {
+            const curAg = (document.getElementById('inputAccount').value || '').trim();
+            const curParty = (document.getElementById('inputName').value || '').trim();
 
-            document.querySelectorAll('.btn-font-scale').forEach(b => b.classList.remove('active-font'));
-
-            if (size === 'small') {
-                listEl.style.fontSize = '10px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => el.style.padding = '7px 12px');
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '9px');
-                const btn = document.getElementById('btnFontSm');
-                if (btn) btn.classList.add('active-font');
-            } else if (size === 'large') {
-                listEl.style.fontSize = '14px';
-                listEl.style.transformOrigin = 'top center';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '12px 14px';
-                    el.style.fontSize = '13.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '12px');
-                const btn = document.getElementById('btnFontLg');
-                if (btn) btn.classList.add('active-font');
-            } else {
-                size = 'medium';
-                listEl.style.fontSize = '11.5px';
-                document.querySelectorAll('.setting-item').forEach(el => {
-                    el.style.padding = '9px 14px';
-                    el.style.fontSize = '11.5px';
-                });
-                document.querySelectorAll('.setting-section-title').forEach(el => el.style.fontSize = '10px');
-                const btn = document.getElementById('btnFontMd');
-                if (btn) btn.classList.add('active-font');
-            }
-
-            if (save) {
-                localStorage.setItem(FONT_STORAGE_KEY, size);
+            if (curAg) {
+                const agentParties = getPartiesForAgent(curAg);
+                if (curParty) {
+                    const q = curParty.toLowerCase();
+                    const filtered = agentParties.filter(p => {
+                        const words = p.toLowerCase().trim().split(/\s+/);
+                        return words.some(w => w.startsWith(q));
+                    });
+                    renderPartyDropdown(filtered, curAg);
+                } else {
+                    renderPartyDropdown(agentParties, curAg);
+                }
+            } else if (curParty) {
+                handlePartySearch(curParty);
             }
         }
 
+        function handlePartySearch(query) {
+            const curAg = (document.getElementById('inputAccount').value || '').trim();
+            const q = (query || '').trim().toLowerCase();
+
+            if (curAg) {
+                const agentParties = getPartiesForAgent(curAg);
+                if (!q) {
+                    renderPartyDropdown(agentParties, curAg);
+                    return;
+                }
+                const filtered = agentParties.filter(p => {
+                    const words = p.toLowerCase().trim().split(/\s+/);
+                    return words.some(w => w.startsWith(q));
+                });
+                renderPartyDropdown(filtered, curAg);
+                return;
+            }
+
+            const pBox = document.getElementById('partySuggestions');
+            if (!q) {
+                if (pBox) { pBox.style.display = 'none'; pBox.innerHTML = ''; }
+                return;
+            }
+
+            let parties = [...new Set([
+                ...records.map(r => r.name).filter(Boolean),
+                ...Object.keys(personMasters)
+            ])].sort();
+
+            parties = parties.filter(p => {
+                const words = p.toLowerCase().trim().split(/\s+/);
+                return words.some(w => w.startsWith(q));
+            });
+
+            renderPartyDropdown(parties);
+        }
+
+        function handleAgentSearch(query) {
+            const aBox = document.getElementById('agentSuggestions');
+            const q = (query || '').trim().toLowerCase();
+
+            if (!q) {
+                if (aBox) { aBox.style.display = 'none'; aBox.innerHTML = ''; }
+                return;
+            }
+
+            let allAgents = [...new Set([
+                ...records.map(r => r.account).filter(Boolean),
+                ...Object.values(personMasters).map(m => m.account).filter(Boolean)
+            ])].sort();
+
+            // अगर पूरा नाम टाइप हो गया (जैसे Sahil या Anwar)
+            const exactAgent = allAgents.find(a => a.toLowerCase() === q);
+            if (exactAgent) {
+                if (aBox) aBox.style.display = 'none';
+                const matchedParties = getPartiesForAgent(exactAgent);
+                renderPartyDropdown(matchedParties, exactAgent);
+                return;
+            }
+
+            const matchedAgents = allAgents.filter(a => {
+                const words = a.toLowerCase().trim().split(/\s+/);
+                return words.some(w => w.startsWith(q));
+            });
+
+            if (matchedAgents.length === 0) {
+                if (aBox) { aBox.style.display = 'none'; aBox.innerHTML = ''; }
+                return;
+            }
+
+            aBox.innerHTML = matchedAgents.map(a => {
+                const agData = getAgentNetTotal(a);
+                return `<div class="suggest-item" onclick="selectAgentFromSuggest('${escapeHtml(a)}')">
+                    <span style="font-weight:700; color:#fff;">🏛 ${escapeHtml(a)}</span>
+                    <small style="color:#38bdf8; font-size:10px;">पार्टियां: ${agData.count}</small>
+                </div>`;
+            }).join('');
+            aBox.style.display = 'block';
+        }
+
+        function handleAgentComplete(val) {
+            const ag = (val || '').trim();
+            if (ag) {
+                const matched = getPartiesForAgent(ag);
+                renderPartyDropdown(matched, ag);
+            }
+        }
+
+        function selectAgentFromSuggest(agName) {
+            document.getElementById('inputAccount').value = agName;
+            const aBox = document.getElementById('agentSuggestions');
+            if (aBox) aBox.style.display = 'none';
+
+            // मेन अकाउंट चुनते ही ऊपर पार्टी नेम की लिस्ट तुरंत खोलना
+            const matchedParties = getPartiesForAgent(agName);
+            renderPartyDropdown(matchedParties, agName);
+        }
+
+        function selectPartyFromSuggest(pName) {
+            document.getElementById('inputName').value = pName;
+            const pBox = document.getElementById('partySuggestions');
+            if (pBox) pBox.style.display = 'none';
+
+            const curAg = document.getElementById('inputAccount').value.trim();
+            const bal = getPersonNetBalance(pName, curAg || null);
+            if (!curAg && bal.account && bal.account !== 'Direct') {
+                document.getElementById('inputAccount').value = bal.account;
+            }
+
+            document.getElementById('inputTargetAmount').value = bal.net;
+            updateRemainingHint();
+
+            const amtInp = document.getElementById('inputAmount');
+            if (amtInp) amtInp.focus();
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#inputName') && !e.target.closest('#partySuggestions')) {
+                const pBox = document.getElementById('partySuggestions');
+                if (pBox) pBox.style.display = 'none';
+            }
+            if (!e.target.closest('#inputAccount') && !e.target.closest('#agentSuggestions')) {
+                const aBox = document.getElementById('agentSuggestions');
+                if (aBox) aBox.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
