@@ -328,6 +328,7 @@
         .tx-check-col { width: 32px; text-align: center; }
         .tx-checkbox { transform: scale(1.2); accent-color: #e74c3c; cursor: pointer; }
 
+        /* सजेशन लिस्ट और '+' बटन */
         .custom-suggest-list {
             position: absolute; top: 100%; left: 0; right: 0; max-height: 190px;
             overflow-y: auto; background: #0d1522; border: 1.5px solid #00f0ff;
@@ -584,25 +585,6 @@
         </div>
     </div>
 
-    <!-- नई आधुनिक इमेज प्रीव्यू और गैलरी शेयर मॉडल -->
-    <div class="modal-overlay" id="imagePreviewModal" style="z-index: 1000000; background: rgba(0, 0, 0, 0.95);">
-        <div class="modal-box" style="max-width: 520px; max-height: 96vh; background: #0b0e14; border: 1.5px solid #00f0ff;">
-            <div class="modal-header" style="background: #090d14; border-bottom: 1px solid #1a2536;">
-                <span style="color: #00f3ff; font-weight: 700; font-size: 13px;">📸 रिपोर्ट इमेज (JPG Preview)</span>
-                <button onclick="closeImagePreviewModal()" style="background:none; border:none; color:#ff4757; font-size:18px; font-weight:bold; cursor:pointer;">✕</button>
-            </div>
-            <div style="flex: 1; overflow-y: auto; padding: 10px; text-align: center; -webkit-overflow-scrolling: touch;">
-                <p style="font-size: 10.5px; color: #94a3b8; margin-bottom: 8px;">गैलरी में सीधे सेव करने के लिए बटन दबाएँ या फोटो पर उंगली दबाकर रखें:</p>
-                <img id="previewImageTag" src="" alt="Report Preview" style="width: 100%; height: auto; border-radius: 6px; border: 1px solid #1e293b; box-shadow: 0 4px 15px rgba(0,0,0,0.6); display: block; margin: 0 auto;">
-            </div>
-            <div class="modal-footer" style="background: #090d14; border-top: 1px solid #1a2536; display: flex; gap: 8px;">
-                <button type="button" class="btn-modal" style="background: #10b981; color: #fff; font-weight: 700;" onclick="shareOrSaveCurrentImage()">📲 शेयर / गैलरी सेव</button>
-                <button type="button" class="btn-modal" style="background: #0284c7; color: #fff; font-weight: 700;" onclick="downloadCurrentImageDirect()">📥 डाउनलोड JPG</button>
-                <button type="button" class="btn-modal btn-cancel" onclick="closeImagePreviewModal()">✕ बंद करें</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Add / Edit Master Modal -->
     <div class="modal-overlay" id="addAccountModal">
         <div class="modal-box">
@@ -769,11 +751,6 @@
         let longPressTimer = null;
         let isLongPressTriggered = false;
 
-        // इमेज शेयर / डाउनलोड वैरिएबल्स
-        let currentGeneratedBlob = null;
-        let currentGeneratedDataUrl = '';
-        let currentGeneratedFileName = '';
-
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         function getDeviceMasterKey() {
@@ -868,6 +845,9 @@
             openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
         }
 
+        // ==========================================
+        // 3-TAP ऐप लॉक
+        // ==========================================
         function handleLockClick() {
             clickCount++;
             if (clickCount >= 3) {
@@ -896,6 +876,9 @@
             closeSettingsModal();
         }
 
+        // ==========================================
+        // यूनिफाइड सिक्योरिटी गेट
+        // ==========================================
         function openUnifiedGate(actionType, title, desc, maxLength = 4) {
             currentGateAction = actionType;
             document.getElementById('unifiedGateTitle').innerText = title;
@@ -999,6 +982,9 @@
             alert("❌ गलत पिन या मास्टर की!");
         }
 
+        // ==========================================
+        // FIREBASE ऑथेंटिकेशन
+        // ==========================================
         function openAuthModalProtected() {
             closeSettingsModal();
             openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
@@ -1095,7 +1081,7 @@
             }
         }
 
-        async function handleLogin() {
+                async function handleLogin() {
             const identifier = document.getElementById('loginIdentifier').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
 
@@ -1122,6 +1108,7 @@
                 const user = userSnap.data();
                 if (user.pass !== pass) { alert("❌ गलत पासवर्ड!"); return; }
 
+                // सुनिश्चित करें कि यूजर ऑब्जेक्ट में फोन नंबर हमेशा सेव रहे
                 if (!user.phone) user.phone = targetMobile;
 
                 localStorage.setItem('khata_active_user', JSON.stringify(user));
@@ -1205,6 +1192,9 @@
             }
         }
 
+        // ==========================================
+        // क्लाउड सिंक व बैकअप / रीस्टोर
+        // ==========================================
         async function executeCloudBackupManual() {
             if (!currentUser || !fbDb) { alert("कृपया पहले लॉगिन करें!"); return; }
             try {
@@ -1249,6 +1239,9 @@
             }
         }
 
+        // ==========================================
+        // पासवर्ड मैनेजर
+        // ==========================================
         function openPasswordManagerGate() {
             closeSettingsModal();
             openUnifiedGate('MANAGE_PINS_MASTER', 'MASTER KEY REQUIRED', 'ENTER MASTER MOBILE NUMBER', 10);
@@ -1269,7 +1262,7 @@
             document.getElementById('passManagerModal').style.display = 'none';
         }
 
-        async function savePasswordSettings() {
+                async function savePasswordSettings() {
             appPins = {
                 openPin: document.getElementById('pm_open').value.trim() || "7869",
                 editPin: document.getElementById('pm_edit').value.trim() || "7869",
@@ -1289,6 +1282,7 @@
                     localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
                 }
 
+                // सीधे Firebase क्लाउड डेटाबेस में पासवर्ड को पक्का अपडेट करना
                 if (fbDb && targetPhone && targetPhone !== "7869") {
                     try {
                         await fbDb.collection("master_profiles").doc(targetPhone).set({ pass: newLoginPass }, { merge: true });
@@ -1369,6 +1363,9 @@
             event.target.value = '';
         }
 
+        // ==========================================
+        // कोर लेज़र फंक्शन्स
+        // ==========================================
         function getTodayDate() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -1542,6 +1539,9 @@
             });
         }
 
+        // ==========================================
+        // पार्टी स्टेटमेंट व मल्टी-डिलीट
+        // ==========================================
         function openSinglePersonStatement(personName) {
             currentViewingPerson = personName;
             pickerCurrentView = 'SINGLE_PERSON_STATEMENT';
@@ -2451,19 +2451,9 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        // ==========================================
-        // सुधरा हुआ इमेज कैप्चर, प्रीव्यू एवं गैलरी सेव सिस्टम
-        // ==========================================
         async function captureAndSaveReportImage() {
             const el = document.getElementById('reportCaptureArea');
             if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
-
-            const btnExport = document.getElementById('btnExportImage');
-            const originalBtnText = btnExport ? btnExport.innerHTML : '';
-            if (btnExport) {
-                btnExport.innerText = "⏳...";
-                btnExport.disabled = true;
-            }
 
             try {
                 const isExcelSheet = pickerCurrentView === 'ALL_PARTIES_EXCEL_SHEET';
@@ -2474,12 +2464,12 @@
                 wrapper.style.left = '-9999px';
                 wrapper.style.top = '0';
                 wrapper.style.background = finalBg;
-                wrapper.style.padding = '20px';
+                wrapper.style.padding = '24px';
                 wrapper.style.display = 'inline-block';
                 wrapper.style.boxSizing = 'border-box';
 
                 const clone = el.cloneNode(true);
-                clone.style.width = isExcelSheet ? '900px' : '580px';
+                clone.style.width = isExcelSheet ? '900px' : '620px';
                 clone.style.maxWidth = 'none';
                 clone.style.margin = '0';
                 clone.style.boxSizing = 'border-box';
@@ -2489,82 +2479,34 @@
 
                 const canvas = await html2canvas(wrapper, { 
                     backgroundColor: finalBg,
-                    scale: 2.2,
+                    scale: 2.5,
                     useCORS: true,
                     logging: false
                 });
 
                 document.body.removeChild(wrapper);
 
-                const safeParty = (currentViewingPerson || 'Ledger_Report').replace(/[^a-zA-Z0-9_-]/g, '_');
-                currentGeneratedFileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
-
-                // JPG DataURL और Blob तैयार करना
-                currentGeneratedDataUrl = canvas.toDataURL("image/jpeg", 0.95);
+                const safeParty = (currentViewingPerson || 'Ledger').replace(/[^a-zA-Z0-9_-]/g, '_');
+                const fileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
 
                 canvas.toBlob(function(blob) {
-                    currentGeneratedBlob = blob;
+                    if (!blob) { alert("❌ इमेज तैयार करने में समस्या आई!"); return; }
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
 
-                    // इमेज को प्रीव्यू स्क्रीन में दिखाना ताकि यूज़र के सामने इमेज खुले
-                    const previewImg = document.getElementById('previewImageTag');
-                    if (previewImg) previewImg.src = currentGeneratedDataUrl;
-
-                    document.getElementById('imagePreviewModal').style.display = 'flex';
-                }, "image/jpeg", 0.95);
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(blobUrl);
+                    }, 1000);
+                }, "image/jpeg", 0.98);
 
             } catch (err) {
-                alert("❌ इमेज तैयार करने में त्रुटि: " + err.message);
-            } finally {
-                if (btnExport) {
-                    btnExport.innerHTML = originalBtnText || "📸 Share";
-                    btnExport.disabled = false;
-                }
+                alert("❌ इमेज डाउनलोड में त्रुटि: " + err.message);
             }
-        }
-
-        function closeImagePreviewModal() {
-            document.getElementById('imagePreviewModal').style.display = 'none';
-        }
-
-        async function shareOrSaveCurrentImage() {
-            if (!currentGeneratedBlob && !currentGeneratedDataUrl) {
-                alert("इमेज उपलब्ध नहीं है!");
-                return;
-            }
-
-            try {
-                if (currentGeneratedBlob && navigator.canShare) {
-                    const file = new File([currentGeneratedBlob], currentGeneratedFileName, { type: "image/jpeg" });
-                    if (navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: currentGeneratedFileName,
-                            text: 'Khata Ledger Pro - खाता लेजर रिपोर्ट'
-                        });
-                        return;
-                    }
-                }
-            } catch (e) {
-                if (e.name === 'AbortError') return;
-            }
-
-            // अगर सीधे शेयर सपोर्टेड न हो तो डायरेक्ट डाउनलोड करें
-            downloadCurrentImageDirect();
-        }
-
-        function downloadCurrentImageDirect() {
-            if (!currentGeneratedDataUrl) {
-                alert("इमेज उपलब्ध नहीं है!");
-                return;
-            }
-            const link = document.createElement('a');
-            link.href = currentGeneratedDataUrl;
-            link.download = currentGeneratedFileName;
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(() => {
-                document.body.removeChild(link);
-            }, 300);
         }
 
         // ==========================================
@@ -2707,6 +2649,7 @@
                 ...Object.values(personMasters).map(m => m.account).filter(Boolean)
             ])].sort();
 
+            // अगर पूरा नाम टाइप हो गया (जैसे Sahil या Anwar)
             const exactAgent = allAgents.find(a => a.toLowerCase() === q);
             if (exactAgent) {
                 if (aBox) aBox.style.display = 'none';
@@ -2748,6 +2691,7 @@
             const aBox = document.getElementById('agentSuggestions');
             if (aBox) aBox.style.display = 'none';
 
+            // मेन अकाउंट चुनते ही ऊपर पार्टी नेम की लिस्ट तुरंत खोलना
             const matchedParties = getPartiesForAgent(agName);
             renderPartyDropdown(matchedParties, agName);
         }
