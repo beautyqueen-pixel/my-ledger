@@ -2451,7 +2451,7 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        async function captureAndSaveReportImage() {
+                async function captureAndSaveReportImage() {
             const el = document.getElementById('reportCaptureArea');
             if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
 
@@ -2464,15 +2464,25 @@
                 wrapper.style.left = '-9999px';
                 wrapper.style.top = '0';
                 wrapper.style.background = finalBg;
-                wrapper.style.padding = '24px';
+                wrapper.style.padding = '16px';
                 wrapper.style.display = 'inline-block';
                 wrapper.style.boxSizing = 'border-box';
 
                 const clone = el.cloneNode(true);
-                clone.style.width = isExcelSheet ? '900px' : '620px';
+                clone.style.width = isExcelSheet ? '900px' : '580px';
                 clone.style.maxWidth = 'none';
+                clone.style.height = 'auto';
+                clone.style.maxHeight = 'none';
+                clone.style.overflow = 'visible';
                 clone.style.margin = '0';
                 clone.style.boxSizing = 'border-box';
+
+                // पूरा लंबा हिसाब बिना कटे कैप्चर करने के लिए
+                clone.querySelectorAll('.passbook-table-wrap, .account-list').forEach(w => {
+                    w.style.overflow = 'visible';
+                    w.style.maxHeight = 'none';
+                    w.style.height = 'auto';
+                });
                 
                 wrapper.appendChild(clone);
                 document.body.appendChild(wrapper);
@@ -2481,7 +2491,9 @@
                     backgroundColor: finalBg,
                     scale: 2.5,
                     useCORS: true,
-                    logging: false
+                    logging: false,
+                    windowWidth: wrapper.scrollWidth,
+                    windowHeight: wrapper.scrollHeight
                 });
 
                 document.body.removeChild(wrapper);
@@ -2489,8 +2501,26 @@
                 const safeParty = (currentViewingPerson || 'Ledger').replace(/[^a-zA-Z0-9_-]/g, '_');
                 const fileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
 
-                canvas.toBlob(function(blob) {
+                canvas.toBlob(async function(blob) {
                     if (!blob) { alert("❌ इमेज तैयार करने में समस्या आई!"); return; }
+
+                    const file = new File([blob], fileName, { type: "image/jpeg" });
+
+                    // 'Save As' का वाइट बैनर रोकने के लिए डायरेक्ट Android Native Share
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: safeParty,
+                                text: `${safeParty} का खाता स्टेटमेंट`
+                            });
+                            return;
+                        } catch (shareErr) {
+                            if (shareErr.name === 'AbortError') return;
+                        }
+                    }
+
+                    // फ़ॉलबैक
                     const blobUrl = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = blobUrl;
@@ -2505,13 +2535,10 @@
                 }, "image/jpeg", 0.98);
 
             } catch (err) {
-                alert("❌ इमेज डाउनलोड में त्रुटि: " + err.message);
+                alert("❌ इमेज तैयार करने में त्रुटि: " + err.message);
             }
         }
 
-        // ==========================================
-        // लाइव सर्च एवं मेन अकाउंट-पार्टी लिंकेज
-        // ==========================================
         function openEntryForCurrentParty() {
             if (!currentViewingPerson) return;
             const pName = currentViewingPerson;
