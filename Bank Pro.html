@@ -87,7 +87,6 @@
   box-shadow: none; 
   margin: 0; 
 }
-  
 
  /* Top Header Bar */
  .app-top-header { display: flex; justify-content: space-between; align-items: center; background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff; margin-bottom: 8px; }
@@ -150,7 +149,7 @@
  <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*" onclick="event.stopPropagation()">  
 </div>  
 
-<!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल (सभी पिन व मास्टर की के लिए) -->
+<!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल -->
 <div class="auth-overlay" id="unifiedSecurityGateModal">
   <div class="security-pin-card">
     <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
@@ -189,7 +188,7 @@
         <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
     </div>
 
-    <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (ईमेल पूरी तरह से हटा दी गई है) -->
+    <!-- 3. LOGGED-IN ACCOUNT DASHBOARD -->
     <div class="auth-card" id="accountBox" style="display:none;">
         <span class="close-auth" onclick="closeAuthModal()">✖</span>
         <h2>FIREBASE CLOUD ACCOUNT</h2>
@@ -214,7 +213,7 @@
     </div>
 </div>
 
-<!-- पासवर्ड मैनेजर मॉडल (6 पिन + 🔑 ACCOUNT LOGIN PASS) -->
+<!-- पासवर्ड मैनेजर मॉडल -->
 <div class="auth-overlay" id="passManagerModal">
   <div class="pm-card">
     <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
@@ -369,14 +368,13 @@
  let currentCustomFields = [];  
  let activeScanTarget = "card";  
  let isTrashDelete = false;
-
- // वर्तमान एक्शन प्रकार और अपेक्षित पिन
  let currentGateAction = '';
 
  function getDeviceMasterKey() {
    if (currentUser && currentUser.phone) return currentUser.phone.trim();
    return localStorage.getItem('bankpro_master_phone') || "7869";
  }
+ 
  let fieldConfig = [  
    ["AGENT", "agent"], ["BANK", "bank"], ["HOLDER", "holder"],  
    ["A/C TYPE", "acctype"], ["A/C NO.", "acc"], ["IFSC CODE", "ifsc"],   
@@ -458,7 +456,7 @@
  });
 
  // ==========================================
- // यूनिफाइड नियॉन सिक्योरिटी गेट (Auto-Submit & No OK Needed)
+ // यूनिफाइड नियॉन सिक्योरिटी गेट
  // ==========================================
  function openUnifiedGate(actionType, title, desc, maxLength = 4) {
    currentGateAction = actionType;
@@ -479,12 +477,9 @@
 
  function handleUnifiedGateInput(el) {
    const val = el.value.trim();
-   // 4-अंकों वाले पिन पर 4 अंक होते ही ऑटो-एग्जीक्यूट
    if (el.maxLength === 4 && val.length === 4) {
      submitUnifiedGate(val);
-   } 
-   // मोबाइल मास्टर की (10 अंक) पर 10 अंक होते ही ऑटो-एग्जीक्यूट
-   else if (el.maxLength === 10 && val.length === 10) {
+   } else if (el.maxLength === 10 && val.length === 10) {
      submitUnifiedGate(val);
    }
  }
@@ -497,7 +492,6 @@
  function submitUnifiedGate(entered) {
    const mKey = getDeviceMasterKey();
 
-   // 1. FIREBASE लॉगिन गेट (सिर्फ लॉगिन पिन चाहिए)
    if (currentGateAction === 'OPEN_AUTH_GATE') {
      const reqPin = appPins.loginPin || "7869";
      if (entered === reqPin) {
@@ -507,7 +501,6 @@
        gateWrongFeedback();
      }
    }
-   // 2. प्रोफाइल एडिट (सिर्फ मास्टर की - मोबाइल नंबर चाहिए)
    else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -516,7 +509,6 @@
        gateWrongFeedback();
      }
    }
-   // 3. मैनेज पासवर्ड (सिर्फ मास्टर की चाहिए)
    else if (currentGateAction === 'MANAGE_PINS_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -525,7 +517,6 @@
        gateWrongFeedback();
      }
    }
-   // 4. ऐप रीसेट (सिर्फ मास्टर की चाहिए)
    else if (currentGateAction === 'RESET_APP_MASTER') {
      if (entered === mKey || (mKey === "7869" && entered === "7869")) {
        closeUnifiedGate();
@@ -534,7 +525,6 @@
        gateWrongFeedback();
      }
    }
-   // 5. एडिट अनलॉक पिन
    else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
      if (entered === appPins.editPin || entered === "7869") {
        closeUnifiedGate();
@@ -543,7 +533,6 @@
        gateWrongFeedback();
      }
    }
-   // 6. डिलीट पिन
    else if (currentGateAction === 'DELETE_ENTRY_PIN') {
      if (entered === appPins.delPin || entered === "7869") {
        closeUnifiedGate();
@@ -565,7 +554,7 @@
  }
 
  // ==========================================
- // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+ // FIREBASE ऑथेंटिकेशन
  // ==========================================
  function openAuthModalProtected() {
    toggleVault(true);
@@ -700,7 +689,6 @@
    }
  }
 
- // एडिट प्रोफाइल सिर्फ मास्टर की से खुलेगी
  function openProfileEditGate() {
    if (!currentUser) return;
    document.getElementById('accountBox').style.display = 'none';
@@ -771,7 +759,7 @@
  }
 
  // ==========================================
- // क्लाउड सिंक व बैकअप / रीस्टोर
+ // क्लाउड सिंक
  // ==========================================
  function handleQuickSync() {
    if (!currentUser) { openAuthModalProtected(); return; }
@@ -819,7 +807,7 @@
  }
 
  // ==========================================
- // मैनेज पासवर्ड (सिर्फ मास्टर की से खुलेगा)
+ // मैनेज पासवर्ड
  // ==========================================
  function openPasswordManagerGate() {
    toggleVault(true);
@@ -1366,7 +1354,16 @@
    });  
  }  
 
- function loadItem(id) {  
+  function loadItem(id) {  
+   // पिछली शेयरिंग के बचे हुए बटन या छुपी हुई पंक्तियों को रीसेट करें
+   const form = document.getElementById('form-to-share');
+   if (form) {
+     const oldBtn = document.getElementById('temp-print-btn');
+     if (oldBtn) oldBtn.remove();
+     form.querySelectorAll('.hide-btn').forEach(b => b.remove());
+     form.querySelectorAll('.row').forEach(r => r.style.display = '');
+   }
+
    const item = JSON.parse(localStorage.getItem('BankProData')).find(i => i.id === id);  
    currentEditID = id;  
    fieldConfig.forEach(f => {   
@@ -1400,8 +1397,9 @@
      if (el) el.parentElement.style.backgroundColor = "#59cba2cf";  
    });  
 
-   liveUpdate(); toggleForm(true, 'edit');  
- }  
+   liveUpdate(); 
+   toggleForm(true, 'edit');  
+ }
 
  function askUnlock() { 
    openUnifiedGate('UNLOCK_EDIT_PIN', 'ENTER EDIT PIN', 'ENTER 4-DIGIT PIN TO EDIT', 4);
@@ -1513,82 +1511,157 @@
    vp.style.display = (vp.style.display === 'none') ? 'block' : 'none';
  }  
 
- async function startSharingProcess() {  
+ // ==========================================
+ // सुधरा हुआ शेयर और PDF सिस्टम
+ // ==========================================
+  async function startSharingProcess() {  
    const form = document.getElementById('form-to-share');  
    form.style.display = 'block';  
+   
+   // पुराने बटन साफ़ करें
+   const oldBtn = document.getElementById('temp-print-btn');
+   if (oldBtn) oldBtn.remove();
+   form.querySelectorAll('.hide-btn').forEach(b => b.remove());
+
+   // हर लाइन पर ➖ बटन जोड़ना
    const rows = form.querySelectorAll('.row');  
    rows.forEach(row => {  
-     if (!row.querySelector('.hide-btn')) {  
-       const btn = document.createElement('button');  
-       btn.innerText = "➖";  
-       btn.className = "hide-btn";  
-       btn.onclick = () => row.remove();  
-       row.prepend(btn);  
-     }  
-   });  
-   if (!document.getElementById('temp-print-btn')) {  
-     const printBtn = document.createElement('button');  
-     printBtn.id = "temp-print-btn";  
-     printBtn.innerText = "✅ PRINT IMAGE NOW";  
-     printBtn.style = "width:100%; padding:15px; background:#25D366; color:white; font-weight:bold; border:2px solid white; margin-bottom:10px;";  
-     printBtn.onclick = async () => {  
-       printBtn.remove();  
-       form.querySelectorAll('.hide-btn').forEach(b => b.remove());  
-       await shareAsImage();  
-       location.reload();   
+     const btn = document.createElement('button');  
+     btn.innerText = "➖";  
+     btn.className = "hide-btn";  
+     // पंक्ति हमेशा के लिए डिलीट न हो, सिर्फ छुप जाए
+     btn.onclick = (e) => {
+       e.stopPropagation();
+       row.style.display = 'none';
      };  
-     form.prepend(printBtn);  
-   }  
+     row.prepend(btn);  
+   });  
+
+   const printBtn = document.createElement('button');  
+   printBtn.id = "temp-print-btn";  
+   printBtn.innerText = "✅ SHARE / DOWNLOAD NOW";  
+   printBtn.style = "width:100%; padding:15px; background:#25D366; color:white; font-weight:bold; border:2px solid white; margin-bottom:10px; cursor:pointer;";  
+   
+   printBtn.onclick = async () => {  
+     printBtn.remove();  
+     form.querySelectorAll('.hide-btn').forEach(b => b.remove());  
+     await shareAsImage();  
+     // शेयर होने के बाद छुपाई गई सभी पंक्तियां वापस सही आकार में आ जाएँ
+     form.querySelectorAll('.row').forEach(r => r.style.display = '');
+   };  
+   form.prepend(printBtn);  
  }  
 
  async function shareAsImage() {  
    const el = document.getElementById('form-to-share');  
    el.style.display = 'block';  
+   
    const agentBar = document.getElementById('head-agent');  
    const agentRow = document.getElementById('row-agent');  
    const passRow = document.getElementById('row-passdate');  
+   
+   // एजेंट और पासडेट अस्थायी रूप से छिपाएं
    if (agentBar) agentBar.style.display = 'none';  
    if (agentRow) agentRow.style.display = 'none';  
    if (passRow) passRow.style.display = 'none';   
+
    try {  
-     const canvas = await html2canvas(el, { backgroundColor: "#0a1f14", scale: 2, useCORS: true });  
-     if (agentBar) agentBar.style.display = 'block';  
-     if (agentRow) agentRow.style.display = 'block';  
-     if (passRow) passRow.style.display = 'block';  
-     el.style.display = 'none';  
-     const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));  
-     const file = new File([blob], "BankDetails.png", { type: 'image/png' });  
-     if (navigator.share) { await navigator.share({ files: [file], title: 'Bank Details' }); }  
+     const canvas = await html2canvas(el, { 
+       backgroundColor: "#0a1f14", 
+       scale: 2, 
+       useCORS: true,
+       logging: false
+     });  
+
+     const blob = await new Promise(r => canvas.toBlob(r, 'image/png', 1.0));  
+     const file = new File([blob], `BankDetails_${Date.now()}.png`, { type: 'image/png' });  
+
+     let isShared = false;
+     if (navigator.canShare && navigator.canShare({ files: [file] })) {  
+       try {
+         await navigator.share({ 
+           files: [file], 
+           title: 'Bank Details',
+           text: 'Bank Account Information'
+         }); 
+         isShared = true;
+       } catch (shErr) {
+         if (shErr.name === 'AbortError') isShared = true; 
+       }
+     }  
+
+     // अगर शेयर मेनू न खुले, तो ऑटोमैटिक डाउनलोड हो जाए
+     if (!isShared) {
+       const a = document.createElement('a');
+       a.download = `BankDetails_${Date.now()}.png`;
+       a.href = URL.createObjectURL(blob);
+       document.body.appendChild(a);
+       a.click();
+       a.remove();
+       setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+       showCustomDialog("सफलता", "✅ इमेज डाउनलोड हो गई है! अब आप इसे WhatsApp पर भेज सकते हैं।", false);
+     }
    } catch (err) {   
-     if (agentBar) agentBar.style.display = 'block';  
-     if (agentRow) agentRow.style.display = 'block';  
-     if (passRow) passRow.style.display = 'block';  
-     el.style.display = 'none';   
-     alert("Error sharing image");   
+     showCustomDialog("त्रुटि", "❌ इमेज बनाने में समस्या: " + err.message, false);   
+   } finally {
+     // 'block' की जगह खाली स्ट्रिंग ('') देने से फ्लेक्सबॉक्स लेआउट नहीं टूटता
+     if (agentBar) agentBar.style.display = '';  
+     if (agentRow) agentRow.style.display = '';  
+     if (passRow) passRow.style.display = '';  
+     el.querySelectorAll('.row').forEach(r => r.style.display = '');
    }  
- }  
+ }
 
  async function downloadPDF() {  
+   if (!window.jspdf || !window.jspdf.jsPDF) {
+     showCustomDialog("त्रुटि", "❌ PDF लाइब्रेरी लोड नहीं हुई है!", false);
+     return;
+   }
+
    const { jsPDF } = window.jspdf;  
    const el = document.getElementById('form-to-share');  
-   const getVal = (id) => { const el = document.getElementById('inp-'+id); return (el ? (el.tagName === 'TEXTAREA' ? el.value : el.innerText).trim() : ""); }  
+   const getVal = (id) => { const elem = document.getElementById('inp-'+id); return (elem ? (elem.tagName === 'TEXTAREA' ? elem.value : elem.innerText).trim() : ""); };  
    const fileName = `${getFirstWord(getVal('bank')) || "BANK"}_${getFirstWord(getVal('holder')) || "HOLDER"}.pdf`;  
+   
    el.style.display = 'block';   
    el.style.width = '450px';   
+   
    try {  
-     const canvas = await html2canvas(el, { backgroundColor: "#0a1f14", scale: 2, useCORS: true });  
-     const imgData = canvas.toDataURL('image/jpeg', 0.9);  
+     const canvas = await html2canvas(el, { 
+       backgroundColor: "#0a1f14", 
+       scale: 2, 
+       useCORS: true,
+       logging: false 
+     });  
+     
+     const imgData = canvas.toDataURL('image/jpeg', 0.95);  
      const imgWidth = 190;   
      const imgHeight = (canvas.height * imgWidth) / canvas.width;   
-     const pdf = new jsPDF('p', 'mm', [imgWidth + 20, imgHeight + 20]);  
+     
+     const pdf = new jsPDF({
+       orientation: 'portrait',
+       unit: 'mm',
+       format: [imgWidth + 20, imgHeight + 20]
+     });  
+
      pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);  
-     pdf.save(fileName);  
+
+     // Blob के ज़रिए सीधा डाउनलोड (मोबाइल क्रोम व PWA में 100% वर्किंग)
+     const pdfBlob = pdf.output('blob');
+     const blobUrl = URL.createObjectURL(pdfBlob);
+     const dlLink = document.createElement('a');
+     dlLink.href = blobUrl;
+     dlLink.download = fileName;
+     document.body.appendChild(dlLink);
+     dlLink.click();
+     dlLink.remove();
+     setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+
+     showCustomDialog("सफलता", `✅ PDF सफलतापूर्वक डाउनलोड हो गया:\n${fileName}`, false);
    } catch (err) {  
-     alert("PDF Error: " + err);  
+     showCustomDialog("त्रुटि", "❌ PDF डाउनलोड में त्रुटि: " + err.message, false);  
    } finally {  
-     el.style.display = 'none';   
      el.style.width = '';   
-     refreshApp();  
    }  
  }  
 
