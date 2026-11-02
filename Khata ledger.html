@@ -1081,7 +1081,7 @@
             }
         }
 
-                async function handleLogin() {
+        async function handleLogin() {
             const identifier = document.getElementById('loginIdentifier').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
 
@@ -1108,7 +1108,6 @@
                 const user = userSnap.data();
                 if (user.pass !== pass) { alert("❌ गलत पासवर्ड!"); return; }
 
-                // सुनिश्चित करें कि यूजर ऑब्जेक्ट में फोन नंबर हमेशा सेव रहे
                 if (!user.phone) user.phone = targetMobile;
 
                 localStorage.setItem('khata_active_user', JSON.stringify(user));
@@ -1262,7 +1261,7 @@
             document.getElementById('passManagerModal').style.display = 'none';
         }
 
-                async function savePasswordSettings() {
+        async function savePasswordSettings() {
             appPins = {
                 openPin: document.getElementById('pm_open').value.trim() || "7869",
                 editPin: document.getElementById('pm_edit').value.trim() || "7869",
@@ -1282,7 +1281,6 @@
                     localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
                 }
 
-                // सीधे Firebase क्लाउड डेटाबेस में पासवर्ड को पक्का अपडेट करना
                 if (fbDb && targetPhone && targetPhone !== "7869") {
                     try {
                         await fbDb.collection("master_profiles").doc(targetPhone).set({ pass: newLoginPass }, { merge: true });
@@ -2451,7 +2449,7 @@
             return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-                        async function captureAndSaveReportImage() {
+        async function captureAndSaveReportImage() {
             const el = document.getElementById('reportCaptureArea');
             if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
 
@@ -2506,7 +2504,6 @@
             const fileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
             const dataUrl = canvas.toDataURL('image/jpeg', 0.98);
 
-            // सीधा स्क्रीन पर दो बटन वाला बॉक्स खोलना (बिना किसी Save As बैनर के)
             showDirectActionModal(dataUrl, fileName, safeParty);
         }
 
@@ -2539,7 +2536,6 @@
             `;
             modal.style.display = 'flex';
 
-            // 1. WhatsApp शेयर बटन की कार्यप्रणाली
             document.getElementById('modalShareBtn').onclick = async function() {
                 try {
                     const res = await fetch(dataUrl);
@@ -2553,12 +2549,7 @@
                             text: `${partyName} का खाता हिसाब`
                         });
                     } else {
-                        // यदि ऐप में डायरेक्ट शेयर ब्लॉक हो, तो डायरेक्ट WhatsApp लिंक ट्रिगर करना
-                        const reader = new FileReader();
-                        reader.onloadend = function() {
-                            alert("📲 फोटो तैयार है! कृपया नीचे दिख रही फोटो पर 1 सेकंड दबाकर रखें (Long Press) और शेयर करें।");
-                        };
-                        reader.readAsDataURL(blob);
+                        alert("📲 फोटो तैयार है! कृपया नीचे दिख रही फोटो पर 1 सेकंड दबाकर रखें (Long Press) और शेयर करें।");
                     }
                 } catch (e) {
                     if (e.name !== 'AbortError') {
@@ -2566,7 +2557,8 @@
                     }
                 }
             };
-document.getElementById('modalDownloadBtn').onclick = async function() {
+
+            document.getElementById('modalDownloadBtn').onclick = async function() {
                 try {
                     const res = await fetch(dataUrl);
                     const blob = await res.blob();
@@ -2588,14 +2580,13 @@ document.getElementById('modalDownloadBtn').onclick = async function() {
                     a.click();
                     setTimeout(() => {
                         document.body.removeChild(a);
-                        alert("✅ ");
+                        alert("✅ फोटो डाउनलोड हो गई है!");
                     }, 500);
                 } catch (err) {
                     alert("❌ डाउनलोड में त्रुटि: " + err.message);
                 }
             };
         }
-
 
         function openEntryForCurrentParty() {
             if (!currentViewingPerson) return;
@@ -2734,7 +2725,6 @@ document.getElementById('modalDownloadBtn').onclick = async function() {
                 ...Object.values(personMasters).map(m => m.account).filter(Boolean)
             ])].sort();
 
-            // अगर पूरा नाम टाइप हो गया (जैसे Sahil या Anwar)
             const exactAgent = allAgents.find(a => a.toLowerCase() === q);
             if (exactAgent) {
                 if (aBox) aBox.style.display = 'none';
@@ -2776,7 +2766,6 @@ document.getElementById('modalDownloadBtn').onclick = async function() {
             const aBox = document.getElementById('agentSuggestions');
             if (aBox) aBox.style.display = 'none';
 
-            // मेन अकाउंट चुनते ही ऊपर पार्टी नेम की लिस्ट तुरंत खोलना
             const matchedParties = getPartiesForAgent(agName);
             renderPartyDropdown(matchedParties, agName);
         }
