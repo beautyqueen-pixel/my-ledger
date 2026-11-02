@@ -2532,7 +2532,6 @@
                     <button onclick="document.getElementById('customImgPreviewModal').style.display='none'" style="background:#ef4444; color:#fff; border:none; width:36px; height:36px; border-radius:50%; font-size:18px; font-weight:bold; cursor:pointer; margin-left:8px; flex-shrink:0;">✕</button>
                 </div>
                 <div style="font-size:11px; color:#38bdf8; margin-bottom:8px; text-align:center; font-weight:600;">
-                    💡 फोटो पर 1 सेकंड उंगली दबाकर रखें (Long Press) और सीधा गैलरी में सेव करें।
                 </div>
                 <div style="flex:1; width:100%; max-width:520px; overflow-y:auto; overflow-x:auto; -webkit-overflow-scrolling:touch; text-align:center; border:1px solid #334155; border-radius:10px; background:#000; padding:4px;">
                     <img src="${dataUrl}" style="max-width:100%; height:auto; display:block; margin:0 auto; user-select:auto; -webkit-user-select:auto;" alt="Report">
@@ -2589,7 +2588,7 @@ document.getElementById('modalDownloadBtn').onclick = async function() {
                     a.click();
                     setTimeout(() => {
                         document.body.removeChild(a);
-                        alert("✅ फोटो डाउनलोड हो गई है!\nनोट: यदि गैलरी में तुरंत न दिखे, तो अपने फोन के File Manager > Download फोल्डर में चेक करें या फोटो पर 1 सेकंड दबाकर (Long Press) सीधे सेव करें।");
+                        alert("✅ ");
                     }, 500);
                 } catch (err) {
                     alert("❌ डाउनलोड में त्रुटि: " + err.message);
