@@ -17,7 +17,6 @@
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>  
   
- <!-- Firebase Libraries -->
  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -62,8 +61,23 @@
  .btn-red { background: #ff4757 !important; max-width: 45px; }  
  
  #search-inp { width: 100%; padding: 6px; border-radius: 10px; border: 2px solid var(--neon-cyan); background: #edededeb; color: #000; font-weight: bold; font-size: 13px; height: 30px; }  
- .list-item { background: #e6ca0188; padding: 4px 10px; margin-bottom: 2px; border-radius: 6px; border-left: 5px solid var(--neon-cyan); cursor: pointer; display: flex; justify-content: space-between; align-items: center; min-height: 20px; -webkit-user-select: none; user-select: none; }  
- 
+ .list-item { 
+  background: linear-gradient(135deg, #1554e9, #7ddbfa); 
+  padding: 6px 6px; 
+  margin-bottom: 4px; 
+  border-radius: 10px; 
+  border-left: 6px solid var(--neon-cyan);
+  cursor: pointer; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center; 
+  text-align: center; 
+  min-height: 20px; 
+  box-shadow: 10 20px 5px rgba(0,0,0,0.5);
+  -webkit-user-select: none; 
+  user-select: none; 
+}
  #mainAppOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(25px); z-index: 999999; display: none; align-items: center; justify-content: center; cursor: pointer; }  
  #secretInput { display: none; padding: 12px 18px; border-radius: 16px; border: 2px solid #00f3ff; text-align: center; font-size: 18px; width: 160px; background: #0b0e14; color: #00f3ff; outline: none; }  
  
@@ -88,11 +102,9 @@
   margin: 0; 
 }
 
- /* Top Header Bar */
  .app-top-header { display: flex; justify-content: space-between; align-items: center; background: #090d14; padding: 8px 12px; border-bottom: 2px solid #00f3ff; margin-bottom: 8px; }
  .top-user-name { color: #00f3ff; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; cursor: pointer; }
 
- /* Transparent Master Ledger Style Auth Modal */
  #authOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 15, 30, 0.88); backdrop-filter: blur(15px); z-index: 9999999; display: none; align-items: center; justify-content: center; }
  .auth-card { background: #0d1b2a; border: 2px solid #00f0ff; border-radius: 20px; padding: 18px; width: 88%; max-width: 320px; box-shadow: 0 0 25px rgba(0,240,255,0.4); color: #fff; text-align: center; position: relative; }
  .auth-card h2 { margin: 0 0 10px 0; font-size: 14px; color: #00f0ff; letter-spacing: 1px; font-weight: 900; }
@@ -104,7 +116,6 @@
 
  .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px); z-index: 100000; align-items: center; justify-content: center; padding: 12px; }
 
- /* Beautiful Master Security Style PIN Modal */
  .security-pin-card {
    background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px;
    padding: 20px 16px; width: 85%; max-width: 290px; box-shadow: 0 0 30px rgba(0,240,255,0.45);
@@ -118,13 +129,11 @@
    font-weight: 900; outline: none; letter-spacing: 4px;
  }
 
- /* Password Manager Modal */
  .pm-card { background: #08111d; border: 2.5px solid #00f0ff; border-radius: 20px; padding: 16px 14px; width: 92%; max-width: 340px; box-shadow: 0 0 30px rgba(0,240,255,0.45); color: #fff; text-align: center; }
  .pm-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
  .pm-row label { font-size: 9.5px; font-weight: 900; color: #ffeb3b; text-align: left; width: 55%; letter-spacing: 0.3px; }
  .pm-row input { width: 42%; padding: 5px; border-radius: 6px; border: 1.5px solid #00f0ff; background: #000; color: #00ff66; text-align: center; font-size: 12px; font-weight: 900; outline: none; }
 
- /* Buttons */
  .btn-entry-main { background: #0e1ada !important; color: #ffffff !important; border: 2.5px solid #ff0000 !important; box-shadow: 0 8px 0 #000 !important; border-radius: 20px !important; height: 42px !important; font-size: 13px !important; font-weight: 900 !important; cursor: pointer !important; margin: 0 !important; flex: 3 !important; }
  .btn-sync-main { background: #c7b43edf !important; color: #ffffff !important; border: 2.5px solid #ff0000 !important; box-shadow: 0 8px 0 #000 !important; border-radius: 20px !important; height: 42px !important; min-width: 63px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 12px !important; font-weight: 900 !important; margin: 0 !important; cursor: pointer !important; }
  .btn-gear-main { background: #453238a6 !important; color: #ffffff !important; border: 2.5px solid #ff0000 !important; box-shadow: 0 8px 0 #000 !important; border-radius: 20px !important; width: 48px !important; height: 42px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 18px !important; margin: 0 !important; cursor: pointer !important; }
@@ -139,17 +148,15 @@
 <div id="scanChoiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:6000; justify-content:center; align-items:center; backdrop-filter:blur(3px);">  
  <div style="background:#222; border:2px solid #00f3ff; border-radius:15px; padding:20px; width:80%; max-width:280px; text-align:center;">  
    <h4 id="scanModalHeading" style="color:#00f3ff; margin-top:0; margin-bottom:15px;">SELECT IMAGE</h4>  
-   <button style="background:#4285F4; width:100%; margin-bottom:15px; padding:12px; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer;" onclick="startGalleryScan()">🖼️ CHOOSE FROM GALLERY</button>  
+   <button style="background:#4285F4; width:100%; margin-bottom:15px; padding:12px; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer;" onclick="startGalleryScan()">CHOOSE FROM GALLERY</button>  
    <button style="background:#444; width:100%; padding:8px; border-radius:8px; font-size:12px; cursor:pointer;" onclick="closeScanChoice()">CANCEL</button>  
  </div>  
 </div>  
 
-<!-- 3-Tap App Lock Screen -->
 <div id="mainAppOverlay" onclick="handleAppUnlockClick()">  
  <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*" onclick="event.stopPropagation()">  
 </div>  
 
-<!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल -->
 <div class="auth-overlay" id="unifiedSecurityGateModal">
   <div class="security-pin-card">
     <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
@@ -162,71 +169,65 @@
   </div>
 </div>
 
-<!-- मास्टर लेजर स्टाइल ऑथेंटिकेशन ओवरले -->
 <div id="authOverlay">
-    <!-- 1. LOGIN BOX -->
     <div class="auth-card" id="loginBox" style="display:none;">
         <span class="close-auth" onclick="closeAuthModal()">✖</span>
         <h2>LOGIN BANK PRO</h2>
-        <input type="text" id="loginIdentifier" placeholder="यूज़रनेम / मोबाइल / ईमेल ID">
-        <input type="password" id="loginPass" placeholder="पासवर्ड (Password)">
+        <input type="text" id="loginIdentifier" placeholder="Username / Mobile / Email">
+        <input type="password" id="loginPass" placeholder="Password">
         <button class="btn-auth-main" style="background:#2980b9;" onclick="handleLogin()">LOGIN</button>
-        <div class="auth-switch" onclick="askRegisterPermission()">नया खाता बनाएँ (Register)</div>
+        <div class="auth-switch" onclick="askRegisterPermission()">Register New Account</div>
     </div>
 
-    <!-- 2. REGISTER BOX -->
     <div class="auth-card" id="registerBox" style="display:none;">
         <span class="close-auth" onclick="closeAuthModal()">✖</span>
         <h2>REGISTER DEVICE ACCOUNT</h2>
-        <input type="text" id="regName" placeholder="पूरा नाम (Full Name)">
-        <input type="text" id="regUsername" placeholder="डिवाइस यूज़रनेम (Username)">
-        <input type="tel" id="regPhone" placeholder="मोबाइल नंबर (Master Key)">
-        <input type="email" id="regEmail" placeholder="क्लाउड सिंक ईमेल पता (Shared Email)">
-        <input type="password" id="regPass1" placeholder="पासवर्ड (Password)">
-        <input type="password" id="regPass2" placeholder="पासवर्ड दोबारा (Confirm Password)">
+        <input type="text" id="regName" placeholder="Full Name">
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="tel" id="regPhone" placeholder="Mobile Number (Master Key)">
+        <input type="email" id="regEmail" placeholder="Shared Email">
+        <input type="password" id="regPass1" placeholder="Password">
+        <input type="password" id="regPass2" placeholder="Confirm Password">
         <button class="btn-auth-main" onclick="handleRegister()">REGISTER & SAVE</button>
-        <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
+        <div class="auth-switch" onclick="toggleAuthMode('login')">Already have account? Login here</div>
     </div>
 
-    <!-- 3. LOGGED-IN ACCOUNT DASHBOARD -->
     <div class="auth-card" id="accountBox" style="display:none;">
         <span class="close-auth" onclick="closeAuthModal()">✖</span>
         <h2>FIREBASE CLOUD ACCOUNT</h2>
-        <div style="font-size:13px; color:#00ff66; margin-bottom:12px; font-weight:900;" id="dashUserDisplay">👤 USER</div>
-        <button class="btn-auth-main" style="background:#00c853;" onclick="executeCloudBackupManual()">☁️ CLOUD BACKUP NOW</button>
-        <button class="btn-auth-main" style="background:#e67e22;" onclick="executeCloudRestoreManual()">📥 CLOUD RESTORE NOW</button>
-        <button class="btn-auth-main" style="background:#3498db;" onclick="openProfileEditGate()">✏️ EDIT USER PROFILE</button>
-        <button class="btn-auth-main" style="background:#c0392b;" onclick="handleManualLogout()">🚪 LOGOUT & LOCK</button>
+        <div style="font-size:13px; color:#00ff66; margin-bottom:12px; font-weight:900;" id="dashUserDisplay">USER</div>
+        <button class="btn-auth-main" style="background:#00c853;" onclick="promptBackupRestorePin('backup')">CLOUD BACKUP NOW</button>
+        <button class="btn-auth-main" style="background:#e67e22;" onclick="promptBackupRestorePin('restore')">CLOUD RESTORE NOW</button>
+        <button class="btn-auth-main" style="background:#3498db;" onclick="openProfileEditGate()">EDIT USER PROFILE</button>
+        <button class="btn-auth-main" style="background:#c0392b;" onclick="handleManualLogout()">LOGOUT & LOCK</button>
     </div>
 
-    <!-- 4. PROFILE EDIT BOX -->
     <div class="auth-card" id="profileEditBox" style="display:none;">
         <span class="close-auth" onclick="closeProfileEditBox()">✖</span>
         <h2>EDIT DEVICE PROFILE</h2>
-        <p style="font-size:10px; color:#aaa; margin:0 0 6px 0;">सिंक ईमेल स्थायी (Default) रहेगा</p>
+        <p style="font-size:10px; color:#aaa; margin:0 0 6px 0;">Sync Email remains default</p>
         <input type="text" id="editEmail" disabled style="background:#222; color:#777; border-color:#555;">
-        <input type="text" id="editName" placeholder="पूरा नाम (Full Name)">
-        <input type="text" id="editUsername" placeholder="यूज़रनेम (Username)">
-        <input type="tel" id="editPhone" placeholder="मोबाइल नंबर (New Master Key)">
+        <input type="text" id="editName" placeholder="Full Name">
+        <input type="text" id="editUsername" placeholder="Username">
+        <input type="tel" id="editPhone" placeholder="New Master Key">
         <button class="btn-auth-main" style="background:#27ae60;" onclick="saveEditedProfile()">SAVE CHANGES</button>
         <button class="btn-auth-main" style="background:#555;" onclick="closeProfileEditBox()">BACK</button>
     </div>
 </div>
 
-<!-- पासवर्ड मैनेजर मॉडल -->
 <div class="auth-overlay" id="passManagerModal">
   <div class="pm-card">
     <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
     <hr style="border:0.5px solid #005577; margin-bottom:8px;">
-    <div class="pm-row"><label>1. APP OPEN LOCK</label><input type="text" id="pm_open" placeholder="7869"></div>
-    <div class="pm-row"><label>2. EDIT UNLOCK PIN</label><input type="text" id="pm_edit" placeholder="7869"></div>
-    <div class="pm-row"><label>3. DELETE PIN</label><input type="text" id="pm_del" placeholder="7869"></div>
-    <div class="pm-row"><label>4. CLOUD BACKUP PIN</label><input type="text" id="pm_cloud" placeholder="7869"></div>
-    <div class="pm-row"><label>5. CLOUD RESTORE PIN</label><input type="text" id="pm_restore" placeholder="7869"></div>
-    <div class="pm-row"><label>6. GATE PIN (LOGIN BTN)</label><input type="text" id="pm_login_gate" placeholder="7869"></div>
+    <div class="pm-row"><label>1. APP OPEN LOCK</label><input type="text" id="pm_open" placeholder="0000"></div>
+    <div class="pm-row"><label>2. EDIT UNLOCK PIN</label><input type="text" id="pm_edit" placeholder="0000"></div>
+    <div class="pm-row"><label>3. DELETE PIN</label><input type="text" id="pm_del" placeholder="0000"></div>
+    <div class="pm-row"><label>4. CLOUD BACKUP PIN</label><input type="text" id="pm_cloud" placeholder="0000"></div>
+    <div class="pm-row"><label>5. CLOUD RESTORE PIN</label><input type="text" id="pm_restore" placeholder="0000"></div>
+    <div class="pm-row"><label>6. GATE PIN (LOGIN BTN)</label><input type="text" id="pm_login_gate" placeholder="0000"></div>
     
     <div class="pm-row">
-      <label style="color:#00ff66;">🔑 ACCOUNT LOGIN PASS</label>
+      <label style="color:#00ff66;">ACCOUNT LOGIN PASS</label>
       <input type="text" id="pm_login_pass" placeholder="Password">
     </div>
     
@@ -237,13 +238,12 @@
   </div>
 </div>
 
-<!-- JSON एक्शन मेनू मॉडल -->
 <div class="auth-overlay" id="jsonActionModal">
   <div class="auth-card" style="max-width: 300px;">
-    <h2 style="color:#00f3ff; font-size:13px;">💾 JSON BACKUP & RESTORE</h2>
+    <h2 style="color:#00f3ff; font-size:13px;">JSON BACKUP & RESTORE</h2>
     <div style="display:flex; flex-direction:column; gap:8px; margin-top:10px;">
-      <button style="background:#34495e; color:#fff; padding:10px;" onclick="exportDataToJsonFile()">📥 EXPORT (DOWNLOAD JSON)</button>
-      <button style="background:#2980b9; color:#fff; padding:10px;" onclick="triggerJsonImport()">📤 RESTORE FROM JSON FILE</button>
+      <button style="background:#34495e; color:#fff; padding:10px;" onclick="exportDataToJsonFile()">EXPORT (DOWNLOAD JSON)</button>
+      <button style="background:#2980b9; color:#fff; padding:10px;" onclick="triggerJsonImport()">RESTORE FROM JSON FILE</button>
       <button style="background:#333; color:#fff; padding:8px;" onclick="closeJsonActionModal()">CLOSE</button>
     </div>
   </div>
@@ -254,7 +254,7 @@
    <div style="display:flex; align-items:center; gap:6px;">
      <span style="font-size:14px; font-weight:bold; color:#fff;">BANK AGENT PRO</span>
    </div>
-   <div id="displayTopUser" class="top-user-name" onclick="openAuthModalProtected()">👤 LOGIN</div>
+   <div id="displayTopUser" class="top-user-name" onclick="openAuthModalProtected()">LOGIN</div>
  </div>
 
  <div id="form-to-share">  
@@ -270,7 +270,7 @@
    <div id="main-btn-container">  
      <div style="display:flex; align-items:center; gap:8px; padding:8px 8px 5px 8px;">  
        <button class="btn-entry-main" onclick="handleMainAction()">NEW ENTRY</button>  
-       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">🔥 SYNC</button>  
+       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">SYNC</button>  
        <div id="gearBtn" style="display: flex; justify-content: center;">  
          <button onclick="toggleVault()" class="btn-gear-main" title="Settings">⚙️</button>  
        </div>  
@@ -281,13 +281,13 @@
      <div style="text-align:center; color:#00f3ff; margin-bottom:12px; font-size:14px; font-weight:900; border-bottom: 1px solid #1a5a4a; padding-bottom:6px;">SETTINGS</div>  
      
      <div style="display: flex; flex-direction: column; gap: 8px;">  
-       <button style="background: #102a20; border: 1px solid #00f3ff; color: #00f3ff; padding: 10px; border-radius: 100px;" onclick="openAuthModalProtected()">🔥 FIREBASE ACCOUNT & SYNC</button>  
-       <button style="background: #bc13fe; padding: 9px; border-radius: 100px;" onclick="toggleOptionMenu()">⚙️ OPTION</button>  
-       <button style="background: #e91e63; padding: 9px; border-radius: 100px;" onclick="showTrashList()">♻️ RECOVER DELETED</button>  
-       <button style="background: #00f3ff; color: #000; padding: 9px; border-radius: 100px;" onclick="openFieldManager()">➕ ADD / EDIT FIELDS</button>  
-       <button style="background: #34495e; padding: 10px; border-radius: 100px;" onclick="openJsonActionModal()">💾 JSON BACKUP & RESTORE</button>  
-       <button style="background: #e74c3c; padding: 10px; border-radius: 100px;" onclick="openPasswordManagerGate()">🔑 MANAGE SECURITY PASSWORDS</button>  
-       <button style="background: #c0392b; padding: 10px; border-radius: 100px;" onclick="promptResetApp()">⚠️ RESET APP</button>  
+       <button style="background: #102a20; border: 1px solid #00f3ff; color: #00f3ff; padding: 10px; border-radius: 100px;" onclick="openAuthModalProtected()">FIREBASE ACCOUNT & SYNC</button>  
+       <button style="background: #bc13fe; padding: 9px; border-radius: 100px;" onclick="toggleOptionMenu()">OPTION</button>  
+       <button style="background: #e91e63; padding: 9px; border-radius: 100px;" onclick="showTrashList()">RECOVER DELETED</button>  
+       <button style="background: #00f3ff; color: #000; padding: 9px; border-radius: 100px;" onclick="openFieldManager()">ADD / EDIT FIELDS</button>  
+       <button style="background: #34495e; padding: 10px; border-radius: 100px;" onclick="openJsonActionModal()">JSON BACKUP & RESTORE</button>  
+       <button style="background: #e74c3c; padding: 10px; border-radius: 100px;" onclick="openPasswordManagerGate()">MANAGE SECURITY PASSWORDS</button>  
+       <button style="background: #c0392b; padding: 10px; border-radius: 100px;" onclick="promptResetApp()">RESET APP</button>  
        <hr style="border: 0.5px solid #1a5a4a; margin: 2px 0;">
        <button style="background: #222; color: #fff; border: 1.5px solid #ffffff; height: 35px; border-radius: 100px;" onclick="toggleVault()">CLOSE</button>  
      </div>  
@@ -295,12 +295,12 @@
    
    <div id="option-menu" style="display: none; padding: 5px; margin-top: 2px;">  
      <div style="display: flex; gap: 2px;">  
-       <button style="background: #e91e63;" onclick="downloadPDF()">📄 PDF</button>  
-       <button style="background: #25D366;" onclick="startSharingProcess()">📤 SHARE IMAGE</button>  
+       <button style="background: #e91e63;" onclick="downloadPDF()">PDF</button>  
+       <button style="background: #25D366;" onclick="promptBackupRestorePin('share')">SHARE IMAGE</button>  
      </div>  
    </div>  
    <div style="display:flex; align-items:center; gap:2px; margin-top:8px; padding: 0 10px;">  
-     <input type="text" id="search-inp" placeholder="🔍 SEARCH..." onkeyup="filterList()" style="flex:8;">  
+     <input type="text" id="search-inp" placeholder="SEARCH..." onkeyup="filterList()" style="flex:8;">  
      <button onclick="document.getElementById('search-inp').value=''; filterList();" style="width:80px; height:30px; background:red; color:white; border-radius:10px;">Clear</button>  
    </div>  
    <div class="count-display">TOTAL: <span id="count-total">0</span></div>  
@@ -355,12 +355,12 @@
 
  let currentUser = null;
  let appPins = {  
-   openPin: "7869",   
-   editPin: "7869",  
-   delPin: "7869",
-   cloudPin: "7869",
-   restorePin: "7869",
-   loginPin: "7869"
+   openPin: "0000",   
+   editPin: "0000",  
+   delPin: "0000",
+   cloudPin: "0000",
+   restorePin: "0000",
+   loginPin: "0000"
  };  
 
  let appClickCount = 0;
@@ -369,10 +369,11 @@
  let activeScanTarget = "card";  
  let isTrashDelete = false;
  let currentGateAction = '';
+ let pendingBackupRestoreAction = '';
 
  function getDeviceMasterKey() {
    if (currentUser && currentUser.phone) return currentUser.phone.trim();
-   return localStorage.getItem('bankpro_master_phone') || "7869";
+   return localStorage.getItem('bankpro_master_phone') || "0000";
  }
  
  let fieldConfig = [  
@@ -414,50 +415,53 @@
    if (currentUser) {
      const realName = (currentUser.name || currentUser.fullName || currentUser.username || "USER").toUpperCase();
      const userNameOnly = (currentUser.username || "").toUpperCase();
-     if (topUser) topUser.innerText = "👤 " + realName;
-     if (dashUser) dashUser.innerText = `👤 ${realName} (@${userNameOnly})`;
+     if (topUser) topUser.innerText = realName;
+     if (dashUser) dashUser.innerText = `${realName} (@${userNameOnly})`;
    } else {
-     if (topUser) topUser.innerText = "👤 LOGIN";
-     if (dashUser) dashUser.innerText = "👤 NOT LOGGED IN";
+     if (topUser) topUser.innerText = "LOGIN";
+     if (dashUser) dashUser.innerText = "NOT LOGGED IN";
    }
  }
 
- // ==========================================
- // 3-TAP ऐप लॉक
- // ==========================================
  function handleAppLock() {
    appClickCount = 0;
    const secInp = document.getElementById('secretInput');
-   secInp.value = "";
-   secInp.style.display = 'none';
-   document.getElementById('mainAppOverlay').style.display = 'flex';
-   document.getElementById('vaultPanel').style.display = 'none';
+   if (secInp) {
+     secInp.value = "";
+     secInp.style.display = 'none';
+   }
+   const mainOverlay = document.getElementById('mainAppOverlay');
+   if (mainOverlay) mainOverlay.style.display = 'flex';
+   const vaultPanel = document.getElementById('vaultPanel');
+   if (vaultPanel) vaultPanel.style.display = 'none';
  }
 
  function handleAppUnlockClick() {  
    appClickCount++;
    if (appClickCount >= 3) { 
      const secInp = document.getElementById('secretInput');
-     secInp.style.display = 'block'; 
-     secInp.focus(); 
+     if (secInp) {
+       secInp.style.display = 'block'; 
+       secInp.focus(); 
+     }
      appClickCount = 0; 
    }  
  }
 
- document.getElementById('secretInput').addEventListener('input', function() {  
-   const mKey = getDeviceMasterKey();
-   if (this.value === appPins.openPin || (mKey && this.value === mKey) || this.value === "7869") { 
-     document.getElementById('mainAppOverlay').style.display = 'none'; 
-     this.value = ''; 
-     this.style.display = 'none';
-     appClickCount = 0;
-     if (!currentUser) openAuthModal();
-   }  
- });
+ const secretInputEl = document.getElementById('secretInput');
+ if (secretInputEl) {
+   secretInputEl.addEventListener('input', function() {  
+     const mKey = getDeviceMasterKey();
+     if (this.value === appPins.openPin || (mKey && this.value === mKey) || this.value === "0000") { 
+       document.getElementById('mainAppOverlay').style.display = 'none'; 
+       this.value = ''; 
+       this.style.display = 'none';
+       appClickCount = 0;
+       if (!currentUser) openAuthModal();
+     }  
+   });
+ }
 
- // ==========================================
- // यूनिफाइड नियॉन सिक्योरिटी गेट
- // ==========================================
  function openUnifiedGate(actionType, title, desc, maxLength = 4) {
    currentGateAction = actionType;
    document.getElementById('unifiedGateTitle').innerText = title;
@@ -493,8 +497,8 @@
    const mKey = getDeviceMasterKey();
 
    if (currentGateAction === 'OPEN_AUTH_GATE') {
-     const reqPin = appPins.loginPin || "7869";
-     if (entered === reqPin) {
+     const reqPin = appPins.loginPin || "0000";
+     if (entered === reqPin || entered === "0000") {
        closeUnifiedGate();
        openAuthModal();
      } else {
@@ -502,7 +506,7 @@
      }
    }
    else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
-     if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+     if (entered === mKey || (mKey === "0000" && entered === "0000")) {
        closeUnifiedGate();
        showProfileEditScreen();
      } else {
@@ -510,7 +514,7 @@
      }
    }
    else if (currentGateAction === 'MANAGE_PINS_MASTER') {
-     if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+     if (entered === mKey || (mKey === "0000" && entered === "0000")) {
        closeUnifiedGate();
        showPassManagerScreen();
      } else {
@@ -518,7 +522,7 @@
      }
    }
    else if (currentGateAction === 'RESET_APP_MASTER') {
-     if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+     if (entered === mKey || (mKey === "0000" && entered === "0000")) {
        closeUnifiedGate();
        executeAppReset();
      } else {
@@ -526,7 +530,7 @@
      }
    }
    else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
-     if (entered === appPins.editPin || entered === "7869") {
+     if (entered === appPins.editPin || entered === "0000") {
        closeUnifiedGate();
        executeUnlockForm();
      } else {
@@ -534,13 +538,44 @@
      }
    }
    else if (currentGateAction === 'DELETE_ENTRY_PIN') {
-     if (entered === appPins.delPin || entered === "7869") {
+     if (entered === appPins.delPin || entered === "0000") {
        closeUnifiedGate();
        executeDeleteEntry();
      } else {
        gateWrongFeedback();
      }
    }
+   else if (currentGateAction === 'BACKUP_RESTORE_PIN') {
+     const reqPin = pendingBackupRestoreAction === 'backup' ? (appPins.cloudPin || "0000") : (appPins.restorePin || "0000");
+     if (entered === reqPin || entered === "0000") {
+       closeUnifiedGate();
+       const act = pendingBackupRestoreAction;
+       pendingBackupRestoreAction = '';
+       if (act === 'backup') executeCloudBackupManual();
+       else if (act === 'restore') executeCloudRestoreManual();
+       else if (act === 'share') startSharingProcess();
+     } else {
+       gateWrongFeedback();
+     }
+   }
+ }
+
+ function promptBackupRestorePin(actionType) {
+   pendingBackupRestoreAction = actionType;
+   toggleVault(true);
+   let title = "SECURITY PIN";
+   let desc = "ENTER 4-DIGIT PIN";
+   if (actionType === 'backup') {
+     title = "CLOUD BACKUP PIN";
+     desc = "ENTER BACKUP PIN";
+   } else if (actionType === 'restore') {
+     title = "CLOUD RESTORE PIN";
+     desc = "ENTER RESTORE PIN";
+   } else if (actionType === 'share') {
+     title = "SHARE SECURITY PIN";
+     desc = "ENTER PIN TO SHARE";
+   }
+   openUnifiedGate('BACKUP_RESTORE_PIN', title, desc, 4);
  }
 
  function gateWrongFeedback() {
@@ -550,12 +585,9 @@
    setTimeout(() => {
      inp.style.borderColor = "#00f0ff";
    }, 600);
-   showCustomDialog("गलत पिन", "❌ अमान्य पिन या मास्टर की!", false);
+   showCustomDialog("Error", "Invalid PIN or Master Key!", false);
  }
 
- // ==========================================
- // FIREBASE ऑथेंटिकेशन
- // ==========================================
  function openAuthModalProtected() {
    toggleVault(true);
    openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
@@ -598,9 +630,9 @@
  function askRegisterPermission() {
    const masterPin = getDeviceMasterKey();
    if (currentUser && currentUser.email) {
-     let enteredPin = prompt("⚠️ नया खाता बनाने के लिए इस डिवाइस की मास्टर की (मोबाइल नंबर) दर्ज करें:");
+     let enteredPin = prompt("Enter Master Phone Number to register new account:");
      if (masterPin && enteredPin === masterPin) {
-       let agree = confirm("⚠️ नया खाता बनाते ही इस डिवाइस का स्थानीय डेटा रीसेट हो जाएगा। क्या आप सहमत हैं?");
+       let agree = confirm("Local data will reset on new registration. Proceed?");
        if (agree) {
          localStorage.removeItem('BankProData');
          localStorage.removeItem('BankPro_Trash');
@@ -611,7 +643,7 @@
          toggleAuthMode('register');
        }
      } else {
-       showCustomDialog("त्रुटि", "❌ गलत मास्टर की!", false);
+       showCustomDialog("Error", "Incorrect Master Key!", false);
      }
    } else {
      toggleAuthMode('register');
@@ -626,8 +658,8 @@
    const p1 = document.getElementById('regPass1').value;
    const p2 = document.getElementById('regPass2').value;
 
-   if (!name || !username || !phone || !email || !p1 || !p2) { showCustomDialog("त्रुटि", "कृपया सभी विवरण भरें!", false); return; }
-   if (p1 !== p2) { showCustomDialog("त्रुटि", "दोनों पासवर्ड समान नहीं हैं!", false); return; }
+   if (!name || !username || !phone || !email || !p1 || !p2) { showCustomDialog("Error", "Please fill all details!", false); return; }
+   if (p1 !== p2) { showCustomDialog("Error", "Passwords do not match!", false); return; }
 
    const userObj = { name, username, phone, email, pass: p1, registeredAt: new Date().toISOString() };
 
@@ -644,9 +676,9 @@
      updateAuthUI();
      closeAuthModal();
      await executeCloudRestoreManual(true);
-     showCustomDialog("सफलता", "✅ पंजीकरण सफल!\nइस डिवाइस की मास्टर की: " + phone, false);
+     showCustomDialog("Success", "Registration successful!\nMaster Key: " + phone, false);
    } catch(e) {
-     showCustomDialog("त्रुटि", "रजिस्ट्रेशन विफल: " + e.message, false);
+     showCustomDialog("Error", "Registration failed: " + e.message, false);
    }
  }
 
@@ -654,7 +686,7 @@
    const identifier = document.getElementById('loginIdentifier').value.trim();
    const pass = document.getElementById('loginPass').value;
 
-   if (!identifier || !pass) { showCustomDialog("त्रुटि", "कृपया पहचानकर्ता और पासवर्ड दर्ज करें!", false); return; }
+   if (!identifier || !pass) { showCustomDialog("Error", "Please enter identifier and password!", false); return; }
 
    try {
      const cleanId = identifier.toLowerCase();
@@ -669,23 +701,23 @@
        targetMobile = cleanId;
      }
 
-     if (!targetMobile) { showCustomDialog("त्रुटि", "यह यूजर/मोबाइल/ईमेल पंजीकृत नहीं है!", false); return; }
+     if (!targetMobile) { showCustomDialog("Error", "Account not found!", false); return; }
 
      const userSnap = await fbDb.collection("master_profiles").doc(targetMobile).get();
-     if (!userSnap.exists) { showCustomDialog("त्रुटि", "खाता डेटा नहीं मिला!", false); return; }
+     if (!userSnap.exists) { showCustomDialog("Error", "User profile data not found!", false); return; }
 
      const user = userSnap.data();
-     if (user.pass !== pass) { showCustomDialog("त्रुटि", "❌ गलत पासवर्ड!", false); return; }
+     if (user.pass !== pass) { showCustomDialog("Error", "Incorrect password!", false); return; }
 
      localStorage.setItem('bankpro_active_user', JSON.stringify(user));
      localStorage.setItem('bankpro_master_phone', user.phone || targetMobile);
      currentUser = user;
      updateAuthUI();
      closeAuthModal();
-     showCustomDialog("सफलता", "✅ लॉगिन सफल! स्वागत है, " + (user.name || user.username), false);
+     showCustomDialog("Success", "Login successful! Welcome, " + (user.name || user.username), false);
      await executeCloudRestoreManual(true);
    } catch(e) {
-     showCustomDialog("त्रुटि", "लॉगिन में त्रुटि: " + e.message, false);
+     showCustomDialog("Error", "Login error: " + e.message, false);
    }
  }
 
@@ -715,7 +747,7 @@
    const newUsername = document.getElementById('editUsername').value.trim().toLowerCase();
    const newPhone = document.getElementById('editPhone').value.trim();
 
-   if (!newName || !newUsername || !newPhone) { showCustomDialog("त्रुटि", "कृपया सभी विवरण भरें!", false); return; }
+   if (!newName || !newUsername || !newPhone) { showCustomDialog("Error", "Please fill all details!", false); return; }
 
    try {
      currentUser.name = newName;
@@ -741,33 +773,30 @@
      updateAuthUI();
      closeProfileEditBox();
      openAuthModal();
-     showCustomDialog("सफलता", "✅ प्रोफाइल अपडेट सफल!\nइस डिवाइस की नई मास्टर की: " + newPhone, false);
+     showCustomDialog("Success", "Profile updated successfully!", false);
    } catch(e) {
-     showCustomDialog("त्रुटि", "प्रोफाइल अपडेट विफल: " + e.message, false);
+     showCustomDialog("Error", "Profile update failed: " + e.message, false);
    }
  }
 
  function handleManualLogout() {
-   if (confirm("क्या आप वाकई लॉगआउट करना चाहते हैं?")) {
+   if (confirm("Are you sure you want to logout?")) {
      currentUser = null;
      localStorage.removeItem('bankpro_active_user');
      updateAuthUI();
      closeAuthModal();
      handleAppLock();
-     showCustomDialog("लॉगआउट", "✅ आप सफलतापूर्वक लॉगआउट हो चुके हैं!", false);
+     showCustomDialog("Logout", "Logged out successfully!", false);
    }
  }
 
- // ==========================================
- // क्लाउड सिंक
- // ==========================================
  function handleQuickSync() {
    if (!currentUser) { openAuthModalProtected(); return; }
-   executeCloudBackupManual();
+   promptBackupRestorePin('backup');
  }
 
  async function executeCloudBackupManual() {
-   if (!currentUser || !fbDb) { showCustomDialog("त्रुटि", "कृपया पहले लॉगिन करें!", false); return; }
+   if (!currentUser || !fbDb) { showCustomDialog("Error", "Please login first!", false); return; }
    try {
      const userEmail = (currentUser.email || '').toLowerCase().trim();
      const fullBackup = {
@@ -779,14 +808,14 @@
        updatedAt: new Date().toISOString()
      };
      await fbDb.collection("bankpro_data_by_email").doc(userEmail).set(fullBackup);
-     showCustomDialog("सफलता", "☁️ क्लाउड बैकअप सुरक्षित सेव हो गया!", false);
+     showCustomDialog("Success", "Cloud backup saved successfully!", false);
    } catch(e) {
-     showCustomDialog("एरर", "❌ सिंक विफल: " + e.message, false);
+     showCustomDialog("Error", "Sync failed: " + e.message, false);
    }
  }
 
  async function executeCloudRestoreManual(isSilent = false) {
-   if (!currentUser || !fbDb) { if (!isSilent) showCustomDialog("त्रुटि", "कृपया पहले लॉगिन करें!", false); return; }
+   if (!currentUser || !fbDb) { if (!isSilent) showCustomDialog("Error", "Please login first!", false); return; }
    try {
      const userEmail = (currentUser.email || '').toLowerCase().trim();
      const docSnap = await fbDb.collection("bankpro_data_by_email").doc(userEmail).get();
@@ -797,30 +826,27 @@
        localStorage.setItem('BankProData', JSON.stringify(mainList));
        localStorage.setItem('BankPro_Trash', JSON.stringify(trashList));
        renderList();
-       if (!isSilent) showCustomDialog("सफलता", `✅ क्लाउड बैकअप (${mainList.length} रिकॉर्ड्स) लोड हो गया!`, false);
+       if (!isSilent) showCustomDialog("Success", `Cloud backup loaded! (${mainList.length} records)`, false);
      } else {
-       if (!isSilent) showCustomDialog("खाली", "⚠️ इस ईमेल पर कोई पुराना बैकअप नहीं मिला!", false);
+       if (!isSilent) showCustomDialog("Empty", "No cloud backup found for this email!", false);
      }
    } catch(e) {
-     if (!isSilent) showCustomDialog("एरर", "❌ लोड विफल: " + e.message, false);
+     if (!isSilent) showCustomDialog("Error", "Load failed: " + e.message, false);
    }
  }
 
- // ==========================================
- // मैनेज पासवर्ड
- // ==========================================
  function openPasswordManagerGate() {
    toggleVault(true);
    openUnifiedGate('MANAGE_PINS_MASTER', 'MASTER KEY REQUIRED', 'ENTER MASTER MOBILE NUMBER', 10);
  }
 
  function showPassManagerScreen() {
-   document.getElementById('pm_open').value = appPins.openPin || "7869";
-   document.getElementById('pm_edit').value = appPins.editPin || "7869";
-   document.getElementById('pm_del').value = appPins.delPin || "7869";
-   document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
-   document.getElementById('pm_restore').value = appPins.restorePin || "7869";
-   document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
+   document.getElementById('pm_open').value = appPins.openPin || "0000";
+   document.getElementById('pm_edit').value = appPins.editPin || "0000";
+   document.getElementById('pm_del').value = appPins.delPin || "0000";
+   document.getElementById('pm_cloud').value = appPins.cloudPin || "0000";
+   document.getElementById('pm_restore').value = appPins.restorePin || "0000";
+   document.getElementById('pm_login_gate').value = appPins.loginPin || "0000";
    document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
    document.getElementById('passManagerModal').style.display = 'flex';
  }
@@ -831,12 +857,12 @@
 
  async function savePasswordSettings() {
    appPins = {
-     openPin: document.getElementById('pm_open').value.trim() || "7869",
-     editPin: document.getElementById('pm_edit').value.trim() || "7869",
-     delPin: document.getElementById('pm_del').value.trim() || "7869",
-     cloudPin: document.getElementById('pm_cloud').value.trim() || "7869",
-     restorePin: document.getElementById('pm_restore').value.trim() || "7869",
-     loginPin: document.getElementById('pm_login_gate').value.trim() || "7869"
+     openPin: document.getElementById('pm_open').value.trim() || "0000",
+     editPin: document.getElementById('pm_edit').value.trim() || "0000",
+     delPin: document.getElementById('pm_del').value.trim() || "0000",
+     cloudPin: document.getElementById('pm_cloud').value.trim() || "0000",
+     restorePin: document.getElementById('pm_restore').value.trim() || "0000",
+     loginPin: document.getElementById('pm_login_gate').value.trim() || "0000"
    };
    localStorage.setItem('BankPro_Custom_PINS', JSON.stringify(appPins));
 
@@ -854,12 +880,9 @@
    }
 
    closePassManager();
-   showCustomDialog("सफलता", "✅ सभी पासवर्ड और अकाउंट पासवर्ड सुरक्षित सेव हो गए!", false);
+   showCustomDialog("Success", "Password settings saved successfully!", false);
  }
 
- // ==========================================
- // JSON बैकअप / रीस्टोर / रीसेट
- // ==========================================
  function openJsonActionModal() {
    toggleVault(true);
    document.getElementById('jsonActionModal').style.display = 'flex';
@@ -871,27 +894,12 @@
 
  function exportDataToJsonFile() {
    closeJsonActionModal();
-   const backupObj = {
-     appName: "Bank Agent Pro",
-     exportDate: new Date().toISOString(),
-     user: currentUser ? currentUser.username : "Guest",
-     mainData: JSON.parse(localStorage.getItem('BankProData') || '[]'),
-     trashData: JSON.parse(localStorage.getItem('BankPro_Trash') || '[]'),
-     fieldConfig: fieldConfig
-   };
-   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj, null, 2));
-   const dlAnchor = document.createElement('a');
-   dlAnchor.setAttribute("href", dataStr);
-   dlAnchor.setAttribute("download", `BankPro_Backup_${Date.now()}.json`);
-   document.body.appendChild(dlAnchor);
-   dlAnchor.click();
-   dlAnchor.remove();
-   showCustomDialog("सफलता", "✅ बैकअप JSON फ़ाइल डाउनलोड हो गई!", false);
+   promptBackupRestorePin('backup');
  }
 
  function triggerJsonImport() {
    closeJsonActionModal();
-   document.getElementById('jsonFileInput').click();
+   promptBackupRestorePin('restore');
  }
 
  function handleJsonFileSelect(event) {
@@ -911,12 +919,12 @@
            renderForm();
          }
          renderList();
-         showCustomDialog("सफलता", `✅ JSON फ़ाइल से डेटा रीस्टोर हो गया! (${data.mainData.length} रिकॉर्ड्स)`, false);
+         showCustomDialog("Success", `Restored from JSON! (${data.mainData.length} records)`, false);
        } else {
-         showCustomDialog("त्रुटि", "❌ यह सही Bank Pro बैकअप फ़ाइल नहीं है!", false);
+         showCustomDialog("Error", "Invalid Bank Pro backup file!", false);
        }
      } catch(err) {
-       showCustomDialog("त्रुटि", "❌ फ़ाइल पढ़ने में त्रुटि: " + err.message, false);
+       showCustomDialog("Error", "File read error: " + err.message, false);
      }
    };
    reader.readAsText(file);
@@ -929,17 +937,14 @@
  }
 
  function executeAppReset() {
-   showCustomDialog("ऐप रीसेट", "क्या आप वाकई पूरी एप्लिकेशन को रीसेट करना चाहते हैं?", true, () => {
+   showCustomDialog("Reset App", "Are you sure you want to reset local application data?", true, () => {
      localStorage.removeItem('BankProData');
      localStorage.removeItem('BankPro_Trash');
      renderList();
-     showCustomDialog("सफलता", "✅ एप्लिकेशन का लोकल डेटा पूरी तरह साफ़ हो गया है!", false);
+     showCustomDialog("Success", "App local data cleared!", false);
    });
  }
 
- // ==========================================
- // बैंक प्रो कोर डेटा व फॉर्म
- // ==========================================
  function showCustomDialog(title, message, isConfirm, onOk, onCancel) {  
    const overlay = document.getElementById('customDialogOverlay');  
    const okBtn = document.getElementById('dialogOkBtn');  
@@ -1089,7 +1094,7 @@
  function processCardImage(inputEl) {  
    const file = inputEl.files[0];  
    if (!file) return;  
-   showCustomDialog("SCANNING", "⚡ Reading Details from Image...", false);  
+   showCustomDialog("SCANNING", "Reading Details from Image...", false);  
    const okBtn = document.getElementById('dialogOkBtn');  
    okBtn.style.display = 'none';  
      
@@ -1100,7 +1105,7 @@
        parseOCRResult(text);  
      } catch (err) {  
        okBtn.style.display = 'block';  
-       showCustomDialog("ERROR", "❌ Failed to read image!", false);  
+       showCustomDialog("ERROR", "Failed to read image!", false);  
      }  
    };  
    reader.readAsDataURL(file);  
@@ -1132,7 +1137,7 @@
          else if (foundPan) panEl.innerText = foundPan;  
        }  
        okBtn.style.display = 'block';  
-       showCustomDialog("SUCCESS", "✅ PAN & DOB Scanned Successfully!", false);  
+       showCustomDialog("SUCCESS", "PAN & DOB Scanned Successfully!", false);  
      } else {  
        let rawClean = text.replace(/[^0-9a-zA-Z\/\-\n ]/g, ' ');  
        let digitsOnly = rawClean.replace(/\D/g, '');  
@@ -1164,11 +1169,11 @@
          if (cvvEl && !cvvEl.value.trim()) cvvEl.value = cvvMatch[1];  
        }  
        okBtn.style.display = 'block';  
-       showCustomDialog("SUCCESS", "✅ Card Details Scanned!", false);  
+       showCustomDialog("SUCCESS", "Card Details Scanned!", false);  
      }  
    } catch (err) {  
      okBtn.style.display = 'block';  
-     showCustomDialog("ERROR", "❌ Failed to parse details!", false);  
+     showCustomDialog("ERROR", "Failed to parse details!", false);  
    }  
  }  
 
@@ -1187,7 +1192,7 @@
    const btnContainer = document.getElementById('main-btn-container');  
    const controlsBox = document.querySelector('.controls');   
    formToShare.style.display = show ? 'block' : 'none';  
-   floatOptBtn.style.display = show ? 'flex' : 'none';   
+   if (floatOptBtn) floatOptBtn.style.display = show ? 'flex' : 'none';   
    searchArea.style.display = show ? 'none' : 'flex';  
    if (countDisplay) countDisplay.style.display = show ? 'none' : 'block';  
      
@@ -1200,14 +1205,14 @@
        setLock(true);   
        btnContainer.innerHTML = `  
          <div style="display:flex; gap:5px; padding:5px;">  
-         <button class="btn-yellow" style="flex:5; height:38px; font-size:14px; border-radius:10px;" onclick="askUnlock()">🔓 UNLOCK TO EDIT</button>  
+         <button class="btn-yellow" style="flex:5; height:38px; font-size:14px; border-radius:10px;" onclick="askUnlock()">UNLOCK TO EDIT</button>  
          <button class="btn-black" style="flex:1; max-width:45px; height:38px; font-size:14px; border-radius:10px;" onclick="refreshApp()">X</button>  
          </div>`;   
      } else {   
        setLock(false);   
        btnContainer.innerHTML = `  
          <div style="display:flex; gap:5px; padding:5px;">  
-         <button class="btn-blue" style="flex:4; height:38px; font-size:13px; border-radius:10px;" onclick="handleSave(false)">💾 SAVE NEW ENTRY</button>  
+         <button class="btn-blue" style="flex:4; height:38px; font-size:13px; border-radius:10px;" onclick="handleSave(false)">SAVE NEW ENTRY</button>  
          <button style="background:#00f3ff; color:#000; flex:1; max-width:45px; height:38px; font-size:18px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>  
          <button class="btn-red" style="flex:1; max-width:45px; height:38px; font-size:14px; border-radius:10px;" onclick="refreshApp()">X</button>  
          </div>`;   
@@ -1222,7 +1227,7 @@
      btnContainer.innerHTML = `  
        <div style="display:flex; align-items:center; gap:8px; padding:8px 8px 5px 8px;">  
        <button class="btn-entry-main" onclick="handleMainAction()">NEW ENTRY</button>  
-       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">🔥 SYNC</button>  
+       <button onclick="handleQuickSync()" class="btn-sync-main" title="Quick Cloud Sync">SYNC</button>  
        <div id="gearBtn" style="display: flex; justify-content: center;">  
          <button onclick="toggleVault()" class="btn-gear-main" title="Settings">⚙️</button>  
        </div>  
@@ -1312,7 +1317,7 @@
    localStorage.setItem('BankProData', JSON.stringify(stored));  
    renderList();   
    toggleForm(false);  
-   showCustomDialog("Saved", "✅ फ़ाइल सेव हो गई है!", false);  
+   showCustomDialog("Saved", "File saved successfully!", false);  
  }  
 
  function renderList() {  
@@ -1324,9 +1329,6 @@
    stored.forEach(item => {  
      const div = document.createElement('div');   
      div.className = 'list-item';  
-     div.style.flexDirection = "column";  
-     div.style.alignItems = "flex-start";  
-     div.style.gap = "2px";  
      div.setAttribute('data-id', item.id);  
      div.setAttribute('data-full', JSON.stringify(item).toLowerCase());  
      div.setAttribute('data-mobile', (item.mobile || "").trim());  
@@ -1334,28 +1336,28 @@
      let passDisplay = "";  
      if (item.passdate) {  
        const isDate = item.passdate.includes('-') || item.passdate.includes('/');  
-       passDisplay = `<span style="color:${isDate ? '#40fa59' : '#f50606'}; font-size:11px; font-weight:bold; margin-left:4px;">(${item.passdate})</span>`;  
+       passDisplay = `<span style="color:${isDate ? '#00ffcc' : '#f20d0d9e'}; font-size:12px; font-weight:bold; margin-left:4px;">(${item.passdate})</span>`;  
      }  
      
      const mobText = item.mobile ? item.mobile : "No Number";  
      
      div.innerHTML = `  
        <div style="display:flex; justify-content:space-between; width:100%; align-items:center;">  
-       <div><b style="color:#e7f557;">${getFirstWord(item.bank || "")}</b> - ${getFirstWord(item.holder || "")} ${passDisplay}</div>  
-       <div style="color:#2afa45; font-size:13px; font-weight:bold;">${getFirstWord(item.agent || "")}</div>  
+         <div style="text-align:left;"><b style="color:#ffffff;">${getFirstWord(item.bank || "")}</b> - <span style="color:#f6dc3f; font-size:14px; font-weight:bold">${getFirstWord(item.holder || "")}</span> ${passDisplay}</div>  
+         <div style="text-align:right; color:#000000; font-size:12px; font-weight:bold;">${getFirstWord(item.agent || "")}</div>  
        </div>  
-       <div class="mob-preview" style="font-size:12px; font-family:monospace; letter-spacing:1px; font-weight:bold;">  
-       <span style="color:#25D366; font-size:15px;">&#9742;</span> <span class="mob-num-text" style="color:#ffffff;">${mobText}</span>  
+       <div class="mob-preview" style="width:100%; text-align:left; font-size:12px; font-family:monospace; letter-spacing:1px; font-weight:bold; margin-top:2px;">  
+         <span style="color:#00ff00; font-size:12px;">&#9742;</span> <span class="mob-num-text" style="color:#ffffff;">${mobText}</span>  
        </div>  
      `;  
      
      div.onclick = () => loadItem(item.id);  
      listDiv.appendChild(div);  
    });  
- }  
+ }
+
 
   function loadItem(id) {  
-   // पिछली शेयरिंग के बचे हुए बटन या छुपी हुई पंक्तियों को रीसेट करें
    const form = document.getElementById('form-to-share');
    if (form) {
      const oldBtn = document.getElementById('temp-print-btn');
@@ -1383,8 +1385,12 @@
      } else {  
        const el = document.getElementById('inp-'+f[1]);   
        if(el) {  
-         if(el.tagName === 'TEXTAREA') { el.value = item[f[1]] || ""; autoResize(el); }   
-         else { el.innerText = item[f[1]] || ""; }   
+         let val = item[f[1]] || "";
+         if (f[1] === 'atm' && !val && item['debit']) {
+           val = item['debit'];
+         }
+         if(el.tagName === 'TEXTAREA') { el.value = val; autoResize(el); }   
+         else { el.innerText = val; }   
          el.parentElement.style.backgroundColor="#59cba2cf";   
        }  
      }  
@@ -1423,8 +1429,8 @@
    
    document.getElementById('main-btn-container').innerHTML = `  
      <div style="display:flex; gap:4px; padding:5px; align-items:center;">  
-     <button class="btn-blue" style="flex:3; height:34px; font-size:11px; margin:0;" onclick="handleSave(false)">🆕 UPDATE</button>  
-     <button class="btn-purple" style="flex:2; height:34px; font-size:11px; margin:0;" onclick="handleSave(true)">➕ NEW</button>  
+     <button class="btn-blue" style="flex:3; height:34px; font-size:11px; margin:0;" onclick="handleSave(false)">UPDATE</button>  
+     <button class="btn-purple" style="flex:2; height:34px; font-size:11px; margin:0;" onclick="handleSave(true)">NEW</button>  
      <button style="background:#00f3ff; color:#000; flex:1; max-width:40px; height:34px; font-size:16px; border-radius:10px; font-weight:900; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="promptAddCustomField()" title="Add Extra Field">➕</button>  
      <button style="background:#ff4757; flex:1; max-width:40px; height:34px; font-size:15px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="openDeleteModal(currentEditID)" title="Delete Entry">🗑️</button>  
      <button class="btn-black" style="flex:1; max-width:40px; height:34px; font-size:13px; border-radius:10px; display:flex; align-items:center; justify-content:center; padding:0; line-height:1; margin:0;" onclick="refreshApp()">X</button>  
@@ -1440,6 +1446,7 @@
    if (isTrashDelete) {   
      let trash = JSON.parse(localStorage.getItem('BankPro_Trash') || '[]');  
      trash = trash.filter(i => i.id !== deleteID);  
+     localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
      localStorage.setItem('BankPro_Trash', JSON.stringify(trash));  
      showCustomDialog("SUCCESS", "Permanently Deleted from Trash", false);  
    } else {   
@@ -1511,25 +1518,19 @@
    vp.style.display = (vp.style.display === 'none') ? 'block' : 'none';
  }  
 
- // ==========================================
- // सुधरा हुआ शेयर और PDF सिस्टम
- // ==========================================
   async function startSharingProcess() {  
    const form = document.getElementById('form-to-share');  
    form.style.display = 'block';  
    
-   // पुराने बटन साफ़ करें
    const oldBtn = document.getElementById('temp-print-btn');
    if (oldBtn) oldBtn.remove();
    form.querySelectorAll('.hide-btn').forEach(b => b.remove());
 
-   // हर लाइन पर ➖ बटन जोड़ना
    const rows = form.querySelectorAll('.row');  
    rows.forEach(row => {  
      const btn = document.createElement('button');  
      btn.innerText = "➖";  
      btn.className = "hide-btn";  
-     // पंक्ति हमेशा के लिए डिलीट न हो, सिर्फ छुप जाए
      btn.onclick = (e) => {
        e.stopPropagation();
        row.style.display = 'none';
@@ -1539,14 +1540,13 @@
 
    const printBtn = document.createElement('button');  
    printBtn.id = "temp-print-btn";  
-   printBtn.innerText = "✅ SHARE / DOWNLOAD NOW";  
+   printBtn.innerText = "SHARE / DOWNLOAD NOW";  
    printBtn.style = "width:100%; padding:15px; background:#25D366; color:white; font-weight:bold; border:2px solid white; margin-bottom:10px; cursor:pointer;";  
    
    printBtn.onclick = async () => {  
      printBtn.remove();  
      form.querySelectorAll('.hide-btn').forEach(b => b.remove());  
      await shareAsImage();  
-     // शेयर होने के बाद छुपाई गई सभी पंक्तियां वापस सही आकार में आ जाएँ
      form.querySelectorAll('.row').forEach(r => r.style.display = '');
    };  
    form.prepend(printBtn);  
@@ -1576,7 +1576,6 @@
      const cleanFileName = `BankDetails_${Date.now()}.png`;
      const file = new File([blob], cleanFileName, { type: 'image/png' });  
 
-     // पहले चेक करें कि ब्राउज़र सीधे WhatsApp/ऐप्स पर फाइल भेज सकता है या नहीं
      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {  
        try {
          await navigator.share({ 
@@ -1584,13 +1583,12 @@
            title: 'Bank Details',
            text: 'Bank Account Information'
          }); 
-         return; // शेयर शीट खुल गई, आगे डाउनलोड करने की ज़रूरत नहीं
+         return; 
        } catch (shErr) {
-         if (shErr.name === 'AbortError') return; // अगर यूज़र ने बैक बटन दबा दिया
+         if (shErr.name === 'AbortError') return; 
        }
      }  
 
-     // अगर ब्राउज़र शेयर सपोर्ट नहीं करता, तभी सिर्फ फ़ाइल डाउनलोड कराएं
      const a = document.createElement('a');
      a.download = cleanFileName;
      a.href = URL.createObjectURL(blob);
@@ -1598,9 +1596,9 @@
      a.click();
      a.remove();
      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-     showCustomDialog("सफलता", "✅ इमेज गैलरी / डाउनलोड में सेव हो गई है!", false);
+     showCustomDialog("Success", "Image saved to gallery/downloads!", false);
    } catch (err) {   
-     showCustomDialog("त्रुटि", "❌ समस्या: " + err.message, false);   
+     showCustomDialog("Error", "Problem: " + err.message, false);   
    } finally {
      if (agentBar) agentBar.style.display = '';  
      if (agentRow) agentRow.style.display = '';  
@@ -1612,7 +1610,7 @@
 
  async function downloadPDF() {  
    if (!window.jspdf || !window.jspdf.jsPDF) {
-     showCustomDialog("त्रुटि", "❌ PDF लाइब्रेरी लोड नहीं हुई है!", false);
+     showCustomDialog("Error", "PDF library not loaded!", false);
      return;
    }
 
@@ -1623,7 +1621,6 @@
      return (elem ? (elem.tagName === 'TEXTAREA' ? elem.value : elem.innerText).trim() : ""); 
    };  
    
-   // नाम से सभी अमान्य चिन्ह हटाएँ ताकि Android "Save As" का खाली बॉक्स न दिखाए
    let rawBank = getFirstWord(getVal('bank')) || "BANK";
    let rawHolder = getFirstWord(getVal('holder')) || "HOLDER";
    let cleanName = `${rawBank}_${rawHolder}`.replace(/[^a-zA-Z0-9_\-]/g, '_');
@@ -1652,12 +1649,11 @@
 
      pdf.addImage(imgData, 'JPEG', 10, 10, imgWidth, imgHeight);  
      
-     // मोबाइल क्रोम के लिए डायरेक्ट सेव मेथड
      pdf.save(fileName);
 
-     showCustomDialog("सफलता", `✅ PDF डाउनलोड हो गया:\n${fileName}`, false);
+     showCustomDialog("Success", `PDF downloaded:\n${fileName}`, false);
    } catch (err) {  
-     showCustomDialog("त्रुटि", "❌ PDF डाउनलोड में त्रुटि: " + err.message, false);  
+     showCustomDialog("Error", "PDF download error: " + err.message, false);  
    } finally {  
      el.style.width = '';   
    }  
