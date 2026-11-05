@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Data Manager</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <!-- html2canvas Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --accent-hover: #0284c7;
+            --green-accent: #22c55e;
+            --red-accent: #ef4444;
+            --purple-accent: #a855f7;
+            --orange-accent: #f97316;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 12px; min-height: 100vh; display: flex; justify-content: center; align-items: flex-start; }
+        
+        .container { width: 100%; max-width: 950px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); position: relative; }
+        
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .app-title { font-size: 18px; font-weight: 700; color: var(--accent-color); letter-spacing: 0.5px; text-transform: uppercase; }
+        
+        /* Auth Screen */
+        .auth-container { max-width: 400px; margin: 40px auto; background: #0f172a; padding: 22px; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .auth-container h2 { text-align: center; color: var(--accent-color); margin-bottom: 18px; font-size: 19px; }
+        .auth-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+        .auth-group label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; }
+        .auth-group input { background: #1e293b; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 12px; color: #fff; font-size: 13px; outline: none; }
+        .auth-group input:focus { border-color: var(--accent-color); }
+        .auth-btn { width: 100%; padding: 11px; border: none; border-radius: 25px; font-weight: 600; font-size: 13px; cursor: pointer; margin-top: 8px; background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); color: #0f172a; }
+        .auth-toggle { text-align: center; margin-top: 14px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+        .auth-toggle span { color: var(--accent-color); font-weight: bold; text-decoration: underline; }
+
+        /* Actions Bar */
+        .actions-bar { 
+    display: flex; 
+    gap: 6px; 
+    margin-bottom: 12px; 
+    align-items: center; 
+    width: 100%;
+    box-sizing: border-box;
+}
+
+        .search-container { flex: 1; display: flex; align-items: center; gap: 8px; background: #0f172a; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .search-container input { flex: 1; background: transparent; border: none; color: #fff; font-size: 13px; outline: none; }
+        .search-counter { font-size: 11px; color: var(--accent-color); font-weight: 600; white-space: nowrap; }
+
+       .btn-top { 
+    padding: 8px 12px; 
+    border: none; 
+    border-radius: 10px; 
+    font-weight: 600; 
+    font-size: 12px; 
+    cursor: pointer; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    gap: 0px; 
+    white-space: nowrap;
+}
+.btn-del-multi { 
+    background: #ef4444; 
+    color: #fff; 
+    flex-shrink: 0;
+}
+        .btn-floating-add {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            color: #0f172a;
+            font-size: 30px;
+            font-weight: bold;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            z-index: 40;
+            transition: transform 0.2s ease;
+        }
+        .btn-floating-add:active { transform: scale(0.92); }
+
+        /* Fixed Sticky Header List Table */
+        .table-container { 
+            width: 100%; 
+            border: 1px solid var(--border-color); 
+            border-radius: 10px; 
+            background: #0f172a; 
+            overflow: auto; 
+            max-height: calc(100vh - 140px); 
+            position: relative;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0; 
+            font-size: 12px; 
+            white-space: nowrap; 
+        }
+        th { 
+            background: #1e293b !important; 
+            color: var(--accent-color); 
+            padding: 11px 10px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            font-size: 11px; 
+            border-bottom: 2px solid var(--accent-color); 
+            border-right: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        td { 
+            padding: 9px 12px; 
+            border-bottom: 1px solid var(--border-color); 
+            border-right: 1px solid var(--border-color);
+            color: var(--text-color); 
+            user-select: none; 
+            background: #0f172a;
+        }
+        tr:hover td { background: #162032; }
+        
+        .row-checkbox, #selectAllCheckbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent-color); }
+        .hidden { display: none !important; }
+
+        /* Modals */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 100; justify-content: center; align-items: center; padding: 12px; }
+        .modal-content { background: var(--card-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 14px; width: 100%; max-width: 520px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
+        .modal-content h3 { margin-bottom: 14px; font-size: 16px; color: var(--accent-color); }
+        .modal-btn { width: 100%; padding: 10px; margin: 5px 0; border: none; border-radius: 20px; font-weight: 600; cursor: pointer; font-size: 12px; }
+        .btn-edit { background: #f59e0b; color: #fff; }
+        .btn-delete { background: var(--red-accent); color: #fff; }
+        .btn-close { background: #475569; color: #fff; }
+
+        /* Form Modal Grid */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 15px; text-align: left; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        .form-group label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input { background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 9px 12px; color: #fff; font-size: 13px; outline: none; transition: all 0.3s ease; }
+        .form-group input:focus { border-color: var(--accent-color); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2); }
+        .form-group input[readonly] { background: #1a2332; color: var(--accent-color); font-weight: bold; cursor: not-allowed; }
+        
+        .date-input-wrapper { position: relative; display: flex; align-items: center; }
+        .date-input-wrapper input[type="text"] { width: 100%; padding-right: 36px; }
+        .date-picker-hidden { position: absolute; right: 6px; width: 26px; height: 26px; opacity: 0; cursor: pointer; z-index: 2; }
+        .date-icon { position: absolute; right: 10px; font-size: 15px; pointer-events: none; z-index: 1; }
+
+        .form-btn-group { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-save { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); color: #0f172a; }
+        .btn-save-new { background: linear-gradient(180deg, #10b981 0%, #059669 100%); color: #fff; }
+
+        .settings-btn-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+        .settings-btn-item { padding: 11px; border-radius: 12px; border: 1px solid var(--border-color); font-weight: 600; font-size: 13px; cursor: pointer; text-align: center; color: #fff; background: #0f172a; transition: 0.2s; }
+        .settings-btn-item:hover { border-color: var(--accent-color); background: #162032; }
+
+        .manage-fields-list { list-style: none; margin: 10px 0; text-align: left; max-height: 220px; overflow-y: auto; }
+        .manage-item { display: flex; gap: 6px; align-items: center; background: #0f172a; padding: 6px 8px; border-radius: 8px; margin-bottom: 6px; border: 1px solid var(--border-color); }
+        .manage-item input { flex: 1; min-width: 0; background: #1e293b; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 8px; color: #fff; outline: none; font-size: 12px; }
+        .reorder-btns { display: flex; gap: 3px; flex-shrink: 0; }
+        .reorder-btns button { padding: 4px 6px; font-size: 11px; background: #334155; color: #fff; border-radius: 5px; border: none; cursor: pointer; }
+        .btn-field-del { background: var(--red-accent) !important; color: #fff; padding: 4px 6px; border-radius: 5px; border: none; font-size: 11px; cursor: pointer; }
+        .add-new-box { display: flex; gap: 6px; margin-top: 10px; background: #0f172a; padding: 8px; border-radius: 8px; border: 1px dashed var(--accent-color); align-items: center; }
+        .add-new-box input { flex: 1; min-width: 0; background: #1e293b; border: 1px solid var(--border-color); border-radius: 6px; padding: 7px; color: #fff; font-size: 12px; outline: none; }
+        .btn-add-inline { background: var(--purple-accent); color: #fff; padding: 7px 12px; font-size: 12px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; }
+
+        #imagePreviewContainer { width: 100%; margin: 12px 0; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 6px; background: #0f172a; text-align: center; max-height: 220px; overflow: auto; }
+        #imagePreviewContainer img { max-width: 100%; height: auto; border-radius: 6px; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Auth Section -->
+    <div id="authSection" class="auth-container">
+        <div id="loginBox">
+            <h2>User Login</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="auth-group">
+                    <label>Registered Mobile Number</label>
+                    <input type="tel" id="loginMobile" placeholder="Enter Mobile Number" required>
+                </div>
+                <div class="auth-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter Password" required>
+                </div>
+                <button type="submit" class="auth-btn">Log In</button>
+            </form>
+            <div class="auth-toggle">
+                नया अकाउंट बनाएं? <span onclick="toggleAuthForm('register')">Register Now</span>
+            </div>
+        </div>
+
+        <div id="registerBox" class="hidden">
+            <h2>New Registration</h2>
+            <form onsubmit="handleRegister(event)">
+                <div class="auth-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="Enter Full Name" required>
+                </div>
+                <div class="auth-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" id="regMobile" placeholder="Enter Mobile Number" required>
+                </div>
+                <div class="auth-group">
+                    <label>Email Address</label>
+                    <input type="email" id="regEmail" placeholder="Enter Email" required>
+                </div>
+                <div class="auth-group">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="Create Password" required>
+                </div>
+                <div class="auth-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="regConfirmPassword" placeholder="Re-enter Password" required>
+                </div>
+                <button type="submit" class="auth-btn">Register</button>
+            </form>
+            <div class="auth-toggle">
+                पहले से खाता है? <span onclick="toggleAuthForm('login')">Log In</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Screen -->
+    <div id="mainDashboard" class="hidden">
+        <div class="top-bar">
+            <h2 class="app-title">Saved List</h2>
+            <button class="btn-top btn-settings" onclick="openSettingsModal()">⚙️ Settings</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="actions-bar">
+            <div class="search-container">
+                <span>🔍</span>
+               <input type="text" id="searchInput" placeholder="Search..." oninput="filterEntries()">
+                <span class="search-counter" id="searchCounter">Total: 0</span>
+            </div>
+           <button class="btn-top btn-del-multi" onclick="deleteSelectedEntries()">🗑️ (<span id="selectedCount">0</span>)</button>
+        </div>
+
+        <!-- Table with Sticky Header -->
+        <div class="table-container">
+            <table id="printableTable">
+                <thead>
+                    <tr id="tableHeaderRow"></tr>
+                </thead>
+                <tbody id="dataTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Floating (+) Button -->
+        <button class="btn-floating-add" onclick="openFormModal(false)" title="Add New Entry">+</button>
+    </div>
+</div>
+
+<!-- Form Modal -->
+<div id="formModal" class="modal">
+    <div class="modal-content">
+        <h3 id="formModalTitle">Data Entry</h3>
+        <form id="dataForm">
+            <input type="hidden" id="editIndex" value="-1">
+            <div class="form-grid" id="formGrid"></div>
+            
+            <div class="form-btn-group">
+    <button type="button" class="modal-btn btn-close" onclick="closeModal('formModal')">Cancel</button>
+    <button type="button" class="modal-btn btn-save-new hidden" id="saveNewBtn" onclick="saveAsNewEntry()">Save New</button>
+    <button type="submit" class="modal-btn btn-save" id="saveBtnText">Save</button>
+</div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Settings Master Modal -->
+<div id="settingsModal" class="modal">
+    <div class="modal-content">
+        <h3>⚙️ Settings</h3>
+        <div class="settings-btn-grid">
+            <div class="settings-btn-item" onclick="closeModal('settingsModal'); openBackupRestoreModal();">📦 Backup & Restore (Firebase)</div>
+            <div class="settings-btn-item" onclick="closeModal('settingsModal'); openFieldManagerModal();">🛠️ Manage Fields</div>
+            <div class="settings-btn-item" onclick="closeModal('settingsModal'); openImageFieldSelectorModal();">🖼️ Generate Image</div>
+            <div class="settings-btn-item" style="color: var(--red-accent);" onclick="handleLogout()">🔒 Logout</div>
+        </div>
+        <button class="modal-btn btn-close" onclick="closeModal('settingsModal')">Close</button>
+    </div>
+</div>
+
+<!-- Password Protected Backup & Restore (Only 2 Firebase Buttons) -->
+<div id="backupRestoreModal" class="modal">
+    <div class="modal-content">
+        <h3>📦 Firebase Backup & Restore</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;"></p>
+        
+        <input type="password" id="backupPasswordInput" placeholder="Enter Password" style="width: 100%; background: #0f172a; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; color: #fff; font-size: 13px; margin-bottom: 12px; outline: none; text-align: center;">
+
+        <button class="modal-btn" style="background: var(--orange-accent); color: #fff; margin-bottom: 8px;" onclick="verifyAndRunBackup()">📥 Backup to Firebase</button>
+        <button class="modal-btn" style="background: var(--green-accent); color: #0f172a; margin-bottom: 8px;" onclick="verifyAndRestoreFromFirebase()">☁️ Restore from Firebase</button>
+        <button class="modal-btn btn-close" onclick="closeModal('backupRestoreModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- Manage Fields Modal -->
+<div id="fieldManagerModal" class="modal">
+    <div class="modal-content">
+        <h3>Manage Fields</h3>
+        <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">Rename directly, use ⬆️/⬇️ to reorder, or 🗑️ to delete a field.</p>
+        <ul id="manageFieldsList" class="manage-fields-list"></ul>
+        <div class="add-new-box">
+            <input type="text" id="newFieldNameInput" placeholder="Enter new field name">
+            <button type="button" class="btn-add-inline" onclick="addNewFieldToList()">+ Add</button>
+        </div>
+        <button class="modal-btn btn-save" style="margin-top: 12px;" onclick="saveFieldManagerChanges()">Save & Apply</button>
+        <button class="modal-btn btn-close" onclick="closeModal('fieldManagerModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- Action Modal -->
+<div id="actionModal" class="modal">
+    <div class="modal-content">
+        <h3>Select Option</h3>
+        <button class="modal-btn btn-edit" onclick="editEntry()">Edit</button>
+        <button class="modal-btn btn-delete" onclick="deleteEntry()">Delete</button>
+        <button class="modal-btn btn-close" onclick="closeModal('actionModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- Image Field Selection Modal -->
+<div id="imageFieldModal" class="modal">
+    <div class="modal-content">
+        <h3>Select Fields for Image</h3>
+        <div id="imageFieldsContainer" style="text-align: left; max-height: 200px; overflow-y: auto; margin-bottom: 12px; padding: 6px; background: #0f172a; border-radius: 8px; border: 1px solid var(--border-color);"></div>
+        <button class="modal-btn" style="background: var(--green-accent); color: #0f172a;" onclick="generateCustomFieldImage()">Generate Image 🖼️</button>
+        <button class="modal-btn btn-close" onclick="closeModal('imageFieldModal')">Cancel</button>
+    </div>
+</div>
+
+<!-- Share Image Preview Modal -->
+<div id="shareModal" class="modal">
+    <div class="modal-content">
+        <h3>Generated List Image</h3>
+        <div id="imagePreviewContainer"></div>
+        <button class="modal-btn" style="background: var(--green-accent); color: #0f172a;" id="downloadImgBtn">Download Photo 📥</button>
+        <button class="modal-btn btn-close" onclick="closeModal('shareModal')">Close</button>
+    </div>
+</div>
+
+<script>
+    // ---------------- FIREBASE CONFIGURATION ----------------
+    const firebaseConfig = {
+      apiKey: "AIzaSyADc1c3pGh5sxIQ71WwKmSyVxX1kDIF0wU",
+      authDomain: "sim-master-20598.firebaseapp.com",
+      projectId: "sim-master-20598",
+      storageBucket: "sim-master-20598.firebasestorage.app",
+      messagingSenderId: "350278039693",
+      appId: "1:350278039693:web:579a504d6cb46c4a0ccac4"
+    };
+
+    let db = null;
+    let currentUser = null;
+    let idleTimer = null;
+    const IDLE_TIMEOUT_MS = 10 * 60 * 1000; // ठीक 10 मिनट (Auto-Logout)
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+    } catch(e) {
+        console.warn("Firebase Init Error:", e);
+    }
+
+    // ---------------- 10-MINUTE INACTIVITY TIMER ----------------
+    function resetIdleTimer() {
+        if (!currentUser) return;
+        localStorage.setItem('lastActivityTime', Date.now().toString());
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+            alert("⏰ 10 मिनट तक कोई गतिविधि न होने के कारण ऐप अपने आप सुरक्षित लॉगआउट हो गई है।");
+            handleLogout();
+        }, IDLE_TIMEOUT_MS);
+    }
+
+    ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+        document.addEventListener(evt, resetIdleTimer, true);
+    });
+
+    // ---------------- AUTHENTICATION ----------------
+    function toggleAuthForm(type) {
+        if (type === 'register') {
+            document.getElementById('loginBox').classList.add('hidden');
+            document.getElementById('registerBox').classList.remove('hidden');
+        } else {
+            document.getElementById('registerBox').classList.add('hidden');
+            document.getElementById('loginBox').classList.remove('hidden');
+        }
+    }
+
+    function handleRegister(e) {
+        e.preventDefault();
+        const name = document.getElementById('regName').value.trim();
+        const mobile = document.getElementById('regMobile').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const pass = document.getElementById('regPassword').value;
+        const confirmPass = document.getElementById('regConfirmPassword').value;
+
+        if (pass !== confirmPass) {
+            alert("⚠️ दोनों पासवर्ड मैच नहीं हो रहे हैं!");
+            return;
+        }
+
+        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || {};
+        const userData = { name, mobile, email, pass };
+
+        // Firebase में यूज़र प्रोफ़ाइल सेव करें
+        if (db) {
+            db.collection("users").doc(mobile).get().then(doc => {
+                if (doc.exists) {
+                    alert("⚠️ यह मोबाइल नंबर पहले से रजिस्टर्ड है! कृपया उसी नंबर से लॉगिन करें।");
+                } else {
+                    db.collection("users").doc(mobile).set({ profile: userData }, { merge: true }).then(() => {
+                        registeredUsers[mobile] = userData;
+                        localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                        alert("✅ रजिस्ट्रेशन सफल हुआ! कृपया लॉगिन करें।");
+                        toggleAuthForm('login');
+                    });
+                }
+            }).catch(err => {
+                registeredUsers[mobile] = userData;
+                localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers));
+                alert("✅ रजिस्ट्रेशन स्थानीय रूप से संपन्न हुआ! कृपया लॉगिन करें।");
+                toggleAuthForm('login');
+            });
+        }
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const mobile = document.getElementById('loginMobile').value.trim();
+        const pass = document.getElementById('loginPassword').value;
+
+        if (db) {
+            // क्लाउड डेटाबेस से यूज़र की पुष्टि करें
+            db.collection("users").doc(mobile).get().then(doc => {
+                if (doc.exists && doc.data().profile && doc.data().profile.pass === pass) {
+                    loginSuccess(doc.data().profile);
+                } else {
+                    // स्थानीय बैकअप जाँचें
+                    const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || {};
+                    const user = registeredUsers[mobile];
+                    if (user && user.pass === pass) {
+                        loginSuccess(user);
+                    } else {
+                        alert("❌ गलत मोबाइल नंबर या पासवर्ड! डेटा नहीं खुलेगा।");
+                    }
+                }
+            }).catch(() => {
+                const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers')) || {};
+                const user = registeredUsers[mobile];
+                if (user && user.pass === pass) {
+                    loginSuccess(user);
+                } else {
+                    alert("❌ गलत मोबाइल नंबर या पासवर्ड!");
+                }
+            });
+        }
+    }
+
+    function loginSuccess(user) {
+        currentUser = user;
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        localStorage.setItem('lastActivityTime', Date.now().toString());
+        startApp();
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('lastActivityTime');
+        clearTimeout(idleTimer);
+        currentUser = null;
+        closeModal('settingsModal');
+        closeModal('formModal');
+        closeModal('backupRestoreModal');
+        document.getElementById('mainDashboard').classList.add('hidden');
+        document.getElementById('authSection').classList.remove('hidden');
+    }
+
+    function checkLoginStatus() {
+        const savedUser = localStorage.getItem('loggedInUser');
+        const lastActivity = localStorage.getItem('lastActivityTime');
+
+        if (savedUser && lastActivity) {
+            const timeDiff = Date.now() - parseInt(lastActivity, 10);
+            if (timeDiff < IDLE_TIMEOUT_MS) {
+                currentUser = JSON.parse(savedUser);
+                startApp();
+                return;
+            } else {
+                handleLogout();
+                return;
+            }
+        }
+    }
+
+    function startApp() {
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('mainDashboard').classList.remove('hidden');
+        
+        resetIdleTimer();
+        renderForm();
+        renderTableHeader();
+        updateAutoSrNo();
+        displayEntries();
+    }
+
+    // ---------------- DATA STORAGE ----------------
+    const defaultFields = [
+        { id: 'srNo', label: 'Sir. N.' },
+        { id: 'dob', label: 'Date' },
+        { id: 'holderName', label: 'Holder Name' },
+        { id: 'mobile', label: 'Mobile Number' },
+        { id: 'company', label: 'Company' },
+        { id: 'simNo', label: 'SIM Number' },
+        { id: 'aadharLink', label: 'Aadhar Number' },
+        { id: 'agent', label: 'Agent' }
+    ];
+
+    let fieldOrder = JSON.parse(localStorage.getItem('savedFieldOrder')) || defaultFields;
+    let entries = JSON.parse(localStorage.getItem('savedEntries')) || [];
+    let filteredIndices = null; 
+    let selectedIndex = -1;
+    let pressTimer;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isTouchScrolling = false;
+
+    function saveEntriesLocally() {
+        localStorage.setItem('savedEntries', JSON.stringify(entries));
+    }
+
+    function formatDateToShort(dateString) {
+        if (!dateString) return '';
+        const parts = dateString.split('-');
+        if (parts.length !== 3) return dateString;
+        const fullYear = parts[0];
+        const shortYear = fullYear.slice(-2);
+        const monthIndex = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return `${day} ${shortMonths[monthIndex]} ${shortYear}`;
+    }
+
+    function sortAndReindexEntries() {
+        entries.sort((a, b) => {
+            const nameA = (a.holderName || '').toString().toLowerCase().trim();
+            const nameB = (b.holderName || '').toString().toLowerCase().trim();
+            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: 'base' });
+        });
+        entries.forEach((item, index) => { item.srNo = index + 1; });
+    }
+
+    function saveFieldOrderToStorage() {
+        localStorage.setItem('savedFieldOrder', JSON.stringify(fieldOrder));
+    }
+
+    function getFormFieldsOrder() {
+        const orderPriority = ['srno', 'dob', 'aadharlink', 'holdername', 'mobile', 'company', 'simno', 'agent'];
+        let ordered = [];
+        let remaining = [...fieldOrder];
+
+        orderPriority.forEach(prefId => {
+            const idx = remaining.findIndex(f => {
+                const id = f.id.toLowerCase();
+                const lbl = f.label.toLowerCase();
+                if (prefId === 'srno') return id === 'srno' || lbl.includes('sir. n') || lbl.includes('sr.');
+                if (prefId === 'dob') return id === 'dob' || lbl.includes('date');
+                if (prefId === 'aadharlink') return id === 'aadharlink' || lbl.includes('aadhar');
+                if (prefId === 'holdername') return id === 'holdername' || lbl.includes('holder');
+                if (prefId === 'mobile') return id === 'mobile' || lbl.includes('mobile');
+                if (prefId === 'company') return id === 'company' || lbl.includes('company');
+                if (prefId === 'simno') return id === 'simno' || lbl.includes('sim');
+                if (prefId === 'agent') return id === 'agent' || lbl.includes('agent');
+                return false;
+            });
+            if (idx !== -1) {
+                ordered.push(remaining[idx]);
+                remaining.splice(idx, 1);
+            }
+        });
+        return ordered.concat(remaining);
+    }
+
+    function renderForm() {
+        const formGrid = document.getElementById('formGrid');
+        formGrid.innerHTML = '';
+        const displayFields = getFormFieldsOrder();
+
+        displayFields.forEach(field => {
+            const div = document.createElement('div');
+            div.className = 'form-group';
+            
+            const isReadonly = field.id === 'srNo' ? 'readonly' : '';
+            const lowerLabel = field.label.toLowerCase();
+            const lowerId = field.id.toLowerCase();
+            const isDateField = (lowerId === 'dob' || lowerLabel.includes('date'));
+            const isMobileField = (lowerId === 'mobile' || lowerLabel.includes('mobile'));
+
+            if (isDateField) {
+                div.innerHTML = `
+                    <label for="${field.id}">${field.label}</label>
+                    <div class="date-input-wrapper">
+                        <input type="text" id="${field.id}" placeholder="">
+                        <input type="date" id="${field.id}_picker" class="date-picker-hidden">
+                        <span class="date-icon">📅</span>
+                    </div>
+                `;
+            } else {
+                let inputType = isMobileField ? 'tel' : 'text';
+                div.innerHTML = `
+                    <label for="${field.id}">${field.label}</label>
+                    <input type="${inputType}" id="${field.id}" ${isReadonly}>
+                `;
+            }
+            formGrid.appendChild(div);
+
+            if (isDateField) {
+                const picker = document.getElementById(`${field.id}_picker`);
+                const textInput = document.getElementById(field.id);
+                picker.addEventListener('change', function() {
+                    if (this.value) {
+                        textInput.value = formatDateToShort(this.value);
+                    }
+                });
+            }
+        });
+
+        setupEnterNavigation(displayFields);
+
+        const aadharEl = document.getElementById('aadharLink');
+        const holderEl = document.getElementById('holderName');
+        if (aadharEl) aadharEl.addEventListener('input', () => handleAutoMatch('aadharLink'));
+        if (holderEl) holderEl.addEventListener('input', () => handleAutoMatch('holderName'));
+    }
+
+    function setupEnterNavigation(displayFields) {
+        const editableFields = displayFields.filter(f => f.id !== 'srNo');
+        
+        editableFields.forEach((field, index) => {
+            const el = document.getElementById(field.id);
+            if (!el) return;
+
+            el.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (index < editableFields.length - 1) {
+                        const nextField = editableFields[index + 1];
+                        const nextEl = document.getElementById(nextField.id);
+                        if (nextEl) nextEl.focus();
+                    } else {
+                        triggerFormSubmit();
+                    }
+                }
+            });
+        });
+    }
+
+    function handleAutoMatch(triggerType) {
+        if (document.getElementById('editIndex').value !== "-1") return;
+        const aadharInput = document.getElementById('aadharLink');
+        const holderInput = document.getElementById('holderName');
+        const agentInput = document.getElementById('agent');
+
+        let val = '';
+        if (triggerType === 'aadharLink' && aadharInput) val = aadharInput.value.trim().toLowerCase();
+        else if (triggerType === 'holderName' && holderInput) val = holderInput.value.trim().toLowerCase();
+
+        if (!val) return;
+
+        const matched = entries.slice().reverse().find(e => {
+            if (triggerType === 'aadharLink') return (e.aadharLink || '').toString().trim().toLowerCase() === val;
+            return (e.holderName || '').toString().trim().toLowerCase() === val;
+        });
+
+        if (matched) {
+            if (agentInput && matched.agent) agentInput.value = matched.agent;
+            if (triggerType === 'aadharLink' && holderInput && matched.holderName) holderInput.value = matched.holderName;
+            else if (triggerType === 'holderName' && aadharInput && matched.aadharLink) aadharInput.value = matched.aadharLink;
+        }
+    }
+
+    function renderTableHeader() {
+        const headerRow = document.getElementById('tableHeaderRow');
+        headerRow.innerHTML = '';
+        
+        const thCheck = document.createElement('th');
+        thCheck.style.width = '35px';
+        thCheck.innerHTML = `<input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)" title="Select All">`;
+        headerRow.appendChild(thCheck);
+
+        fieldOrder.forEach(field => {
+            const th = document.createElement('th');
+            th.innerText = field.label;
+            headerRow.appendChild(th);
+        });
+    }
+
+    function toggleSelectAll(masterCb) {
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(cb => { cb.checked = masterCb.checked; });
+        updateSelectedCount();
+    }
+
+    function updateSelectedCount() {
+        const checkedCount = document.querySelectorAll('.row-checkbox:checked').length;
+        const total = document.querySelectorAll('.row-checkbox').length;
+        document.getElementById('selectedCount').innerText = checkedCount;
+
+        const masterCb = document.getElementById('selectAllCheckbox');
+        if (masterCb) masterCb.checked = total > 0 && checkedCount === total;
+    }
+
+    function deleteSelectedEntries() {
+        const checkedBoxes = Array.from(document.querySelectorAll('.row-checkbox:checked'));
+        if (checkedBoxes.length === 0) {
+            alert("कृपया हटाने के लिए लिस्ट से कम से कम एक एंट्री चुनें।");
+            return;
+        }
+
+        if (confirm(`क्या आप चुनी हुई ${checkedBoxes.length} एंट्रीज को हटाना चाहते हैं?\n(नोट: आपका Firebase बैकअप सुरक्षित रहेगा)`)) {
+            const indicesToDelete = checkedBoxes
+                .map(cb => parseInt(cb.getAttribute('data-index'), 10))
+                .sort((a, b) => b - a);
+
+            indicesToDelete.forEach(idx => { entries.splice(idx, 1); });
+
+            sortAndReindexEntries();
+            saveEntriesLocally();
+            filterEntries();
+            updateAutoSrNo();
+        }
+    }
+
+    function openFormModal(isEdit = false) {
+        const saveNewBtn = document.getElementById('saveNewBtn');
+        document.getElementById('formModalTitle').innerText = isEdit ? "Edit Entry" : "Add New Entry";
+        
+        if (!isEdit) {
+            document.getElementById('dataForm').reset();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('saveBtnText').innerText = "Save";
+            if (saveNewBtn) saveNewBtn.classList.add('hidden');
+            updateAutoSrNo();
+        } else {
+            if (saveNewBtn) saveNewBtn.classList.remove('hidden');
+            document.getElementById('saveBtnText').innerText = "Update";
+        }
+
+        document.getElementById('formModal').style.display = 'flex';
+        focusDateField();
+    }
+
+    function focusDateField() {
+        setTimeout(() => {
+            const dateField = document.getElementById('dob');
+            if (dateField) {
+                dateField.focus();
+                dateField.select();
+            }
+        }, 80);
+    }
+
+    function triggerFormSubmit() {
+        const form = document.getElementById('dataForm');
+        if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+    }
+
+    function isFormValid(entry) {
+        const importantFields = ['dob', 'holderName', 'mobile', 'aadharLink'];
+        let hasData = false;
+        importantFields.forEach(fId => {
+            if (entry[fId] && entry[fId].toString().trim() !== '') hasData = true;
+        });
+        return hasData;
+    }
+
+    document.getElementById('dataForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const editIndex = document.getElementById('editIndex').value;
+        const entry = {};
+
+        fieldOrder.forEach(field => {
+            const el = document.getElementById(field.id);
+            entry[field.id] = el ? el.value.trim() : '';
+        });
+
+        if (!isFormValid(entry)) {
+            alert("⚠️ खाली फ़ॉर्म सेव नहीं किया जा सकता!");
+            focusDateField();
+            return;
+        }
+
+        if (editIndex === "-1") entries.push(entry);
+        else entries[editIndex] = entry;
+
+        sortAndReindexEntries();
+        saveEntriesLocally();
+        filterEntries();
+        closeModal('formModal');
+    });
+
+    function saveAsNewEntry() {
+        const entry = {};
+        fieldOrder.forEach(field => {
+            const el = document.getElementById(field.id);
+            entry[field.id] = el ? el.value.trim() : '';
+        });
+
+        if (!isFormValid(entry)) {
+            alert("⚠️ खाली फ़ॉर्म सेव नहीं किया जा सकता!");
+            return;
+        }
+
+        entries.push(entry);
+        sortAndReindexEntries();
+        saveEntriesLocally();
+        filterEntries();
+        closeModal('formModal');
+    }
+
+    function editEntry() {
+        if (selectedIndex === -1 || !entries[selectedIndex]) return;
+        const item = entries[selectedIndex];
+        
+        openFormModal(true);
+        document.getElementById('editIndex').value = selectedIndex;
+        
+        fieldOrder.forEach(field => {
+            const inputEl = document.getElementById(field.id);
+            if (inputEl) inputEl.value = item[field.id] || '';
+        });
+
+        closeModal('actionModal');
+    }
+
+    function deleteEntry() {
+        if (confirm("क्या आप इस एंट्री को हटाना चाहते हैं?\n(नोट: आपका Firebase बैकअप सुरक्षित रहेगा)")) {
+            entries.splice(selectedIndex, 1);
+            sortAndReindexEntries();
+            saveEntriesLocally();
+            filterEntries();
+            updateAutoSrNo();
+        }
+        closeModal('actionModal');
+    }
+
+    // ---------------- SETTINGS & MANUAL FIREBASE BACKUP ----------------
+    function openSettingsModal() {
+        document.getElementById('settingsModal').style.display = 'flex';
+    }
+
+    function openBackupRestoreModal() {
+        document.getElementById('backupPasswordInput').value = '';
+        document.getElementById('backupRestoreModal').style.display = 'flex';
+    }
+
+    // केवल यही बटन दबाने पर Firebase क्लाउड में बैकअप सुरक्षित होगा
+    function verifyAndRunBackup() {
+        const pass = document.getElementById('backupPasswordInput').value;
+        if (pass === "7869") {
+            closeModal('backupRestoreModal');
+
+            if (db && currentUser) {
+                db.collection("users").doc(currentUser.mobile).set({
+                    entries: entries,
+                    fieldOrder: fieldOrder,
+                    backupDate: new Date()
+                }, { merge: true }).then(() => {
+                    alert("☁️ डेटा सफलतापूर्वक Firebase बैकअप में सुरक्षित हो गया!");
+                }).catch(err => {
+                    alert("⚠️ Firebase पर बैकअप में समस्या आई: " + err.message);
+                });
+            } else {
+                alert("⚠️ Firebase कनेक्शन उपलब्ध नहीं है!");
+            }
+        } else {
+            alert("❌ गलत पासवर्ड!");
+        }
+    }
+
+    // Firebase से बैकअप लोड करना
+    function verifyAndRestoreFromFirebase() {
+        const pass = document.getElementById('backupPasswordInput').value;
+        if (pass === "7869") {
+            closeModal('backupRestoreModal');
+            if (db && currentUser) {
+                db.collection("users").doc(currentUser.mobile).get().then(doc => {
+                    if (doc.exists && doc.data().entries) {
+                        entries = doc.data().entries;
+                        if (doc.data().fieldOrder) fieldOrder = doc.data().fieldOrder;
+                        sortAndReindexEntries();
+                        saveEntriesLocally();
+                        saveFieldOrderToStorage();
+                        renderForm();
+                        renderTableHeader();
+                        updateAutoSrNo();
+                        filterEntries();
+                        alert("✅ Firebase क्लाउड से आपका बैकअप सफलतापूर्वक लोड हो गया!");
+                    } else {
+                        alert("⚠️ Firebase पर कोई सुरक्षित बैकअप नहीं मिला!");
+                    }
+                }).catch(err => {
+                    alert("❌ बैकअप लोड करने में त्रुटि: " + err.message);
+                });
+            }
+        } else {
+            alert("❌ गलत पासवर्ड!");
+        }
+    }
+
+    // ---------------- FIELD MANAGER ----------------
+    function openFieldManagerModal() {
+        renderFieldManagerList();
+        document.getElementById('newFieldNameInput').value = '';
+        document.getElementById('fieldManagerModal').style.display = 'flex';
+    }
+
+    function renderFieldManagerList() {
+        const list = document.getElementById('manageFieldsList');
+        list.innerHTML = '';
+
+        fieldOrder.forEach((field, idx) => {
+            const li = document.createElement('li');
+            li.className = 'manage-item';
+            const isSrNo = field.id === 'srNo';
+
+            li.innerHTML = `
+                <span style="font-size: 11px; font-weight: bold; width: 22px; color: var(--accent-color);">#${idx + 1}</span>
+                <input type="text" value="${field.label}" id="field_label_input_${idx}" ${isSrNo ? 'readonly style="background:#1a2332; cursor:not-allowed;"' : ''}>
+                <div class="reorder-btns">
+                    ${idx > 0 ? `<button type="button" onclick="moveFieldItem(${idx}, -1)">⬆️</button>` : ''}
+                    ${idx < fieldOrder.length - 1 ? `<button type="button" onclick="moveFieldItem(${idx}, 1)">⬇️</button>` : ''}
+                    ${!isSrNo ? `<button type="button" class="btn-field-del" onclick="deleteFieldItem(${idx})">🗑️</button>` : ''}
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function moveFieldItem(index, direction) {
+        syncInputLabelsToArray();
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= fieldOrder.length) return;
+
+        const temp = fieldOrder[index];
+        fieldOrder[index] = fieldOrder[targetIndex];
+        fieldOrder[targetIndex] = temp;
+        renderFieldManagerList();
+    }
+
+    function deleteFieldItem(index) {
+        if (fieldOrder[index].id === 'srNo') return;
+        if (confirm(`क्या आप '${fieldOrder[index].label}' फ़ील्ड हटाना चाहते हैं?`)) {
+            syncInputLabelsToArray();
+            fieldOrder.splice(index, 1);
+            renderFieldManagerList();
+        }
+    }
+
+    function syncInputLabelsToArray() {
+        fieldOrder.forEach((field, idx) => {
+            const inputEl = document.getElementById(`field_label_input_${idx}`);
+            if (inputEl) {
+                const updatedVal = inputEl.value.trim();
+                if (updatedVal) field.label = updatedVal;
+            }
+        });
+    }
+
+    function addNewFieldToList() {
+        syncInputLabelsToArray();
+        const newNameInput = document.getElementById('newFieldNameInput');
+        const name = newNameInput.value.trim();
+        if (!name) {
+            alert("कृपया फ़ील्ड का नाम दर्ज करें!");
+            return;
+        }
+
+        const newId = 'custom_' + Date.now();
+        fieldOrder.push({ id: newId, label: name });
+        newNameInput.value = '';
+        renderFieldManagerList();
+    }
+
+    function saveFieldManagerChanges() {
+        syncInputLabelsToArray();
+        saveFieldOrderToStorage();
+        closeModal('fieldManagerModal');
+        renderForm();
+        renderTableHeader();
+        updateAutoSrNo();
+        displayEntries();
+    }
+
+    function updateAutoSrNo() {
+        const srEl = document.getElementById('srNo');
+        if (srEl && document.getElementById('editIndex').value === "-1") {
+            srEl.value = entries.length + 1;
+        }
+    }
+
+    // ---------------- SEARCH & DISPLAY ----------------
+    function filterEntries() {
+        const searchInput = document.getElementById('searchInput');
+        const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+        if (!query) {
+            filteredIndices = null;
+        } else {
+            filteredIndices = [];
+            entries.forEach((item, index) => {
+                const holder = (item.holderName || '').toLowerCase();
+                const aadhar = (item.aadharLink || '').toLowerCase();
+                const agent = (item.agent || '').toLowerCase();
+                const mobile = (item.mobile || '').toLowerCase();
+
+                if (holder.includes(query) || aadhar.includes(query) || agent.includes(query) || mobile.includes(query)) {
+                    filteredIndices.push(index);
+                }
+            });
+        }
+        displayEntries();
+    }
+
+    function displayEntries() {
+        const tableBody = document.getElementById('dataTable');
+        tableBody.innerHTML = '';
+        const masterCb = document.getElementById('selectAllCheckbox');
+        if (masterCb) masterCb.checked = false;
+
+        const indicesToDisplay = filteredIndices !== null ? filteredIndices : entries.map((_, i) => i);
+        const counterEl = document.getElementById('searchCounter');
+        if (counterEl) {
+            counterEl.innerText = filteredIndices !== null ? `Found: ${indicesToDisplay.length}` : `Total: ${entries.length}`;
+        }
+
+        if (indicesToDisplay.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="${fieldOrder.length + 1}" style="text-align: center; color: var(--text-muted); padding: 20px;">कोई डेटा मौजूद नहीं है</td></tr>`;
+            updateSelectedCount();
+            return;
+        }
+
+        indicesToDisplay.forEach((entryIdx) => {
+            const item = entries[entryIdx];
+            const row = document.createElement('tr');
+            let rowHTML = `<td style="text-align:center;" onclick="event.stopPropagation();"><input type="checkbox" class="row-checkbox" data-index="${entryIdx}" onchange="updateSelectedCount()"></td>`;
+            
+            fieldOrder.forEach(field => {
+                const val = item[field.id] !== undefined ? item[field.id] : '';
+                rowHTML += field.id === 'srNo' ? `<td><b>${val || (entryIdx + 1)}</b></td>` : `<td>${val}</td>`;
+            });
+
+            row.innerHTML = rowHTML;
+
+            row.addEventListener('touchstart', (e) => {
+                isTouchScrolling = false;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                pressTimer = setTimeout(() => { if (!isTouchScrolling) openActionModal(entryIdx); }, 550);
+            }, { passive: true });
+
+            row.addEventListener('touchmove', (e) => {
+                const moveX = Math.abs(e.touches[0].clientX - touchStartX);
+                const moveY = Math.abs(e.touches[0].clientY - touchStartY);
+                if (moveX > 10 || moveY > 10) {
+                    isTouchScrolling = true;
+                    clearTimeout(pressTimer);
+                }
+            }, { passive: true });
+
+            row.addEventListener('touchend', () => clearTimeout(pressTimer));
+            row.addEventListener('touchcancel', () => clearTimeout(pressTimer));
+            row.addEventListener('mousedown', () => { pressTimer = setTimeout(() => openActionModal(entryIdx), 550); });
+            row.addEventListener('mouseup', () => clearTimeout(pressTimer));
+            row.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+
+            tableBody.appendChild(row);
+        });
+
+        updateSelectedCount();
+    }
+
+    function openActionModal(index) {
+        selectedIndex = index;
+        document.getElementById('actionModal').style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    // ---------------- IMAGE GENERATION ----------------
+    function openImageFieldSelectorModal() {
+        if (entries.length === 0) {
+            alert("इमेज बनाने के लिए कोई डेटा नहीं है!");
+            return;
+        }
+        const container = document.getElementById('imageFieldsContainer');
+        container.innerHTML = '';
+        fieldOrder.forEach(field => {
+            const div = document.createElement('div');
+            div.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-bottom: 1px solid var(--border-color); color: #fff; font-size: 12px;';
+            div.innerHTML = `<span>${field.label}</span><input type="checkbox" class="img-field-cb" data-id="${field.id}" checked style="width: 17px; height: 17px; cursor: pointer; accent-color: var(--accent-color);">`;
+            container.appendChild(div);
+        });
+        document.getElementById('imageFieldModal').style.display = 'flex';
+    }
+
+    async function generateCustomFieldImage() {
+        const checkboxes = document.querySelectorAll('.img-field-cb:checked');
+        const selectedIds = Array.from(checkboxes).map(cb => cb.getAttribute('data-id'));
+        if (selectedIds.length === 0) {
+            alert("कृपया कम से कम एक फ़ील्ड चुनें!");
+            return;
+        }
+
+        closeModal('imageFieldModal');
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        previewContainer.innerHTML = '<p style="color:var(--accent-color); padding: 18px;">इमेज तैयार की जा रही है...</p>';
+        document.getElementById('shareModal').style.display = 'flex';
+
+        const selectedFields = fieldOrder.filter(f => selectedIds.includes(f.id));
+        const activeEntries = (filteredIndices !== null) ? filteredIndices.map(i => entries[i]) : entries;
+
+                        const tempDiv = document.createElement('div');
+        tempDiv.style.position = 'fixed';
+        tempDiv.style.left = '-9999px';
+        tempDiv.style.top = '0';
+        tempDiv.style.background = '#0f172a';
+        tempDiv.style.padding = '15px';
+        tempDiv.style.zIndex = '-9999';
+
+        let tableHTML = `<table style="border-collapse:collapse; font-size:12px; color:#f8fafc; background:#0f172a; white-space:nowrap; font-family:'Segoe UI',sans-serif;"><tbody>`;
+        
+        // हेडर को पहली पंक्ति के रूप में रखना ताकि यह कभी नीचे न खिसके
+        tableHTML += `<tr>`;
+        selectedFields.forEach(f => {
+            tableHTML += `<td style="background:#1e293b; color:#38bdf8; padding:10px 14px; border:1px solid #334155; font-weight:bold; font-size:11px; text-transform:uppercase; text-align:center;">${f.label}</td>`;
+        });
+        tableHTML += `</tr>`;
+
+        // सभी डेटा पंक्तियाँ
+        activeEntries.forEach((item, index) => {
+            tableHTML += `<tr>`;
+            selectedFields.forEach(f => {
+                const val = item[f.id] !== undefined ? item[f.id] : '';
+                if (f.id === 'srNo') {
+                    tableHTML += `<td style="padding:8px 14px; border:1px solid #334155; color:#f8fafc; font-weight:bold; text-align:center;">${val || (index + 1)}</td>`;
+                } else {
+                    tableHTML += `<td style="padding:8px 14px; border:1px solid #334155; color:#f8fafc; text-align:center;">${val}</td>`;
+                }
+            });
+            tableHTML += `</tr>`;
+        });
+        tableHTML += `</tbody></table>`;
+
+        tempDiv.innerHTML = tableHTML;
+        document.body.appendChild(tempDiv);
+        try {
+            const canvas = await html2canvas(tempDiv.querySelector('table'), {
+                backgroundColor: '#0f172a',
+                scale: 2,
+                logging: false,
+                useCORS: true
+            });
+            const imgData = canvas.toDataURL("image/png");
+            previewContainer.innerHTML = `<img src="${imgData}" alt="List Image">`;
+            document.getElementById('downloadImgBtn').onclick = () => {
+                const a = document.createElement('a');
+                a.href = imgData;
+                a.download = 'data_list_sheet.png';
+                a.click();
+            };
+        } catch (error) {
+            alert("इमेज तैयार करने में समस्या आई।");
+            closeModal('shareModal');
+        } finally {
+            document.body.removeChild(tempDiv);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', checkLoginStatus);
+</script>
+
+</body>
+</html>
