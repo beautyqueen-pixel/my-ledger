@@ -257,8 +257,8 @@
             flex: 1; background: #0b0e14; padding: 7px; text-align: center; border-radius: 5px;
             border: 1px solid var(--border-soft); cursor: pointer; font-weight: 600; font-size: 11px;
         }
-        .radio-btn-label.active-cr { background: rgba(46, 204, 113, 0.15); border-color: var(--accent-recv); color: var(--accent-recv); }
-        .radio-btn-label.active-dr { background: rgba(231, 76, 60, 0.15); border-color: var(--accent-give); color: #ff7675; }
+        .radio-btn-label.active-cr { background: rgba(46, 204, 113, 0.0); border-color: var(--accent-recv); color: var(--accent-recv); }
+        .radio-btn-label.active-dr { background: rgba(231, 76, 60, 0.0); border-color: var(--accent-give); color: #ff7675; }
 
         .modal-footer {
             padding: 9px 14px; display: flex; gap: 6px; border-top: 1px solid var(--border-soft);
@@ -419,12 +419,12 @@
       <div class="pm-card">
         <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
         <hr style="border:0.5px solid #005577; margin-bottom:8px;">
-        <div class="pm-row"><label>1. APP OPEN LOCK</label><input type="text" id="pm_open" placeholder="7869"></div>
-        <div class="pm-row"><label>2. EDIT UNLOCK PIN</label><input type="text" id="pm_edit" placeholder="7869"></div>
-        <div class="pm-row"><label>3. DELETE PIN</label><input type="text" id="pm_del" placeholder="7869"></div>
-        <div class="pm-row"><label>4. CLOUD BACKUP PIN</label><input type="text" id="pm_cloud" placeholder="7869"></div>
-        <div class="pm-row"><label>5. CLOUD RESTORE PIN</label><input type="text" id="pm_restore" placeholder="7869"></div>
-        <div class="pm-row"><label>6. GATE PIN (LOGIN BTN)</label><input type="text" id="pm_login_gate" placeholder="7869"></div>
+        <div class="pm-row"><label>1. APP OPEN LOCK</label><input type="text" id="pm_open" placeholder="0000"></div>
+        <div class="pm-row"><label>2. EDIT UNLOCK PIN</label><input type="text" id="pm_edit" placeholder="0000"></div>
+        <div class="pm-row"><label>3. DELETE PIN</label><input type="text" id="pm_del" placeholder="0000"></div>
+        <div class="pm-row"><label>4. CLOUD BACKUP PIN</label><input type="text" id="pm_cloud" placeholder="0000"></div>
+        <div class="pm-row"><label>5. CLOUD RESTORE PIN</label><input type="text" id="pm_restore" placeholder="0000"></div>
+        <div class="pm-row"><label>6. GATE PIN (LOGIN BTN)</label><input type="text" id="pm_login_gate" placeholder="0000"></div>
         
         <div class="pm-row">
           <label style="color:#00ff66;">🔑 ACCOUNT LOGIN PASS</label>
@@ -671,8 +671,8 @@
                 <div class="form-group">
                     <label>DR / CR (Entry Type)</label>
                     <div class="form-radio-row">
-                        <div class="radio-btn-label" id="optCr" onclick="selectType('Cr')">CR (Credit / लिया)</div>
-                        <div class="radio-btn-label active-dr" id="optDr" onclick="selectType('Dr')">DR (Debit / दिया)</div>
+                       <div class="radio-btn-label" id="optCr" onclick="selectType('Cr')">CR (Credit /  लिया - लेना है )</div>
+                       <div class="radio-btn-label active-dr" id="optDr" onclick="selectType('Dr')">DR (Debit / दिया - देना है )</div>
                     </div>
                 </div>
 
@@ -755,7 +755,7 @@
 
         function getDeviceMasterKey() {
             if (currentUser && currentUser.phone) return currentUser.phone.trim();
-            return localStorage.getItem('khata_master_phone') || "7869";
+            return localStorage.getItem('khata_master_phone') || "0000";
         }
 
         window.onload = function() {
@@ -860,7 +860,7 @@
 
         document.getElementById('secretInput').addEventListener('input', function() {
             const mKey = getDeviceMasterKey();
-            if (this.value === appPins.openPin || (mKey && this.value === mKey) || this.value === "7869") {
+            if (this.value === appPins.openPin || (mKey && this.value === mKey) || this.value === "0000") {
                 document.getElementById('mainAppOverlay').style.display = 'none';
                 this.value = "";
                 this.style.display = 'none';
@@ -914,15 +914,15 @@
             const mKey = getDeviceMasterKey();
 
             if (currentGateAction === 'DIRECT_SYNC_PIN') {
-                const reqPin = appPins.cloudPin || "7869";
-                if (entered === reqPin || entered === mKey || (mKey === "7869" && entered === "7869")) {
+                const reqPin = appPins.cloudPin || "0000";
+                if (entered === reqPin || entered === mKey || (mKey === "0000" && entered === "0000")) {
                     closeUnifiedGate();
                     executeCloudBackupManual();
                 } else {
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'OPEN_AUTH_GATE') {
-                const reqPin = appPins.loginPin || "7869";
+                const reqPin = appPins.loginPin || "0000";
                 if (entered === reqPin) {
                     closeUnifiedGate();
                     openAuthModal();
@@ -930,42 +930,42 @@
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
-                if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+                if (entered === mKey || (mKey === "0000" && entered === "0000")) {
                     closeUnifiedGate();
                     showProfileEditScreen();
                 } else {
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'MANAGE_PINS_MASTER') {
-                if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+                if (entered === mKey || (mKey === "0000" && entered === "0000")) {
                     closeUnifiedGate();
                     showPassManagerScreen();
                 } else {
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'RESET_APP_MASTER') {
-                if (entered === mKey || (mKey === "7869" && entered === "7869")) {
+                if (entered === mKey || (mKey === "0000" && entered === "0000")) {
                     closeUnifiedGate();
                     executeAppReset();
                 } else {
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'DELETE_RECORD_PIN') {
-                if (entered === appPins.delPin || entered === "7869") {
+                if (entered === appPins.delPin || entered === "0000") {
                     closeUnifiedGate();
                     executeDeleteRecord();
                 } else {
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'BULK_DELETE_PIN') {
-                if (entered === appPins.delPin || entered === "7869") {
+                if (entered === appPins.delPin || entered === "0000") {
                     closeUnifiedGate();
                     executeBulkDeleteConfirmed();
                 } else {
                     gateWrongFeedback();
                 }
             } else if (currentGateAction === 'DELETE_WHOLE_PARTY_PIN') {
-                if (entered === appPins.delPin || entered === "7869") {
+                if (entered === appPins.delPin || entered === "0000") {
                     closeUnifiedGate();
                     executeDeleteWholePartyConfirmed();
                 } else {
@@ -1247,12 +1247,12 @@
         }
 
         function showPassManagerScreen() {
-            document.getElementById('pm_open').value = appPins.openPin || "7869";
-            document.getElementById('pm_edit').value = appPins.editPin || "7869";
-            document.getElementById('pm_del').value = appPins.delPin || "7869";
-            document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
-            document.getElementById('pm_restore').value = appPins.restorePin || "7869";
-            document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
+            document.getElementById('pm_open').value = appPins.openPin || "0000";
+            document.getElementById('pm_edit').value = appPins.editPin || "0000";
+            document.getElementById('pm_del').value = appPins.delPin || "0000";
+            document.getElementById('pm_cloud').value = appPins.cloudPin || "0000";
+            document.getElementById('pm_restore').value = appPins.restorePin || "0000";
+            document.getElementById('pm_login_gate').value = appPins.loginPin || "0000";
             document.getElementById('pm_login_pass').value = currentUser ? (currentUser.pass || "") : "";
             document.getElementById('passManagerModal').style.display = 'flex';
         }
@@ -1263,12 +1263,12 @@
 
         async function savePasswordSettings() {
             appPins = {
-                openPin: document.getElementById('pm_open').value.trim() || "7869",
-                editPin: document.getElementById('pm_edit').value.trim() || "7869",
-                delPin: document.getElementById('pm_del').value.trim() || "7869",
-                cloudPin: document.getElementById('pm_cloud').value.trim() || "7869",
-                restorePin: document.getElementById('pm_restore').value.trim() || "7869",
-                loginPin: document.getElementById('pm_login_gate').value.trim() || "7869"
+                openPin: document.getElementById('pm_open').value.trim() || "0000",
+                editPin: document.getElementById('pm_edit').value.trim() || "0000",
+                delPin: document.getElementById('pm_del').value.trim() || "0000",
+                cloudPin: document.getElementById('pm_cloud').value.trim() || "0000",
+                restorePin: document.getElementById('pm_restore').value.trim() || "0000",
+                loginPin: document.getElementById('pm_login_gate').value.trim() || "0000"
             };
             localStorage.setItem('khata_custom_pins', JSON.stringify(appPins));
 
@@ -1281,7 +1281,7 @@
                     localStorage.setItem('khata_active_user', JSON.stringify(currentUser));
                 }
 
-                if (fbDb && targetPhone && targetPhone !== "7869") {
+                if (fbDb && targetPhone && targetPhone !== "0000") {
                     try {
                         await fbDb.collection("master_profiles").doc(targetPhone).set({ pass: newLoginPass }, { merge: true });
                     } catch (err) {
@@ -2334,6 +2334,7 @@
         function deleteCurrentFormRecord() {
             openUnifiedGate('DELETE_RECORD_PIN', 'DELETE ENTRY', 'ENTER 4-DIGIT DELETE PIN', 4);
         }
+
         function executeDeleteRecord() {
             const editIdx = parseInt(document.getElementById('editIndex').value);
             if (editIdx >= 0) {
