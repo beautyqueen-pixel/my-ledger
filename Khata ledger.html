@@ -328,7 +328,6 @@
         .tx-check-col { width: 32px; text-align: center; }
         .tx-checkbox { transform: scale(1.2); accent-color: #e74c3c; cursor: pointer; }
 
-        /* सजेशन लिस्ट और '+' बटन */
         .custom-suggest-list {
             position: absolute; top: 100%; left: 0; right: 0; max-height: 190px;
             overflow-y: auto; background: #0d1522; border: 1.5px solid #00f0ff;
@@ -349,12 +348,10 @@
 </head>
 <body>
 
-    <!-- 3-Tap App Lock Screen -->
     <div id="mainAppOverlay" onclick="handleLockClick()">
         <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" autocomplete="new-password" onclick="event.stopPropagation()">
     </div>
 
-    <!-- यूनिफाइड आधुनिक नियॉन सिक्योरिटी गेट मॉडल -->
     <div class="auth-overlay" id="unifiedSecurityGateModal">
       <div class="security-pin-card">
         <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
@@ -367,7 +364,6 @@
       </div>
     </div>
 
-    <!-- मास्टर लेजर स्टाइल ऑथेंटिकेशन ओवरले -->
     <div id="authOverlay">
         <div class="auth-card" id="loginBox" style="display:none;">
             <span class="close-auth" onclick="closeAuthModal()">✖</span>
@@ -414,7 +410,6 @@
         </div>
     </div>
 
-    <!-- पासवर्ड मैनेजर मॉडल -->
     <div class="auth-overlay" id="passManagerModal">
       <div class="pm-card">
         <h3 style="color:#00ffff; margin-top:0; font-size:14px; letter-spacing:1px;">PASSWORD SETTINGS</h3>
@@ -482,7 +477,6 @@
 
     <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="handleJsonFileSelect(event)">
 
-    <!-- SETTINGS MODAL -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -566,7 +560,6 @@
         </div>
     </div>
 
-    <!-- Statement / Passbook Modal -->
     <div class="modal-overlay" id="accountPickerModal">
         <div class="modal-box" style="max-width: 520px;">
             <div class="modal-header">
@@ -585,7 +578,6 @@
         </div>
     </div>
 
-    <!-- Add / Edit Master Modal -->
     <div class="modal-overlay" id="addAccountModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -625,7 +617,6 @@
         </div>
     </div>
 
-    <!-- Add / Edit Entry Form -->
     <div class="modal-overlay" id="entryModal">
         <div class="modal-box">
             <div class="modal-header">
@@ -671,7 +662,7 @@
                 <div class="form-group">
                     <label>DR / CR (Entry Type)</label>
                     <div class="form-radio-row">
-                       <div class="radio-btn-label" id="optCr" onclick="selectType('Cr')">CR (Credit /  लिया - लेना है )</div>
+                       <div class="radio-btn-label" id="optCr" onclick="selectType('Cr')">CR (Credit / लिया - लेना है )</div>
                        <div class="radio-btn-label active-dr" id="optDr" onclick="selectType('Dr')">DR (Debit / दिया - देना है )</div>
                     </div>
                 </div>
@@ -750,6 +741,10 @@
         let pendingDeletePartyName = '';
         let longPressTimer = null;
         let isLongPressTriggered = false;
+
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isScrolling = false;
 
         const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -845,9 +840,6 @@
             openUnifiedGate('DIRECT_SYNC_PIN', '🔥 CLOUD BACKUP', 'ENTER 4-DIGIT PIN', 4);
         }
 
-        // ==========================================
-        // 3-TAP ऐप लॉक
-        // ==========================================
         function handleLockClick() {
             clickCount++;
             if (clickCount >= 3) {
@@ -876,9 +868,6 @@
             closeSettingsModal();
         }
 
-        // ==========================================
-        // यूनिफाइड सिक्योरिटी गेट
-        // ==========================================
         function openUnifiedGate(actionType, title, desc, maxLength = 4) {
             currentGateAction = actionType;
             document.getElementById('unifiedGateTitle').innerText = title;
@@ -909,6 +898,9 @@
             const val = document.getElementById('unifiedGateInput').value.trim();
             if (val) submitUnifiedGate(val);
         }
+
+        let pendingSaveEditIndex = -1;
+        let pendingSaveKeepOpen = false;
 
         function submitUnifiedGate(entered) {
             const mKey = getDeviceMasterKey();
@@ -971,6 +963,15 @@
                 } else {
                     gateWrongFeedback();
                 }
+            } else if (currentGateAction === 'EDIT_RECORD_PIN') {
+                if (entered === appPins.editPin || entered === "0000") {
+                    closeUnifiedGate();
+                    const idx = pendingSaveEditIndex;
+                    pendingSaveEditIndex = -1;
+                    executeSaveRecord(idx, pendingSaveKeepOpen);
+                } else {
+                    gateWrongFeedback();
+                }
             }
         }
 
@@ -982,9 +983,6 @@
             alert("❌ गलत पिन या मास्टर की!");
         }
 
-        // ==========================================
-        // FIREBASE ऑथेंटिकेशन
-        // ==========================================
         function openAuthModalProtected() {
             closeSettingsModal();
             openUnifiedGate('OPEN_AUTH_GATE', 'LOGIN GATE', 'ENTER 4-DIGIT LOGIN PIN', 4);
@@ -1191,9 +1189,6 @@
             }
         }
 
-        // ==========================================
-        // क्लाउड सिंक व बैकअप / रीस्टोर
-        // ==========================================
         async function executeCloudBackupManual() {
             if (!currentUser || !fbDb) { alert("कृपया पहले लॉगिन करें!"); return; }
             try {
@@ -1238,9 +1233,6 @@
             }
         }
 
-        // ==========================================
-        // पासवर्ड मैनेजर
-        // ==========================================
         function openPasswordManagerGate() {
             closeSettingsModal();
             openUnifiedGate('MANAGE_PINS_MASTER', 'MASTER KEY REQUIRED', 'ENTER MASTER MOBILE NUMBER', 10);
@@ -1361,9 +1353,6 @@
             event.target.value = '';
         }
 
-        // ==========================================
-        // कोर लेज़र फंक्शन्स
-        // ==========================================
         function getTodayDate() {
             const today = new Date();
             const yyyy = today.getFullYear();
@@ -1537,9 +1526,6 @@
             });
         }
 
-        // ==========================================
-        // पार्टी स्टेटमेंट व मल्टी-डिलीट
-        // ==========================================
         function openSinglePersonStatement(personName) {
             currentViewingPerson = personName;
             pickerCurrentView = 'SINGLE_PERSON_STATEMENT';
@@ -1572,9 +1558,17 @@
             renderStatementTable(currentViewingPerson);
         }
 
-        function handleTxTouchStart(idx) {
+        function handleTxTouchStart(idx, event) {
             isLongPressTriggered = false;
+            if (longPressTimer) clearTimeout(longPressTimer);
+            if (event && event.touches) {
+                touchStartX = event.touches[0].clientX;
+                touchStartY = event.touches[0].clientY;
+                isScrolling = false;
+            }
+
             longPressTimer = setTimeout(() => {
+                if (isScrolling) return; 
                 isLongPressTriggered = true;
                 if (!isSelectionMode) {
                     isSelectionMode = true;
@@ -1583,7 +1577,20 @@
                 selectedIndices.add(idx);
                 renderStatementTable(currentViewingPerson);
                 if (navigator.vibrate) navigator.vibrate(60);
-            }, 550);
+            }, 800);
+        }
+
+        function handleTxTouchMove(event) {
+            if (!longPressTimer) return;
+            if (event && event.touches) {
+                const moveX = event.touches[0].clientX;
+                const moveY = event.touches[0].clientY;
+                if (Math.abs(moveX - touchStartX) > 8 || Math.abs(moveY - touchStartY) > 8) {
+                    isScrolling = true;
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            }
         }
 
         function handleTxTouchEnd() {
@@ -1591,11 +1598,13 @@
                 clearTimeout(longPressTimer);
                 longPressTimer = null;
             }
+            isScrolling = false;
         }
 
         function handleTxRowClick(idx) {
-            if (isLongPressTriggered) {
+            if (isLongPressTriggered || isScrolling) {
                 isLongPressTriggered = false;
+                isScrolling = false;
                 return;
             }
             if (isSelectionMode) {
@@ -1661,22 +1670,24 @@
             }
         }
 
-        function renderStatementTable(personName) {
+        function renderStatementTable(personName, isForExport = false) {
             const container = document.getElementById('accountListContainer');
             const actionsWrap = document.getElementById('statementActionsWrap');
             container.innerHTML = '';
 
-            if (isSelectionMode) {
-                actionsWrap.innerHTML = `
-                    <button onclick="promptBulkDelete()" style="background:#e74c3c; color:#fff; border:none; padding:5px 9px; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">
-                        🗑️ Delete (${selectedIndices.size})
-                    </button>
-                    <button onclick="cancelSelectionMode()" style="background:#334155; color:#fff; border:none; padding:5px 8px; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer;">
-                        ✕ Cancel
-                    </button>
-                `;
-            } else {
-                actionsWrap.innerHTML = '';
+            if (!isForExport) {
+                if (isSelectionMode) {
+                    actionsWrap.innerHTML = `
+                        <button onclick="promptBulkDelete()" style="background:#e74c3c; color:#fff; border:none; padding:5px 9px; border-radius:5px; font-size:11px; font-weight:700; cursor:pointer;">
+                            🗑️ Delete (${selectedIndices.size})
+                        </button>
+                        <button onclick="cancelSelectionMode()" style="background:#334155; color:#fff; border:none; padding:5px 8px; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer;">
+                            ✕ Cancel
+                        </button>
+                    `;
+                } else {
+                    actionsWrap.innerHTML = '';
+                }
             }
 
             const mKey = findMasterKey(personName);
@@ -1699,9 +1710,10 @@
 
                 rowsHtml += `
                     <tr style="border-bottom: 1px solid #161c27; vertical-align: middle;">
-                        ${isSelectionMode ? `<td style="padding:8px 2px; text-align:center; color:#555;">-</td>` : ''}
+                        ${(!isForExport && isSelectionMode) ? `<td style="padding:8px 2px; text-align:center; color:#555;">-</td>` : ''}
                         <td style="padding: 8px 4px; text-align: center; color: #64748b; white-space: nowrap; font-size: 10px;">-</td>
                         <td style="padding: 8px 6px; text-align: left; font-weight: 600; color: #38bdf8; word-break: break-word; white-space: normal; line-height: 1.35;">Opening Balance</td>
+                        ${isForExport ? `<td style="padding: 8px 6px; text-align: left; font-weight: 500; color: #94a3b8; word-break: break-word; white-space: normal;">-</td>` : ''}
                         <td style="padding: 8px 4px; text-align: right; font-weight: 700; color: #cbd5e1; white-space: nowrap;">₹ ${formatINR(targetAmount)}</td>
                         <td style="padding: 8px 8px; text-align: right; font-weight: 700; color: ${opColor}; white-space: nowrap;">
                             ${opSign}₹ ${formatINR(targetAmount)}
@@ -1726,17 +1738,19 @@
                 rowsHtml += `
                     <tr style="cursor: pointer; border-bottom: 1px solid #161c27; background:${isChecked ? 'rgba(231,76,60,0.18)' : 'transparent'}; vertical-align: middle; user-select:none;" 
                         onclick="handleTxRowClick(${tx.originalIdx})"
-                        ontouchstart="handleTxTouchStart(${tx.originalIdx})"
+                        ontouchstart="handleTxTouchStart(${tx.originalIdx}, event)"
+                        ontouchmove="handleTxTouchMove(event)"
                         ontouchend="handleTxTouchEnd()"
                         onmousedown="handleTxTouchStart(${tx.originalIdx})"
                         onmouseup="handleTxTouchEnd()">
-                        ${isSelectionMode ? `
+                        ${(!isForExport && isSelectionMode) ? `
                             <td class="tx-check-col" onclick="event.stopPropagation()" style="width: 28px; padding: 6px 2px;">
                                 <input type="checkbox" class="tx-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTxSelection(${tx.originalIdx}, event)">
                             </td>
                         ` : ''}
                         <td style="padding: 8px 4px; font-size: 10.5px; text-align: center; white-space: nowrap; color: #94a3b8;">${formatHindiDate(tx.date)}</td>
                         <td style="padding: 8px 6px; text-align: left; word-break: break-word; white-space: normal; line-height: 1.35; color: #e2e8f0; font-size: 11px;"><b>${escapeHtml(tx.parpas || '-')}</b></td>
+                        ${isForExport ? `<td style="padding: 8px 6px; text-align: left; word-break: break-word; white-space: normal; line-height: 1.35; color: #94a3b8; font-size: 10.5px;">${escapeHtml(tx.note || '-')}</td>` : ''}
                         <td style="padding: 8px 4px; text-align: right; color: ${isDebit ? '#ff7675' : '#2ecc71'}; font-weight: 700; white-space: nowrap;">
                             ${isDebit ? '- ' : '+ '}₹ ${formatINR(amt)}
                         </td>
@@ -1774,9 +1788,10 @@
                         <table class="passbook-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
                             <thead>
                                 <tr style="background: #111722; color: #94a3b8;">
-                                    ${isSelectionMode ? `<th style="width: 28px; padding: 7px 2px;">✓</th>` : ''}
+                                    ${(!isForExport && isSelectionMode) ? `<th style="width: 28px; padding: 7px 2px;">✓</th>` : ''}
                                     <th style="width: 72px; padding: 7px 4px; text-align: center; white-space: nowrap;">तारीख</th>
                                     <th style="padding: 7px 6px; text-align: left;">विवरण</th>
+                                    ${isForExport ? `<th style="padding: 7px 6px; text-align: left;">नोट</th>` : ''}
                                     <th style="width: 85px; padding: 7px 4px; text-align: right; white-space: nowrap;">रकम</th>
                                     <th style="width: 95px; padding: 7px 8px; text-align: right; white-space: nowrap;">बैलेंस</th>
                                 </tr>
@@ -1889,6 +1904,7 @@
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 90px; text-align: left;">MAIN AC</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 110px; text-align: left;">PARTY</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; text-align: left;">DETAILS</th>
+                                    <th style="padding: 6px; border: 1px solid #94a3b8; text-align: left;">NOTE</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 85px; text-align: right;">AMOUNT</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 45px; text-align: center;">DR/CR</th>
                                     <th style="padding: 6px; border: 1px solid #94a3b8; width: 95px; text-align: right;">NET BAL</th>
@@ -1905,7 +1921,7 @@
 
                 fullHtml += `
                     <tr style="background: #e0f2fe;">
-                        <td colspan="5" style="padding: 5px 8px; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 11px;">
+                        <td colspan="6" style="padding: 5px 8px; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 11px;">
                             🏛 MAIN AC: ${escapeHtml(agent)}
                         </td>
                         <td style="padding: 5px; text-align: center; font-weight: 800; color: #0369a1; border: 1px solid #cbd5e1; font-size: 10px;">NET:</td>
@@ -1931,6 +1947,7 @@
                                 <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(agent)}</td>
                                 <td style="font-weight: 700; border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(pName)}</td>
                                 <td style="color: #0284c7; font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">OPENING</td>
+                                <td style="border: 1px solid #e2e8f0; padding: 4px;">-</td>
                                 <td style="text-align: right; font-weight: 700; border: 1px solid #e2e8f0; padding: 4px;">₹ ${formatINR(opening)}</td>
                                 <td style="text-align: center; font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">${agreedDir === 'RECEIVE' ? 'CR' : 'DR'}</td>
                                 <td style="text-align: right; font-weight: 800; color: ${agreedDir==='RECEIVE'?'#15803d':'#b91c1c'}; border: 1px solid #e2e8f0; padding: 4px;">
@@ -1965,6 +1982,7 @@
                                 <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(agent)}</td>
                                 <td style="font-weight: 600; border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(pName)}</td>
                                 <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(tx.parpas || '-')}</td>
+                                <td style="border: 1px solid #e2e8f0; padding: 4px;">${escapeHtml(tx.note || '-')}</td>
                                 <td style="text-align: right; font-weight: 700; color: ${isDebit ? '#dc2626' : '#15803d'}; border: 1px solid #e2e8f0; padding: 4px;">
                                     ₹ ${formatINR(amt)}
                                 </td>
@@ -2201,14 +2219,23 @@
             });
         }
 
-        function openEntryFormFromStatement(originalIdx) {
-            closeAccountPicker();
+                function openEntryFormFromStatement(originalIdx) {
+            // अकाउंट पिकर को बंद न करके सिर्फ फॉर्म खोलें ताकि currentViewingPerson सुरक्षित रहे
+            document.getElementById('accountPickerModal').style.display = 'none';
             openEntryForm(originalIdx);
         }
 
+
         function handleModalBack() {
-            if (pickerCurrentView === 'SINGLE_PERSON_STATEMENT' && currentDrillDownAccount) {
-                openAgentPartiesView(currentDrillDownAccount);
+            if (pickerCurrentView === 'SINGLE_PERSON_STATEMENT') {
+                if (currentViewingPerson) {
+                    closeAccountPicker();
+                } else if (currentDrillDownAccount) {
+                    openAgentPartiesView(currentDrillDownAccount);
+                } else {
+                    closeAccountPicker();
+                    openSettingsModal();
+                }
             } else if (pickerCurrentView === 'AGENT_DRILLDOWN') {
                 openAccountPicker('SETTINGS');
             } else if (pickerCurrentView === 'MANAGE_PARTIES_VIEW') {
@@ -2231,8 +2258,11 @@
             const title = document.getElementById('modalFormTitle');
             const btnDelete = document.getElementById('btnDeleteForm');
             const btnSaveMore = document.getElementById('btnSaveAndMore');
-
+            if (currentViewingPerson) {
+                lastActiveParty = currentViewingPerson;
+            }
             if (editIdx >= 0) {
+                // लेज़र से क्लिक करते ही फॉर्म बिना पासवर्ड के खुल जाएगा (ताकि आप देख सकें)
                 const item = records[editIdx];
                 document.getElementById('editIndex').value = editIdx;
                 document.getElementById('inputDate').value = item.date || getTodayDate();
@@ -2246,7 +2276,7 @@
                 document.getElementById('inputTargetAmount').value = bal.net;
                 selectType(item.crdr || 'Dr');
 
-                title.innerText = 'Edit Entry';
+                title.innerText = 'Edit Entry (View Mode)';
                 btnDelete.style.display = 'block';
                 btnSaveMore.style.display = 'none';
             } else {
@@ -2267,12 +2297,18 @@
             modal.style.display = 'flex';
         }
 
-        function closeEntryForm() { 
+             function closeEntryForm() { 
             document.getElementById('entryModal').style.display = 'none'; 
             const pBox = document.getElementById('partySuggestions');
             const aBox = document.getElementById('agentSuggestions');
             if (pBox) pBox.style.display = 'none';
             if (aBox) aBox.style.display = 'none';
+
+            // Cancel दबाते ही 100% उसी पार्टी के लेज़र स्टेटमेंट पर वापस जाएगा
+            if (currentViewingPerson) {
+                document.getElementById('accountPickerModal').style.display = 'flex';
+                renderStatementTable(currentViewingPerson);
+            }
         }
 
         function selectType(type) {
@@ -2300,6 +2336,19 @@
 
         function submitRecord(keepOpen = false) {
             const editIdx = parseInt(document.getElementById('editIndex').value);
+            
+            // जब कोई पुराना रिकॉर्ड देखकर उसमें बदलाव करके 'Save' दबाएगा, तब पासवर्ड मांगेगा!
+            if (editIdx >= 0) {
+                pendingSaveEditIndex = editIdx;
+                pendingSaveKeepOpen = keepOpen;
+                openUnifiedGate('EDIT_RECORD_PIN', 'SAVE CHANGES', 'ENTER 4-DIGIT EDIT PIN', 4);
+                return;
+            }
+
+            executeSaveRecord(editIdx, keepOpen);
+        }
+
+        function executeSaveRecord(editIdx, keepOpen) {
             const date = document.getElementById('inputDate').value || getTodayDate();
             const name = document.getElementById('inputName').value.trim();
             const account = document.getElementById('inputAccount').value.trim() || 'Direct';
@@ -2328,6 +2377,9 @@
                 document.getElementById('inputAmount').focus();
             } else {
                 closeEntryForm();
+                if (currentViewingPerson) {
+                    openSinglePersonStatement(currentViewingPerson);
+                }
             }
         }
 
@@ -2342,6 +2394,9 @@
                 saveToStorage();
                 renderView();
                 closeEntryForm();
+                if (currentViewingPerson) {
+                    openSinglePersonStatement(currentViewingPerson);
+                }
                 alert("✅ एंट्री हटा दी गई!");
             }
         }
@@ -2431,6 +2486,7 @@
         function closeAccountPicker() { 
             isSelectionMode = false;
             selectedIndices.clear();
+            currentViewingPerson = '';
             const btnAdd = document.getElementById('btnStatementAddEntry');
             if (btnAdd) btnAdd.style.display = 'none';
             document.getElementById('statementActionsWrap').innerHTML = '';
@@ -2450,6 +2506,10 @@
         }
 
         async function captureAndSaveReportImage() {
+            if (currentViewingPerson) {
+                renderStatementTable(currentViewingPerson, true);
+            }
+
             const el = document.getElementById('reportCaptureArea');
             if (!el) { alert("रिपोर्ट उपलब्ध नहीं है!"); return; }
 
@@ -2496,9 +2556,14 @@
             } catch (err) {
                 alert("❌ इमेज बनाने में त्रुटि: " + err.message);
                 document.body.removeChild(wrapper);
+                if (currentViewingPerson) renderStatementTable(currentViewingPerson, false);
                 return;
             }
             document.body.removeChild(wrapper);
+
+            if (currentViewingPerson) {
+                renderStatementTable(currentViewingPerson, false);
+            }
 
             const safeParty = (currentViewingPerson || 'Ledger').replace(/[^a-zA-Z0-9_-]/g, '_');
             const fileName = `${safeParty}_${getTodayDate()}_${Date.now()}.jpg`;
