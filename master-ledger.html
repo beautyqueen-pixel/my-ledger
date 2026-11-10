@@ -233,7 +233,7 @@
         .balance-red { background: var(--red-balance) !important; color: #fff !important; }
         .row-full td { background: var(--dark-green); color: #000; }
 
-        /* Unified Beautiful Master Security Style PIN Modal (बैंक प्रो & खाता लेज़र जैसा) */
+        /* Unified Beautiful Master Security Style PIN Modal */
         .auth-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(16px);
@@ -286,7 +286,7 @@
 
 <div id="appWrapper">
 
-    <!-- Unified Clean Secret PIN Modal (बिना एक्स्ट्रा टेक्स्ट, एकदम सीक्रेट व ऑटो-सबमिट) -->
+    <!-- Unified Clean Secret PIN Modal -->
     <div class="auth-overlay" id="unifiedSecurityGateModal">
       <div class="security-pin-card">
         <h3 id="unifiedGateTitle">SECURITY CHECK</h3>
@@ -326,7 +326,7 @@
             <div class="auth-switch" onclick="toggleAuthMode('login')">पहले से खाता है? यहाँ Login करें</div>
         </div>
 
-        <!-- 3. LOGGED-IN ACCOUNT DASHBOARD (नो प्राइवेट ईमेल लीक) -->
+        <!-- 3. LOGGED-IN ACCOUNT DASHBOARD -->
         <div class="auth-card" id="accountBox" style="display:none;">
             <span class="close-auth" onclick="closeAuthModal()">✖</span>
             <h2>FIREBASE CLOUD ACCOUNT</h2>
@@ -410,7 +410,6 @@
 
     <!-- Top Container -->
     <div class="container" id="mainContainer">
-        <!-- हेडर यूजरनेम/टैग: सीधे क्लिक करने पर सीक्रेट पिन मांगकर Firebase Account खुलेगा -->
         <div id="userDisplayTag" class="user-tag" onclick="openAuthModalProtected()">👤 USER: NOT LOGGED IN</div>
 
         <div class="tabs">
@@ -632,14 +631,25 @@
 </script>
 
 <script>
-    let appPins = JSON.parse(localStorage.getItem('master_custom_pins')) || {
-        openPin: "7869",
-        editPin: "7869",
-        delPin: "7869",
-        cloudPin: "7869",
-        restorePin: "7869",
-        loginPin: "7869"
-    };
+    /* =========================================================
+       DEFAULT PIN CONFIGURATION: 
+       Login PIN (loginPin) ko chhod kar baki sabhi default "0000" hain.
+       Jab app naye mobile mein install ya reset hoga, yehi "0000" rahenge.
+       User baad mein settings se inko change karega toh wahi naya password save rahega.
+       ========================================================= */
+    let appPins = JSON.parse(localStorage.getItem('master_custom_pins_v2')) || {
+    openPin: "0000",
+    editPin: "0000",
+    delPin: "0000",
+    cloudPin: "0000",
+    restorePin: "0000",
+    loginPin: "7869" 
+};
+// Purani key ko naye version se replace karne ke liye
+if(!localStorage.getItem('master_custom_pins_v2')) {
+    localStorage.setItem('master_custom_pins_v2', JSON.stringify(appPins));
+    localStorage.removeItem('master_custom_pins');
+}
 
     let isPermanentDelete = false;
     let db = JSON.parse(localStorage.getItem('shared_master_v19')) || [];
@@ -663,7 +673,7 @@
         return localStorage.getItem('master_phone_key') || "7869";
     }
 
-    // 10 मिनट ऑटो-लॉगआउट व बैकअप
+    // Auto-Logout & Backup Timer
     let autoLogoutTimer = null;
     const INACTIVITY_LIMIT = 10 * 60 * 1000;
 
@@ -712,7 +722,9 @@
 
     document.getElementById('secretInput').addEventListener('input', function() {
         const masterPin = getDeviceMasterKey();
-        if(this.value === appPins.openPin || (masterPin && this.value === masterPin) || this.value === "7869") { 
+        const activeOpenPin = appPins.openPin || "0000";
+        
+        if(this.value === activeOpenPin || (masterPin && this.value === masterPin) || this.value === "7869") { 
             document.getElementById('mainAppOverlay').style.display = 'none'; 
             this.value = "";
             this.style.display = 'none';
@@ -733,7 +745,7 @@
     }
 
     // ==========================================
-    // यूनिफाइड नियॉन सीक्रेट गेट (Auto-Submit & No OK Needed)
+    // Unified Neon Secret Gate
     // ==========================================
     function openUnifiedGate(actionType, title, desc, maxLength = 4) {
         currentGateAction = actionType;
@@ -769,7 +781,7 @@
     function submitUnifiedGate(entered) {
         const masterPin = getDeviceMasterKey();
 
-        // 1. FIREBASE लॉगिन गेट (सिर्फ 4 अंकों का लॉगिन पिन)
+        // 1. FIREBASE Login Gate (Login Pin)
         if (currentGateAction === 'OPEN_AUTH_GATE') {
             const reqPin = appPins.loginPin || "7869";
             if (entered === reqPin || entered === "7869") {
@@ -779,7 +791,7 @@
                 gateWrongFeedback();
             }
         }
-        // 2. प्रोफाइल एडिट (सिर्फ 10 अंकों का मास्टर मोबाइल नंबर)
+        // 2. Profile Edit (Master Mobile Key)
         else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
             if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
                 closeUnifiedGate();
@@ -788,7 +800,7 @@
                 gateWrongFeedback();
             }
         }
-        // 3. मैनेज पासवर्ड (सिर्फ 10 अंकों का मास्टर मोबाइल नंबर)
+        // 3. Manage Passwords (Master Mobile Key)
         else if (currentGateAction === 'MANAGE_PINS_MASTER') {
             if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
                 closeUnifiedGate();
@@ -797,7 +809,7 @@
                 gateWrongFeedback();
             }
         }
-        // 4. ऐप रीसेट (सिर्फ मास्टर मोबाइल नंबर)
+        // 4. App Reset (Master Mobile Key)
         else if (currentGateAction === 'RESET_APP_MASTER') {
             if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
                 closeUnifiedGate();
@@ -806,45 +818,45 @@
                 gateWrongFeedback();
             }
         }
-        // 5. JSON एक्सपोर्ट
+        // 5. JSON Export PIN (Default "0000")
         else if (currentGateAction === 'EXPORT_JSON_PIN') {
-            if (entered === (appPins.cloudPin || "7869") || entered === "7869") {
+            if (entered === (appPins.cloudPin || "0000") || entered === "7869") {
                 closeUnifiedGate();
                 executeJsonExport();
             } else {
                 gateWrongFeedback();
             }
         }
-        // 6. JSON रीस्टोर
+        // 6. JSON Restore PIN (Default "0000")
         else if (currentGateAction === 'RESTORE_JSON_PIN') {
-            if (entered === (appPins.restorePin || "7869") || entered === "7869") {
+            if (entered === (appPins.restorePin || "0000") || entered === "7869") {
                 closeUnifiedGate();
                 document.getElementById('jsonFileInput').click();
             } else {
                 gateWrongFeedback();
             }
         }
-        // 7. एडिट अनलॉक पिन
+        // 7. Unlock Edit PIN (Default "0000")
         else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
-            if (entered === (appPins.editPin || "7869") || entered === "7869") {
+            if (entered === (appPins.editPin || "0000") || entered === "7869") {
                 closeUnifiedGate();
                 executeUnlockForm();
             } else {
                 gateWrongFeedback();
             }
         }
-        // 8. मुख्य एंट्री डिलीट
+        // 8. Delete Entry PIN (Default "0000")
         else if (currentGateAction === 'DELETE_ENTRY_PIN') {
-            if (entered === (appPins.delPin || "7869") || entered === "7869") {
+            if (entered === (appPins.delPin || "0000") || entered === "7869") {
                 closeUnifiedGate();
                 executeConfirmDeletion();
             } else {
                 gateWrongFeedback();
             }
         }
-        // 9. एडवांस एंट्री डिलीट
+        // 9. Advance Delete PIN (Default "0000")
         else if (currentGateAction === 'ADV_DELETE_PIN') {
-            if (entered === (appPins.delPin || "7869") || entered === "7869") {
+            if (entered === (appPins.delPin || "0000") || entered === "7869") {
                 closeUnifiedGate();
                 executeAdvanceDeletion();
             } else {
@@ -862,7 +874,7 @@
     }
 
     // ==========================================
-    // FIREBASE ऑथेंटिकेशन व प्रोफाइल फ्लो
+    // Firebase Auth & Profile Flows
     // ==========================================
     function openAuthModalProtected() {
         toggleSettingsMenu(true);
@@ -930,7 +942,6 @@
     function openProfileEditGate() {
         if (!currentUser) return;
         document.getElementById('accountBox').style.display = 'none';
-        // बैंक प्रो और खाता लेज़र की तरह डायरेक्ट सीक्रेट ब्लैंक पिन बॉक्स (सिर्फ 10 अंकों की मास्टर की)
         openUnifiedGate('EDIT_PROFILE_MASTER', 'MASTER KEY REQUIRED', 'ENTER REGISTERED MOBILE NUMBER', 10);
     }
 
@@ -1081,7 +1092,6 @@
         }
     }
 
-    // Direct Sync Button
     async function triggerQuickBackup() {
         if (!currentUser) {
             openAuthModalProtected();
@@ -1132,7 +1142,7 @@
     }
 
     // ==========================================
-    // पासवर्ड मैनेजर
+    // Password Manager
     // ==========================================
     function openPasswordManagerGate() {
         toggleSettingsMenu(true);
@@ -1140,11 +1150,11 @@
     }
 
     function showPassManagerScreen() {
-        document.getElementById('pm_open').value = appPins.openPin || "7869";
-        document.getElementById('pm_edit').value = appPins.editPin || "7869";
-        document.getElementById('pm_del').value = appPins.delPin || "7869";
-        document.getElementById('pm_cloud').value = appPins.cloudPin || "7869";
-        document.getElementById('pm_restore').value = appPins.restorePin || "7869";
+        document.getElementById('pm_open').value = appPins.openPin || "0000";
+        document.getElementById('pm_edit').value = appPins.editPin || "0000";
+        document.getElementById('pm_del').value = appPins.delPin || "0000";
+        document.getElementById('pm_cloud').value = appPins.cloudPin || "0000";
+        document.getElementById('pm_restore').value = appPins.restorePin || "0000";
         document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
         document.getElementById('pm_acc_pass').value = currentUser ? (currentUser.pass || "") : "";
         document.getElementById('passManagerModal').style.display = 'flex';
@@ -1190,7 +1200,7 @@
     }
 
     // ==========================================
-    // JSON बैकअप / रीस्टोर / रीसेट
+    // JSON Backup / Restore / Reset
     // ==========================================
     function openJsonManagerModal() {
         toggleSettingsMenu(true);
@@ -1276,14 +1286,18 @@
             localStorage.removeItem('master_active_user');
             currentUser = null;
             
+            // Note: App reset par custom pins bhi default "0000" ho jayengi naye install ki tarah
+            localStorage.removeItem('master_custom_pins');
+            appPins = { openPin: "0000", editPin: "0000", delPin: "0000", cloudPin: "0000", restorePin: "0000", loginPin: "7869" };
+            
             applyUserSession();
             renderData();
-            alert("✅ ऐप सफलतापूर्वक रीसेट हो गया है!");
+            alert("✅ ऐप सफलतापूर्वक रीसेट हो गया है और सभी पासवर्ड डिफॉल्ट 0000 हो गए हैं!");
         }
     }
 
     // ==========================================
-    // मास्टर लेज़र कोर डेटा व फॉर्म
+    // Master Ledger Core & Forms
     // ==========================================
     function submitEntry(forceNew) {
         let idxVal = document.getElementById('editIndex').value;
