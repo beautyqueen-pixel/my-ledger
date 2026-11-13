@@ -2572,7 +2572,7 @@
             showDirectActionModal(dataUrl, fileName, safeParty);
         }
 
-        function showDirectActionModal(dataUrl, fileName, partyName) {
+                function showDirectActionModal(dataUrl, fileName, partyName) {
             let modal = document.getElementById('customImgPreviewModal');
             if (!modal) {
                 modal = document.createElement('div');
@@ -2625,19 +2625,6 @@
 
             document.getElementById('modalDownloadBtn').onclick = async function() {
                 try {
-                    const res = await fetch(dataUrl);
-                    const blob = await res.blob();
-                    const file = new File([blob], fileName, { type: 'image/jpeg' });
-
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: partyName,
-                            text: `${partyName} का खाता हिसाब`
-                        });
-                        return;
-                    }
-
                     const a = document.createElement('a');
                     a.href = dataUrl;
                     a.download = fileName;
@@ -2645,14 +2632,13 @@
                     a.click();
                     setTimeout(() => {
                         document.body.removeChild(a);
-                        alert("✅ फोटो डाउनलोड हो गई है!");
-                    }, 500);
+                        alert("✅ फोटो सफलतापूर्वक गैलरी/डाउनलोड में सेव हो गई है!");
+                    }, 300);
                 } catch (err) {
                     alert("❌ डाउनलोड में त्रुटि: " + err.message);
                 }
             };
         }
-
         function openEntryForCurrentParty() {
             if (!currentViewingPerson) return;
             const pName = currentViewingPerson;
