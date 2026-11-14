@@ -1375,24 +1375,25 @@
    }  
  }  
 
- function setLock(lock) {   
+  function setLock(lock) {   
    fieldConfig.forEach(f => {   
      if (f[1] === 'cvv') {  
        const cvvBox = document.getElementById('inp-cvv-code');  
        const expBox = document.getElementById('inp-cvv-exp');  
-       if (cvvBox) cvvBox.disabled = lock;  
-       if (expBox) expBox.disabled = lock;  
+       // लॉक होने पर भी इन्हें डिसेबल न करें ताकि टेक्स्ट सिलेक्ट और कॉपी हो सके
+       if (cvvBox) cvvBox.readOnly = lock;  
+       if (expBox) expBox.readOnly = lock;  
      } else {  
        const el = document.getElementById('inp-'+f[1]);   
        if(el) {  
+         el.contentEditable = "true"; // हमेशा true रखें ताकि कॉपी/सेलेक्ट चालू रहे
          if(el.tagName === 'TEXTAREA') el.readOnly = lock;   
-         else el.contentEditable = !lock;   
        }  
      }  
    });   
    currentCustomFields.forEach(cf => {  
      const el = document.getElementById('inp-cf-' + cf.key);  
-     if(el) el.contentEditable = !lock;  
+     if(el) el.contentEditable = "true";  
    });  
  }  
 
@@ -1562,14 +1563,18 @@
  function executeUnlockForm() {
    setLock(false);   
    fieldConfig.forEach(f => {  
-     if (f[1] === 'cvv') {  
+          if (f[1] === 'cvv') {  
        const cvvBox = document.getElementById('inp-cvv-code');  
        const expBox = document.getElementById('inp-cvv-exp');
        if (cvvBox) {
+         cvvBox.readOnly = false;
          cvvBox.parentElement.style.backgroundColor = "var(--new-input-bg)";
          cvvBox.style.color = "var(--new-input-text)";
        }
-       if (expBox) expBox.style.color = "var(--new-input-text)";
+       if (expBox) {
+         expBox.readOnly = false;
+         expBox.style.color = "var(--new-input-text)";
+       }
      } else {  
        const el = document.getElementById('inp-' + f[1]);  
        if (el) {
