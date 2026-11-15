@@ -1638,11 +1638,11 @@
    document.getElementById('head-agent').innerText = getFirstWord(getVal('agent')) || "NAME";  
    document.getElementById('head-title').innerText = (getFirstWord(getVal('bank')) || "BANK") + " / " + (getFirstWord(getVal('holder')) || "HOLDER");  
  }  
-
- function filterList() {  
+   function filterList() {  
    const rawInput = document.getElementById('search-inp').value;  
    const queryTrim = rawInput.trim();  
    const items = Array.from(document.getElementsByClassName('list-item'));  
+   
    if (!queryTrim) {  
      items.forEach(it => {  
        it.style.display = "flex";  
@@ -1652,30 +1652,101 @@
      document.getElementById('count-total').innerText = items.length;  
      return;  
    }  
-   const hasPatternChar = /[\s\-_.*xX]/.test(rawInput);  
-   let regex = null;  
-   if (hasPatternChar) {  
-     let pattern = rawInput.replace(/[^0-9\s\-_.*xX]/g, '').replace(/[\s\-_.*xX]/g, '\\d');  
-     try { regex = new RegExp(pattern); } catch(e) { regex = null; }  
-   }  
+
    let visibleItems = [];  
+   let lowerQuery = queryTrim.toLowerCase();
+
+   // 1. एजेंट सर्च: 'a ' से शुरू होना चाहिए और केवल Sahil, Anwar या Sohel होना चाहिए
+   let isAgentSearch = lowerQuery.startsWith('a ');
+   let agentQuery = isAgentSearch ? lowerQuery.substring(2).trim() : '';
+   const validAgents = ['sahil', 'anwar', 'sohel'];
+
+   // 2. मोबाइल या स्टार (*) सर्च: यदि इनपुट में नंबर्स या '*' हैं
+   let isMobileOrStarSearch = queryTrim.includes('*') || /^[0-9\s\-_*]+$/.test(queryTrim);
+
    items.forEach(it => {  
      const mobileRaw = (it.getAttribute('data-mobile') || "").replace(/\D/g, '');  
-     const fullText = it.getAttribute('data-full') || "";  
      let isMatch = false;  
-     if (regex && mobileRaw) { if (regex.test(mobileRaw)) isMatch = true; }  
-     if (!isMatch) {  
-       isMatch = it.innerText.toLowerCase().includes(queryTrim.toLowerCase()) || fullText.includes(queryTrim.toLowerCase());  
+
+     if (isAgentSearch) {
+       // सिर्फ वैध एजेंट (Sahil, Anwar, Sohel) के लिए ही जांच करें
+       if (validAgents.includes(agentQuery)) {
+         try {
+           let itemData = JSON.parse(it.getAttribute('data-full'));
+           let agentName = (itemData.agent || "").toLowerCase();
+           if (agentName.includes(agentQuery)) {
+             isMatch = true;
+           }
+         } catch(e) {}
+       }
+     } 
+          else if (isMobileOrStarSearch) {
+       // स्टार (*) को किसी भी एक अंक (digit) के रूप में मानकर सही पोजीशन पर मैच करना
+       let regexPattern = '';
+       for (let i = 0; i < queryTrim.length; i++) {
+         let char = queryTrim[i];
+         if (char === '*') {
+           regexPattern += '\\d'; // स्टार का मतलब कोई भी 1 अंक
+         } else if (/[0-9]/.test(char)) {
+           regexPattern += char; // जो नंबर लिखा है वही होना चाहिए
+         }
+       }
+
+       try {
+         // मोबाइल नंबर ठीक उसी पैटर्न और लंबाई पर बैठना चाहिए
+         let regex = new RegExp('^' + regexPattern);
+         if (regex.test(mobileRaw)) {
+           isMatch = true;
+         }
+       } catch(e) {}
+
+       // यदि यूजर ने बिना स्टार के सीधे कुछ अंक लिखे हैं (जैसे 98 या पूरा नंबर)
+       if (!isMatch && !queryTrim.includes('*')) {
+         let cleanQueryDigits = queryTrim.replace(/[^0-9]/g, '');
+         // अगर शुरुआत से या पूरे नंबर में सटीक बैठता है
+         if (mobileRaw.startsWith(cleanQueryDigits) || mobileRaw === cleanQueryDigits) {
+           isMatch = true;
+         }
+       }
+     } 
+     else {
+       // 3. होल्डर और बैंक नेम सर्च (बैंक का नाम या होल्डर का नाम सटीक खोजेगा)
+       try {
+         let itemData = JSON.parse(it.getAttribute('data-full'));
+         let holderName = (itemData.holder || "").toLowerCase();
+         let bankName = (itemData.bank || "").toLowerCase();
+         
+         let queryStr = lowerQuery;
+         let isBankMatch = false;
+
+         // अगर बैंक के लिए शार्ट फॉर्म लिखा है (जैसे jk या jnk, तो जम्मू एंड कश्मीर बैंक आ जाए)
+         if (queryStr === 'jk' || queryStr === 'jnk') {
+           if (bankName.includes('jammu') || bankName.includes('j&k') || bankName.includes('jk')) {
+             isBankMatch = true;
+           }
+         } else {
+           // सामान्य बैंक नाम या होल्डर नाम मैच के लिए
+           if (bankName.includes(queryStr) || holderName.includes(queryStr)) {
+             isBankMatch = true;
+           }
+         }
+
+         if (isBankMatch) {
+           isMatch = true;
+         }
+       } catch(e) {}
      }  
-     if (isMatch) { it.style.display = "flex"; visibleItems.push(it); }  
-     else it.style.display = "none";  
+
+     if (isMatch) {  
+       it.style.display = "flex";  
+       visibleItems.push(it);  
+     } else {  
+       it.style.display = "none";  
+     }  
    });  
+
    document.getElementById('count-total').innerText = visibleItems.length;  
-   if (visibleItems.length === 1 && queryTrim.length >= 4 && (hasPatternChar || /^\d+$/.test(queryTrim))) {  
-     const targetId = Number(visibleItems[0].getAttribute('data-id'));  
-     loadItem(targetId);  
-   }  
- }  
+ }
 
  function refreshApp() { toggleForm(false); renderList(); document.getElementById('vaultPanel').style.display = 'none'; }  
  function toggleOptionMenu() { document.getElementById('option-menu').style.display = document.getElementById('option-menu').style.display === 'none' ? 'block' : 'none'; }  
