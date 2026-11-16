@@ -1230,12 +1230,12 @@
    galInp.click();  
  }  
   
- function processCardImage(inputEl) {  
+  function processCardImage(inputEl) {  
    const file = inputEl.files[0];  
    if (!file) return;  
    showCustomDialog("SCANNING", "Reading Details from Image...", false);  
    const okBtn = document.getElementById('dialogOkBtn');  
-   okBtn.style.display = 'none';  
+   if (okBtn) okBtn.style.display = 'none';  
      
    const reader = new FileReader();  
    reader.onload = async function(e) {  
@@ -1243,7 +1243,7 @@
        const { data: { text } } = await Tesseract.recognize(e.target.result, 'eng');  
        parseOCRResult(text);  
      } catch (err) {  
-       okBtn.style.display = 'block';  
+       if (okBtn) okBtn.style.display = 'block';  
        showCustomDialog("ERROR", "Failed to read image!", false);  
      }  
    };  
@@ -1252,6 +1252,8 @@
   
  function parseOCRResult(text) {  
    const okBtn = document.getElementById('dialogOkBtn');  
+   if (okBtn) okBtn.style.display = 'block';
+   
    try {  
      if (activeScanTarget === 'pan') {  
        let cleanPanText = text.toUpperCase().replace(/[^A-Z0-9\n ]/g, ' ');  
@@ -1275,7 +1277,6 @@
          if (foundPan && foundDob) panEl.innerText = `${foundPan} ${foundDob}`;  
          else if (foundPan) panEl.innerText = foundPan;  
        }  
-       okBtn.style.display = 'block';  
        showCustomDialog("SUCCESS", "PAN & DOB Scanned Successfully!", false);  
      } else {  
        let rawClean = text.replace(/[^0-9a-zA-Z\/\-\n ]/g, ' ');  
@@ -1298,23 +1299,25 @@
        let expMatch = rawClean.match(/\b(0[1-9]|1[0-2])\s*[\/\-]\s*([0-9]{2,4})\b/);  
        if (expMatch) {  
          const expEl = document.getElementById('inp-cvv-exp');  
-         let yr = expMatch[2];  
-         if (yr.length === 4) yr = yr.substring(2);  
-         if (expEl) expEl.value = expMatch[1] + '/' + yr;  
+         let yr = expMatch/2;  // Safe fallback
+         if (expMatch[2]) {
+           let yStr = expMatch[2];  
+           if (yStr.length === 4) yStr = yStr.substring(2);  
+           if (expEl) expEl.value = expMatch[1] + '/' + yStr;  
+         }
        }  
        let cvvMatch = rawClean.match(/\b(?:CVV|CVC)\s*[:\-]?\s*([0-9]{3})\b/i);  
        if (cvvMatch) {  
          const cvvEl = document.getElementById('inp-cvv-code');  
          if (cvvEl && !cvvEl.value.trim()) cvvEl.value = cvvMatch[1];  
        }  
-       okBtn.style.display = 'block';  
        showCustomDialog("SUCCESS", "Card Details Scanned!", false);  
      }  
    } catch (err) {  
-     okBtn.style.display = 'block';  
      showCustomDialog("ERROR", "Failed to parse details!", false);  
    }  
  }  
+
 
  function autoResize(el) {   
    el.style.height = '30px';   
