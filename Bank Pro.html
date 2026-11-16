@@ -15,8 +15,7 @@
   
  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  
  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
- <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>  
-  
+
  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -176,18 +175,7 @@
  .btn-entry-main:active, .btn-sync-main:active, .btn-gear-main:active { transform: translateY(2px) !important; box-shadow: 0 2px 0 #000 !important; }
  </style>  
 </head>  
-<body>  
-
-<input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="handleJsonFileSelect(event)">
-<input type="file" id="cardGalleryInput" accept="image/*" style="display:none;" onchange="processCardImage(this)">  
-
-<div id="scanChoiceModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:6000; justify-content:center; align-items:center; backdrop-filter:blur(3px);">  
- <div style="background:#222; border:2px solid #00f3ff; border-radius:15px; padding:20px; width:80%; max-width:280px; text-align:center;">  
-   <h4 id="scanModalHeading" style="color:#00f3ff; margin-top:0; margin-bottom:15px;">SELECT IMAGE</h4>  
-   <button style="background:#4285F4; width:100%; margin-bottom:15px; padding:12px; border-radius:8px; font-size:14px; font-weight:bold; cursor:pointer;" onclick="startGalleryScan()">CHOOSE FROM GALLERY</button>  
-   <button style="background:#444; width:100%; padding:8px; border-radius:8px; font-size:12px; cursor:pointer;" onclick="closeScanChoice()">CANCEL</button>  
- </div>  
-</div>  
+<body>
 
 <div id="mainAppOverlay" onclick="handleAppUnlockClick()">  
  <input type="password" id="secretInput" placeholder="PIN" inputmode="numeric" pattern="[0-9]*" onclick="event.stopPropagation()">  
@@ -1031,11 +1019,6 @@
      const row = document.createElement('div'); row.className = 'row'; row.id = 'row-' + f[1];   
      
      let labelHtml = f[0];  
-     if (f[1] === 'atm') {  
-       labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('card')" title="Scan Debit Card">📷</button>`;  
-     } else if (f[1] === 'pan') {  
-       labelHtml = `<span>${f[0]}</span> <button class="cam-btn" onclick="openScanChoice('pan')" title="Scan Pan Card">📷</button>`;  
-     }  
      
      let inputHtml = "";  
      if (f[1] === 'addr') {  
@@ -1641,7 +1624,7 @@
    document.getElementById('head-agent').innerText = getFirstWord(getVal('agent')) || "NAME";  
    document.getElementById('head-title').innerText = (getFirstWord(getVal('bank')) || "BANK") + " / " + (getFirstWord(getVal('holder')) || "HOLDER");  
  }  
-   function filterList() {  
+    function filterList() {  
    const rawInput = document.getElementById('search-inp').value;  
    const queryTrim = rawInput.trim();  
    const items = Array.from(document.getElementsByClassName('list-item'));  
@@ -1672,7 +1655,7 @@
      let isMatch = false;  
 
      if (isAgentSearch) {
-       // सिर्फ वैध एजेंट (Sahil, Anwar, Sohel) के लिए ही जांच करें
+       // सिर्फ वैध एजेंट के लिए ही जांच करें
        if (validAgents.includes(agentQuery)) {
          try {
            let itemData = JSON.parse(it.getAttribute('data-full'));
@@ -1683,8 +1666,8 @@
          } catch(e) {}
        }
      } 
-          else if (isMobileOrStarSearch) {
-       // स्टार (*) को किसी भी एक अंक (digit) के रूप में मानकर सही पोजीशन पर मैच करना
+     else if (isMobileOrStarSearch) {
+       // स्टार (*) का मतलब अननोन अंक है, जो ठीक उसी पोजीशन पर मैच होना चाहिए
        let regexPattern = '';
        for (let i = 0; i < queryTrim.length; i++) {
          let char = queryTrim[i];
@@ -1696,7 +1679,6 @@
        }
 
        try {
-         // मोबाइल नंबर ठीक उसी पैटर्न और लंबाई पर बैठना चाहिए
          let regex = new RegExp('^' + regexPattern);
          if (regex.test(mobileRaw)) {
            isMatch = true;
@@ -1706,14 +1688,13 @@
        // यदि यूजर ने बिना स्टार के सीधे कुछ अंक लिखे हैं (जैसे 98 या पूरा नंबर)
        if (!isMatch && !queryTrim.includes('*')) {
          let cleanQueryDigits = queryTrim.replace(/[^0-9]/g, '');
-         // अगर शुरुआत से या पूरे नंबर में सटीक बैठता है
          if (mobileRaw.startsWith(cleanQueryDigits) || mobileRaw === cleanQueryDigits) {
            isMatch = true;
          }
        }
      } 
      else {
-       // 3. होल्डर और बैंक नेम सर्च (बैंक का नाम या होल्डर का नाम सटीक खोजेगा)
+       // 3. होल्डर और बैंक नेम सर्च
        try {
          let itemData = JSON.parse(it.getAttribute('data-full'));
          let holderName = (itemData.holder || "").toLowerCase();
@@ -1722,13 +1703,11 @@
          let queryStr = lowerQuery;
          let isBankMatch = false;
 
-         // अगर बैंक के लिए शार्ट फॉर्म लिखा है (जैसे jk या jnk, तो जम्मू एंड कश्मीर बैंक आ जाए)
          if (queryStr === 'jk' || queryStr === 'jnk') {
            if (bankName.includes('jammu') || bankName.includes('j&k') || bankName.includes('jk')) {
              isBankMatch = true;
            }
          } else {
-           // सामान्य बैंक नाम या होल्डर नाम मैच के लिए
            if (bankName.includes(queryStr) || holderName.includes(queryStr)) {
              isBankMatch = true;
            }
@@ -1750,7 +1729,6 @@
 
    document.getElementById('count-total').innerText = visibleItems.length;  
  }
-
  function refreshApp() { toggleForm(false); renderList(); document.getElementById('vaultPanel').style.display = 'none'; }  
  function toggleOptionMenu() { document.getElementById('option-menu').style.display = document.getElementById('option-menu').style.display === 'none' ? 'block' : 'none'; }  
  function toggleVault(forceClose = false) { 
