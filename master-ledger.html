@@ -21,7 +21,9 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden !important;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             font-family: 'Segoe UI', sans-serif;
             background: #000;
             font-size: 10px;
@@ -29,12 +31,15 @@
 
         #appWrapper {
             width: 100%;
-            height: 100%;
+            min-height: 100%;
+            height: 100dvh;
             box-sizing: border-box;
             padding: 2px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* 3-Tap App Lock Screen */
@@ -265,7 +270,26 @@
             background: #000; color: #00ff66; text-align: center; font-size: 13px; font-weight: 900; outline: none; 
         }
 
-        #entryArea, #advanceEntryArea { background: #001f3f; padding: 8px; display: none; border-radius: 14px; border: 2px solid #00f0ff; margin-bottom: 4px; flex-shrink: 0; }
+        #entryArea, #advanceEntryArea { 
+            background: #001f3f; 
+            padding: 8px; 
+            display: none; 
+            border-radius: 14px; 
+            border: 2px solid #00f0ff; 
+            margin-bottom: 6px; 
+            flex-shrink: 0; 
+            max-height: 62dvh; 
+            overflow-y: auto !important; 
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior: contain;
+            touch-action: pan-y;
+        }
+        .form-actions-bar {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            background: transparent;
+        }
         .entry-form { max-width: 400px; margin: auto; border: 1.5px solid #00f0ff; padding: 8px; border-radius: 10px; transition: background 0.3s; }
         .form-row { display: flex; margin-bottom: 4px; align-items: center; justify-content: space-between; }
         .form-row label { width: 120px; font-weight: 900; font-size: 11px; color: #000; text-transform: uppercase; }
@@ -490,7 +514,7 @@
             <div class="form-row"><label>BAL. DATE</label><input type="text" id="f9" onblur="smartDate(this)"></div>
             <div class="form-row"><label>PAYMENT</label><input type="number" id="f_pay_amt"></div>
             <div class="form-row"><label>PAID DATE</label><input type="text" id="f_pay_date" onblur="smartDate(this)"></div>
-            <div style="display:flex; gap:5px; margin-top:8px;">
+            <div class="form-actions-bar">
                 <button id="mainSaveBtn" class="u-btn" style="flex:10; background:#27ae60;" onclick="submitEntry(false)">SAVE</button>
                 <button id="updateBtn" class="u-btn" style="flex:4; background:#f39c12; display:none;" onclick="submitEntry(false)">UPDATE</button>
                 <button id="saveAsNewBtn" class="u-btn" style="flex:4; background:#3498db; display:none;" onclick="submitEntry(true)">NEW</button>
@@ -637,7 +661,7 @@
        Jab app naye mobile mein install ya reset hoga, yehi "0000" rahenge.
        User baad mein settings se inko change karega toh wahi naya password save rahega.
        ========================================================= */
-    let appPins = JSON.parse(localStorage.getItem('master_custom_pins_v2')) || {
+    let appPins = JSON.parse(localStorage.getItem('master_custom_pins_v3')) || {
     openPin: "0000",
     editPin: "0000",
     delPin: "0000",
@@ -645,10 +669,15 @@
     restorePin: "0000",
     loginPin: "0000" 
 };
+if(!localStorage.getItem('master_custom_pins_v3')) {
+    localStorage.setItem('master_custom_pins_v3', JSON.stringify(appPins));
+    localStorage.removeItem('master_custom_pins_v2');
+    localStorage.removeItem('master_custom_pins_v3');
+}
 // Purani key ko naye version se replace karne ke liye
 if(!localStorage.getItem('master_custom_pins_v2')) {
     localStorage.setItem('master_custom_pins_v2', JSON.stringify(appPins));
-    localStorage.removeItem('master_custom_pins');
+    localStorage.removeItem('master_custom_pins_v3');
 }
 
     let isPermanentDelete = false;
@@ -670,12 +699,39 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         if (currentUser && currentUser.phone) {
             return currentUser.phone.trim();
         }
-        return localStorage.getItem('master_phone_key') || "7869";
+        return localStorage.getItem('master_phone_key') || "0000";
     }
 
-    // Auto-Logout & Backup Timer
+    // Auto-Logout & 15-Minute Auto-Backup Timer
     let autoLogoutTimer = null;
-    const INACTIVITY_LIMIT = 10 * 60 * 1000;
+    let exitBackupTimer = null;
+    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 Minutes
+
+    function saveAllLocalDataSafely() {
+        localStorage.setItem('shared_master_v19', JSON.stringify(db));
+        localStorage.setItem('master_advance_v1', JSON.stringify(db_advance));
+        localStorage.setItem('master_trash_v1', JSON.stringify(trash));
+    }
+
+    async function pushBackupForEmail(emailToSync) {
+        if (!emailToSync) return;
+        saveAllLocalDataSafely();
+        try {
+            const payload = {
+                shared_master_v19: db,
+                master_advance_v1: db_advance,
+                master_trash_v1: trash,
+                lastSync: new Date().toISOString()
+            };
+            if (window.fbPushData) {
+                await window.fbPushData(emailToSync, payload);
+                localStorage.removeItem('pending_auto_backup_email');
+            }
+        } catch (err) {
+            localStorage.setItem('pending_auto_backup_email', emailToSync);
+            console.log("Auto-backup queued: " + err.message);
+        }
+    }
 
     function resetAutoTimer() {
         if (autoLogoutTimer) clearTimeout(autoLogoutTimer);
@@ -683,26 +739,11 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
     }
 
     async function triggerAutoLogoutSequence() {
-        if (currentUser && currentUser.email) {
-            try {
-                const payload = {
-                    shared_master_v19: db,
-                    master_advance_v1: db_advance,
-                    master_trash_v1: trash,
-                    lastSync: new Date().toISOString()
-                };
-                if (window.fbPushData) {
-                    await window.fbPushData(currentUser.email, payload);
-                }
-            } catch (err) {
-                console.log("Auto-backup failed: " + err.message);
-            }
-            localStorage.removeItem('master_active_user');
-            currentUser = null;
-            applyUserSession();
-            handleAppLock();
-            alert("⏰ 10 मिनट तक कोई उपयोग न होने पर डेटा सुरक्षित बैकअप करके ऑटो-लॉगआउट कर दिया गया है।");
+        const emailToSync = (currentUser && currentUser.email) || localStorage.getItem('pending_auto_backup_email');
+        if (emailToSync) {
+            await pushBackupForEmail(emailToSync);
         }
+        handleAppLock();
     }
 
     ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'].forEach(evt => {
@@ -724,15 +765,11 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         const masterPin = getDeviceMasterKey();
         const activeOpenPin = appPins.openPin || "0000";
         
-        if(this.value === activeOpenPin || (masterPin && this.value === masterPin) || this.value === "7869") { 
+        if(this.value === activeOpenPin || (masterPin && this.value === masterPin)) { 
             document.getElementById('mainAppOverlay').style.display = 'none'; 
             this.value = "";
             this.style.display = 'none';
             clickCount = 0;
-
-            if (!currentUser) {
-                openAuthModal();
-            }
         }
     });
 
@@ -783,8 +820,8 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
 
         // 1. FIREBASE Login Gate (Login Pin)
         if (currentGateAction === 'OPEN_AUTH_GATE') {
-            const reqPin = appPins.loginPin || "7869";
-            if (entered === reqPin || entered === "7869") {
+            const reqPin = appPins.loginPin || "0000";
+            if (entered === reqPin) {
                 closeUnifiedGate();
                 openAuthModal();
             } else {
@@ -793,7 +830,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 2. Profile Edit (Master Mobile Key)
         else if (currentGateAction === 'EDIT_PROFILE_MASTER') {
-            if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
+            if (entered === masterPin) {
                 closeUnifiedGate();
                 showProfileEditScreen();
             } else {
@@ -802,7 +839,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 3. Manage Passwords (Master Mobile Key)
         else if (currentGateAction === 'MANAGE_PINS_MASTER') {
-            if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
+            if (entered === masterPin) {
                 closeUnifiedGate();
                 showPassManagerScreen();
             } else {
@@ -811,7 +848,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 4. App Reset (Master Mobile Key)
         else if (currentGateAction === 'RESET_APP_MASTER') {
-            if (entered === masterPin || (masterPin === "7869" && entered === "7869")) {
+            if (entered === masterPin) {
                 closeUnifiedGate();
                 executeAppReset();
             } else {
@@ -820,7 +857,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 5. JSON Export PIN (Default "0000")
         else if (currentGateAction === 'EXPORT_JSON_PIN') {
-            if (entered === (appPins.cloudPin || "0000") || entered === "7869") {
+            if (entered === (appPins.cloudPin || "0000")) {
                 closeUnifiedGate();
                 executeJsonExport();
             } else {
@@ -829,7 +866,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 6. JSON Restore PIN (Default "0000")
         else if (currentGateAction === 'RESTORE_JSON_PIN') {
-            if (entered === (appPins.restorePin || "0000") || entered === "7869") {
+            if (entered === (appPins.restorePin || "0000")) {
                 closeUnifiedGate();
                 document.getElementById('jsonFileInput').click();
             } else {
@@ -838,7 +875,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 7. Unlock Edit PIN (Default "0000")
         else if (currentGateAction === 'UNLOCK_EDIT_PIN') {
-            if (entered === (appPins.editPin || "0000") || entered === "7869") {
+            if (entered === (appPins.editPin || "0000")) {
                 closeUnifiedGate();
                 executeUnlockForm();
             } else {
@@ -847,7 +884,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 8. Delete Entry PIN (Default "0000")
         else if (currentGateAction === 'DELETE_ENTRY_PIN') {
-            if (entered === (appPins.delPin || "0000") || entered === "7869") {
+            if (entered === (appPins.delPin || "0000")) {
                 closeUnifiedGate();
                 executeConfirmDeletion();
             } else {
@@ -856,7 +893,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
         // 9. Advance Delete PIN (Default "0000")
         else if (currentGateAction === 'ADV_DELETE_PIN') {
-            if (entered === (appPins.delPin || "0000") || entered === "7869") {
+            if (entered === (appPins.delPin || "0000")) {
                 closeUnifiedGate();
                 executeAdvanceDeletion();
             } else {
@@ -1155,7 +1192,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         document.getElementById('pm_del').value = appPins.delPin || "0000";
         document.getElementById('pm_cloud').value = appPins.cloudPin || "0000";
         document.getElementById('pm_restore').value = appPins.restorePin || "0000";
-        document.getElementById('pm_login_gate').value = appPins.loginPin || "7869";
+        document.getElementById('pm_login_gate').value = appPins.loginPin || "0000";
         document.getElementById('pm_acc_pass').value = currentUser ? (currentUser.pass || "") : "";
         document.getElementById('passManagerModal').style.display = 'flex';
     }
@@ -1179,7 +1216,7 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         }
 
         appPins = { openPin: oPin, editPin: ePin, delPin: dPin, cloudPin: cPin, restorePin: rPin, loginPin: lPin };
-        localStorage.setItem('master_custom_pins', JSON.stringify(appPins));
+        localStorage.setItem('master_custom_pins_v3', JSON.stringify(appPins));
 
         if (newAccPass && currentUser && currentUser.phone) {
             if (newAccPass !== currentUser.pass) {
@@ -1287,8 +1324,8 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
             currentUser = null;
             
             // Note: App reset par custom pins bhi default "0000" ho jayengi naye install ki tarah
-            localStorage.removeItem('master_custom_pins');
-            appPins = { openPin: "0000", editPin: "0000", delPin: "0000", cloudPin: "0000", restorePin: "0000", loginPin: "7869" };
+            localStorage.removeItem('master_custom_pins_v3');
+            appPins = { openPin: "0000", editPin: "0000", delPin: "0000", cloudPin: "0000", restorePin: "0000", loginPin: "0000" };
             
             applyUserSession();
             renderData();
@@ -1365,6 +1402,11 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         document.getElementById('saveAsNewBtn').style.display = 'block'; 
         document.getElementById('delEntryBtn').style.display = 'block'; 
         document.getElementById('newCancelBtn').style.display = 'block'; 
+        const entryArea = document.getElementById('entryArea');
+        if (entryArea) {
+            entryArea.scrollTop = 0;
+            entryArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
     }
 
     function handleInsideDelete() {
@@ -1704,13 +1746,31 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
     }
 
     function smartDate(input) {
-        let v = input.value.trim().toLowerCase(); if (!v) return;
+        let v = input.value.trim().toLowerCase(); 
+        if (!v) return;
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         let day, month, year;
-        let numOnly = v.replace(/\D/g, '');
-        if (numOnly.length === 6) { day = numOnly.substring(0, 2); month = monthNames[parseInt(numOnly.substring(2, 4)) - 1] || "Jan"; year = "20" + numOnly.substring(4, 6); }
-        else { let parts = v.split(/[\s-]+/); if (parts.length >= 2) { day = parts[0].padStart(2, '0'); let mVal = parts[1].substring(0, 3); month = mVal.charAt(0).toUpperCase() + mVal.slice(1); year = (parts[2] && parts[2].length === 2) ? "20" + parts[2] : (parts[2] || "2026"); } }
-        if (day && month && year) { let finalDate = `${day}-${month}-${year}`; input.value = finalDate; }
+        if (/^\d{6}$/.test(v)) { 
+            day = v.substring(0, 2); 
+            month = monthNames[parseInt(v.substring(2, 4), 10) - 1] || "Jan"; 
+            year = "20" + v.substring(4, 6); 
+        } else { 
+            let parts = v.split(/[\s\-\/]+/); 
+            if (parts.length >= 2) { 
+                day = parts[0].padStart(2, '0'); 
+                let mRaw = parts[1];
+                if (!isNaN(mRaw)) {
+                    month = monthNames[parseInt(mRaw, 10) - 1] || "Jan";
+                } else {
+                    let mVal = mRaw.substring(0, 3); 
+                    month = mVal.charAt(0).toUpperCase() + mVal.slice(1); 
+                }
+                year = (parts[2] && parts[2].length === 2) ? "20" + parts[2] : (parts[2] || "2026"); 
+            } 
+        }
+        if (day && month && year) { 
+            input.value = `${day}-${month}-${year}`; 
+        }
     }
 
     function calcBal() { let pr = Number(document.getElementById('f_pr').value) || 0; let am = Number(document.getElementById('f_am').value) || 0; document.getElementById('f_bal_ui').value = pr - am; }
@@ -1745,10 +1805,64 @@ if(!localStorage.getItem('master_custom_pins_v2')) {
         switchTab('sahil');
         resetAutoTimer();
 
-        if (!currentUser) {
-            openAuthModal();
+        const pendingEmail = localStorage.getItem('pending_auto_backup_email');
+        if (pendingEmail) {
+            setTimeout(() => {
+                pushBackupForEmail(pendingEmail);
+            }, 2000);
         }
     };
+
+    function performInstantExitBackupAndLogout() {
+        saveAllLocalDataSafely();
+        const emailToSync = (currentUser && currentUser.email) || localStorage.getItem('pending_auto_backup_email');
+        if (emailToSync) {
+            localStorage.setItem('pending_auto_backup_email', emailToSync);
+            pushBackupForEmail(emailToSync);
+
+            if (exitBackupTimer) clearTimeout(exitBackupTimer);
+            exitBackupTimer = setTimeout(() => {
+                pushBackupForEmail(emailToSync);
+            }, INACTIVITY_LIMIT);
+        }
+        handleAppLock();
+    }
+
+    document.addEventListener("visibilitychange", function() {
+        if (document.visibilityState === "hidden") {
+            performInstantExitBackupAndLogout();
+        }
+    });
+
+    window.addEventListener("pagehide", function() {
+        performInstantExitBackupAndLogout();
+    });
+
+    // Mobile Keyboard & Thumb Scroll Helper for Entry Forms
+    function setupFormKeyboardScroll() {
+        const formInputs = document.querySelectorAll('#entryArea input, #advanceEntryArea input, #advanceEntryArea select');
+        formInputs.forEach(inp => {
+            inp.addEventListener('focus', function() {
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 250);
+            });
+        });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                const appWrap = document.getElementById('appWrapper');
+                if (appWrap) {
+                    appWrap.style.height = window.visualViewport.height + 'px';
+                }
+                const entryArea = document.getElementById('entryArea');
+                if (entryArea && entryArea.style.display === 'block') {
+                    entryArea.style.maxHeight = Math.max(220, window.visualViewport.height * 0.65) + 'px';
+                }
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', setupFormKeyboardScroll);
 </script>
 
 </body>
